@@ -1,7 +1,6 @@
 package ru.prog_matik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
-import org.w3._2000._09.xmldsig_.SignatureType;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult;
@@ -11,27 +10,25 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_servi
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceClient;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.List;
 
 public class ExportOrgRegistry {
 
     private Logger logger = Logger.getLogger(ExportOrgRegistry.class);
 
-    private ResultHeader resultHeader;
-    private Holder<ResultHeader> resultHolder = new Holder(resultHeader);
+    private Holder<ResultHeader> resultHolder = new Holder<>();
+
 
     /**
      * Метод формирует запрос и отправляет на серавер.
      *
-     * @param isRequestHeader
-     * @param exportOrgRegistryRequest
+     * @param isRequestHeader - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
+     * @param exportOrgRegistryRequest - Тело письма содержащее бизнес логику.
+     * @param resultHolder - Заголовок письма полученый в ответ от сервера.
      * @return ExportOrgRegistryResult
      * @throws Fault
      */
@@ -44,40 +41,9 @@ public class ExportOrgRegistry {
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
-//        provider.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY , true);
-//        provider.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY , "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/");
-//        provider.getRequestContext().put( "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory", sendSOAPMessage.certificateInitialize());
 
         return port.exportOrgRegistry(exportOrgRegistryRequest, isRequestHeader, resultHolder);
     }
-
-
-
-//    public void sendMessage() {
-//        try {
-//
-//            SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
-//
-////            Формируем загаловок с датой и идентификатором сообщения
-//            Marshaller marshallerHeader = JAXBContext.newInstance(ISRequestHeader.class).createMarshaller();
-//            marshallerHeader.marshal(getHeader(), soapMessage.getSOAPPart().getEnvelope().getHeader());
-//
-////            Формируем бизнес данные
-//            Marshaller marshallerBody = JAXBContext.newInstance(ExportOrgRegistryRequest.class).createMarshaller();
-//            marshallerBody.marshal(getExportOrgRegistryRequest(), soapMessage.getSOAPPart().getEnvelope().getBody());
-//
-////            сохраняем
-//            soapMessage.saveChanges();
-//
-////            Отправляем сообщение в формате SOAPMessage
-//            SendSOAPMessage sendSOAPMessage = new SendSOAPMessage();
-//            SOAPMessage result = sendSOAPMessage.sendSOAP(soapMessage, new URL("https://54.76.42.99:60045/ext-bus-org-registry-service/services/OrgRegistry"));
-//
-//
-//        } catch (SOAPException | JAXBException | MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     /**
      * Метод во временной реализации, создаёт запрос на указанных данных.
@@ -133,11 +99,7 @@ public class ExportOrgRegistry {
     }
 
     public ResultHeader getResultHeader() {
-        resultHeader = resultHolder.value;
-        return resultHeader;
+        return resultHolder.value;
     }
 
-    public void setResultHeader(ResultHeader resultHeader) {
-        this.resultHeader = resultHeader;
-    }
 }

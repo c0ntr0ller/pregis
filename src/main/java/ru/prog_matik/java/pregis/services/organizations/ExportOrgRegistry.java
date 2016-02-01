@@ -1,7 +1,6 @@
 package ru.prog_matik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
-import org.w3._2000._09.xmldsig_.SignatureType;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
@@ -36,7 +35,7 @@ public class ExportOrgRegistry {
         BindingProvider provider = (BindingProvider) port;
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
-        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.WSDL_LOCATION.toString());
+        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
 //        provider.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY , true);
 //        provider.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY , "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/");
 //        provider.getRequestContext().put( "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory", sendSOAPMessage.certificateInitialize());
@@ -84,8 +83,8 @@ public class ExportOrgRegistry {
         list.setOGRN("1125476111903");
         exportOrgRegistryRequest.getSearchCriteria().add(list);
 
-        SignatureType signatureType = new SignatureType();
-        exportOrgRegistryRequest.setSignature(signatureType);
+//        SignatureType signatureType = new SignatureType();
+//        exportOrgRegistryRequest.setSignature(signatureType);
 
 
         ExportOrgRegistryResult result = exportOrgRegistry(getHeader(), exportOrgRegistryRequest);

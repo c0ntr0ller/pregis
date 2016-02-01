@@ -7,15 +7,15 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
 //        Инициализация сертификатов и Крипто-ПРО
-        System.setProperty("com.sun.security.enableCRLDP", "true");
-        System.setProperty("com.ibm.security.enableCRLDP", "true");
-        System.setProperty("javax.net.ssl.supportGVO","false");
+//        System.setProperty("com.sun.security.enableCRLDP", "true");
+//        System.setProperty("com.ibm.security.enableCRLDP", "true");
+//        System.setProperty("javax.net.ssl.supportGVO","false");
 //        System.getProperty("javax.net.ssl.context", "GostTLS"); Не понятно работает ли?
         System.setProperty("javax.net.ssl.keyStoreType", "HDImageStore");
         System.setProperty("javax.net.ssl.keyStoreProvider", "JCP");
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
         System.setProperty("javax.net.ssl.trustStoreType", "HDImageStore");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\java_workspace\\projects_with_git\\Work\\PreGIS\\data\\xadesTrustStore");
+        System.setProperty("javax.net.ssl.trustStore", "C:\\andryha\\project\\workspace_for_git\\PreGIS\\data\\xadesTrustStore");
         System.setProperty("javax.net.ssl.trustStorePassword", "1");
 
 //        System.setProperty("jdk.tls.client.protocols", "TLSv1");

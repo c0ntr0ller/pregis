@@ -1,12 +1,19 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service;
 
-import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.*;
-
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.ws.Holder;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportSubsidiaryRequest;
 
 
 /**
@@ -16,7 +23,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * 
  */
 @WebService(name = "RegOrgPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry-service/")
-@HandlerChain(file = "RegOrgService_handler.xml")
+@HandlerChain(file = "RegOrgPortsType_handler.xml")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ObjectFactory.class,
@@ -30,6 +37,8 @@ public interface RegOrgPortsType {
      * экспорт сведений об организациях
      * 
      * @param exportOrgRegistryRequest
+     * @param header0
+     * @param header
      * @return
      *     returns ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult
      * @throws Fault
@@ -38,13 +47,19 @@ public interface RegOrgPortsType {
     @WebResult(name = "exportOrgRegistryResult", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", partName = "exportOrgRegistryResult")
     public ExportOrgRegistryResult exportOrgRegistry(
         @WebParam(name = "exportOrgRegistryRequest", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", partName = "exportOrgRegistryRequest")
-        ExportOrgRegistryRequest exportOrgRegistryRequest)
+        ExportOrgRegistryRequest exportOrgRegistryRequest,
+        @WebParam(name = "ISRequestHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", header = true, partName = "Header")
+        ISRequestHeader header,
+        @WebParam(name = "ResultHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/", header = true, mode = WebParam.Mode.OUT, partName = "Header")
+        Holder<ResultHeader> header0)
         throws Fault
     ;
 
     /**
      * импорт сведений о поставщиках данных
      * 
+     * @param header0
+     * @param header
      * @param importDataProviderRequest
      * @return
      *     returns ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult
@@ -54,7 +69,11 @@ public interface RegOrgPortsType {
     @WebResult(name = "ImportResult", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/", partName = "ImportResult")
     public ImportResult importDataProvider(
         @WebParam(name = "importDataProviderRequest", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", partName = "importDataProviderRequest")
-        ImportDataProviderRequest importDataProviderRequest)
+        ImportDataProviderRequest importDataProviderRequest,
+        @WebParam(name = "ISRequestHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", header = true, partName = "Header")
+        ISRequestHeader header,
+        @WebParam(name = "ResultHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/", header = true, mode = WebParam.Mode.OUT, partName = "Header")
+        Holder<ResultHeader> header0)
         throws Fault
     ;
 
@@ -62,6 +81,8 @@ public interface RegOrgPortsType {
      * экспорт сведений о поставщиках данных
      * 
      * @param exportDataProviderRequest
+     * @param header0
+     * @param header
      * @return
      *     returns ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderResult
      * @throws Fault
@@ -70,7 +91,11 @@ public interface RegOrgPortsType {
     @WebResult(name = "exportDataProviderResult", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", partName = "exportDataProviderResult")
     public ExportDataProviderResult exportDataProvider(
         @WebParam(name = "exportDataProviderRequest", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", partName = "exportDataProviderRequest")
-        ExportDataProviderRequest exportDataProviderRequest)
+        ExportDataProviderRequest exportDataProviderRequest,
+        @WebParam(name = "ISRequestHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", header = true, partName = "Header")
+        ISRequestHeader header,
+        @WebParam(name = "ResultHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/", header = true, mode = WebParam.Mode.OUT, partName = "Header")
+        Holder<ResultHeader> header0)
         throws Fault
     ;
 
@@ -78,6 +103,8 @@ public interface RegOrgPortsType {
      * импорт сведений об обособленном подразделении
      * 
      * @param importSubsidiaryRequest
+     * @param header0
+     * @param header
      * @return
      *     returns ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult
      * @throws Fault
@@ -86,7 +113,11 @@ public interface RegOrgPortsType {
     @WebResult(name = "ImportResult", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/", partName = "importSubsidiaryResult")
     public ImportResult importSubsidiary(
         @WebParam(name = "importSubsidiaryRequest", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", partName = "importSubsidiaryRequest")
-        ImportSubsidiaryRequest importSubsidiaryRequest)
+        ImportSubsidiaryRequest importSubsidiaryRequest,
+        @WebParam(name = "ISRequestHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/", header = true, partName = "Header")
+        ISRequestHeader header,
+        @WebParam(name = "ResultHeader", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/", header = true, mode = WebParam.Mode.OUT, partName = "Header")
+        Holder<ResultHeader> header0)
         throws Fault
     ;
 

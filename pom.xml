@@ -13,16 +13,35 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cxf.version>3.1.4</cxf.version>
-    <!--<cryptopro-jcp.version>2.0.38481</cryptopro-jcp.version>-->
+    <cryptopro-jcp.version>2.0.38481</cryptopro-jcp.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>crypto-pro</groupId>
+      <artifactId>JCP</artifactId>
+      <version>${cryptopro-jcp.version}</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/JCP.jar</systemPath>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>crypto-pro</groupId>
+      <artifactId>JCPxml</artifactId>
+      <version>${cryptopro-jcp.version}</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/JCPxml.jar</systemPath>
+      <type>jar</type>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>

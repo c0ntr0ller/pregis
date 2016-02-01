@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:base="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:tns="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/device-metering/" targetNamespace="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/device-metering/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/" schemaLocation="hcs-basetypes-8.5.0.2.xsd"/>
+	<!--Импорт показаний-->
+	<xs:element name="importMeteringDeviceValuesRequest">
+		<xs:annotation>
+			<xs:documentation>Импорт перечня показаний приборов учета.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="FIASHouseGuid" type="base:GUIDType">
+							<xs:annotation>
+								<xs:documentation>Глобальный уникальный идентификатор дома по ФИАС</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MeteringDevicesValues" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Показатели ПУ</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="MeteringDeviceGUID" type="base:MeteringDeviceGUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор ПУ</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AccountGUID" type="base:GUIDType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Идентификатор лицевого счета</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:choice>
+										<xs:element name="OneRateDeviceValue">
+											<xs:annotation>
+												<xs:documentation>Показания ПУ расхода холодной/горячей воды; газа; тепловой энергии</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CurrentValue" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Текущее показание</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="base:OneRateMeteringValueType">
+																	<xs:sequence>
+																		<xs:element ref="base:TransportGUID"/>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="ControlValue" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Контрольное показание</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="base:OneRateMeteringValueType">
+																	<xs:sequence>
+																		<xs:element ref="base:TransportGUID"/>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="VerificationValue" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Показание поверки, ПУ остается прежним</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="StartVerificationValue" type="base:OneRateMeteringValueType">
+																	<xs:annotation>
+																		<xs:documentation>Показания начала поверки</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="EndVerificationValue" type="base:OneRateMeteringValueType">
+																	<xs:annotation>
+																		<xs:documentation>Показания окончания поверки</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:choice>
+																	<xs:element name="PlannedVerification" type="xs:boolean">
+																		<xs:annotation>
+																			<xs:documentation>Признак плановой поверки</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="VerificationReason" type="base:nsiRef">
+																		<xs:annotation>
+																			<xs:documentation>Причина выхода ПУ из строя (НСИ 78). Вносится при неплановой поверке.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:choice>
+																<xs:element ref="base:TransportGUID"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ElectricDeviceValue">
+											<xs:annotation>
+												<xs:documentation>Показания ПУ расхода электроэнергии</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CurrentValue" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Текущее показание</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="base:ElectricMeteringValueType">
+																	<xs:sequence>
+																		<xs:element ref="base:TransportGUID"/>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="ControlValue" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Контрольное показание</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="base:ElectricMeteringValueType">
+																	<xs:sequence>
+																		<xs:element ref="base:TransportGUID"/>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="VerificationValue" minOccurs="0" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Показание поверки, ПУ остается прежним</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="StartVerificationValue" type="base:ElectricMeteringValueType">
+																	<xs:annotation>
+																		<xs:documentation>Показания начала поверки</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="EndVerificationValue" type="base:ElectricMeteringValueType">
+																	<xs:annotation>
+																		<xs:documentation>Показания окончания поверки</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:choice>
+																	<xs:element name="PlannedVerification" type="xs:boolean">
+																		<xs:annotation>
+																			<xs:documentation>Признак плановой поверки</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="VerificationReason" type="base:nsiRef">
+																		<xs:annotation>
+																			<xs:documentation>Причина выхода ПУ из строя (НСИ 78). Вносится при неплановой поверке.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:choice>
+																<xs:element ref="base:TransportGUID"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+		<xs:key name="importMeteringDeviceValuesRequest_TransportGUIDKey">
+			<xs:selector xpath=".//base:TransportGUID"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<!--Экспорт показаний-->
+	<xs:element name="exportMeteringDeviceHistoryRequest">
+		<xs:annotation>
+			<xs:documentation>Экспорт истории показаний и поверок приборов учета.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="FIASHouseGuid" type="base:GUIDType">
+							<xs:annotation>
+								<xs:documentation>Глобальный уникальный идентификатор дома по ФИАС</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:choice>
+							<xs:element name="MeteringDeviceType" type="base:GUIDType" maxOccurs="100">
+								<xs:annotation>
+									<xs:documentation>Тип прибора учета</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="MunicipalResource" type="base:GUIDType" maxOccurs="100">
+								<xs:annotation>
+									<xs:documentation>Коммунальный ресурс</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="MeteringDeviceGUID" type="base:GUIDType" maxOccurs="100">
+								<xs:annotation>
+									<xs:documentation>Идентификатор ПУ</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:choice>
+						<xs:element name="CommissioningDateFrom" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата ввода в эксплуатацию «С»</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CommissioningDateTo" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата ввода в эксплуатацию «По»</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SerchArchived" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Выгружать архивированные</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ArchiveDateFrom" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата архивации «С»</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ArchiveDateTo" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата архивации «По»</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="inputDateFrom" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата ввода показаний "С"</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="inputDateTo" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата ввода показаний "По"</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="excludeISValues" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Выгрузить показания, поставщик которых не текущая ИС.
+(Часть показаний может быть внесена не только через ГУИ, а с помощью другой ИС) Если флаг = "истина", то выгружаются показания, созданные через ГУИ и с помощью других ИС, в остальных случаях выгружаются все показания</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="exportMeteringDeviceHistoryResult">
+		<xs:annotation>
+			<xs:documentation>Статус экспорта показаний и поверок приборов учета.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:choice>
+						<xs:element name="exportMeteringDeviceHistoryResult" type="tns:exportMeteringDeviceHistoryResultType" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="base:ErrorMessage"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="exportMeteringDeviceHistoryResultType">
+		<xs:sequence>
+			<xs:element name="MeteringDeviceGUID" type="base:MeteringDeviceGUIDType">
+				<xs:annotation>
+					<xs:documentation>Идентификатор ПУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MunicipalResource" type="base:GUIDType">
+				<xs:annotation>
+					<xs:documentation>Коммунальный ресурс</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="OneRateDeviceValue">
+					<xs:annotation>
+						<xs:documentation>Показания ПУ расхода холодной/горячей воды; газа; тепловой энергии</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="BaseValue" type="base:OneRateMeteringValueType">
+								<xs:annotation>
+									<xs:documentation>Базовое показание</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Values" minOccurs="0" maxOccurs="1">
+								<xs:annotation>
+									<xs:documentation>Показание</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="base:OneRateMeteringValueKindType">
+											<xs:sequence>
+												<xs:element name="excludeISValues" type="xs:boolean" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Выгрузить показания, поставщик которых не текущая ИС.
+(Часть показаний может быть внесена не только через ГУИ, а с помощью другой ИС) Если флаг = "истина", то выгружаются показания, созданные через ГУИ и с помощью других ИС, в остальных случаях выгружаются все показания</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ArchivedValues" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ArchivingReason" type="base:nsiRef">
+											<xs:annotation>
+												<xs:documentation>Причина архивации. Ссылка на НСИ "Причина архивации прибора учета" (реестровый номер 21).</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ElectricDeviceValue">
+					<xs:annotation>
+						<xs:documentation>Показания ПУ расхода электроэнергии</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="BaseValue" type="base:ElectricMeteringValueType">
+								<xs:annotation>
+									<xs:documentation>Базовое показание</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Values" minOccurs="0" maxOccurs="1">
+								<xs:annotation>
+									<xs:documentation>Показание</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:complexContent>
+										<xs:extension base="base:ElectricMeteringValueKindType">
+											<xs:sequence>
+												<xs:element name="excludeISValues" type="xs:boolean" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Выгрузить показания, поставщик которых не текущая ИС.
+(Часть показаний может быть внесена не только через ГУИ, а с помощью другой ИС) Если флаг = "истина", то выгружаются показания, созданные через ГУИ и с помощью других ИС, в остальных случаях выгружаются все показания</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:extension>
+									</xs:complexContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ArchivedValues" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ArchivingReason" type="base:nsiRef">
+											<xs:annotation>
+												<xs:documentation>Причина архивации. Ссылка на НСИ "Причина архивации прибора учета" (реестровый номер 21).</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Методы для асинхронного обмена-->
+	<xs:element name="getStateResult">
+		<xs:annotation>
+			<xs:documentation>Возврат статуса отправленного сообщения</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseAsyncResponseType">
+					<xs:choice minOccurs="0">
+						<xs:element ref="base:ErrorMessage"/>
+						<xs:element name="ImportResult" type="base:CommonResultType" maxOccurs="unbounded"/>
+						<xs:element name="exportMeteringDeviceHistoryResult" type="tns:exportMeteringDeviceHistoryResultType" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

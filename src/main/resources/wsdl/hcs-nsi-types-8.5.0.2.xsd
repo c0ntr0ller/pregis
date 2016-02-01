@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:base="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:tns="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/nsi/" targetNamespace="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/nsi/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.5.0.2/" schemaLocation="hcs-basetypes-8.5.0.2.xsd"/>
+	<!-- Скалярные типы -->
+	<xs:simpleType name="NsiItemNameType">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Наименование справочника. Строка не более 200 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NsiItemRegistryNumberType">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Реестровый номер справочника. Код не более 10 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:positiveInteger">
+			<xs:totalDigits value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FieldNameType">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Наименование поля элемента справочника. Строка не более 200 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String100Type">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Строка не более 100 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String250Type">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Строка не более 250 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="250"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String500Type">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Строка не более 500 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="500"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- ВИ_НСИ_ППС. Получить перечень справочников с указанием даты последнего изменения каждого из них. -->
+	<xs:element name="exportNsiListRequest">
+		<xs:annotation>
+			<xs:documentation>Запрос получения перечня справочников.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="exportNsiListResult">
+		<xs:annotation>
+			<xs:documentation>Перечень справочников с датой последнего изменения каждого из них.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Составной тип. Перечень справочников с указанием даты последнего изменения каждого из них.</xs:documentation>
+			</xs:annotation>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:choice>
+						<xs:element name="NsiList" type="tns:NsiListType">
+							<xs:annotation>
+								<xs:documentation>Перечень справочников с указанием даты последнего изменения каждого из них.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="base:ErrorMessage"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="NsiListType">
+		<xs:annotation>
+			<xs:documentation>Перечень справочников с датой последнего изменения каждого из них.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Created" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Дата и время формирования перечня справочников.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NsiItemInfo" type="tns:NsiItemInfoType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Наименование, дата и время последнего изменения справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NsiItemInfoType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование, дата и время последнего изменения справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RegistryNumber" type="tns:NsiItemRegistryNumberType">
+				<xs:annotation>
+					<xs:documentation>Реестровый номер справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="tns:NsiItemNameType">
+				<xs:annotation>
+					<xs:documentation>Наименование справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Modified" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Дата и время последнего изменения справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- ВИ_НСИ_ПДС. Получить данные справочника. -->
+	<xs:element name="exportNsiItemRequest">
+		<xs:annotation>
+			<xs:documentation>Запрос на получение данных справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="RegistryNumber" type="tns:NsiItemRegistryNumberType">
+							<xs:annotation>
+								<xs:documentation>Реестровый номер справочника.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ModifiedAfter" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Дата и время, измененные после которой элементы справочника должны быть возвращены в ответе. Если не указана, возвращаются все элементы справочника.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="exportNsiItemResult">
+		<xs:annotation>
+			<xs:documentation>Возврат данных справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Составной тип. Данные справочника.</xs:documentation>
+			</xs:annotation>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:choice>
+						<xs:element name="NsiItem" type="tns:NsiItemType">
+							<xs:annotation>
+								<xs:documentation>Данные справочника.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="base:ErrorMessage"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="NsiItemType">
+		<xs:annotation>
+			<xs:documentation>Данные справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="NsiItemRegistryNumber" type="tns:NsiItemRegistryNumberType">
+				<xs:annotation>
+					<xs:documentation>Реестровый номер справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Created" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Дата и время формирования данных справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NsiElement" type="tns:NsiElementType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Элемент справочника верхнего уровня.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Импортировать данные справочника 1 "Дополнительные услуги"-->
+	<xs:element name="importAdditionalServicesRequest">
+		<xs:annotation>
+			<xs:documentation>Запрос на импорт данных справочника 1 "Дополнительные услуги".</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="ImportAdditionalServiceType" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Создание/изменение вида дополнительной услуги.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:sequence>
+										<xs:element ref="base:TransportGUID"/>
+										<xs:element name="ElementGuid" type="base:GUIDType" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Идентификатор существующего элемента справочника</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:element name="AdditionalServiceTypeName">
+										<xs:annotation>
+											<xs:documentation>Наименование вида дополнительной услуги.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="tns:String100Type">
+												<xs:minLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:choice>
+										<xs:element ref="base:OKEI">
+											<xs:annotation>
+												<xs:documentation>Единица измерения из справочника ОКЕИ.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="StringDimensionUnit">
+											<xs:annotation>
+												<xs:documentation>Другая единица измерения.</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="tns:String100Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:choice>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RecoverAdditionalServiceType" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Восстановление вида дополнительной услуги.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="base:TransportGUID"/>
+									<xs:element name="ElementGuid" type="base:GUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор ранее существовавшего  элемента справочника.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DeleteAdditionalServiceType" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Удаление вида дополнительной услуги.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="base:TransportGUID"/>
+									<xs:element name="ElementGuid" type="base:GUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор существующего элемента справочника.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+		<xs:key name="importAdditionalServicesRequest_TransportGUIDKey">
+			<xs:selector xpath=".//base:TransportGUID"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<!--Импортировать данные справочника 51 "Коммунальные услуги"-->
+	<xs:element name="importMunicipalServicesRequest">
+		<xs:annotation>
+			<xs:documentation>Запрос на импорт данных справочника 51 "Коммунальные услуги".</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="ImportMainMunicipalService" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Уровень 2. Создание/изменение главной коммунальной услуги.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:sequence>
+										<xs:element ref="base:TransportGUID"/>
+										<xs:element name="ElementGuid" type="base:GUIDType" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Идентификатор существующего элемента справочника.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:element name="MunicipalServiceRef" type="base:nsiRef">
+										<xs:annotation>
+											<xs:documentation>Ссылка на НСИ "Вид коммунальной услуги" (реестровый номер 3).</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="GeneralNeeds" type="xs:boolean" fixed="true" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Признак "Услуга предоставляется на общедомовые нужды"</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MainMunicipalServiceName">
+										<xs:annotation>
+											<xs:documentation>Наименование главной коммунальной услуги.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="tns:String100Type">
+												<xs:minLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="MunicipalResourceRef" type="base:nsiRef">
+										<xs:annotation>
+											<xs:documentation>Ссылка на НСИ "Вид коммунального ресурса" (реестровый номер 2)</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:choice>
+										<xs:element name="SortOrder">
+											<xs:annotation>
+												<xs:documentation>Порядок сортировки.</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="3"/>
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SortOrderNotDefined" type="xs:boolean" fixed="true">
+											<xs:annotation>
+												<xs:documentation>Порядок сортировки не задан</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:choice>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RecoverMainMunicipalService" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Уровень 2. Восстановление главной коммунальной услуги (ветки).</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="base:TransportGUID"/>
+									<xs:element name="ElementGuid" type="base:GUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор ранее существовавшего  элемента справочника.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="HierarchyRecover" type="xs:boolean" fixed="true" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Признак восстановления всех дочерних элементов.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DeleteMainMunicipalService" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Уровень 2. Удаление главной коммунальной услуги (ветки).</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="base:TransportGUID"/>
+									<xs:element name="ElementGuid" type="base:GUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор существующего элемента справочника.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+		<xs:key name="importMunicipalServicesRequest_TransportGUIDKey">
+			<xs:selector xpath=".//base:TransportGUID"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<!--Импортировать данные справочника 59 "Работы и услуги организации"-->
+	<xs:element name="importOrganizationWorksRequest">
+		<xs:annotation>
+			<xs:documentation>Запрос на импорт данных справочника 59 "Работы и услуги организации".</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="ImportOrganizationWork" type="tns:ImportOrganizationWorkType" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Создание/изменение элемента справочника работ и услуг</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RecoverOrganizationWork" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Восстановление элемент (ветки) справочника работ и услуг организации.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="base:TransportGUID"/>
+									<xs:element name="ElementGuid" type="base:GUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор ранее существовавшего  элемента справочника.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="HierarchyRecover" type="xs:boolean" fixed="true" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Признак восстановления всех дочерних элементов.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DeleteOrganizationWork" minOccurs="0" maxOccurs="1000">
+							<xs:annotation>
+								<xs:documentation>Удаление элемента (ветки) справочника работ и услуг организации.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="base:TransportGUID"/>
+									<xs:element name="ElementGuid" type="base:GUIDType">
+										<xs:annotation>
+											<xs:documentation>Идентификатор существующего элемента справочника.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+		<xs:key name="importOrganizationWorksRequest_TransportGUIDKey">
+			<xs:selector xpath=".//base:TransportGUID"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<xs:complexType name="ImportOrganizationWorkType">
+		<xs:annotation>
+			<xs:documentation>Элемент справочника работ и услуг организации.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:sequence>
+				<xs:element ref="base:TransportGUID"/>
+				<xs:element name="ElementGuid" type="base:GUIDType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Идентификатор существующего элемента справочника.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:element name="WorkName">
+				<xs:annotation>
+					<xs:documentation>Название работы/услуги.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="tns:String500Type">
+						<xs:minLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ServiceTypeRef" type="base:nsiRef">
+				<xs:annotation>
+					<xs:documentation>Ссылка на НСИ "Вид работ" (реестровый номер 56).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RequiredServiceRef" type="base:nsiRef" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Ссылка на НСИ "Обязательные работы, обеспечивающие надлежащее содержание МКД" (реестровый номер 67).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element ref="base:OKEI">
+					<xs:annotation>
+						<xs:documentation>Единница измерения из справочника ОКЕИ.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="StringDimensionUnit">
+					<xs:annotation>
+						<xs:documentation>Другая единица измерения.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="tns:String100Type">
+							<xs:minLength value="1"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="ImportOrganizationWork" type="tns:ImportOrganizationWorkType" minOccurs="0" maxOccurs="1000">
+				<xs:annotation>
+					<xs:documentation>Дочерний  элемент</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Общие типы -->
+	<xs:complexType name="NsiElementType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Элемент справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="base:nsiCodeType">
+				<xs:annotation>
+					<xs:documentation>Код элемента справочника, уникальный в пределах справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GUID" type="base:GUIDType">
+				<xs:annotation>
+					<xs:documentation>Глобально-уникальный идентификатор элемента справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Modified" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Дата и время последнего изменения элемента справочника (в том числе создания).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IsActual" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>Признак актуальности элемента справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NsiElementField" type="tns:NsiElementFieldType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Наименование и значение поля для элемента справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChildElement" type="tns:NsiElementType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Дочерний элемент.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NsiElementFieldType" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля для элемента справочника. Абстрактный тип.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="tns:FieldNameType">
+				<xs:annotation>
+					<xs:documentation>Наименование поля элемента справочника.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NsiElementStringFieldType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля типа "Строка" для элемента справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:NsiElementFieldType">
+				<xs:sequence>
+					<xs:element name="Value" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Значение поля элемента справочника типа "Строка".</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NsiElementBooleanFieldType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля типа "Да/Нет" для элемента справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:NsiElementFieldType">
+				<xs:sequence>
+					<xs:element name="Value" type="xs:boolean" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Значение поля элемента справочника типа "Да/Нет".</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NsiElementIntegerFieldType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля типа "Целое число" для элемента справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:NsiElementFieldType">
+				<xs:sequence>
+					<xs:element name="Value" type="xs:integer" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Значение поля элемента справочника типа "Целое число".</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NsiElementNsiRefFieldType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля типа "Ссылка на элемент внутреннего справочника" для элемента справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:NsiElementFieldType">
+				<xs:sequence>
+					<xs:element name="NsiRef" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Ссылка на элемент внутреннего справочника.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="NsiItemRegistryNumber" type="tns:NsiItemRegistryNumberType">
+									<xs:annotation>
+										<xs:documentation>Реестровый номер справочника.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="Ref" type="base:nsiRef">
+									<xs:annotation>
+										<xs:documentation>Ссылка на элемент справочника.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NsiElementOkeiRefFieldType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля типа "Ссылка на элемент справочника ОКЕИ" для элемента справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:NsiElementFieldType">
+				<xs:sequence>
+					<xs:element name="Code" type="base:nsiCodeType" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Код единицы измерения по справочнику ОКЕИ.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NsiElementFiasAddressRefFieldType">
+		<xs:annotation>
+			<xs:documentation>Составной тип. Наименование и значение поля типа "Ссылка на элемент справочника ФИАС" для элемента справочника.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:NsiElementFieldType">
+				<xs:sequence>
+					<xs:element name="NsiRef" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Ссылка на элемент справочника ФИАС.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Guid" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>Идентификационный код позиции в справочнике ФИАС.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="aoGuid" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>Глобально-уникальный идентификатор адресного объекта в справочнике ФИАС.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--Методы для асинхронного обмена-->
+	<xs:element name="getStateResult">
+		<xs:annotation>
+			<xs:documentation>Возврат статуса отправленного сообщения</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseAsyncResponseType">
+					<xs:choice minOccurs="0">
+						<xs:element ref="base:ErrorMessage"/>
+						<xs:element name="ImportResult" type="base:CommonResultType" maxOccurs="unbounded"/>
+						<xs:element name="NsiItem" type="tns:NsiItemType"/>
+						<xs:element name="NsiList" type="tns:NsiListType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

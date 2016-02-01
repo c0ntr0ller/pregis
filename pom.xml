@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ru.prog_matik.java</groupId>
+  <artifactId>pregis</artifactId>
+  <packaging>war</packaging>
+  <version>2.0-SNAPSHOT</version>
+  <name>pregis Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cxf.version>3.1.4</cxf.version>
+    <!--<cryptopro-jcp.version>2.0.38481</cryptopro-jcp.version>-->
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>pregis</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-codegen-plugin</artifactId>
+        <version>${cxf.version}</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+              <wsdlOptions>
+                <wsdlOption>
+                  <wsdl>${project.basedir}/src/main/resources/wsdl/hcs-organizations-registry-service-8.5.0.2.wsdl</wsdl>
+                  <extraargs>
+                    <extraarg>-exsh</extraarg>
+                    <extraarg>true</extraarg>
+                  </extraargs>
+                  <serviceName>RegOrgService</serviceName>
+                  <wsdlLocation>classpath:wsdl/hcs-organizations-registry-service-8.5.0.2.wsdl</wsdlLocation>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${project.basedir}/src/main/resources/wsdl/hcs-ru.prog_matik.java.pregis.services.nsi-service-8.5.0.2.wsdl</wsdl>
+                  <serviceName>NsiService</serviceName>
+                  <wsdlLocation>classpath:wsdl/hcs-ru.prog_matik.java.pregis.services.nsi-service-8.5.0.2.wsdl</wsdlLocation>
+                  <extraargs>
+                    <extraarg>-exsh</extraarg>
+                    <extraarg>true</extraarg>
+                  </extraargs>
+                </wsdlOption>
+              </wsdlOptions>
+            </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -80,6 +80,7 @@ https://54.76.42.99:60045/ext-bus-licenses-service/services/Licenses
 https://54.76.42.99:60045/ext-bus-licenses-service/services/LicensesAsync
 
 **Сервис обмена сведениями об оплате и квитировании**
+
 https://54.76.42.99:60045/ext-bus-payment-service/services/PaymentAsync
 
 **Файловый сервис**	https://54.76.42.99:60045

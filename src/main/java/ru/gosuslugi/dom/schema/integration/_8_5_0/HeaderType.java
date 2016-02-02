@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
 
 
 /**
@@ -40,8 +39,7 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISReq
 })
 @XmlSeeAlso({
     ResultHeader.class,
-    RequestHeader.class,
-    ISRequestHeader.class
+    RequestHeader.class
 })
 public class HeaderType {
 

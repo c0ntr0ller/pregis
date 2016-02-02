@@ -5,6 +5,8 @@
 
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
+import ru.prog_matik.java.pregis.signet.RequestSiginet;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
@@ -12,6 +14,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -21,9 +24,11 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
-//        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-//        RequestSiginet requestSiginet = new RequestSiginet();
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        RequestSiginet requestSiginet = new RequestSiginet();
         SOAPMessage msg = messageContext.getMessage();
+
+
 //        msg.getMimeHeaders().setHeader("SOAPAction", "urn:exportOrgRegistry");
 //        msg.getMimeHeaders().removeHeader("Accept");
 
@@ -40,24 +45,43 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
         Boolean outboundProperty = (Boolean) messageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
-        if (outboundProperty.booleanValue()) {
+        if (outboundProperty) {
+            try {
+//                SOAPPart soapPart = msg.getSOAPPart();
+//                soapPart.normalizeDocument();
+//                msg.saveChanges();
+                msg.writeTo(byteStream);
+                System.out.println("\nOriginal Message: \n");
+                byteStream.writeTo(System.out);
+                System.out.println("\n");
+
+
+
+//                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+//                Document doc = requestSiginet.signRequest(byteStream);
+
+//                DOMSource domSource = new DOMSource(doc);
+//                soapPart.setContent(domSource);
+//                soapPart.normalizeDocument();
+                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+
+//                msg = MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(requestSiginet.signRequest(byteStream).toByteArray()));
+                msg.saveChanges();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
             System.out.println("\nOutbound message:");
         } else {
             System.out.println("\nInbound message:");
         }
 
         try {
-            System.out.println("\nOriginal Message: \n");
+
+            System.out.println("\nMessage: \n");
             msg.writeTo(System.out);
             System.out.println("\n");
-
-//            requestSiginet.signRequest(msg);
-//            msg.saveChanges();
-
-//            System.out.println("\nCorrect Message: \n");
-//            msg.writeTo(System.out);
-            System.out.println("\n");
-//            msg.saveChanges();
 
 
 //            MimeHeaders mimeHeader = msg.getMimeHeaders();

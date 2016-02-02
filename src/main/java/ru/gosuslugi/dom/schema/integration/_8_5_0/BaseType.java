@@ -9,12 +9,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.w3._2000._09.xmldsig_.SignatureType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportSubsidiaryRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiItemRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportAdditionalServicesRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportMunicipalServicesRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportOrganizationWorksRequest;
 
 
 /**
@@ -44,14 +45,15 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.Impor
     "signature"
 })
 @XmlSeeAlso({
-    ImportResult.class,
-    ExportDataProviderResult.class,
-    ImportDataProviderRequest.class,
-    ImportSubsidiaryRequest.class,
-    ExportDataProviderRequest.class,
-    ExportOrgRegistryResult.class,
-    ExportOrgRegistryRequest.class,
-    BaseAsyncResponseType.class
+    ImportAdditionalServicesRequest.class,
+    ExportNsiItemResult.class,
+    ExportNsiListResult.class,
+    ExportNsiItemRequest.class,
+    ImportOrganizationWorksRequest.class,
+    ImportMunicipalServicesRequest.class,
+    ExportNsiListRequest.class,
+    BaseAsyncResponseType.class,
+    ImportResult.class
 })
 public class BaseType {
 

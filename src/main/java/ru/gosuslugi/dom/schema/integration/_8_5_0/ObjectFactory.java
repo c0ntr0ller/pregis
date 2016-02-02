@@ -133,38 +133,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BaseAsyncResponseType }
-     * 
-     */
-    public BaseAsyncResponseType createBaseAsyncResponseType() {
-        return new BaseAsyncResponseType();
-    }
-
-    /**
-     * Create an instance of {@link BaseType }
-     * 
-     */
-    public BaseType createBaseType() {
-        return new BaseType();
-    }
-
-    /**
-     * Create an instance of {@link ErrorMessageType }
-     * 
-     */
-    public ErrorMessageType createErrorMessageType() {
-        return new ErrorMessageType();
-    }
-
-    /**
-     * Create an instance of {@link HeaderType }
-     * 
-     */
-    public HeaderType createHeaderType() {
-        return new HeaderType();
-    }
-
-    /**
      * Create an instance of {@link Attachment }
      * 
      */
@@ -221,11 +189,35 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link BaseType }
+     * 
+     */
+    public BaseType createBaseType() {
+        return new BaseType();
+    }
+
+    /**
+     * Create an instance of {@link ErrorMessageType }
+     * 
+     */
+    public ErrorMessageType createErrorMessageType() {
+        return new ErrorMessageType();
+    }
+
+    /**
      * Create an instance of {@link AckRequest.Ack }
      * 
      */
     public AckRequest.Ack createAckRequestAck() {
         return new AckRequest.Ack();
+    }
+
+    /**
+     * Create an instance of {@link HeaderType }
+     * 
+     */
+    public HeaderType createHeaderType() {
+        return new HeaderType();
     }
 
     /**
@@ -266,6 +258,14 @@ public class ObjectFactory {
      */
     public IndType createIndType() {
         return new IndType();
+    }
+
+    /**
+     * Create an instance of {@link BaseAsyncResponseType }
+     * 
+     */
+    public BaseAsyncResponseType createBaseAsyncResponseType() {
+        return new BaseAsyncResponseType();
     }
 
     /**

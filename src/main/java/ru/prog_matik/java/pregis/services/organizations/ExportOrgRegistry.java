@@ -26,9 +26,9 @@ public class ExportOrgRegistry {
     /**
      * Метод формирует запрос и отправляет на серавер.
      *
-     * @param isRequestHeader - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
+     * @param isRequestHeader          - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
      * @param exportOrgRegistryRequest - Тело письма содержащее бизнес логику.
-     * @param resultHolder - Заголовок письма полученый в ответ от сервера.
+     * @param resultHolder             - Заголовок письма полученый в ответ от сервера.
      * @return ExportOrgRegistryResult
      * @throws Fault
      */
@@ -80,6 +80,9 @@ public class ExportOrgRegistry {
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
         list.setOGRN("1125476111903");
         exportOrgRegistryRequest.getSearchCriteria().add(list);
+//
+//        SignatureType signatureType = new SignatureType();
+//        exportOrgRegistryRequest.setSignature(signatureType);
 
         return exportOrgRegistryRequest;
     }

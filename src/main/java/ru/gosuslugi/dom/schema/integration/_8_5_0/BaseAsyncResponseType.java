@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.GetStateResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.GetStateResult;
 
 
 /**

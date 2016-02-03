@@ -8,9 +8,7 @@ package ru.prog_matik.java.pregis.clientmessagehandler;
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.*;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
@@ -28,45 +26,25 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
         RequestSiginet requestSiginet = new RequestSiginet();
         SOAPMessage msg = messageContext.getMessage();
 
-
-//        msg.getMimeHeaders().setHeader("SOAPAction", "urn:exportOrgRegistry");
-//        msg.getMimeHeaders().removeHeader("Accept");
-
-
-//        String name = "test";
-//        String password = "SDldfls4lz5@!82d";
-//
-//        String authString = name + ":" + password;
-//        System.out.println("auth string: " + authString);
-//        String authEncBytes = Base64.encode(authString.getBytes());
-//        System.out.println("Base64 encoded auth string: " + authEncBytes);
-//
-//        msg.getMimeHeaders().addHeader("Authorization", "Basic " + authEncBytes);
-
         Boolean outboundProperty = (Boolean) messageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
         if (outboundProperty) {
             try {
-//                SOAPPart soapPart = msg.getSOAPPart();
-//                soapPart.normalizeDocument();
-//                msg.saveChanges();
+
                 msg.writeTo(byteStream);
                 System.out.println("\nOriginal Message: \n");
                 byteStream.writeTo(System.out);
                 System.out.println("\n");
 
+                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+                msg.getSOAPPart().normalizeDocument();
+                msg.saveChanges();
 
 
-//                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-//                Document doc = requestSiginet.signRequest(byteStream);
-
-//                DOMSource domSource = new DOMSource(doc);
-//                soapPart.setContent(domSource);
-//                soapPart.normalizeDocument();
-                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+//                requestSiginet.signRequest(soapEnvelope.getOwnerDocument());
 
 //                msg = MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(requestSiginet.signRequest(byteStream).toByteArray()));
-                msg.saveChanges();
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -83,17 +61,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
             msg.writeTo(System.out);
             System.out.println("\n");
 
-
-//            MimeHeaders mimeHeader = msg.getMimeHeaders();
-//            mimeHeader.addHeader("SOAPAction", "urn:exportOrgRegistry");
-//            mimeHeader.addHeader("User-Agent", "Apache-HttpClient/4.1.1 (java 1.5)");
-//            mimeHeader.addHeader("Content-Length", "6170");
-//            mimeHeader.addHeader("Content-Type", "text/xml;charset=UTF-8");
-//
-//            System.out.println("MIMEHEADER: " + mimeHeader.toString());
-
             printHeaders(msg.getMimeHeaders());
-
 
         } catch (Exception e) {
             e.printStackTrace();

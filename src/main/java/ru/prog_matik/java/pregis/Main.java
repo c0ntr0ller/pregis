@@ -18,6 +18,9 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStore", "C:\\andryha\\project\\workspace_for_git\\PreGIS\\data\\xadesTrustStore");
         System.setProperty("javax.net.ssl.trustStorePassword", "1");
 
+//        Укажем XMLSignature формировать подпись без разделителей '\n'
+        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+
 
 
 

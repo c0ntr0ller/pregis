@@ -1,12 +1,13 @@
 package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.DOMImplementation;
+import org.apache.xml.security.utils.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.InputSource;
 import ru.CryptoPro.JCP.KeyStore.HDImage.HDImageStore;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
@@ -20,15 +21,25 @@ import xades4j.providers.impl.DefaultAlgorithmsProviderEx;
 import xades4j.providers.impl.DefaultMessageDigestProvider;
 import xades4j.providers.impl.DirectKeyingDataProvider;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.ResourceBundle;
 
 public class RequestSiginet {
 
@@ -36,14 +47,11 @@ public class RequestSiginet {
 
     //    public Document signRequest(byte[] sourceXmlBin) throws Exception {
 //    public ByteArrayOutputStream signRequest(ByteArrayOutputStream sourceXmlBin) throws Exception {
-    public void signRequest(Document sourceDocument) throws Exception {
+    public SOAPMessage signRequest(Document sourceDocument) throws Exception {
 
 //        JCPXMLDSigInit.init();
-        ru.CryptoPro.JCPxml.XmlInit.init();
-//        Старая версия инициализации КРИПТО-ПРО
-//        if(!JCPXMLDSigInit.isInitialized()) {
-//            JCPXMLDSigInit.init();
-//        }
+        if (!ru.CryptoPro.JCPxml.XmlInit.isInitialized())
+            ru.CryptoPro.JCPxml.XmlInit.init();
 
         String hdiPath = System.getProperty("user.dir") + "\\data";
         String signingId = "signed-data-container";
@@ -57,6 +65,7 @@ public class RequestSiginet {
 //        Для изменения пути к носителю необходимо дать доступ
 //        в реестре windows в ветке
 //        "HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Prefs\ru\/Crypto/Pro\/J/C/P\/Key/Store\/H/D/Image"
+        System.out.println(Constants._TAG_SIGNATUREVALUE + "application: " + ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.path"));
         if (hdiPath.equals(HDImageStore.getDir())) {
             System.out.println(HDImageStore.getDir());
         } else {
@@ -71,20 +80,28 @@ public class RequestSiginet {
 
         // Исходный документ.
 //
-//        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//        dbFactory.setNamespaceAware(true);
+        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setNamespaceAware(true);
 //
+        DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
 //        final Document sourceDocument = dbFactory.newDocumentBuilder().
 //                parse(new ByteArrayInputStream(sourceXmlBin.toByteArray()));
 
-        System.out.println("sourceDocument: " + sourceDocument.getNodeName());
+//        Решил сделать выравнивание. Моя реализация красивости.
+        DOMImplementationLS ls = (DOMImplementationLS) sourceDocument.getImplementation().getFeature("LS", "3.0");
+        LSSerializer serializer = ls.createLSSerializer();
 
-//        Моя реализация красивости
+        serializer.getDomConfig().setParameter("format-pretty-print", true);
+//        serializer.getDomConfig().setParameter("xml-declaration", true);
 
-        DOMImplementation impl = sourceDocument.getImplementation();
-        DOMImplementationLS implLS = (DOMImplementationLS) impl.getFeature("LS", "3.0");
-        LSSerializer ser = implLS.createLSSerializer();
-        ser.getDomConfig().setParameter("format-pretty-print", true); // Если требуется ввести пробелы и разрывы строк.
+        String newMessage = serializer.writeToString(sourceDocument);
+
+        newMessage = newMessage.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
+
+        System.out.println(newMessage);
+
+        sourceDocument = docBuilder.parse(new InputSource(new StringReader(newMessage)));
+//          Закончил. Моя реализация красивости.
 
 
         final XPathFactory factory = XPathFactory.newInstance();
@@ -177,12 +194,12 @@ public class RequestSiginet {
 
         final DataObjectDesc dataObj = new DataObjectReference(referenceURI);
         dataObj.withTransform(new EnvelopedSignatureTransform());
-//         dataObj.withTransform(new ExclusiveCanonicalXMLWithoutComments());
+         dataObj.withTransform(new ExclusiveCanonicalXMLWithoutComments());
 
         final SignedDataObjects dataObjects = new SignedDataObjects(dataObj);
 
         signer.sign(dataObjects, nodeToSign, SignatureAppendingStrategies.AsFirstChild);
-        System.out.println("XAdES-T signature completed.");
+        System.out.println("XAdES-BES signature completed.\n");
 
         String mes = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(sourceDocument);
         mes = mes.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
@@ -194,5 +211,22 @@ public class RequestSiginet {
 
 //        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 //        org.apache.xml.security.utils.XMLUtils.outputDOM(doc, byteStream, true);
+
+        return toMessage(mes);
+    }
+
+    /**
+     * Метод преобразует String в SOAPMessage.
+     * @param message - сообщение в формате String.
+     * @return SOAPMessage - готовое сообщение для отправки в формате SOAPMessage.
+     * @throws IOException
+     * @throws SOAPException
+     */
+    private SOAPMessage toMessage(String message) throws IOException, SOAPException {
+
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        InputStream inputStream = new ByteArrayInputStream(message.getBytes());
+
+        return messageFactory.createMessage(null, inputStream);
     }
 }

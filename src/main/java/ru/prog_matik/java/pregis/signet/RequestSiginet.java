@@ -222,7 +222,7 @@ public class RequestSiginet {
      * @throws IOException
      * @throws SOAPException
      */
-    private SOAPMessage toMessage(String message) throws IOException, SOAPException {
+    public SOAPMessage toMessage(String message) throws IOException, SOAPException {
 
         MessageFactory messageFactory = MessageFactory.newInstance();
         InputStream inputStream = new ByteArrayInputStream(message.getBytes());

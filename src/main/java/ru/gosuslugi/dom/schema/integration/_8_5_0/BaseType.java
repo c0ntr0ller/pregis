@@ -1,21 +1,11 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 import org.w3._2000._09.xmldsig_.SignatureType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportAdditionalServicesRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportMunicipalServicesRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportOrganizationWorksRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.*;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.*;
+
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -45,15 +35,108 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportOrganizationWorksR
     "signature"
 })
 @XmlSeeAlso({
-    ImportAdditionalServicesRequest.class,
-    ExportNsiItemResult.class,
-    ExportNsiListResult.class,
-    ExportNsiItemRequest.class,
-    ImportOrganizationWorksRequest.class,
-    ImportMunicipalServicesRequest.class,
-    ExportNsiListRequest.class,
-    BaseAsyncResponseType.class,
-    ImportResult.class
+//        ImportAcknowledgmentRequest.class,
+//        ImportNotificationsOfOrderExecutionCancellationRequest.class,
+//        ImportNotificationsOfOrderExecutionRequest.class,
+//        ExportPaymentDocumentDetailsResult.class,
+//        ExportNotificationsOfOrderExecutionResult.class,
+//        ExportNotificationsOfOrderExecutionRequest.class,
+//        ExportPaymentDocumentDetailsRequest.class,
+//        ExportInspectionPlansResult.class,
+//        ExportExaminationsResult.class,
+//        ImportInspectionPlanRequest.class,
+//        ImportExaminationsRequest.class,
+//        ExportExaminationsRequest.class,
+//        ExportInspectionPlansRequest.class,
+//        ImportHMServicesTarifsRequest.class,
+//        ExportMSRSOResult.class,
+//        ExportWorkingListRequest.class,
+//        ImportWorkingListRequest.class,
+//        ImportWorkingPlanRequest.class,
+//        ExportHMServicesTarifsResult.class,
+//        ExportMSRSORequest.class,
+//        ExportWorkingListResult.class,
+//        ExportWorkingPlanRequest.class,
+//        ExportWorkingPlanResult.class,
+//        ExportCompletedWorksResult.class,
+//        ExportCompletedWorksRequest.class,
+//        ExportHMServicesTarifsRequest.class,
+//        ImportCompletedWorksRequest.class,
+//        ImportMSRSORequest.class,
+        ExportDataProviderResult.class,
+        ImportDataProviderRequest.class,
+        ImportSubsidiaryRequest.class,
+        ExportDataProviderRequest.class,
+        ExportOrgRegistryResult.class,
+        ExportOrgRegistryRequest.class,
+        ImportAdditionalServicesRequest.class,
+        ExportNsiItemResult.class,
+        ExportNsiListResult.class,
+        ExportNsiItemRequest.class,
+        ImportOrganizationWorksRequest.class,
+        ImportMunicipalServicesRequest.class,
+        ExportNsiListRequest.class,
+//        ImportContractRequest.class,
+//        ExportAccountResult.class,
+//        ImportVotingProtocolRequest.class,
+//        ExportHouseRequest.class,
+//        ExportShareEncbrDataRequest.class,
+//        ExportMeteringDeviceDataRequest.class,
+//        ExportStatusPublicPropertyContractResult.class,
+//        ExportCAChResult.class,
+//        ExportStatusPublicPropertyContractRequest.class,
+//        ExportCAChRequest.class,
+//        ImportPublicPropertyContractRequest.class,
+//        ExportMeteringDeviceDataResult.class,
+//        ImportShareEncbrDataRequest.class,
+//        ImportHouseUORequest.class,
+//        ExportStatusCAChRequest.class,
+//        ImportNotificationRequest.class,
+//        ExportVotingProtocolRequest.class,
+//        ImportMeteringDeviceDataRequest.class,
+//        ImportHouseOMSRequest.class,
+//        ExportShareEncbrDataResult.class,
+//        ImportAccountRequest.class,
+//        ImportHouseRSORequest.class,
+//        ExportVotingProtocolResult.class,
+//        ExportHouseResult.class,
+//        FaultHouseManagement.class,
+//        ExportStatusCAChResult.class,
+//        ExportAccountRequest.class,
+//        ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.ImportResult.class,
+//        ImportCharterRequest.class,
+//        ImportOKIRequest.class,
+//        ExportOKIResult.class,
+//        ExportOKIRequest.class,
+//        ExportMeteringDeviceHistoryRequest.class,
+//        ExportMeteringDeviceHistoryResult.class,
+//        ImportMeteringDeviceValuesRequest.class,
+//        ExportOrgPeriodResult.class,
+//        ExportPaymentDocumentRequest.class,
+//        CloseHousePaymentPeriodRequest.class,
+//        ExportPaymentDocumentResult.class,
+//        ExportOrgPeriodRequest.class,
+//        ImportPaymentDocumentRequest.class,
+//        OpenOrgPaymentPeriodRequest.class,
+//        ExportDisqualifiedPersonResult.class,
+//        ExportLicenseResult.class,
+//        ExportDisqualifiedPersonRequest.class,
+//        ExportLicenseRequest.class,
+//        ImportRSORequest.class,
+        ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult.class,
+//        ImportDisclosureRequest.class,
+        BaseAsyncResponseType.class
+
+//        Original
+//    ImportAdditionalServicesRequest.class,
+//    ExportNsiItemResult.class,
+//    ExportNsiListResult.class,
+//    ExportNsiItemRequest.class,
+//    ImportOrganizationWorksRequest.class,
+//    ImportMunicipalServicesRequest.class,
+//    ExportNsiListRequest.class,
+//    BaseAsyncResponseType.class,
+//    ImportResult.class
 })
 public class BaseType {
 

@@ -1,19 +1,14 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service;
 
+import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.*;
+
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
-import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportSubsidiaryRequest;
 
 
 /**

@@ -8,11 +8,12 @@ package ru.prog_matik.java.pregis.clientmessagehandler;
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.*;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+//        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         RequestSiginet requestSiginet = new RequestSiginet();
         SOAPMessage msg = messageContext.getMessage();
 
@@ -31,11 +32,13 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
         if (outboundProperty) {
             try {
 
-                msg.writeTo(byteStream);
+//                msg.writeTo(byteStream);
                 System.out.println("\nOriginal Message: \n");
-                byteStream.writeTo(System.out);
+                msg.writeTo(System.out);
                 System.out.println("\n");
 
+                msg.getSOAPPart().getEnvelope().removeNamespaceDeclaration("SOAP-ENV");
+                msg.saveChanges();
                 msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();
                 msg.saveChanges();

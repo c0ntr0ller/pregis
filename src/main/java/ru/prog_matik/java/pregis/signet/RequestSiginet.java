@@ -8,6 +8,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import ru.CryptoPro.JCP.KeyStore.HDImage.HDImageStore;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
@@ -23,9 +24,13 @@ import xades4j.providers.impl.DirectKeyingDataProvider;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -39,14 +44,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class RequestSiginet {
 
     private Logger logger = Logger.getLogger(RequestSiginet.class);
 
-    //    public Document signRequest(byte[] sourceXmlBin) throws Exception {
-//    public ByteArrayOutputStream signRequest(ByteArrayOutputStream sourceXmlBin) throws Exception {
+    /**
+     * Метод добавляет цифровую подпись к запросу.
+     * @param sourceDocument - получает документ, который требуется подписать.
+     * @return SOAPMessage - возвращает подписанный документ.
+     * @throws Exception
+     */
     public SOAPMessage signRequest(Document sourceDocument) throws Exception {
 
 //        JCPXMLDSigInit.init();
@@ -72,7 +81,7 @@ public class RequestSiginet {
             System.out.println("Now :" + HDImageStore.getDir());
 //            HDImageStore.setDir(hdiPath); Пока тключил
             System.out.println("set :" + HDImageStore.getDir());
-        }
+        } // if
 
         ks.load(null, null);
 
@@ -80,27 +89,29 @@ public class RequestSiginet {
 
         // Исходный документ.
 //
-        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        dbFactory.setNamespaceAware(true);
+//        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+//        dbFactory.setNamespaceAware(true);
+////
+//        DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
+////        final Document sourceDocument = dbFactory.newDocumentBuilder().
+////                parse(new ByteArrayInputStream(sourceXmlBin.toByteArray()));
 //
-        DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
-//        final Document sourceDocument = dbFactory.newDocumentBuilder().
-//                parse(new ByteArrayInputStream(sourceXmlBin.toByteArray()));
+////        Решил сделать выравнивание. Моя реализация красивости.
+//        DOMImplementationLS ls = (DOMImplementationLS) sourceDocument.getImplementation().getFeature("LS", "3.0");
+//        LSSerializer serializer = ls.createLSSerializer();
+//
+//        serializer.getDomConfig().setParameter("format-pretty-print", true);
+////        serializer.getDomConfig().setParameter("xml-declaration", true);
+//
+//        String newMessage = serializer.writeToString(sourceDocument);
+//
+//        newMessage = newMessage.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
+//
+//        System.out.println(newMessage);
 
-//        Решил сделать выравнивание. Моя реализация красивости.
-        DOMImplementationLS ls = (DOMImplementationLS) sourceDocument.getImplementation().getFeature("LS", "3.0");
-        LSSerializer serializer = ls.createLSSerializer();
+//        sourceDocument = docBuilder.parse(new InputSource(new StringReader(newMessage)));
 
-        serializer.getDomConfig().setParameter("format-pretty-print", true);
-//        serializer.getDomConfig().setParameter("xml-declaration", true);
-
-        String newMessage = serializer.writeToString(sourceDocument);
-
-        newMessage = newMessage.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
-
-        System.out.println(newMessage);
-
-        sourceDocument = docBuilder.parse(new InputSource(new StringReader(newMessage)));
+        sourceDocument = removeNamespace(sourceDocument);
 //          Закончил. Моя реализация красивости.
 
 
@@ -116,16 +127,12 @@ public class RequestSiginet {
         } // if
 
         final Node nodeToSign = nodes.item(0);
-        System.err.println(nodeToSign.getNodeName());
-//         final Node sigParent = nodeToSign.getParentNode();
         final String referenceURI = "#" + signingId;
 
         // 2. Ключ подписи и сертификат.
 
         // Сертификат для проверки.
         X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
-        System.out.println("x509 : " + cert.getIssuerX500Principal());
-
 
         // Ключ подписи.
         PrivateKey privateKey = (PrivateKey) ks.getKey(alias, password);
@@ -137,7 +144,6 @@ public class RequestSiginet {
 
         final xades4j.production.XadesSigningProfile sigProf = new XadesBesSigningProfile(keyingProvider)
 
-                // My
                 .withDigestEngineProvider(new DefaultMessageDigestProvider() {
                     @Override
                     public MessageDigest getEngine(String digestAlgorithmURI) throws UnsupportedAlgorithmException {
@@ -213,7 +219,7 @@ public class RequestSiginet {
 //        org.apache.xml.security.utils.XMLUtils.outputDOM(doc, byteStream, true);
 
         return toMessage(mes);
-    }
+    } // signRequest
 
     /**
      * Метод преобразует String в SOAPMessage.
@@ -222,11 +228,80 @@ public class RequestSiginet {
      * @throws IOException
      * @throws SOAPException
      */
-    public SOAPMessage toMessage(String message) throws IOException, SOAPException {
+    private SOAPMessage toMessage(String message) throws IOException, SOAPException {
 
         MessageFactory messageFactory = MessageFactory.newInstance();
         InputStream inputStream = new ByteArrayInputStream(message.getBytes());
 
         return messageFactory.createMessage(null, inputStream);
-    }
+    } // toMessage
+
+    /**
+     * Метод удаляет лишние пространства имен в файле.
+     * @param document - документ, содержащий не нужные пространства имен.
+     * @return Document - возвращает исправленный документ.
+     * @throws XMLStreamException
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     */
+    private Document removeNamespace(Document document) throws XMLStreamException, ParserConfigurationException, IOException, SAXException {
+
+        DOMImplementationLS ls = (DOMImplementationLS) document.getImplementation().getFeature("LS", "3.0");
+        LSSerializer serializer = ls.createLSSerializer();
+        serializer.getDomConfig().setParameter("format-pretty-print", true);
+
+        String message = serializer.writeToString(document);
+        message = message.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
+
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        XMLStreamReader reader = factory.createXMLStreamReader(new ByteArrayInputStream(message.getBytes()));
+        Map removeNamespace = new HashMap<String, String>();
+        List listPrefix = new ArrayList<String>();
+
+        while (reader.hasNext()) {
+            if (reader.isStartElement()) {
+                listPrefix.add(reader.getPrefix());
+                if (reader.getNamespaceCount() > 1) {
+                    for (int i = 0; i < reader.getNamespaceCount(); i++) {
+//                        System.out.print("Namespace: " + reader.getNamespaceURI(i));
+//                        System.out.println("Namespace Prefix: " + reader.getNamespacePrefix(i));
+                        removeNamespace.put(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+                    } // for
+                } // if
+//                System.out.print(reader.getLocalName() + " ");
+//                System.out.print(reader.getPrefix());
+//                System.out.println(" URI: " + reader.getNamespaceURI());
+            } // if
+            reader.next();
+        } // while
+
+        for (Object o : listPrefix) {
+            if (removeNamespace.containsKey(o)) {
+                removeNamespace.remove(o);
+            } // if
+        } // for
+
+        String prefix;
+
+        for (Object s : removeNamespace.keySet()) {
+
+            if (s != null)
+                prefix = ":" + s.toString();
+            else
+                prefix = "";
+
+//            System.out.println("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"");
+            message = message.replaceAll("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"", "");
+        } // for
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+        StringReader readerMessage = new StringReader(message);
+        InputSource inputSource = new InputSource(readerMessage);
+        Document doc = docBuilder.parse(inputSource);
+
+        return doc;
+    } // removeNamespace
 }

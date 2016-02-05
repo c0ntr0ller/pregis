@@ -16,8 +16,10 @@
  */
 package xades4j.verification;
 
-import java.security.cert.X509Certificate;
 import xades4j.properties.data.CertRef;
+
+import javax.security.auth.x500.X500Principal;
+import java.security.cert.X509Certificate;
 
 /**
  * Thrown during verification of the {@code CompleteCertificateRefs} property if
@@ -39,7 +41,7 @@ public class CompleteCertRefsReferenceException extends CompleteCertRefsVerifica
         this.certificate = certificate;
         this.certificateRef = certificateRef;
         this.msg = String.format("cannot verify reference for certificate %s (%s)",
-                certificate.getSubjectX500Principal().getName(), msg);
+                certificate.getSubjectX500Principal().getName(X500Principal.RFC1779), msg);
     }
 
     public X509Certificate getCertificate()

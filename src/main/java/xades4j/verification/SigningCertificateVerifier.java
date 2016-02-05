@@ -17,16 +17,17 @@
 package xades4j.verification;
 
 import com.google.inject.Inject;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Iterator;
-import javax.security.auth.x500.X500Principal;
 import xades4j.properties.QualifyingProperty;
 import xades4j.properties.SigningCertificateProperty;
 import xades4j.properties.data.CertRef;
-import xades4j.providers.MessageDigestEngineProvider;
 import xades4j.properties.data.SigningCertificateData;
+import xades4j.providers.MessageDigestEngineProvider;
 import xades4j.verification.QualifyingPropertyVerificationContext.CertificationChainData;
+
+import javax.security.auth.x500.X500Principal;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * XAdES section G.2.2.5

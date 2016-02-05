@@ -7,8 +7,8 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
 //        Инициализация сертификатов и Крипто-ПРО
-//        System.setProperty("com.sun.security.enableCRLDP", "true");
-//        System.setProperty("com.ibm.security.enableCRLDP", "true");
+        System.setProperty("com.sun.security.enableCRLDP", "true");
+        System.setProperty("com.ibm.security.enableCRLDP", "true");
 //        System.setProperty("javax.net.ssl.supportGVO","false");
 //        System.getProperty("javax.net.ssl.context", "GostTLS");// Не понятно работает ли?
         System.setProperty("javax.net.ssl.keyStoreType", "HDImageStore");
@@ -20,8 +20,6 @@ public class Main {
 
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
-
-
 
 
 //        System.setProperty("jdk.tls.client.protocols", "TLSv1");

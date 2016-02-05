@@ -16,16 +16,17 @@
  */
 package xades4j.verification;
 
+import xades4j.UnsupportedAlgorithmException;
+import xades4j.XAdES4jException;
+import xades4j.properties.data.CertRef;
+import xades4j.providers.MessageDigestEngineProvider;
+
+import javax.security.auth.x500.X500Principal;
 import java.security.MessageDigest;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.security.auth.x500.X500Principal;
-import xades4j.UnsupportedAlgorithmException;
-import xades4j.XAdES4jException;
-import xades4j.properties.data.CertRef;
-import xades4j.providers.MessageDigestEngineProvider;
 
 /**
  *
@@ -42,9 +43,13 @@ class CertRefUtils
             // Need to use a X500Principal because the DN strings can have different
             // spaces and so on.
             X500Principal certRefIssuerPrincipal;
+            String certRefTest;
+            String certTest;
             try
             {
                 certRefIssuerPrincipal = new X500Principal(certRef.issuerDN);
+                certRefTest = certRefIssuerPrincipal.toString();
+                certTest = cert.getIssuerX500Principal().toString();
             } catch (IllegalArgumentException ex)
             {
                 throw new SigningCertificateVerificationException(ex)
@@ -56,7 +61,8 @@ class CertRefUtils
                     }
                 };
             }
-            if (cert.getIssuerX500Principal().equals(certRefIssuerPrincipal) &&
+//            if (cert.getIssuerX500Principal().equals(certRefIssuerPrincipal) && // Original
+            if (certTest.equals(certRefTest) &&
                     certRef.serialNumber.equals(cert.getSerialNumber()))
                 return certRef;
         }

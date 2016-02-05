@@ -16,6 +16,7 @@
  */
 package xades4j.verification;
 
+import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 
 /**
@@ -32,7 +33,7 @@ public class CompleteRevocRefsReferenceException extends CompleteRevocRefsVerifi
     {
         this.crl = crl;
         this.msg = String.format("cannot verify reference for CRL issued by %s (%s)",
-                crl.getIssuerX500Principal().getName(), msg);
+                crl.getIssuerX500Principal().getName(X500Principal.RFC1779), msg);
     }
 
     public X509CRL getCrl()

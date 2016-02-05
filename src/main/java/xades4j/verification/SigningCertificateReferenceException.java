@@ -16,8 +16,10 @@
  */
 package xades4j.verification;
 
-import java.security.cert.X509Certificate;
 import xades4j.properties.data.CertRef;
+
+import javax.security.auth.x500.X500Principal;
+import java.security.cert.X509Certificate;
 
 /**
  * Thrown during verification of the {@code SigningCertificate} property if the
@@ -38,7 +40,7 @@ public class SigningCertificateReferenceException extends SigningCertificateVeri
         super(cause);
         this.certificate = certificate;
         this.certificateRef = certificateRef;
-        this.msg = "cannot verify reference for certificate " + certificate.getSubjectX500Principal().getName();
+        this.msg = "cannot verify reference for certificate " + certificate.getSubjectX500Principal().getName(X500Principal.RFC1779);
     }
 
     public X509Certificate getCertificate()

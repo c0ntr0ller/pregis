@@ -218,6 +218,15 @@ public class RequestSiginet {
 //        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 //        org.apache.xml.security.utils.XMLUtils.outputDOM(doc, byteStream, true);
 
+
+//        Проверка подписи.
+//        try {
+//            VerifySignet.verify(sourceDocument);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
         return toMessage(mes);
     } // signRequest
 

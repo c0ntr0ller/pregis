@@ -5,8 +5,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.services.ExportMSRSOResultType;
 
 
 /**
@@ -39,6 +41,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "startDateFrom",
     "startDateTo",
     "accountingType"
+})
+@XmlSeeAlso({
+    ExportMSRSOResultType.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.services.ImportMSRSORequest.MSRSO.class
 })
 public class MunicipalServiceType {
 

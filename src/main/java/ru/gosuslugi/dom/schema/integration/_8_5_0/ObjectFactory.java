@@ -77,30 +77,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RateType }
-     * 
-     */
-    public RateType createRateType() {
-        return new RateType();
-    }
-
-    /**
-     * Create an instance of {@link OneRateMeteringValueKindType }
-     * 
-     */
-    public OneRateMeteringValueKindType createOneRateMeteringValueKindType() {
-        return new OneRateMeteringValueKindType();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType createMeteringDeviceBasicCharacteristicsType() {
-        return new MeteringDeviceBasicCharacteristicsType();
-    }
-
-    /**
      * Create an instance of {@link SubsidiaryImportType }
      * 
      */
@@ -125,11 +101,75 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link OneRateMeteringValueKindType }
+     * 
+     */
+    public OneRateMeteringValueKindType createOneRateMeteringValueKindType() {
+        return new OneRateMeteringValueKindType();
+    }
+
+    /**
      * Create an instance of {@link CommonResultType }
      * 
      */
     public CommonResultType createCommonResultType() {
         return new CommonResultType();
+    }
+
+    /**
+     * Create an instance of {@link RateType }
+     * 
+     */
+    public RateType createRateType() {
+        return new RateType();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType createMeteringDeviceBasicCharacteristicsType() {
+        return new MeteringDeviceBasicCharacteristicsType();
+    }
+
+    /**
+     * Create an instance of {@link BaseAsyncResponseType }
+     * 
+     */
+    public BaseAsyncResponseType createBaseAsyncResponseType() {
+        return new BaseAsyncResponseType();
+    }
+
+    /**
+     * Create an instance of {@link BaseType }
+     * 
+     */
+    public BaseType createBaseType() {
+        return new BaseType();
+    }
+
+    /**
+     * Create an instance of {@link ErrorMessageType }
+     * 
+     */
+    public ErrorMessageType createErrorMessageType() {
+        return new ErrorMessageType();
+    }
+
+    /**
+     * Create an instance of {@link NsiRef }
+     * 
+     */
+    public NsiRef createNsiRef() {
+        return new NsiRef();
+    }
+
+    /**
+     * Create an instance of {@link OKTMORefType }
+     * 
+     */
+    public OKTMORefType createOKTMORefType() {
+        return new OKTMORefType();
     }
 
     /**
@@ -165,14 +205,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link NsiRef }
-     * 
-     */
-    public NsiRef createNsiRef() {
-        return new NsiRef();
-    }
-
-    /**
      * Create an instance of {@link GetStateRequest }
      * 
      */
@@ -186,22 +218,6 @@ public class ObjectFactory {
      */
     public ImportResult createImportResult() {
         return new ImportResult();
-    }
-
-    /**
-     * Create an instance of {@link BaseType }
-     * 
-     */
-    public BaseType createBaseType() {
-        return new BaseType();
-    }
-
-    /**
-     * Create an instance of {@link ErrorMessageType }
-     * 
-     */
-    public ErrorMessageType createErrorMessageType() {
-        return new ErrorMessageType();
     }
 
     /**
@@ -261,27 +277,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BaseAsyncResponseType }
-     * 
-     */
-    public BaseAsyncResponseType createBaseAsyncResponseType() {
-        return new BaseAsyncResponseType();
-    }
-
-    /**
      * Create an instance of {@link LegalType }
      * 
      */
     public LegalType createLegalType() {
         return new LegalType();
-    }
-
-    /**
-     * Create an instance of {@link OKTMORefType }
-     * 
-     */
-    public OKTMORefType createOKTMORefType() {
-        return new OKTMORefType();
     }
 
     /**
@@ -389,102 +389,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RateType.SingleRate }
-     * 
-     */
-    public RateType.SingleRate createRateTypeSingleRate() {
-        return new RateType.SingleRate();
-    }
-
-    /**
-     * Create an instance of {@link RateType.DoubleRate }
-     * 
-     */
-    public RateType.DoubleRate createRateTypeDoubleRate() {
-        return new RateType.DoubleRate();
-    }
-
-    /**
-     * Create an instance of {@link RateType.TripleRate }
-     * 
-     */
-    public RateType.TripleRate createRateTypeTripleRate() {
-        return new RateType.TripleRate();
-    }
-
-    /**
-     * Create an instance of {@link OneRateMeteringValueKindType.CurrentValue }
-     * 
-     */
-    public OneRateMeteringValueKindType.CurrentValue createOneRateMeteringValueKindTypeCurrentValue() {
-        return new OneRateMeteringValueKindType.CurrentValue();
-    }
-
-    /**
-     * Create an instance of {@link OneRateMeteringValueKindType.ControlValue }
-     * 
-     */
-    public OneRateMeteringValueKindType.ControlValue createOneRateMeteringValueKindTypeControlValue() {
-        return new OneRateMeteringValueKindType.ControlValue();
-    }
-
-    /**
-     * Create an instance of {@link OneRateMeteringValueKindType.VerificationValue }
-     * 
-     */
-    public OneRateMeteringValueKindType.VerificationValue createOneRateMeteringValueKindTypeVerificationValue() {
-        return new OneRateMeteringValueKindType.VerificationValue();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics createMeteringDeviceBasicCharacteristicsTypeVerificationCharacteristics() {
-        return new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice createMeteringDeviceBasicCharacteristicsTypeResidentialPremiseDevice() {
-        return new MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice createMeteringDeviceBasicCharacteristicsTypeNonResidentialPremiseDevice() {
-        return new MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice createMeteringDeviceBasicCharacteristicsTypeApartmentHouseDevice() {
-        return new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.LivingRoomDevice }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType.LivingRoomDevice createMeteringDeviceBasicCharacteristicsTypeLivingRoomDevice() {
-        return new MeteringDeviceBasicCharacteristicsType.LivingRoomDevice();
-    }
-
-    /**
-     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice }
-     * 
-     */
-    public MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice createMeteringDeviceBasicCharacteristicsTypeCollectiveApartmentDevice() {
-        return new MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice();
-    }
-
-    /**
      * Create an instance of {@link SubsidiaryImportType.CreateSubsidiary }
      * 
      */
@@ -533,11 +437,107 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link OneRateMeteringValueKindType.CurrentValue }
+     * 
+     */
+    public OneRateMeteringValueKindType.CurrentValue createOneRateMeteringValueKindTypeCurrentValue() {
+        return new OneRateMeteringValueKindType.CurrentValue();
+    }
+
+    /**
+     * Create an instance of {@link OneRateMeteringValueKindType.ControlValue }
+     * 
+     */
+    public OneRateMeteringValueKindType.ControlValue createOneRateMeteringValueKindTypeControlValue() {
+        return new OneRateMeteringValueKindType.ControlValue();
+    }
+
+    /**
+     * Create an instance of {@link OneRateMeteringValueKindType.VerificationValue }
+     * 
+     */
+    public OneRateMeteringValueKindType.VerificationValue createOneRateMeteringValueKindTypeVerificationValue() {
+        return new OneRateMeteringValueKindType.VerificationValue();
+    }
+
+    /**
      * Create an instance of {@link CommonResultType.Error }
      * 
      */
     public CommonResultType.Error createCommonResultTypeError() {
         return new CommonResultType.Error();
+    }
+
+    /**
+     * Create an instance of {@link RateType.SingleRate }
+     * 
+     */
+    public RateType.SingleRate createRateTypeSingleRate() {
+        return new RateType.SingleRate();
+    }
+
+    /**
+     * Create an instance of {@link RateType.DoubleRate }
+     * 
+     */
+    public RateType.DoubleRate createRateTypeDoubleRate() {
+        return new RateType.DoubleRate();
+    }
+
+    /**
+     * Create an instance of {@link RateType.TripleRate }
+     * 
+     */
+    public RateType.TripleRate createRateTypeTripleRate() {
+        return new RateType.TripleRate();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics createMeteringDeviceBasicCharacteristicsTypeVerificationCharacteristics() {
+        return new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice createMeteringDeviceBasicCharacteristicsTypeResidentialPremiseDevice() {
+        return new MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice createMeteringDeviceBasicCharacteristicsTypeNonResidentialPremiseDevice() {
+        return new MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice createMeteringDeviceBasicCharacteristicsTypeApartmentHouseDevice() {
+        return new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.LivingRoomDevice }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType.LivingRoomDevice createMeteringDeviceBasicCharacteristicsTypeLivingRoomDevice() {
+        return new MeteringDeviceBasicCharacteristicsType.LivingRoomDevice();
+    }
+
+    /**
+     * Create an instance of {@link MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice }
+     * 
+     */
+    public MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice createMeteringDeviceBasicCharacteristicsTypeCollectiveApartmentDevice() {
+        return new MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice();
     }
 
     /**

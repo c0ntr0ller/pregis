@@ -18,7 +18,7 @@ import javax.xml.ws.Holder;
  * 
  */
 @WebService(name = "RegOrgPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry-service/")
-@HandlerChain(file = "RegOrgPortsType_handler.xml")
+@HandlerChain(file = "ClientMessage_handler.xml")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ObjectFactory.class,

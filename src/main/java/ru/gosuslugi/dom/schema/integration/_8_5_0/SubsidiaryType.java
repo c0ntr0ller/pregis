@@ -85,6 +85,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "sourceName"
 })
 @XmlSeeAlso({
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResultType.OrgVersion.Subsidiary.class,
     ru.gosuslugi.dom.schema.integration._8_5_0.SubsidiaryImportType.CreateSubsidiary.class
 })
 public class SubsidiaryType {

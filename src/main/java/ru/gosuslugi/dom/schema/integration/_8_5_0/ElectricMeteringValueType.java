@@ -46,7 +46,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration._8_5_0.ElectricMeteringValueKindType.CurrentValue.class,
-    ru.gosuslugi.dom.schema.integration._8_5_0.ElectricMeteringValueKindType.ControlValue.class
+    ru.gosuslugi.dom.schema.integration._8_5_0.ElectricMeteringValueKindType.ControlValue.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.ControlValue.class
 })
 public class ElectricMeteringValueType {
 

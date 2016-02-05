@@ -1,12 +1,9 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
+
+import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
@@ -38,6 +35,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "messageGUID"
 })
 @XmlSeeAlso({
+    ISRequestHeader.class,
     ResultHeader.class,
     RequestHeader.class
 })

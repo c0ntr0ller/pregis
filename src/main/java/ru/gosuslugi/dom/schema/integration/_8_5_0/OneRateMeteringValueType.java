@@ -42,7 +42,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration._8_5_0.OneRateMeteringValueKindType.CurrentValue.class,
-    ru.gosuslugi.dom.schema.integration._8_5_0.OneRateMeteringValueKindType.ControlValue.class
+    ru.gosuslugi.dom.schema.integration._8_5_0.OneRateMeteringValueKindType.ControlValue.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.ControlValue.class
 })
 public class OneRateMeteringValueType {
 

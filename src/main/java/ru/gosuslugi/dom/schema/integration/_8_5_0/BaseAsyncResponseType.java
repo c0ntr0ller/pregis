@@ -1,7 +1,11 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -32,18 +36,18 @@ import javax.xml.bind.annotation.*;
     "messageGUID"
 })
 @XmlSeeAlso({
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.payment.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.inspection.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.services.GetStateResult.class,
-        ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.GetStateResult.class,
-        ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.bills.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.fas.GetStateResult.class,
-//        ru.gosuslugi.dom.schema.integration._8_5_0_2.disclosure.GetStateResult.class
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.fas.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.disclosure.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.bills.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.services.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.payment.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.inspection.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.GetStateResult.class
 })
 public class BaseAsyncResponseType
     extends BaseType

@@ -1,22 +1,14 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.*;
+
+import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
-import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportAdditionalServicesRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportMunicipalServicesRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportOrganizationWorksRequest;
 
 
 /**
@@ -26,10 +18,22 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ImportOrganizationWorksR
  * 
  */
 @WebService(name = "NsiPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/nsi-service/")
+@HandlerChain(file = "ClientMessage_handler.xml")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @XmlSeeAlso({
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration._8_5_0.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.inspection.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.payment.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.services.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.bills.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.disclosure.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ObjectFactory.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.fas.ObjectFactory.class,
     org.w3._2000._09.xmldsig_.ObjectFactory.class
 })
 public interface NsiPortsType {

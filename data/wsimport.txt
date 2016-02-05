@@ -5,3 +5,37 @@ wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension
 
 NSI
 wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-nsi-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-nsi-service/services/Nsi?wsdl
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xdebug -Xnocompile -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-nsi-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-nsi-service/services/Nsi?wsdl
+
+Bills
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-bills-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-bills-service/services/Bills?wsdl
+
+Device metering
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-device-metering-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-device-metering-service/services/DeviceMetering?wsdl
+
+Disclosure
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-disclosure-service-async-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-information-disclosure-service/services/DisclosureAsync?wsdl
+
+Fas
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-fas-service-async-8.5.0.2.wsdl
+
+House management
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-house-management-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-home-management-service/services/HomeManagement?wsdl
+
+Infrastructure
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-infrastructure-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-rki-service/services/Infrastructure?wsdl
+
+inspection
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-inspection-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-inspection-service/services/Inspection?wsdl
+
+Licenses
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-licenses-service-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-licenses-service/services/Licenses?wsdl
+
+Payment
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-payment-service-async-8.5.0.2.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-payment-service/services/PaymentAsync?wsdl
+
+Services
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-services-service-8.5.0.2.wsdl
+
+All
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xdebug -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\*.wsdl

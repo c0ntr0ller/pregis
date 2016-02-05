@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -59,6 +60,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "snils",
     "id",
     "placeBirth"
+})
+@XmlSeeAlso({
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.EncbrDataType.EncbrSubject.Ind.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.ShareDataToUpdate.Owners.Ind.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.EncbrDataToUpdate.EncbrSubject.Ind.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.ShareDataType.Owners.Ind.class
 })
 public class IndType
     extends FIOType

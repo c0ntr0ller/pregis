@@ -4,6 +4,7 @@ package ru.gosuslugi.dom.schema.integration._8_5_0;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -41,6 +42,11 @@ import javax.xml.bind.annotation.XmlType;
     "code",
     "guid",
     "name"
+})
+@XmlSeeAlso({
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.InfrastructureType.OKIType.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.services.HMServicesTarifsDocType.KU.MServiceType.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_2.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.BaseDocuments.FormOfFinancialStatement.class
 })
 public class NsiRef {
 

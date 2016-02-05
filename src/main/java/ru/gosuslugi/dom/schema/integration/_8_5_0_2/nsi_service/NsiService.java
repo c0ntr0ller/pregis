@@ -1,6 +1,7 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service;
 
+import javax.jws.HandlerChain;
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;
 import java.net.MalformedURLException;
@@ -15,7 +16,8 @@ import java.net.URL;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "NsiService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/nsi-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-nsi-service/services/Nsi?wsdl")
+@WebServiceClient(name = "NsiService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/nsi-service/", wsdlLocation = "file:/C:/andryha/project/workspace_for_git/PreGIS/src/main/resources/wsdl/hcs-bills-service-8.5.0.2.wsdl")
+@HandlerChain(file = "ClientMessage_handler.xml")
 public class NsiService
     extends Service
 {
@@ -28,7 +30,7 @@ public class NsiService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("https://54.76.42.99:60045/ext-bus-nsi-service/services/Nsi");
+            url = new URL("file:/C:/andryha/project/workspace_for_git/PreGIS/src/main/resources/wsdl/hcs-bills-service-8.5.0.2.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
@@ -82,7 +84,7 @@ public class NsiService
         return super.getPort(new QName("http://dom.gosuslugi.ru/schema/integration/8.5.0.2/nsi-service/", "NsiPort"), NsiPortsType.class, features);
     }
 
-    private static URL __getWsdlLocation() {
+    public static URL __getWsdlLocation() {
         if (NSISERVICE_EXCEPTION!= null) {
             throw NSISERVICE_EXCEPTION;
         }

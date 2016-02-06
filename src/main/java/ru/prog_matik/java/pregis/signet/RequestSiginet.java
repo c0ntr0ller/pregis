@@ -58,67 +58,23 @@ public class RequestSiginet {
      */
     public SOAPMessage signRequest(Document sourceDocument) throws Exception {
 
-//        JCPXMLDSigInit.init();
-        if (!ru.CryptoPro.JCPxml.XmlInit.isInitialized())
-            ru.CryptoPro.JCPxml.XmlInit.init();
 
-        String hdiPath = System.getProperty("user.dir") + "\\data";
+
+//        Документ и узел подписи.
+//        Ищем по указанаму параметру место для подписи.
         String signingId = "signed-data-container";
 
-        char[] password = {'1', '2', '3', '4', '5', '6'};
-//        InputStream keysStore = new FileInputStream("C:\\andryha\\key\\PreGIS\\client");
-        String alias = "dubovik";
+//        Исходный документ.
 
-        KeyStore ks = KeyStore.getInstance("HDImageStore", "JCP");
-
-//        Для изменения пути к носителю необходимо дать доступ
-//        в реестре windows в ветке
-//        "HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Prefs\ru\/Crypto/Pro\/J/C/P\/Key/Store\/H/D/Image"
-        System.out.println(Constants._TAG_SIGNATUREVALUE + "application: " + ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.path"));
-        if (hdiPath.equals(HDImageStore.getDir())) {
-            System.out.println(HDImageStore.getDir());
-        } else {
-            System.out.println("Now :" + HDImageStore.getDir());
-//            HDImageStore.setDir(hdiPath); Пока тключил
-            System.out.println("set :" + HDImageStore.getDir());
-        } // if
-
-        ks.load(null, null);
-
-        // 1. Документ и узел подписи.
-
-        // Исходный документ.
-//
-//        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//        dbFactory.setNamespaceAware(true);
-////
-//        DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
-////        final Document sourceDocument = dbFactory.newDocumentBuilder().
-////                parse(new ByteArrayInputStream(sourceXmlBin.toByteArray()));
-//
-////        Решил сделать выравнивание. Моя реализация красивости.
-//        DOMImplementationLS ls = (DOMImplementationLS) sourceDocument.getImplementation().getFeature("LS", "3.0");
-//        LSSerializer serializer = ls.createLSSerializer();
-//
-//        serializer.getDomConfig().setParameter("format-pretty-print", true);
-////        serializer.getDomConfig().setParameter("xml-declaration", true);
-//
-//        String newMessage = serializer.writeToString(sourceDocument);
-//
-//        newMessage = newMessage.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
-//
-//        System.out.println(newMessage);
-
-//        sourceDocument = docBuilder.parse(new InputSource(new StringReader(newMessage)));
-
+//        Удаляем лишние пространства имен (namespace) в XML, которые добавляются автоматически. Выравниваем документ.
         sourceDocument = removeNamespace(sourceDocument);
-//          Закончил. Моя реализация красивости.
+//        Закончил. Моя реализация красивости.
 
 
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath xpath = factory.newXPath();
 
-        // Подписываемый узел.
+//        Подписываемый узел.
         final XPathExpression expr = xpath.compile(String.format("//*[@Id='%s']", signingId));
         final NodeList nodes = (NodeList) expr.evaluate(sourceDocument, XPathConstants.NODESET);
 
@@ -129,15 +85,17 @@ public class RequestSiginet {
         final Node nodeToSign = nodes.item(0);
         final String referenceURI = "#" + signingId;
 
-        // 2. Ключ подписи и сертификат.
+//        Ключ подписи и сертификат.
 
-        // Сертификат для проверки.
-        X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+        KeyStore keyStore = Configure.getKeyStore();
 
-        // Ключ подписи.
-        PrivateKey privateKey = (PrivateKey) ks.getKey(alias, password);
+//        Сертификат для проверки.
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate(Configure.getKeyStoreAlias());
 
-        // 3. Алгоритмы.
+//        Ключ подписи.
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
+
+//        Алгоритмы.
 
         final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
         System.out.println(keyingProvider.getSigningKey(cert).getAlgorithm());
@@ -195,7 +153,7 @@ public class RequestSiginet {
                     }
                 });
 
-        // 4. Подпись.
+//        Подпись.
         final XadesSigner signer = sigProf.newSigner();
 
         final DataObjectDesc dataObj = new DataObjectReference(referenceURI);
@@ -210,14 +168,6 @@ public class RequestSiginet {
         String mes = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(sourceDocument);
         mes = mes.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
         System.out.println(mes);
-
-//        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-//        Document doc = docBuilder.parse(new InputSource(new StringReader(mes)));
-
-//        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-//        org.apache.xml.security.utils.XMLUtils.outputDOM(doc, byteStream, true);
-
 
 //        Проверка подписи.
 //        try {
@@ -273,14 +223,9 @@ public class RequestSiginet {
                 listPrefix.add(reader.getPrefix());
                 if (reader.getNamespaceCount() > 1) {
                     for (int i = 0; i < reader.getNamespaceCount(); i++) {
-//                        System.out.print("Namespace: " + reader.getNamespaceURI(i));
-//                        System.out.println("Namespace Prefix: " + reader.getNamespacePrefix(i));
                         removeNamespace.put(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
                     } // for
                 } // if
-//                System.out.print(reader.getLocalName() + " ");
-//                System.out.print(reader.getPrefix());
-//                System.out.println(" URI: " + reader.getNamespaceURI());
             } // if
             reader.next();
         } // while
@@ -300,7 +245,6 @@ public class RequestSiginet {
             else
                 prefix = "";
 
-//            System.out.println("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"");
             message = message.replaceAll("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"", "");
         } // for
 

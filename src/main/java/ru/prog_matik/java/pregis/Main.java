@@ -1,29 +1,26 @@
 package ru.prog_matik.java.pregis;
 
 
+import ru.CryptoPro.JCP.JCP;
 import ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry;
+import ru.prog_matik.java.pregis.signet.Configure;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+
+//        Укажем XMLSignature формировать подпись без разделителей '\n'
+        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
 //        Инициализация сертификатов и Крипто-ПРО
         System.setProperty("com.sun.security.enableCRLDP", "true");
         System.setProperty("com.ibm.security.enableCRLDP", "true");
 //        System.setProperty("javax.net.ssl.supportGVO","false");
-//        System.getProperty("javax.net.ssl.context", "GostTLS");// Не понятно работает ли?
-        System.setProperty("javax.net.ssl.keyStoreType", "HDImageStore");
-        System.setProperty("javax.net.ssl.keyStoreProvider", "JCP");
-        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
-        System.setProperty("javax.net.ssl.trustStoreType", "HDImageStore");
-        System.setProperty("javax.net.ssl.trustStore", "C:\\andryha\\project\\workspace_for_git\\PreGIS\\data\\xadesTrustStore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "1");
-
-//        Укажем XMLSignature формировать подпись без разделителей '\n'
-        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
-
-
-//        System.setProperty("jdk.tls.client.protocols", "TLSv1");
-//        System.setProperty("https.protocols", "TLSv1");
+        System.setProperty("javax.net.ssl.keyStoreType", JCP.HD_STORE_NAME);
+        System.setProperty("javax.net.ssl.keyStoreProvider", JCP.PROVIDER_NAME);
+        System.setProperty("javax.net.ssl.keyStorePassword", String.valueOf(Configure.getKeyStorePassword()));
+        System.setProperty("javax.net.ssl.trustStoreType", JCP.CERT_STORE_NAME);
+        System.setProperty("javax.net.ssl.trustStore", Configure.getTrustStorePath());
+        System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 
 //        Start
         ExportOrgRegistry reg = new ExportOrgRegistry();

@@ -3,7 +3,6 @@ package ru.prog_matik.java.pregis.signet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import ru.CryptoPro.JCP.JCP;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.providers.CertificateValidationProvider;
 import xades4j.providers.impl.DefaultMessageDigestProvider;
@@ -12,8 +11,6 @@ import xades4j.verification.XadesVerificationProfile;
 import xades4j.verification.XadesVerifier;
 
 import javax.xml.crypto.dsig.XMLSignature;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,11 +31,7 @@ public class VerifySignet {
      */
     public static void verify(Document sourceDocument) throws Exception {
 
-
-        final KeyStore trustStore = KeyStore.getInstance(JCP.CERT_STORE_NAME);
-
-        InputStream inputStream = new FileInputStream("C:\\andryha\\project\\workspace_for_git\\PreGIS\\data\\xadesTrustStore");
-        trustStore.load(inputStream, "1".toCharArray());
+        final KeyStore trustStore = Configure.getTrustStore();
 
         Collection intermediateCertsAndCRLs = Collections.emptyList();
 
@@ -48,7 +41,7 @@ public class VerifySignet {
         // Проверяемый документ
         final Document verifyDocument = sourceDocument;
 
-//          Узел с подписью (предположительно, один).
+//          Узел с подписью.
         final NodeList nl = verifyDocument.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
 
         if (nl.getLength() == 0) {

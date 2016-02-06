@@ -98,7 +98,6 @@ public class RequestSiginet {
 //        Алгоритмы.
 
         final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
-        System.out.println(keyingProvider.getSigningKey(cert).getAlgorithm());
 
         final xades4j.production.XadesSigningProfile sigProf = new XadesBesSigningProfile(keyingProvider)
 

@@ -30,7 +30,7 @@ public class NsiService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/andryha/project/workspace_for_git/PreGIS/src/main/resources/wsdl/hcs-bills-service-8.5.0.2.wsdl");
+            url = new URL("https://54.76.42.99:60045/ext-bus-nsi-service/services/Nsi");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

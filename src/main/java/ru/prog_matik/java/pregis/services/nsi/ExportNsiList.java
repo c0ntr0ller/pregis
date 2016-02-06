@@ -6,13 +6,14 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service.Fault;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service.NsiPortsType;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service.NsiService;
+import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 public class ExportNsiList {
 
-    private Holder<RequestHeader> headerHolder = new Holder<>();
+    private Holder<RequestHeader> headerHolder;
 
     private static ExportNsiListResult exportNsiList(ExportNsiListRequest exportNsiListRequest, Holder<RequestHeader> header) throws Fault {
 
@@ -27,7 +28,30 @@ public class ExportNsiList {
         return port.exportNsiList(exportNsiListRequest, header);
     }
 
-    public void callExportNsiList() {
+    public void callExportNsiList() throws Fault {
+
+        headerHolder = new Holder<>(getHeader());
+
+        ExportNsiListResult result;
+
+        try {
+            result = exportNsiList(getExportNsiListRequest(), headerHolder);
+
+            System.out.println();
+            System.err.println(result.getErrorMessage().getErrorCode());
+            System.err.println(result.getErrorMessage().getDescription());
+
+            System.out.println("getResultHeader Date: " + getResultHeader().getDate());
+            System.out.println("getResultHeader MessageGUID: " + getResultHeader().getMessageGUID());
+
+        } catch (Fault e) {
+            System.out.println(e.getMessage());
+        }
+
+
+
+
+//        logger.debug("Successful.");
 
     }
 
@@ -39,8 +63,17 @@ public class ExportNsiList {
         return exportNsiListRequest;
     }
 
-    private void getHeader() {
+    private RequestHeader getHeader() {
 
+        RequestHeader requestHeader = new RequestHeader();
+        requestHeader.setDate(OtherFormat.getDateNow());
+        requestHeader.setMessageGUID(OtherFormat.getRandomGUID());
+
+        return requestHeader;
+    }
+
+    private RequestHeader getResultHeader() {
+        return headerHolder.value;
     }
 
 }

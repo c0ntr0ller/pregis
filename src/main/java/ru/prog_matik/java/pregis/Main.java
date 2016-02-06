@@ -2,6 +2,8 @@ package ru.prog_matik.java.pregis;
 
 
 import ru.CryptoPro.JCP.JCP;
+import ru.prog_matik.java.pregis.services.nsi.ExportNsiList;
+import ru.prog_matik.java.pregis.services.organizations.ExportDataProvider;
 import ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry;
 import ru.prog_matik.java.pregis.signet.Configure;
 
@@ -26,6 +28,12 @@ public class Main {
         ExportOrgRegistry reg = new ExportOrgRegistry();
 //        reg.sendMessage();
         reg.callExportOrgRegistry();
+
+//        ExportDataProvider exportDataProvider = new ExportDataProvider();
+//        exportDataProvider.callExportDataProvide();
+
+//        ExportNsiList exportNsiList = new ExportNsiList();
+//        exportNsiList.callExportNsiList();
 
     }
 }

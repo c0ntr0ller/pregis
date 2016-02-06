@@ -78,6 +78,7 @@ public class ExportOrgRegistry {
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
+        list.setKPP("540201001");
         list.setOGRN("1125476111903");
         exportOrgRegistryRequest.getSearchCriteria().add(list);
 //

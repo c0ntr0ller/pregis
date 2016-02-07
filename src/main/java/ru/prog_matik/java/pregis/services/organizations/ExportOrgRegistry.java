@@ -8,6 +8,7 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISReq
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.Fault;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgPortsType;
 import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgService;
+import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;
@@ -73,13 +74,15 @@ public class ExportOrgRegistry {
         logger.debug("Successful.");
     }
 
-    private ExportOrgRegistryRequest getExportOrgRegistryRequest() {
+    private ExportOrgRegistryRequest getExportOrgRegistryRequest() throws PreGISException {
 
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
-        list.setKPP("540201001");
+//        list.setKPP("540201001");
         list.setOGRN("1125476111903");
+        if (list.getOGRN() == null)
+            throw new PreGISException("Не указан обязательный параметр!");
         exportOrgRegistryRequest.getSearchCriteria().add(list);
 //
 //        SignatureType signatureType = new SignatureType();

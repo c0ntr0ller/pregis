@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}orgVersionGUID"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}orgVersionGUID"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

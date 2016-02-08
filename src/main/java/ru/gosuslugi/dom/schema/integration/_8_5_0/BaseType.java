@@ -1,28 +1,102 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 import org.w3._2000._09.xmldsig_.SignatureType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.bills.*;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ExportMeteringDeviceHistoryRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ExportMeteringDeviceHistoryResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.device_metering.ImportMeteringDeviceValuesRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.disclosure.ImportDisclosureRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.fas.ImportRSORequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.*;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.ExportOKIRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.ExportOKIResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.infrastructure.ImportOKIRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.inspection.*;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.ExportDisqualifiedPersonRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.ExportDisqualifiedPersonResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.ExportLicenseRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.licenses.ExportLicenseResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.*;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.*;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.payment.*;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.services.*;
-
-import javax.xml.bind.annotation.*;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.CloseHousePaymentPeriodRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.ExportOrgPeriodRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.ExportOrgPeriodResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.ExportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.ExportPaymentDocumentResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.bills.OpenOrgPaymentPeriodRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.device_metering.ExportMeteringDeviceHistoryRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.device_metering.ExportMeteringDeviceHistoryResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.device_metering.ImportMeteringDeviceValuesRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.disclosure.ImportDisclosureRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.fas.ImportRSORequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportAccountRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportAccountResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportCAChRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportCAChResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportHouseRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportHouseResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportMeteringDeviceDataRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportMeteringDeviceDataResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportShareEncbrDataRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportShareEncbrDataResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportStatusCAChRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportStatusCAChResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportStatusPublicPropertyContractRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportStatusPublicPropertyContractResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportVotingProtocolRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ExportVotingProtocolResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.FaultHouseManagement;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportAccountRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportCharterRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportContractRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportHouseOMSRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportHouseRSORequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportHouseUORequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportMeteringDeviceDataRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportNotificationRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportPublicPropertyContractRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportShareEncbrDataRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportVotingProtocolRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.infrastructure.ExportOKIRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.infrastructure.ExportOKIResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.infrastructure.ImportOKIRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.inspection.ExportExaminationsRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.inspection.ExportExaminationsResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.inspection.ExportInspectionPlansRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.inspection.ExportInspectionPlansResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.inspection.ImportExaminationsRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.inspection.ImportInspectionPlanRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.licenses.ExportDisqualifiedPersonRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.licenses.ExportDisqualifiedPersonResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.licenses.ExportLicenseRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.licenses.ExportLicenseResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiItemRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ImportAdditionalServicesRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ImportMunicipalServicesRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ImportOrganizationWorksRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportDataProviderResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ImportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ImportSubsidiaryRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ExportNotificationsOfOrderExecutionRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ExportNotificationsOfOrderExecutionResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ExportPaymentDocumentDetailsRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ExportPaymentDocumentDetailsResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ImportAcknowledgmentRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ImportNotificationsOfOrderExecutionCancellationRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.payment.ImportNotificationsOfOrderExecutionRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportCompletedWorksRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportCompletedWorksResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportHMServicesTarifsRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportHMServicesTarifsResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportMSRSORequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportMSRSOResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportWorkingListRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportWorkingListResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportWorkingPlanRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ExportWorkingPlanResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ImportCompletedWorksRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ImportHMServicesTarifsRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ImportMSRSORequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ImportWorkingListRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.services.ImportWorkingPlanRequest;
 
 
 /**
@@ -52,28 +126,12 @@ import javax.xml.bind.annotation.*;
     "signature"
 })
 @XmlSeeAlso({
-    ImportRSORequest.class,
-    ImportAdditionalServicesRequest.class,
-    ExportNsiItemResult.class,
-    ExportNsiListResult.class,
-    ExportNsiItemRequest.class,
-    ImportOrganizationWorksRequest.class,
-    ImportMunicipalServicesRequest.class,
-    ExportNsiListRequest.class,
-    ExportDisqualifiedPersonResult.class,
-    ExportLicenseResult.class,
-    ExportDisqualifiedPersonRequest.class,
-    ExportLicenseRequest.class,
     ExportDataProviderResult.class,
     ImportDataProviderRequest.class,
     ImportSubsidiaryRequest.class,
     ExportDataProviderRequest.class,
     ExportOrgRegistryResult.class,
     ExportOrgRegistryRequest.class,
-    ExportMeteringDeviceHistoryRequest.class,
-    ExportMeteringDeviceHistoryResult.class,
-    ImportMeteringDeviceValuesRequest.class,
-    ImportDisclosureRequest.class,
     ExportOrgPeriodResult.class,
     ExportPaymentDocumentRequest.class,
     CloseHousePaymentPeriodRequest.class,
@@ -81,6 +139,17 @@ import javax.xml.bind.annotation.*;
     ExportOrgPeriodRequest.class,
     ImportPaymentDocumentRequest.class,
     OpenOrgPaymentPeriodRequest.class,
+    ImportDisclosureRequest.class,
+    ExportMeteringDeviceHistoryRequest.class,
+    ExportMeteringDeviceHistoryResult.class,
+    ImportMeteringDeviceValuesRequest.class,
+    ImportAcknowledgmentRequest.class,
+    ImportNotificationsOfOrderExecutionCancellationRequest.class,
+    ImportNotificationsOfOrderExecutionRequest.class,
+    ExportPaymentDocumentDetailsResult.class,
+    ExportNotificationsOfOrderExecutionResult.class,
+    ExportNotificationsOfOrderExecutionRequest.class,
+    ExportPaymentDocumentDetailsRequest.class,
     ImportHMServicesTarifsRequest.class,
     ExportMSRSOResult.class,
     ExportWorkingListRequest.class,
@@ -96,13 +165,19 @@ import javax.xml.bind.annotation.*;
     ExportHMServicesTarifsRequest.class,
     ImportCompletedWorksRequest.class,
     ImportMSRSORequest.class,
-    ImportAcknowledgmentRequest.class,
-    ImportNotificationsOfOrderExecutionCancellationRequest.class,
-    ImportNotificationsOfOrderExecutionRequest.class,
-    ExportPaymentDocumentDetailsResult.class,
-    ExportNotificationsOfOrderExecutionResult.class,
-    ExportNotificationsOfOrderExecutionRequest.class,
-    ExportPaymentDocumentDetailsRequest.class,
+    ImportAdditionalServicesRequest.class,
+    ExportNsiItemResult.class,
+    ExportNsiListResult.class,
+    ExportNsiItemRequest.class,
+    ImportOrganizationWorksRequest.class,
+    ImportMunicipalServicesRequest.class,
+    ExportNsiListRequest.class,
+    ExportInspectionPlansResult.class,
+    ExportExaminationsResult.class,
+    ImportInspectionPlanRequest.class,
+    ImportExaminationsRequest.class,
+    ExportExaminationsRequest.class,
+    ExportInspectionPlansRequest.class,
     ImportContractRequest.class,
     ExportAccountResult.class,
     ImportVotingProtocolRequest.class,
@@ -130,14 +205,13 @@ import javax.xml.bind.annotation.*;
     FaultHouseManagement.class,
     ExportStatusCAChResult.class,
     ExportAccountRequest.class,
-    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.ImportResult.class,
+    ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportResult.class,
     ImportCharterRequest.class,
-    ExportInspectionPlansResult.class,
-    ExportExaminationsResult.class,
-    ImportInspectionPlanRequest.class,
-    ImportExaminationsRequest.class,
-    ExportExaminationsRequest.class,
-    ExportInspectionPlansRequest.class,
+    ImportRSORequest.class,
+    ExportDisqualifiedPersonResult.class,
+    ExportLicenseResult.class,
+    ExportDisqualifiedPersonRequest.class,
+    ExportLicenseRequest.class,
     ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult.class,
     ImportOKIRequest.class,
     ExportOKIResult.class,

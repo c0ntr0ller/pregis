@@ -1,11 +1,11 @@
 package ru.prog_matik.java.pregis.services.nsi;
 
 import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi.ExportNsiListResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service.NsiPortsType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.nsi_service.NsiService;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service.NsiPortsType;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service.NsiService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;

@@ -22,12 +22,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="HSGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
- *         &lt;element name="HSType" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
+ *         &lt;element name="HSGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+ *         &lt;element name="HSType" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
  *         &lt;element name="StartDateFrom" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="StartDateTo" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="UpdateDateTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="Rate" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}VolumeType"/>
+ *         &lt;element name="Rate" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}VolumeType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

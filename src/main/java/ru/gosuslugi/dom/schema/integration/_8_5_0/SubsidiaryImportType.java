@@ -25,9 +25,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="CreateSubsidiary">
  *           &lt;complexType>
  *             &lt;complexContent>
- *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}SubsidiaryType">
+ *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}SubsidiaryType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}orgVersionGUID"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}orgVersionGUID"/>
  *                 &lt;/sequence>
  *               &lt;/extension>
  *             &lt;/complexContent>
@@ -38,11 +38,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}orgVersionGUID"/>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}INN" minOccurs="0"/>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}OKOPF" minOccurs="0"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}orgVersionGUID"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}INN" minOccurs="0"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}OKOPF" minOccurs="0"/>
  *                   &lt;element name="Address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}FIASHouseGUIDType" minOccurs="0"/>
+ *                   &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}FIASHouseGUIDType" minOccurs="0"/>
  *                   &lt;element name="ActivityEndDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
@@ -63,7 +63,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "updateSubsidiary"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ImportSubsidiaryRequest.Subsidiary.class
+    ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ImportSubsidiaryRequest.Subsidiary.class
 })
 public class SubsidiaryImportType {
 
@@ -129,9 +129,9 @@ public class SubsidiaryImportType {
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
-     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}SubsidiaryType">
+     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}SubsidiaryType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}orgVersionGUID"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}orgVersionGUID"/>
      *       &lt;/sequence>
      *     &lt;/extension>
      *   &lt;/complexContent>
@@ -188,11 +188,11 @@ public class SubsidiaryImportType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}orgVersionGUID"/>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}INN" minOccurs="0"/>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}OKOPF" minOccurs="0"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}orgVersionGUID"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}INN" minOccurs="0"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}OKOPF" minOccurs="0"/>
      *         &lt;element name="Address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}FIASHouseGUIDType" minOccurs="0"/>
+     *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}FIASHouseGUIDType" minOccurs="0"/>
      *         &lt;element name="ActivityEndDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
      *       &lt;/sequence>
      *     &lt;/restriction>

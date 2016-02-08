@@ -2,12 +2,12 @@ package ru.prog_matik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgPortsType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgService;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgService;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
@@ -81,7 +81,7 @@ public class ExportOrgRegistry {
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
 //        list.setKPP("540201001");
         list.setOGRN("1125476111903");
-        if (list.getOGRN() == null)
+        if (list.getOGRN() == null && list.getOGRNIP() == null)
             throw new PreGISException("Не указан обязательный параметр!");
         exportOrgRegistryRequest.getSearchCriteria().add(list);
 //

@@ -46,7 +46,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
  *                   &lt;element name="FirstVerificationDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *                   &lt;element name="VerificationInterval" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
+ *                   &lt;element name="VerificationInterval" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -59,8 +59,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *               &lt;complexContent>
  *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                   &lt;sequence>
- *                     &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
- *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+ *                     &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+ *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
  *                   &lt;/sequence>
  *                 &lt;/restriction>
  *               &lt;/complexContent>
@@ -71,8 +71,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *               &lt;complexContent>
  *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                   &lt;sequence>
- *                     &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
- *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+ *                     &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+ *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
  *                   &lt;/sequence>
  *                 &lt;/restriction>
  *               &lt;/complexContent>
@@ -83,7 +83,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *               &lt;complexContent>
  *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                   &lt;sequence>
- *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+ *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
  *                   &lt;/sequence>
  *                 &lt;/restriction>
  *               &lt;/complexContent>
@@ -94,8 +94,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *               &lt;complexContent>
  *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                   &lt;sequence>
- *                     &lt;element name="LivingRoomGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
- *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+ *                     &lt;element name="LivingRoomGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
+ *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
  *                   &lt;/sequence>
  *                 &lt;/restriction>
  *               &lt;/complexContent>
@@ -106,8 +106,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *               &lt;complexContent>
  *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                   &lt;sequence>
- *                     &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
- *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+ *                     &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+ *                     &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
  *                   &lt;/sequence>
  *                 &lt;/restriction>
  *               &lt;/complexContent>
@@ -457,7 +457,7 @@ public class MeteringDeviceBasicCharacteristicsType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -517,8 +517,8 @@ public class MeteringDeviceBasicCharacteristicsType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
-     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+     *         &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -605,8 +605,8 @@ public class MeteringDeviceBasicCharacteristicsType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="LivingRoomGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
-     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+     *         &lt;element name="LivingRoomGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
+     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -698,8 +698,8 @@ public class MeteringDeviceBasicCharacteristicsType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
-     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+     *         &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -786,8 +786,8 @@ public class MeteringDeviceBasicCharacteristicsType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
-     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType" maxOccurs="unbounded"/>
+     *         &lt;element name="PremiseGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+     *         &lt;element name="AccountGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType" maxOccurs="unbounded"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -875,7 +875,7 @@ public class MeteringDeviceBasicCharacteristicsType {
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
      *         &lt;element name="FirstVerificationDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
-     *         &lt;element name="VerificationInterval" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
+     *         &lt;element name="VerificationInterval" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>

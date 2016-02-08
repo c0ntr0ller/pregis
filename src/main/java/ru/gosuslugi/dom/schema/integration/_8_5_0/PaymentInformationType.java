@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="BankBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}BIKType"/>
- *         &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}KPPType" minOccurs="0"/>
+ *         &lt;element name="BankBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}BIKType"/>
+ *         &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}KPPType" minOccurs="0"/>
  *         &lt;element name="operatingAccountNumber">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}AccountType"/>
+ *         &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}AccountType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

@@ -18,10 +18,10 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}BaseType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}BaseType">
  *       &lt;choice>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}ErrorMessage"/>
- *         &lt;element name="CommonResult" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}CommonResultType" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}ErrorMessage"/>
+ *         &lt;element name="CommonResult" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}CommonResultType" maxOccurs="unbounded"/>
  *       &lt;/choice>
  *     &lt;/extension>
  *   &lt;/complexContent>

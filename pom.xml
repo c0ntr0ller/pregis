@@ -17,6 +17,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cryptopro-jcp.version>2.0.38481</cryptopro-jcp.version>
+        <cxf.version>3.1.4</cxf.version>
         <slf4j.version>1.7.14</slf4j.version>
     </properties>
 

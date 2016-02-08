@@ -24,16 +24,16 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice>
- *           &lt;element name="TransportGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
- *           &lt;element name="UpdateGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
+ *           &lt;element name="TransportGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
+ *           &lt;element name="UpdateGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
  *         &lt;/choice>
  *         &lt;choice>
  *           &lt;sequence>
- *             &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}GUIDType"/>
+ *             &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}GUIDType"/>
  *             &lt;element name="UpdateDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *             &lt;element name="UniqueNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *           &lt;/sequence>
- *           &lt;element name="CreateOrUpdateError" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}ErrorMessageType" maxOccurs="unbounded"/>
+ *           &lt;element name="CreateOrUpdateError" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}ErrorMessageType" maxOccurs="unbounded"/>
  *         &lt;/choice>
  *       &lt;/sequence>
  *     &lt;/restriction>

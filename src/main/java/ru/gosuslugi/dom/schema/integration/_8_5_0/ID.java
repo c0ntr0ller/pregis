@@ -20,7 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Type" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}nsiRef"/>
+ *         &lt;element name="Type" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}nsiRef"/>
  *         &lt;element name="Series" minOccurs="0">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">

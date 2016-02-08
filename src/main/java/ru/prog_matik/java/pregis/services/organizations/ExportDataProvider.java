@@ -1,12 +1,12 @@
 package ru.prog_matik.java.pregis.services.organizations;
 
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ExportDataProviderResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry.ISRequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgPortsType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_2.organizations_registry_service.RegOrgService;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportDataProviderResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;

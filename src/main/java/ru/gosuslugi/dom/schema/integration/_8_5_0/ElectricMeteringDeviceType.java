@@ -23,10 +23,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="BasicChatacteristicts" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}MeteringDeviceBasicCharacteristicsType"/>
- *         &lt;element name="BaseValueT1" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}MeteringValueType"/>
- *         &lt;element name="BaseValueT2" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}MeteringValueType" minOccurs="0"/>
- *         &lt;element name="BaseValueT3" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.2/}MeteringValueType" minOccurs="0"/>
+ *         &lt;element name="BasicChatacteristicts" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}MeteringDeviceBasicCharacteristicsType"/>
+ *         &lt;element name="BaseValueT1" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}MeteringValueType"/>
+ *         &lt;element name="BaseValueT2" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}MeteringValueType" minOccurs="0"/>
+ *         &lt;element name="BaseValueT3" type="{http://dom.gosuslugi.ru/schema/integration/8.5.0.4/}MeteringValueType" minOccurs="0"/>
  *         &lt;element name="ReadoutDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="ReadingsSource" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -47,7 +47,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "readingsSource"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_5_0_2.house_management.ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.ElectricMeteringDevice.class
+    ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management.ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.ElectricMeteringDevice.class
 })
 public class ElectricMeteringDeviceType {
 

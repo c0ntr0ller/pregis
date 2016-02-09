@@ -1,0 +1,535 @@
+"C:\Program Files\Java\jdk1.8.0_71\bin\java" -Didea.launcher.port=7532 "-Didea.launcher.bin.path=C:\Program Files (x86)\JetBrains\IntelliJ IDEA 144.2925.2\bin" -Dfile.encoding=UTF-8 -classpath "C:\Program Files\Java\jdk1.8.0_71\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\deploy.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\ASN1P.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\CAdES.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCP.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCPControlPane.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCPRequest.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCPRevCheck.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCPRevTools.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCPinst.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCPxml.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCSP.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\JCryptoP.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\XMLDSigRI.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\access-bridge-64.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\asn1rt.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\cldrdata.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\cpSSL.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\dnsns.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\forms_rt.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\jaccess.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\jfxrt.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\localedata.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\nashorn.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\sunec.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\sunjce_provider.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\sunmscapi.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\sunpkcs11.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\ext\zipfs.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\javaws.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\jfxswt.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\management-agent.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\plugin.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_71\jre\lib\rt.jar;C:\andryha\project\workspace_for_git\PreGIS\target\classes;C:\Users\andryha\.m2\repository\org\apache\ws\security\wss4j\1.6.19\wss4j-1.6.19.jar;C:\Users\andryha\.m2\repository\commons-logging\commons-logging\1.1.1\commons-logging-1.1.1.jar;C:\Users\andryha\.m2\repository\org\opensaml\opensaml\2.5.1-1\opensaml-2.5.1-1.jar;C:\Users\andryha\.m2\repository\org\opensaml\openws\1.4.2-1\openws-1.4.2-1.jar;C:\Users\andryha\.m2\repository\org\opensaml\xmltooling\1.3.2-1\xmltooling-1.3.2-1.jar;C:\Users\andryha\.m2\repository\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;C:\Users\andryha\.m2\repository\joda-time\joda-time\1.6.2\joda-time-1.6.2.jar;C:\Users\andryha\.m2\repository\com\googlecode\xades4j\xades4j\1.3.2\xades4j-1.3.2.jar;C:\Users\andryha\.m2\repository\com\google\inject\extensions\guice-multibindings\2.0\guice-multibindings-2.0.jar;C:\Users\andryha\.m2\repository\com\google\inject\guice\2.0\guice-2.0.jar;C:\Users\andryha\.m2\repository\aopalliance\aopalliance\1.0\aopalliance-1.0.jar;C:\Users\andryha\.m2\repository\org\bouncycastle\bcpkix-jdk15on\1.50\bcpkix-jdk15on-1.50.jar;C:\Users\andryha\.m2\repository\org\bouncycastle\bcprov-jdk15on\1.50\bcprov-jdk15on-1.50.jar;C:\Users\andryha\.m2\repository\org\apache\santuario\xmlsec\1.5.0\xmlsec-1.5.0.jar;C:\Users\andryha\.m2\repository\log4j\log4j\1.2.17\log4j-1.2.17.jar;C:\Program Files (x86)\JetBrains\IntelliJ IDEA 144.2925.2\lib\idea_rt.jar" com.intellij.rt.execution.application.AppMain ru.prog_matik.java.pregis.Main
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.A run
+FINE: Applet launched: false
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.A run
+FINE: Applet launched: false
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: keyStore is :
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: keyStore is :
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: keyStore type is : HDImageStore
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: keyStore type is : HDImageStore
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: keyStore provider is : JCP
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: keyStore provider is : JCP
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init key store
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init key store
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: defaultStoreProvider =
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: defaultStoreProvider =
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: JCP
+фев 09, 2016 8:43:23 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: JCP
+фев 09, 2016 8:43:23 AM ru.CryptoPro.JCSP.JCSP <init>
+INFO: Loading JCSP 4.0 38481
+фев 09, 2016 8:43:23 AM ru.CryptoPro.JCSP.KeyStore.KeyStoreConfig enumInstalledProviders
+WARNING: No provider with type of 80 found.
+фев 09, 2016 8:43:23 AM ru.CryptoPro.JCSP.KeyStore.KeyStoreConfig enumInstalledProviders
+WARNING: No provider with type of 81 found.
+фев 09, 2016 8:43:24 AM ru.CryptoPro.JCSP.JCSP <init>
+INFO: JCSP loaded.
+фев 09, 2016 8:43:24 AM ru.CryptoPro.JCP.tools.Starter check
+INFO: Loading JCP 2.0 38481
+фев 09, 2016 8:43:24 AM ru.CryptoPro.JCP.tools.Starter check
+INFO: JCP loaded.
+фев 09, 2016 8:43:24 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init key manager of type GostX509
+фев 09, 2016 8:43:24 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init key manager of type GostX509
+фев 09, 2016 8:43:24 AM ru.CryptoPro.ssl.r <init>
+FINE: %% adding as private keys %%
+фев 09, 2016 8:43:24 AM ru.CryptoPro.ssl.r <init>
+FINE: %% adding as private keys %%
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.r <init>
+FINE:
+found key: dubovik
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.r <init>
+FINE:
+found key: dubovik
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.r <init>
+FINE:
+------
+Certificate chain [0] for key:dubovik
+  Subject: SURNAME=Дубовик, GIVENNAME=Андрей, CN=Дубовик Андрей, O="ООО \"ЦУЖФ\"", L=Новосибирск, C=RU, EMAILADDRESS=dubovik@prog-matik.ru, OID.1.2.643.3.131.1.1=#120C353430343436353039363030, OID.1.2.643.100.1=#120D31313235343736313131393033
+  Valid from Tue Dec 22 17:27:00 NOVT 2015 until Tue Mar 22 17:37:00 NOVT 2016
+------
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.r <init>
+FINE:
+------
+Certificate chain [0] for key:dubovik
+  Subject: SURNAME=Дубовик, GIVENNAME=Андрей, CN=Дубовик Андрей, O="ООО \"ЦУЖФ\"", L=Новосибирск, C=RU, EMAILADDRESS=dubovik@prog-matik.ru, OID.1.2.643.3.131.1.1=#120C353430343436353039363030, OID.1.2.643.100.1=#120D31313235343736313131393033
+  Valid from Tue Dec 22 17:27:00 NOVT 2015 until Tue Mar 22 17:37:00 NOVT 2016
+------
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: trustStore is: C:\andryha\project\workspace_for_git\PreGIS\data\TrustStore
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: trustStore is: C:\andryha\project\workspace_for_git\PreGIS\data\TrustStore
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: trustStore type is : CertStore
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: trustStore type is : CertStore
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: trustStore provider is :
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: trustStore provider is :
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init trust store
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init trust store
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init trust manager of type GostX509
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init trust manager of type GostX509
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.g <init>
+FINE: Trusted certificates: key store.
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.g <init>
+FINE: Trusted certificates: key store.
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.g a
+FINE:
+%% adding as trusted certificates %%
+--------
+  Subject: CN=sit2.amazon-14.01.2016
+  Serial number: 591b247700030002cfe3
+  Valid from Thu Jan 14 20:42:00 NOVT 2016 until Fri Apr 14 20:52:00 NOVT 2017
+--------
+  Subject: CN="Тестовый УЦ ООО \"КРИПТО-ПРО\"", O="ООО \"КРИПТО-ПРО\"", C=RU, EMAILADDRESS=info@cryptopro.ru, L=Москва, ST=77 г. Москва, STREET="ул. Сущёвский вал, д. 18", OID.1.2.643.3.131.1.1=#120C303037373137313037393931, OID.1.2.643.100.1=#120D31303337373030303835343434
+  Serial number: 4487da574993609e4876f6827344ff17
+  Valid from Thu Sep 04 16:13:56 NOVT 2014 until Mon Mar 02 10:21:22 NOVT 2020
+--------
+  Subject: CN=CRYPTO-PRO Test Center 2, O=CRYPTO-PRO LLC, L=Moscow, C=RU, EMAILADDRESS=support@cryptopro.ru
+  Serial number: 2b6e3351fd6eb2ad48200203cb5ba141
+  Valid from Tue Aug 05 20:44:24 NOVT 2014 until Mon Aug 05 19:54:03 NOVT 2019
+--------
+  Subject: CN=Головной удостоверяющий центр, OID.1.2.643.3.131.1.1=#120C303037373130343734333735, OID.1.2.643.100.1=#120D31303437373032303236373031, O=Минкомсвязь России, STREET="125375 г. Москва, ул. Тверская, д. 7", L=Москва, ST=77 г. Москва, C=RU, EMAILADDRESS=dit@minsvyaz.ru
+  Serial number: 34681e40cb41ef33a9a0b7c876929a29
+  Valid from Fri Jul 20 19:31:14 NOVT 2012 until Sat Jul 17 18:31:14 NOVT 2027
+--------
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.g a
+FINE:
+%% adding as trusted certificates %%
+--------
+  Subject: CN=sit2.amazon-14.01.2016
+  Serial number: 591b247700030002cfe3
+  Valid from Thu Jan 14 20:42:00 NOVT 2016 until Fri Apr 14 20:52:00 NOVT 2017
+--------
+  Subject: CN="Тестовый УЦ ООО \"КРИПТО-ПРО\"", O="ООО \"КРИПТО-ПРО\"", C=RU, EMAILADDRESS=info@cryptopro.ru, L=Москва, ST=77 г. Москва, STREET="ул. Сущёвский вал, д. 18", OID.1.2.643.3.131.1.1=#120C303037373137313037393931, OID.1.2.643.100.1=#120D31303337373030303835343434
+  Serial number: 4487da574993609e4876f6827344ff17
+  Valid from Thu Sep 04 16:13:56 NOVT 2014 until Mon Mar 02 10:21:22 NOVT 2020
+--------
+  Subject: CN=CRYPTO-PRO Test Center 2, O=CRYPTO-PRO LLC, L=Moscow, C=RU, EMAILADDRESS=support@cryptopro.ru
+  Serial number: 2b6e3351fd6eb2ad48200203cb5ba141
+  Valid from Tue Aug 05 20:44:24 NOVT 2014 until Mon Aug 05 19:54:03 NOVT 2019
+--------
+  Subject: CN=Головной удостоверяющий центр, OID.1.2.643.3.131.1.1=#120C303037373130343734333735, OID.1.2.643.100.1=#120D31303437373032303236373031, O=Минкомсвязь России, STREET="125375 г. Москва, ул. Тверская, д. 7", L=Москва, ST=77 г. Москва, C=RU, EMAILADDRESS=dit@minsvyaz.ru
+  Serial number: 34681e40cb41ef33a9a0b7c876929a29
+  Valid from Fri Jul 20 19:31:14 NOVT 2012 until Sat Jul 17 18:31:14 NOVT 2027
+--------
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init context...
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: init context...
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl engineInit
+FINE: SSLContext engineInit
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl engineInit
+FINE: SSLContext engineInit
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: Context initiated.
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.SSLContextImpl d
+INFO: Context initiated.
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.f a
+FINE: Allow unsafe renegotiation: false
+Allow legacy hello messages: true
+Is initial handshake: true
+Is secure renegotiation: false
+фев 09, 2016 8:43:25 AM ru.CryptoPro.ssl.f a
+FINE: Allow unsafe renegotiation: false
+Allow legacy hello messages: true
+Is initial handshake: true
+Is secure renegotiation: false
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao r
+FINE: %% No cached client session
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao r
+FINE: %% No cached client session
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.f q
+FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.f q
+FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ad <init>
+FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ad <init>
+FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.f a
+FINE: handshakeDigest :77c2494c
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.f a
+FINE: handshakeDigest :77c2494c
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: ** New session TLS_CIPHER_2001
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: ** New session TLS_CIPHER_2001
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% Certificate message:
+------
+  Subject: CN=sit2.amazon-14.01.2016
+  Valid from Thu Jan 14 20:42:00 NOVT 2016 until Fri Apr 14 20:52:00 NOVT 2017
+------
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% Certificate message:
+------
+  Subject: CN=sit2.amazon-14.01.2016
+  Valid from Thu Jan 14 20:42:00 NOVT 2016 until Fri Apr 14 20:52:00 NOVT 2017
+------
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Signature provider: JCP
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Signature provider: JCP
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Set some additional (intermediate) certificates
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Set some additional (intermediate) certificates
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] parameters:
+	com.sun.security.enableCRLDP=true
+	com.ibm.security.enableCRLDP=true
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] parameters:
+	com.sun.security.enableCRLDP=true
+	com.ibm.security.enableCRLDP=true
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Certificate chain was built (length: 2).
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Certificate chain was built (length: 2).
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Online verification is enabled.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Online verification is enabled.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Offline verification is disabled. CRL timer is turned OFF.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] Offline verification is disabled. CRL timer is turned OFF.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] The certificate chain is valid.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.w a
+FINE: [PKIX] The certificate chain is valid.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ab <init>
+FINE: Given authorities list's size: 0 element(s)
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ab <init>
+FINE: Given authorities list's size: 0 element(s)
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% CertificateRequest
+Cert Authorities:
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% CertificateRequest
+Cert Authorities:
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHelloDone (empty)
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHelloDone (empty)
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Certificate request is received.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Certificate request is received.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.f a
+FINE: Add certificate algorithm: GOST3410EL [priority: 2]
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.f a
+FINE: Add certificate algorithm: GOST3410EL [priority: 2]
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Find client container with type: GOST3410EL
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Find client container with type: GOST3410EL
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.r a
+FINE: %% getting aliases for Client
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.r a
+FINE: %% getting aliases for Client
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.r a
+FINE: %% matching alias: dubovik
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.r a
+FINE: %% matching alias: dubovik
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Found containers: 1
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Found containers: 1
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Certificate 'dubovik' matches...
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Certificate 'dubovik' matches...
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Private key 'dubovik' is available, key test passed...
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Private key 'dubovik' is available, key test passed...
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Private key 'dubovik' selected, key algorithm is suitable or key is allowed DH.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: Private key 'dubovik' selected, key algorithm is suitable or key is allowed DH.
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% Certificate message:
+------
+  Subject: SURNAME=Дубовик, GIVENNAME=Андрей, CN=Дубовик Андрей, O="ООО \"ЦУЖФ\"", L=Новосибирск, C=RU, EMAILADDRESS=dubovik@prog-matik.ru, OID.1.2.643.3.131.1.1=#120C353430343436353039363030, OID.1.2.643.100.1=#120D31313235343736313131393033
+  Valid from Tue Dec 22 17:27:00 NOVT 2015 until Tue Mar 22 17:37:00 NOVT 2016
+------
+фев 09, 2016 8:43:26 AM ru.CryptoPro.ssl.ao a
+FINE: %% Certificate message:
+------
+  Subject: SURNAME=Дубовик, GIVENNAME=Андрей, CN=Дубовик Андрей, O="ООО \"ЦУЖФ\"", L=Новосибирск, C=RU, EMAILADDRESS=dubovik@prog-matik.ru, OID.1.2.643.3.131.1.1=#120C353430343436353039363030, OID.1.2.643.100.1=#120D31313235343736313131393033
+  Valid from Tue Dec 22 17:27:00 NOVT 2015 until Tue Mar 22 17:37:00 NOVT 2016
+------
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% ClientKeyExchange...
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% ClientKeyExchange...
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: clntEncIV:AB 0B 05 4B 02 DE 61 47
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: clntEncIV:AB 0B 05 4B 02 DE 61 47
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: svrEncIV:D5 E6 42 25 02 99 B8 ED
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: svrEncIV:D5 E6 42 25 02 99 B8 ED
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao b
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao b
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: ChangeCipherSpec %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: ChangeCipherSpec %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Cached client session: [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Cached client session: [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: Allow unsafe renegotiation: false
+Allow legacy hello messages: true
+Is initial handshake: true
+Is secure renegotiation: false
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: Allow unsafe renegotiation: false
+Allow legacy hello messages: true
+Is initial handshake: true
+Is secure renegotiation: false
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao r
+FINE: %% Client cached [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao r
+FINE: %% Client cached [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao r
+FINE: %% Try resuming [Session-1, TLS_CIPHER_2001] from port 52888
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao r
+FINE: %% Try resuming [Session-1, TLS_CIPHER_2001] from port 52888
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f q
+FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f q
+FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ad <init>
+FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ad <init>
+FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: handshakeDigest :61001b64
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: handshakeDigest :61001b64
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: clntEncIV:E8 0B F0 E7 25 35 F3 09
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: clntEncIV:E8 0B F0 E7 25 35 F3 09
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: svrEncIV:96 82 F2 FE E9 11 4E 5C
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: svrEncIV:96 82 F2 FE E9 11 4E 5C
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Server resumed [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Server resumed [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao a
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao b
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.ao b
+FINE: %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: ChangeCipherSpec %% Finished.
+фев 09, 2016 8:43:27 AM ru.CryptoPro.ssl.f a
+FINE: ChangeCipherSpec %% Finished.
+фев 09, 2016 8:43:28 AM ru.CryptoPro.ssl.am a
+FINE: Finalizer, SEND TLSv1 ALERT:  warning, description = CLOSE_NOTIFY
+фев 09, 2016 8:43:28 AM ru.CryptoPro.ssl.am a
+FINE: Finalizer, SEND TLSv1 ALERT:  warning, description = CLOSE_NOTIFY
+
+Original Message:
+
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><S:Header><ISRequestHeader xmlns="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/" xmlns:ns10="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/device-metering/" xmlns:ns11="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/payment/" xmlns:ns12="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/nsi/" xmlns:ns13="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/fas/" xmlns:ns14="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/licenses/" xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/" xmlns:ns3="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/inspection/" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#" xmlns:ns5="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/infrastructure/" xmlns:ns6="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/services/" xmlns:ns7="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/house-management/" xmlns:ns8="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/disclosure/" xmlns:ns9="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/bills/"><Date>2016-02-09T08:43:22.876+06:00</Date><MessageGUID>42cb29ad-76cf-440b-a6b7-61f1c4ae6871</MessageGUID></ISRequestHeader></S:Header><S:Body><ns2:exportOrgRegistryRequest xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/" xmlns="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/" xmlns:ns10="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/device-metering/" xmlns:ns11="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/payment/" xmlns:ns12="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/nsi/" xmlns:ns13="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/fas/" xmlns:ns14="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/licenses/" xmlns:ns3="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/inspection/" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#" xmlns:ns5="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/infrastructure/" xmlns:ns6="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/services/" xmlns:ns7="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/house-management/" xmlns:ns8="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/disclosure/" xmlns:ns9="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/bills/" Id="signed-data-container"><ns2:SearchCriteria><OGRN>1125476111903</OGRN></ns2:SearchCriteria></ns2:exportOrgRegistryRequest></S:Body></S:Envelope>
+
+XAdES-BES signature completed.
+
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Header>
+        <ISRequestHeader xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/">
+            <Date>2016-02-09T08:43:22.876+06:00</Date>
+            <MessageGUID>42cb29ad-76cf-440b-a6b7-61f1c4ae6871</MessageGUID>
+        </ISRequestHeader>
+    </S:Header>
+    <S:Body>
+        <ns2:exportOrgRegistryRequest xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/" Id="signed-data-container"><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411"/><ds:Reference Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-ref0" URI="#signed-data-container"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>LLcaokhpsGBWPMj0tlJcVwHWbXUj1kwqL5UcHVrqKts=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-signedprops"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>LQVi9TJ2mpWDPzgLqzpjnHSdGD9AmaTT2szmOoLVJ20=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-sigvalue">rhR5frj/MBU3WakzDm+tedfNCXpjSDZvtx9fp8KZr6gCT+681TEMETSx9Txd1J82fpwUIyqNV8KL1Zrcx4x7iQ==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" Target="#xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a"><xades:SignedProperties Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-signedprops"><xades:SignedSignatureProperties><xades:SigningTime>2016-02-09T08:43:31.234+06:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>3vnkgVJSPQuw65f6VRwO8R+jxZ9AjfzRJw5CwfxB5pA=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN="Тестовый УЦ ООО \"КРИПТО-ПРО\"", O="ООО \"КРИПТО-ПРО\"", C=RU, OID.1.2.840.113549.1.9.1=info@cryptopro.ru, L=Москва, ST=77 г. Москва, STREET="ул. Сущёвский вал, д. 18", OID.1.2.643.3.131.1.1=#120C303037373137313037393931, OID.1.2.643.100.1=#120D31303337373030303835343434</ds:X509IssuerName><ds:X509SerialNumber>541412163180419640118737</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature>
+            <ns2:SearchCriteria>
+                <OGRN>1125476111903</OGRN>
+            </ns2:SearchCriteria>
+        </ns2:exportOrgRegistryRequest>
+    </S:Body>
+</S:Envelope>
+
+Outbound message:
+
+Message:
+
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Header>
+        <ISRequestHeader xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/">
+            <Date>2016-02-09T08:43:22.876+06:00</Date>
+            <MessageGUID>42cb29ad-76cf-440b-a6b7-61f1c4ae6871</MessageGUID>
+        </ISRequestHeader>
+    </S:Header>
+    <S:Body>
+        <ns2:exportOrgRegistryRequest xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/" Id="signed-data-container"><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411"/><ds:Reference Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-ref0" URI="#signed-data-container"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>LLcaokhpsGBWPMj0tlJcVwHWbXUj1kwqL5UcHVrqKts=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-signedprops"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>LQVi9TJ2mpWDPzgLqzpjnHSdGD9AmaTT2szmOoLVJ20=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-sigvalue">rhR5frj/MBU3WakzDm+tedfNCXpjSDZvtx9fp8KZr6gCT+681TEMETSx9Txd1J82fpwUIyqNV8KL1Zrcx4x7iQ==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" Target="#xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a"><xades:SignedProperties Id="xmldsig-a097e252-a4ff-4d0c-98c6-2cfa637f7f8a-signedprops"><xades:SignedSignatureProperties><xades:SigningTime>2016-02-09T08:43:31.234+06:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>3vnkgVJSPQuw65f6VRwO8R+jxZ9AjfzRJw5CwfxB5pA=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN="Тестовый УЦ ООО \"КРИПТО-ПРО\"", O="ООО \"КРИПТО-ПРО\"", C=RU, OID.1.2.840.113549.1.9.1=info@cryptopro.ru, L=Москва, ST=77 г. Москва, STREET="ул. Сущёвский вал, д. 18", OID.1.2.643.3.131.1.1=#120C303037373137313037393931, OID.1.2.643.100.1=#120D31303337373030303835343434</ds:X509IssuerName><ds:X509SerialNumber>541412163180419640118737</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature>
+            <ns2:SearchCriteria>
+                <OGRN>1125476111903</OGRN>
+            </ns2:SearchCriteria>
+        </ns2:exportOrgRegistryRequest>
+    </S:Body>
+</S:Envelope>
+
+
+Header name: Content-Type text/xml; charset=utf-8
+Header name: Content-Length 6037
+Header name: SOAPAction ""
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: Allow unsafe renegotiation: false
+Allow legacy hello messages: true
+Is initial handshake: true
+Is secure renegotiation: false
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: Allow unsafe renegotiation: false
+Allow legacy hello messages: true
+Is initial handshake: true
+Is secure renegotiation: false
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
+FINE: %% Client cached [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
+FINE: %% Client cached [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
+FINE: %% Try resuming [Session-1, TLS_CIPHER_2001] from port 52889
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
+FINE: %% Try resuming [Session-1, TLS_CIPHER_2001] from port 52889
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f q
+FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f q
+FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ad <init>
+FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ad <init>
+FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
+FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: handshakeDigest :117525fe
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: handshakeDigest :117525fe
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: clntEncIV:8B CF D7 08 3B 57 8D 77
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: clntEncIV:8B CF D7 08 3B 57 8D 77
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: svrEncIV:7D 4E C9 9B 0E C8 C7 88
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: svrEncIV:7D 4E C9 9B 0E C8 C7 88
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
+FINE: %% Server resumed [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
+FINE: %% Server resumed [Session-1, TLS_CIPHER_2001]
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
+FINE: %% Finished.
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
+FINE: %% Finished.
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao b
+FINE: %% Finished.
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao b
+FINE: %% Finished.
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: ChangeCipherSpec %% Finished.
+фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
+FINE: ChangeCipherSpec %% Finished.
+
+Inbound message:
+
+Message:
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ns4="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/" xmlns:ns5="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/"><soap:Header><ns4:ResultHeader xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ns4="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/" xmlns:ns5="http://dom.gosuslugi.ru/schema/integration/8.5.0.4/organizations-registry/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <ns4:Date>2016-02-09T05:45:08.272+03:00</ns4:Date>
+            <ns4:MessageGUID>42cb29ad-76cf-440b-a6b7-61f1c4ae6871</ns4:MessageGUID>
+        </ns4:ResultHeader></soap:Header><soap:Body>
+        <ns5:exportOrgRegistryResult Id="signed-data-container"><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-96f6850c-2d69-4e63-8513-3489105c21e9"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411"/><ds:Reference URI="#signed-data-container"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>r7RoTcRp8FbrqpMKkKjgRw+278Wx+iVtQY2M7pe9fFg=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xmldsig-96f6850c-2d69-4e63-8513-3489105c21e9-signedprops"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>a5E+wItpLqSINLgChOaqjvv40zM82wPMZ2nNo0EqXFE=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>BMwIvcmjJwbFrKWY2mvEpPvg0a1tNn8UoKWTWKWrVRoll7ppuPdtxulHbL2NXKjyYgv8QQE6yZb1WFnIRf449Q==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDIjCCAtGgAwIBAgITEgAMglWOkzVUY2/+3wAAAAyCVTAIBgYqhQMCAgMwfzEjMCEGCSqGSIb3DQEJARYUc3VwcG9ydEBjcnlwdG9wcm8ucnUxCzAJBgNVBAYTAlJVMQ8wDQYDVQQHEwZNb3Njb3cxFzAVBgNVBAoTDkNSWVBUTy1QUk8gTExDMSEwHwYDVQQDExhDUllQVE8tUFJPIFRlc3QgQ2VudGVyIDIwHhcNMTYwMTExMTAyMzA5WhcNMTYwNDExMTAzMzA5WjAxMRIwEAYDVQQDDAlURVNUIFNJR04xDjAMBgNVBAoMBUxBTklUMQswCQYDVQQGEwJSVTBjMBwGBiqFAwICEzASBgcqhQMCAiQABgcqhQMCAh4BA0MABEBh+VNFkZbnClvrdixds8luo1CcfhXo6gPK9Vqt+7rQEq4ycAHhKF8xgzTVyiL8LV2iEFpbYcRgge2aIo+163Sgo4IBcDCCAWwwDgYDVR0PAQH/BAQDAgTwMBMGA1UdJQQMMAoGCCsGAQUFBwMCMB0GA1UdDgQWBBSGfu/Zkh87Uns88uyC1i3szSfQYDAfBgNVHSMEGDAWgBQVMXywjRreZtcVnElSlxckuQF6gzBZBgNVHR8EUjBQME6gTKBKhkhodHRwOi8vdGVzdGNhLmNyeXB0b3Byby5ydS9DZXJ0RW5yb2xsL0NSWVBUTy1QUk8lMjBUZXN0JTIwQ2VudGVyJTIwMi5jcmwwgakGCCsGAQUFBwEBBIGcMIGZMGEGCCsGAQUFBzAChlVodHRwOi8vdGVzdGNhLmNyeXB0b3Byby5ydS9DZXJ0RW5yb2xsL3Rlc3QtY2EtMjAxNF9DUllQVE8tUFJPJTIwVGVzdCUyMENlbnRlciUyMDIuY3J0MDQGCCsGAQUFBzABhihodHRwOi8vdGVzdGNhLmNyeXB0b3Byby5ydS9vY3NwL29jc3Auc3JmMAgGBiqFAwICAwNBAJHT/j7ccAFSFDkYGwuGpdy9mbcjUURi/skZ0Rj11Lui2nAB0MP9y0kQA5xpZRFLpSoTHWN2PsYtiiVIEovP2WI=</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#xmldsig-96f6850c-2d69-4e63-8513-3489105c21e9"><xades:SignedProperties Id="xmldsig-96f6850c-2d69-4e63-8513-3489105c21e9-signedprops"><xades:SignedSignatureProperties><xades:SigningTime>2016-02-09T05:43:59.782+03:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>usyLQnDXbJAOMnSVW3mTn8NS/lK2Uj9WFJ+Ziv+mAog=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>cn=CRYPTO-PRO Test Center 2,o=CRYPTO-PRO LLC,l=Moscow,c=RU,1.2.840.113549.1.9.1=support@cryptopro.ru</ds:X509IssuerName><ds:X509SerialNumber>401417670205830718032061318995508048564093525</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature>
+            <ns5:OrgData>
+                <ns4:orgRootEntityGUID>8ba7cf1c-aafe-4547-9584-29aba22a8c96</ns4:orgRootEntityGUID>
+                <ns5:OrgVersion>
+                    <ns4:orgVersionGUID>8ba7cf1c-aafe-4547-9584-29aba22a8c96</ns4:orgVersionGUID>
+                    <ns5:lastEditingDate>2015-12-31+03:00</ns5:lastEditingDate>
+                    <ns5:IsActual>true</ns5:IsActual>
+                    <ns5:Legal>
+                        <ns4:ShortName>ООО "ЦУЖФ"</ns4:ShortName>
+                        <ns4:FullName>ООО "ЦУЖФ"</ns4:FullName>
+                        <ns4:OGRN>1125476111903</ns4:OGRN>
+                        <ns4:StateRegistrationDate>2015-12-31+03:00</ns4:StateRegistrationDate>
+                        <ns4:INN>5404465096</ns4:INN>
+                        <ns4:KPP>540201001</ns4:KPP>
+                        <ns4:OKOPF>12300</ns4:OKOPF>
+                        <ns4:Address>обл. Новосибирская, г. Новосибирск, ул. Тимирязева, д. 45</ns4:Address>
+                        <ns4:FIASHouseGuid>e40b1922-76b7-4d68-a01c-16df96f8d5f2</ns4:FIASHouseGuid>
+                    </ns5:Legal>
+                    <ns5:registryOrganizationStatus>P</ns5:registryOrganizationStatus>
+                </ns5:OrgVersion>
+                <ns5:organizationRoles>
+                    <ns4:Code>1</ns4:Code>
+                    <ns4:GUID>9875cc2e-73f9-41d6-bceb-47b48ed23395</ns4:GUID>
+                    <ns4:Name>Управляющая организация</ns4:Name>
+                </ns5:organizationRoles>
+                <ns5:isRegistered>true</ns5:isRegistered>
+            </ns5:OrgData>
+        </ns5:exportOrgRegistryResult>
+    </soap:Body></soap:Envelope>
+
+
+Header name: Accept text/xml, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+Header name: Content-Type text/xml; charset=utf-8
+Header name: Content-Length 5936
+Header name: SOAPAction ""
+
+Exception in thread "main" java.lang.NullPointerException
+	at ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry.callExportOrgRegistry(ExportOrgRegistry.java:68)
+	at ru.prog_matik.java.pregis.Main.main(Main.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:144)
+
+Process finished with exit code 1

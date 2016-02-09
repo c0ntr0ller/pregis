@@ -5,6 +5,7 @@ import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResultType;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.Fault;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgPortsType;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgService;
@@ -16,6 +17,7 @@ import javax.xml.ws.Holder;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.List;
 
 public class ExportOrgRegistry {
 
@@ -64,12 +66,8 @@ public class ExportOrgRegistry {
 
 
         ExportOrgRegistryResult result = exportOrgRegistry(getHeader(), getExportOrgRegistryRequest(), resultHolder);
-        System.out.println();
-        System.err.println(result.getErrorMessage().getErrorCode());
-        System.err.println(result.getErrorMessage().getDescription());
 
-        System.out.println("getResultHeader Date: " + getResultHeader().getDate());
-        System.out.println("getResultHeader MessageGUID: " + getResultHeader().getMessageGUID());
+
 
         logger.debug("Successful.");
     }
@@ -107,6 +105,52 @@ public class ExportOrgRegistry {
 
     public ResultHeader getResultHeader() {
         return resultHolder.value;
+    }
+
+    public void getResult(ExportOrgRegistryResult result) {
+
+        if (result.getErrorMessage() != null) {
+            List<ExportOrgRegistryResultType> exList = result.getOrgData();
+            for (ExportOrgRegistryResultType resultType : exList) {
+
+//                <ns5:OrgData>
+                resultType.getOrgRootEntityGUID();
+
+//              <ns5:OrgVersion>
+                resultType.getOrgVersion().getOrgVersionGUID();
+                resultType.getOrgVersion().getLastEditingDate();
+                resultType.getOrgVersion().isIsActual();
+
+//                <ns5:Legal>
+                resultType.getOrgVersion().getLegal().getShortName();
+                resultType.getOrgVersion().getLegal().getFullName();
+                resultType.getOrgVersion().getLegal().getOGRN();
+                resultType.getOrgVersion().getLegal().getStateRegistrationDate();
+                resultType.getOrgVersion().getLegal().getINN();
+                resultType.getOrgVersion().getLegal().getKPP();
+                resultType.getOrgVersion().getLegal().getOKOPF();
+                resultType.getOrgVersion().getLegal().getAddress();
+                resultType.getOrgVersion().getLegal().getFIASHouseGuid();
+
+                resultType.getOrgVersion().getRegistryOrganizationStatus();
+
+//                <ns5:organizationRoles>
+                for (int i = 0; i < resultType.getOrganizationRoles().size(); i++) {
+                    resultType.getOrganizationRoles().get(i).getCode();
+                    resultType.getOrganizationRoles().get(i).getGUID();
+                    resultType.getOrganizationRoles().get(i).getName();
+                }
+            }
+
+        } else {
+            System.out.println();
+            System.err.println(result.getErrorMessage().getErrorCode());
+            System.err.println(result.getErrorMessage().getDescription());
+
+            System.out.println("getResultHeader Date: " + getResultHeader().getDate());
+            System.out.println("getResultHeader MessageGUID: " + getResultHeader().getMessageGUID());
+        }
+
     }
 
 }

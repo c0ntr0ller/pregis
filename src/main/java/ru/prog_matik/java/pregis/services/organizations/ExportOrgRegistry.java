@@ -23,9 +23,6 @@ public class ExportOrgRegistry {
 
     private Logger logger = Logger.getLogger(ExportOrgRegistry.class);
 
-    private Holder<ResultHeader> resultHolder = new Holder<>();
-
-
     /**
      * Метод формирует запрос и отправляет на серавер.
      *
@@ -54,19 +51,12 @@ public class ExportOrgRegistry {
      */
     public void callExportOrgRegistry() throws Exception {
 
-//        ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
-//        exportOrgRegistryRequest.setId("signed-data-container");
-////        exportOrgRegistryRequest.setId("1");
-//        ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
-//        list.setOGRN("1125476111903");
-//        exportOrgRegistryRequest.getSearchCriteria().add(list);
-
-//        SignatureType signatureType = new SignatureType();
-//        exportOrgRegistryRequest.setSignature(signatureType);
-
+        Holder<ResultHeader> resultHolder = new Holder<>();
 
         ExportOrgRegistryResult result = exportOrgRegistry(getHeader(), getExportOrgRegistryRequest(), resultHolder);
 
+        AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
+        answer.getResult(result, resultHolder);
 
 
         logger.debug("Successful.");
@@ -77,10 +67,16 @@ public class ExportOrgRegistry {
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
-//        list.setKPP("540201001");
-        list.setOGRN("1125476111903");
-        if (list.getOGRN() == null && list.getOGRNIP() == null)
-            throw new PreGISException("Не указан обязательный параметр!");
+        list.setKPP("540201001");
+//        list.setOGRN("1125476111903");
+
+        if (list.getOGRN() == null && list.getOGRNIP() == null &&
+                list.getOrgRootEntityGUID() == null && list.getOrgVersionGUID() == null)
+            throw new PreGISException("Не указан обязательный параметр!\n" +
+                    "Укажите, пожалуйста, один из обязательных параметров:\n" +
+                    "\"ОГРН\", \"ОГРНИП\", \"Идентификатор версии записи в реестре организаций\"\n" +
+                    "или \"Идентификатор корневой сущности организации в реестре организаций\"");
+
         exportOrgRegistryRequest.getSearchCriteria().add(list);
 //
 //        SignatureType signatureType = new SignatureType();
@@ -102,55 +98,4 @@ public class ExportOrgRegistry {
 
         return isRequestHeader;
     }
-
-    public ResultHeader getResultHeader() {
-        return resultHolder.value;
-    }
-
-    public void getResult(ExportOrgRegistryResult result) {
-
-        if (result.getErrorMessage() != null) {
-            List<ExportOrgRegistryResultType> exList = result.getOrgData();
-            for (ExportOrgRegistryResultType resultType : exList) {
-
-//                <ns5:OrgData>
-                resultType.getOrgRootEntityGUID();
-
-//              <ns5:OrgVersion>
-                resultType.getOrgVersion().getOrgVersionGUID();
-                resultType.getOrgVersion().getLastEditingDate();
-                resultType.getOrgVersion().isIsActual();
-
-//                <ns5:Legal>
-                resultType.getOrgVersion().getLegal().getShortName();
-                resultType.getOrgVersion().getLegal().getFullName();
-                resultType.getOrgVersion().getLegal().getOGRN();
-                resultType.getOrgVersion().getLegal().getStateRegistrationDate();
-                resultType.getOrgVersion().getLegal().getINN();
-                resultType.getOrgVersion().getLegal().getKPP();
-                resultType.getOrgVersion().getLegal().getOKOPF();
-                resultType.getOrgVersion().getLegal().getAddress();
-                resultType.getOrgVersion().getLegal().getFIASHouseGuid();
-
-                resultType.getOrgVersion().getRegistryOrganizationStatus();
-
-//                <ns5:organizationRoles>
-                for (int i = 0; i < resultType.getOrganizationRoles().size(); i++) {
-                    resultType.getOrganizationRoles().get(i).getCode();
-                    resultType.getOrganizationRoles().get(i).getGUID();
-                    resultType.getOrganizationRoles().get(i).getName();
-                }
-            }
-
-        } else {
-            System.out.println();
-            System.err.println(result.getErrorMessage().getErrorCode());
-            System.err.println(result.getErrorMessage().getDescription());
-
-            System.out.println("getResultHeader Date: " + getResultHeader().getDate());
-            System.out.println("getResultHeader MessageGUID: " + getResultHeader().getMessageGUID());
-        }
-
-    }
-
 }

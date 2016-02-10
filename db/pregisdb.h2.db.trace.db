@@ -2748,3 +2748,57 @@ Data conversion error converting "Запрос"; SQL statement:
 select * from OBMEN_OPERATION, AKT, SPR_TYPE_OPERATION
 where OBMEN_OPERATION.AKT_ID = AKT.ID
 and OBMEN_OPERATION.TYPE_OPERATION = SPR_TYPE_OPERATION."NAME" [22018-191]
+2016-02-11 01:26:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "AK.UID" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "AK.UID" not found; SQL statement:
+SELECT
+ak.UID,
+ob.TYPE_OPERATION
+from OBMEN_OPERATION ob
+inner join AKT ak on ob.AKT_ID=ak.ID [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.command.dml.Select.prepare(Select.java:852)
+	at org.h2.command.Parser.prepareCommand(Parser.java:257)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-11 01:41:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "AK.UID" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "AK.UID" not found; SQL statement:
+SELECT
+ak.UID,
+ob.TYPE_OPERATION
+from OBMEN_OPERATION ob
+inner join AKT ak on ob.AKT_ID=ak.ID [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.command.dml.Select.prepare(Select.java:852)
+	at org.h2.command.Parser.prepareCommand(Parser.java:257)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

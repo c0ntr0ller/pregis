@@ -45,64 +45,6 @@ Message:
 Header name: Content-Type text/xml; charset=utf-8
 Header name: Content-Length 6037
 Header name: SOAPAction ""
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: Allow unsafe renegotiation: false
-Allow legacy hello messages: true
-Is initial handshake: true
-Is secure renegotiation: false
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: Allow unsafe renegotiation: false
-Allow legacy hello messages: true
-Is initial handshake: true
-Is secure renegotiation: false
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
-FINE: %% Client cached [Session-1, TLS_CIPHER_2001]
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
-FINE: %% Client cached [Session-1, TLS_CIPHER_2001]
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
-FINE: %% Try resuming [Session-1, TLS_CIPHER_2001] from port 52889
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao r
-FINE: %% Try resuming [Session-1, TLS_CIPHER_2001] from port 52889
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f q
-FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f q
-FINE: %% ClientHello, TLSv1; Cipher Suites: [TLS_CIPHER_2012, TLS_CIPHER_2001, SSL3_CK_GVO_KB2]; Compression Methods: 0; Extensions: Extension ext_hash_and_mac_alg_select, ext_hash_and_mac_alg_select: [48, 32, 48, 30, 48, 8, 6, 6, 42, -123, 3, 2, 2, 9, 48, 8, 6, 6, 42, -123, 3, 2, 2, 22, 48, 8, 6, 6, 42, -123, 3, 2, 2, 23], Extension renegotiation_info, renegotiated_connection: <empty>;
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ad <init>
-FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ad <init>
-FINE: ServerHello sessionId: {165, 231, 106, 134, 208, 179, 117, 6, 188, 160, 197, 61, 242, 34, 55, 59, 130, 120, 224, 126, 98, 157, 200, 47, 63, 145, 177, 169, 9, 164, 85, 163}
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
-FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
-FINE: %% ServerHello, TLSv1; Cipher Suite: TLS_CIPHER_2001; Compression Method: 0; Extensions: Extension renegotiation_info, renegotiated_connection: <empty>;
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: handshakeDigest :117525fe
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: handshakeDigest :117525fe
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: clntEncIV:8B CF D7 08 3B 57 8D 77
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: clntEncIV:8B CF D7 08 3B 57 8D 77
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: svrEncIV:7D 4E C9 9B 0E C8 C7 88
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: svrEncIV:7D 4E C9 9B 0E C8 C7 88
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
-FINE: %% Server resumed [Session-1, TLS_CIPHER_2001]
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
-FINE: %% Server resumed [Session-1, TLS_CIPHER_2001]
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
-FINE: %% Finished.
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao a
-FINE: %% Finished.
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao b
-FINE: %% Finished.
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.ao b
-FINE: %% Finished.
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: ChangeCipherSpec %% Finished.
-фев 09, 2016 8:43:31 AM ru.CryptoPro.ssl.f a
-FINE: ChangeCipherSpec %% Finished.
 
 Inbound message:
 

@@ -734,3 +734,850 @@ Feature not supported: "getFunctions" [50100-191]
 2016-02-10 01:11:43 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLException: ÐžÐ±ÑŠÐµÐºÑ‚ ÑƒÐ¶Ðµ Ð·Ð°ÐºÑ€Ñ‹Ñ‚
 The object is already closed [90007-191]
+02-10 10:19:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 10:19:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 10:20:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 10:20:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:22:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:22:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:23:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:23:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:26:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:26:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:28:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+02-10 11:28:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-176]
+2016-02-10 11:50:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: ÐžÐ±ÑŠÐµÐºÑ‚ ÑƒÐ¶Ðµ Ð·Ð°ÐºÑ€Ñ‹Ñ‚
+The object is already closed [90007-191]
+2016-02-10 11:50:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: ÐžÐ±ÑŠÐµÐºÑ‚ ÑƒÐ¶Ðµ Ð·Ð°ÐºÑ€Ñ‹Ñ‚
+The object is already closed [90007-191]
+2016-02-10 12:26:55 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:26:55 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:35:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:35:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:38:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:38:07 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister.execute(ResultSetPersister.java:240)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister.applyChanges(ResultSetPersister.java:124)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer.applyChanges(ResultSetViewer.java:1692)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer.applyChanges(ResultSetViewer.java:1663)
+	at org.jkiss.dbeaver.ui.editors.data.DatabaseDataEditor.doSave(DatabaseDataEditor.java:150)
+	at org.jkiss.dbeaver.ui.editors.entity.EntityEditor$SaveJob.run(EntityEditor.java:838)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:38:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:40:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister.execute(ResultSetPersister.java:240)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister.applyChanges(ResultSetPersister.java:124)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer.applyChanges(ResultSetViewer.java:1692)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer.applyChanges(ResultSetViewer.java:1663)
+	at org.jkiss.dbeaver.ui.editors.data.DatabaseDataEditor.doSave(DatabaseDataEditor.java:150)
+	at org.jkiss.dbeaver.ui.editors.entity.EntityEditor$SaveJob.run(EntityEditor.java:838)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:41:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:43:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:44:22 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:45:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:46:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:46:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:50:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:50:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "META"
+Feature not supported: "META"; SQL statement:
+UPDATE INFORMATION_SCHEMA.SEQUENCES
+SET CURRENT_VALUE=?
+WHERE SEQUENCE_CATALOG=? AND SEQUENCE_SCHEMA=? AND SEQUENCE_NAME=? AND CURRENT_VALUE=? AND "INCREMENT"=? AND IS_GENERATED=? AND REMARKS=? AND CACHE=? AND MIN_VALUE=? AND MAX_VALUE=? AND IS_CYCLE=? AND ID=? [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.table.MetaTable.removeRow(MetaTable.java:1884)
+	at org.h2.table.Table.updateRows(Table.java:487)
+	at org.h2.command.dml.Update.update(Update.java:145)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcPreparedStatement.execute(JdbcPreparedStatement.java:201)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.execute(JDBCPreparedStatementImpl.java:249)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCPreparedStatementImpl.executeStatement(JDBCPreparedStatementImpl.java:193)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.executeStatement(ExecuteBatchImpl.java:222)
+	at org.jkiss.dbeaver.model.impl.data.ExecuteBatchImpl.execute(ExecuteBatchImpl.java:134)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.executeStatements(ResultSetPersister.java:501)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetPersister$DataUpdaterJob.run(ResultSetPersister.java:367)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:54:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Unable to create or alter sequence "SYSTEM_SEQUENCE_9E44A84A_7C24_4508_B516_41790F38687D" because of invalid attributes (start value "0", min value "1", max value "9223372036854775807", increment "1"); SQL statement:
+ALTER TABLE TYPE_OPERATION ALTER COLUMN ID RESTART WITH 0 [90009-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.schema.Sequence.modify(Sequence.java:121)
+	at org.h2.command.dml.AlterSequence.update(AlterSequence.java:100)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:184)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:54:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Unable to create or alter sequence "SYSTEM_SEQUENCE_9E44A84A_7C24_4508_B516_41790F38687D" because of invalid attributes (start value "0", min value "1", max value "9223372036854775807", increment "1"); SQL statement:
+ALTER TABLE TYPE_OPERATION ALTER COLUMN ID RESTART WITH 0 [90009-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.schema.Sequence.modify(Sequence.java:121)
+	at org.h2.command.dml.AlterSequence.update(AlterSequence.java:100)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:184)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 12:57:40 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Unable to create or alter sequence "SYSTEM_SEQUENCE_9E44A84A_7C24_4508_B516_41790F38687D" because of invalid attributes (start value "-1", min value "1", max value "9223372036854775807", increment "1"); SQL statement:
+ALTER TABLE TYPE_OPERATION ALTER COLUMN ID RESTART WITH -1 [90009-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.schema.Sequence.modify(Sequence.java:121)
+	at org.h2.command.dml.AlterSequence.update(AlterSequence.java:100)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:184)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 15:37:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 15:37:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 15:41:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 15:41:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:00:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.model.navigator.DBNNode.refreshNode(DBNNode.java:179)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:285)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:00:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.model.navigator.DBNNode.refreshNode(DBNNode.java:179)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:285)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:04:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:04:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:06:09 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:06:09 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:07:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-10 16:07:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

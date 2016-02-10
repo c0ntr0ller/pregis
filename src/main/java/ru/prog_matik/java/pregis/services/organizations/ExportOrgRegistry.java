@@ -1,49 +1,19 @@
 package ru.prog_matik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResultType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgPortsType;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.RegOrgService;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
-import javax.xml.ws.BindingProvider;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
-import java.util.List;
 
 public class ExportOrgRegistry {
 
     private Logger logger = Logger.getLogger(ExportOrgRegistry.class);
-
-    /**
-     * Метод формирует запрос и отправляет на серавер.
-     *
-     * @param isRequestHeader          - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
-     * @param exportOrgRegistryRequest - Тело письма содержащее бизнес логику.
-     * @param resultHolder             - Заголовок письма полученый в ответ от сервера.
-     * @return ExportOrgRegistryResult
-     * @throws Fault
-     */
-    private static ExportOrgRegistryResult exportOrgRegistry(ISRequestHeader isRequestHeader, ExportOrgRegistryRequest exportOrgRegistryRequest, Holder<ResultHeader> resultHolder) throws Fault, NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException, NoSuchProviderException, UnrecoverableKeyException, KeyManagementException {
-
-        RegOrgService service = new RegOrgService();
-        RegOrgPortsType port = service.getRegOrgPort();
-
-        BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
-        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
-
-        return port.exportOrgRegistry(exportOrgRegistryRequest, isRequestHeader, resultHolder);
-    }
 
     /**
      * Метод во временной реализации, создаёт запрос на указанных данных.
@@ -53,7 +23,11 @@ public class ExportOrgRegistry {
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
-        ExportOrgRegistryResult result = exportOrgRegistry(getHeader(), getExportOrgRegistryRequest(), resultHolder);
+        OrgRegistryTransfer transfer = new OrgRegistryTransfer();
+
+        ISRequestHeader header = getHeader();
+
+        ExportOrgRegistryResult result = transfer.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
 
         AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
         answer.getResult(result, resultHolder);
@@ -78,9 +52,6 @@ public class ExportOrgRegistry {
                     "или \"Идентификатор корневой сущности организации в реестре организаций\"");
 
         exportOrgRegistryRequest.getSearchCriteria().add(list);
-//
-//        SignatureType signatureType = new SignatureType();
-//        exportOrgRegistryRequest.setSignature(signatureType);
 
         return exportOrgRegistryRequest;
     }
@@ -97,5 +68,11 @@ public class ExportOrgRegistry {
         isRequestHeader.setMessageGUID(OtherFormat.getRandomGUID());
 
         return isRequestHeader;
+    }
+
+    private void setDataBase(ISRequestHeader header) {
+
+        XMLGregorianCalendar  date = header.getDate();
+        String.format("%s-%s-%s %s:%s:%s", date.getYear(), date.getMonth(), date.getDay(), date.getHour(), date.getMinute(), date.getSecond());
     }
 }

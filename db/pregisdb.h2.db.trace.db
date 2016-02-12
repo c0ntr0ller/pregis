@@ -8568,3 +8568,2585 @@ select ob.id, ope.NAME_TYPE, ob.DATE, akt.GUID, ob.STATE_MESSAGE, met.NAME_METHO
 	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 10:02:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 10:02:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 10:03:09 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:481)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:357)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.model.navigator.DBNDataSource.refreshNode(DBNDataSource.java:233)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 10:03:09 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:481)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:357)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.model.navigator.DBNDataSource.refreshNode(DBNDataSource.java:233)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 11:26:20 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 11:26:20 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 11:27:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 11:27:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 14:24:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.model.navigator.DBNNode.refreshNode(DBNNode.java:179)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:285)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 14:24:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.model.navigator.DBNNode.refreshNode(DBNNode.java:179)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:285)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:05:33 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ñ� Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¿Ñ€Ð¸ ÐºÐ¾Ð½Ð²ÐµÑ€Ñ‚Ð°Ñ†Ð¸Ð¸ "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"
+Data conversion error converting "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') -- (, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') [22018-191]
+2016-02-12 16:05:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:05:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:06:03 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ñ� Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¿Ñ€Ð¸ ÐºÐ¾Ð½Ð²ÐµÑ€Ñ‚Ð°Ñ†Ð¸Ð¸ "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"
+Data conversion error converting "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') -- (, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') [22018-191]
+2016-02-12 16:07:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "INSERT  INTO AKT[[*]ID, GUID, NAME_METHOD] VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry')"; Ð¾Ð¶Ð¸Ð´Ð°Ð»Ð¾Ñ�ÑŒ "., (, DIRECT, SORTED, DEFAULT, VALUES, SET, (, SELECT, FROM"
+Syntax error in SQL statement "INSERT  INTO AKT[[*]ID, GUID, NAME_METHOD] VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry')"; expected "., (, DIRECT, SORTED, DEFAULT, VALUES, SET, (, SELECT, FROM"; SQL statement:
+INSERT  INTO AKT[ID, GUID, NAME_METHOD] VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') [42001-191]
+2016-02-12 16:09:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ñ� Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¿Ñ€Ð¸ ÐºÐ¾Ð½Ð²ÐµÑ€Ñ‚Ð°Ñ†Ð¸Ð¸ "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"
+Data conversion error converting "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') -- (, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') [22018-191]
+2016-02-12 16:09:40 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ñ� Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¿Ñ€Ð¸ ÐºÐ¾Ð½Ð²ÐµÑ€Ñ‚Ð°Ñ†Ð¸Ð¸ "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"
+Data conversion error converting "'exportOrgRegistry' (AKT: NAME_METHOD BIGINT NOT NULL COMMENT STRINGDECODE('\u0418\u043c\u044f \u043c\u0435\u0442\u043e\u0434\u0430. \u0421\u043e\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044f \u0432 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f, \u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438, \u0432 \u043a\u043e\u0434\u0435 Java. \u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a \""SPR_NAME_METHOD\"".'))"; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') -- (, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', 'exportOrgRegistry') [22018-191]
+2016-02-12 16:11:15 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "EXPORTORGREGISTRY" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "EXPORTORGREGISTRY" not found; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = exportOrgRegistry) [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:855)
+	at org.h2.engine.Session.optimizeQueryExpression(Session.java:232)
+	at org.h2.expression.Subquery.optimize(Subquery.java:72)
+	at org.h2.command.dml.Insert.prepare(Insert.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:257)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:11:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', SELECT ID FROM SPR_NAME_METHOD OB WHERE NAME_METHOD = EXPORTORGREGISTRY;[*]
+                     
+                             
+                                
+                                                                                                                                          "; Ð¾Ð¶Ð¸Ð´Ð°Ð»Ð¾Ñ�ÑŒ "., (, [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, GROUP, HAVING, UNION, MINUS, EXCEPT, INTERSECT, ORDER, OFFSET, FETCH, LIMIT, FOR, [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', SELECT ID FROM SPR_NAME_METHOD OB WHERE NAME_METHOD = EXPORTORGREGISTRY;[*]
+                     
+                             
+                                
+                                                                                                                                          "; expected "., (, [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, GROUP, HAVING, UNION, MINUS, EXCEPT, INTERSECT, ORDER, OFFSET, FETCH, LIMIT, FOR, [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = exportOrgRegistry;
+--CALL GET_MESSAGE();
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42001-191]
+2016-02-12 16:11:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', SELECT ID FROM SPR_NAME_METHOD OB WHERE NAME_METHOD = 'exportOrgRegistry';[*]
+                     
+                             
+                                
+                                                                                                                                          "; Ð¾Ð¶Ð¸Ð´Ð°Ð»Ð¾Ñ�ÑŒ "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, GROUP, HAVING, UNION, MINUS, EXCEPT, INTERSECT, ORDER, OFFSET, FETCH, LIMIT, FOR, [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', SELECT ID FROM SPR_NAME_METHOD OB WHERE NAME_METHOD = 'exportOrgRegistry';[*]
+                     
+                             
+                                
+                                                                                                                                          "; expected "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, GROUP, HAVING, UNION, MINUS, EXCEPT, INTERSECT, ORDER, OFFSET, FETCH, LIMIT, FOR, [, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+INSERT  INTO AKT(ID, GUID, NAME_METHOD) 
+VALUES(DEFAULT, '42cb29ad-76cf-440b-a6b7-61f1c4ac6871', select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = 'exportOrgRegistry';
+--CALL GET_MESSAGE();
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42001-191]
+2016-02-12 16:13:46 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "AKT.GUID" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "AKT.GUID" not found; SQL statement:
+select ID from AKT ob WHERE AKT.GUID = '42cb29ad-76cf-440b-a6b7-61f1c4ac6871' [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:178)
+	at org.h2.command.dml.Select.prepare(Select.java:855)
+	at org.h2.command.Parser.prepareCommand(Parser.java:257)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:18:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "TYPE_OPPEATION" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "TYPE_OPPEATION" not found; SQL statement:
+INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPPEATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(DEFAULT, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.table.Table.getColumn(Table.java:680)
+	at org.h2.command.Parser.parseColumn(Parser.java:866)
+	at org.h2.command.Parser.parseColumnList(Parser.java:850)
+	at org.h2.command.Parser.parseInsert(Parser.java:1050)
+	at org.h2.command.Parser.parsePrepared(Parser.java:411)
+	at org.h2.command.Parser.parse(Parser.java:315)
+	at org.h2.command.Parser.parse(Parser.java:287)
+	at org.h2.command.Parser.prepareCommand(Parser.java:252)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:19:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "TYPE_OPPEATION" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "TYPE_OPPEATION" not found; SQL statement:
+INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPPEATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(DEFAULT, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.table.Table.getColumn(Table.java:680)
+	at org.h2.command.Parser.parseColumn(Parser.java:866)
+	at org.h2.command.Parser.parseColumnList(Parser.java:850)
+	at org.h2.command.Parser.parseInsert(Parser.java:1050)
+	at org.h2.command.Parser.parsePrepared(Parser.java:411)
+	at org.h2.command.Parser.parse(Parser.java:315)
+	at org.h2.command.Parser.parse(Parser.java:287)
+	at org.h2.command.Parser.prepareCommand(Parser.java:252)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:19:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ñ‚Ð¾Ð»Ð±ÐµÑ† "TYPE_OPPEATION" Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½
+Column "TYPE_OPPEATION" not found; SQL statement:
+INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPPEATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(DEFAULT, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') [42122-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.table.Table.getColumn(Table.java:680)
+	at org.h2.command.Parser.parseColumn(Parser.java:866)
+	at org.h2.command.Parser.parseColumnList(Parser.java:850)
+	at org.h2.command.Parser.parseInsert(Parser.java:1050)
+	at org.h2.command.Parser.parsePrepared(Parser.java:411)
+	at org.h2.command.Parser.parse(Parser.java:315)
+	at org.h2.command.Parser.parse(Parser.java:287)
+	at org.h2.command.Parser.prepareCommand(Parser.java:252)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:20:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð�ÐµÐ²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ Ñ�Ñ‚Ñ€Ð¾ÐºÐ¸ "2016-02.12 16:17:18" Ð² Ñ‚Ð¸Ð¿ "TIMESTAMP"
+Cannot parse "TIMESTAMP" constant "2016-02.12 16:17:18"; SQL statement:
+INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPERATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(DEFAULT, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') -- (, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') [22007-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:168)
+	at org.h2.value.ValueTimestamp.parse(ValueTimestamp.java:122)
+	at org.h2.value.Value.convertTo(Value.java:911)
+	at org.h2.table.Column.convert(Column.java:148)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:143)
+	at org.h2.command.dml.Insert.update(Insert.java:114)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:184)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: java.lang.IllegalArgumentException: 2016-02.12 16:17:18
+	at org.h2.util.DateTimeUtils.parseDateValue(DateTimeUtils.java:305)
+	at org.h2.value.ValueTimestamp.parseTry(ValueTimestamp.java:140)
+	at org.h2.value.ValueTimestamp.parse(ValueTimestamp.java:120)
+	... 16 more
+2016-02-12 16:20:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPERATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(,[*] 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.')"; Ð¾Ð¶Ð¸Ð´Ð°Ð»Ð¾Ñ�ÑŒ "), DEFAULT, NOT, EXISTS, INTERSECTS, SELECT, FROM"
+Syntax error in SQL statement "INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPERATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(,[*] 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.')"; expected "), DEFAULT, NOT, EXISTS, INTERSECTS, SELECT, FROM"; SQL statement:
+INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPERATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') [42001-191]
+2016-02-12 16:21:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð�ÐµÐ²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ Ñ�Ñ‚Ñ€Ð¾ÐºÐ¸ "2016-02.12 16:17:18" Ð² Ñ‚Ð¸Ð¿ "TIMESTAMP"
+Cannot parse "TIMESTAMP" constant "2016-02.12 16:17:18"; SQL statement:
+INSERT  INTO OBMEN_OPERATION(ID, AKT_ID, DATE, TYPE_OPERATION, SOAPMESSAGE, STATE_MESSAGE) 
+VALUES(DEFAULT, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') -- (, 3, '2016-02.12 16:17:18', 1, NULL, 'Test Message.') [22007-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:168)
+	at org.h2.value.ValueTimestamp.parse(ValueTimestamp.java:122)
+	at org.h2.value.Value.convertTo(Value.java:911)
+	at org.h2.table.Column.convert(Column.java:148)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:143)
+	at org.h2.command.dml.Insert.update(Insert.java:114)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:98)
+	at org.h2.command.Command.executeUpdate(Command.java:258)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:184)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: java.lang.IllegalArgumentException: 2016-02.12 16:17:18
+	at org.h2.util.DateTimeUtils.parseDateValue(DateTimeUtils.java:305)
+	at org.h2.value.ValueTimestamp.parseTry(ValueTimestamp.java:140)
+	at org.h2.value.ValueTimestamp.parse(ValueTimestamp.java:120)
+	... 16 more
+2016-02-12 16:24:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:21: error: illegal start of expression
+    void setTableContent(java.sql.Connection con,
+    ^
+org\h2\dynamic\SET_MESSAGE.java:21: error: ';' expected
+    void setTableContent(java.sql.Connection con,
+                        ^
+org\h2\dynamic\SET_MESSAGE.java:22: error: ';' expected
+                                      String guid,
+                                            ^
+org\h2\dynamic\SET_MESSAGE.java:22: error: not a statement
+                                      String guid,
+                                             ^
+org\h2\dynamic\SET_MESSAGE.java:22: error: ';' expected
+                                      String guid,
+                                                 ^
+org\h2\dynamic\SET_MESSAGE.java:24: error: ';' expected
+                                      String dateMessage,
+                                            ^
+org\h2\dynamic\SET_MESSAGE.java:24: error: not a statement
+                                      String dateMessage,
+                                             ^
+org\h2\dynamic\SET_MESSAGE.java:24: error: ';' expected
+                                      String dateMessage,
+                                                        ^
+org\h2\dynamic\SET_MESSAGE.java:26: error: ';' expected
+                                      java.io.InputStream soapMessage,
+                                          ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: ';' expected
+                                      String stateMessage) throws Exception {
+                                            ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: not a statement
+                                      String stateMessage) throws Exception {
+                                             ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: ';' expected
+                                      String stateMessage) throws Exception {
+                                                         ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: not a statement
+                                      String stateMessage) throws Exception {
+                                                                  ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: ';' expected
+                                      String stateMessage) throws Exception {
+                                                                           ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                        ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                        ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: not a statement
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                         ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                                   ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: not a statement
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                                                    ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                                                                 ^
+org\h2\dynamic\SET_MESSAGE.java:77: error: ';' expected
+    int getAktID(java.sql.Connection con,
+                ^
+org\h2\dynamic\SET_MESSAGE.java:78: error: ';' expected
+                 String guid,
+                       ^
+org\h2\dynamic\SET_MESSAGE.java:78: error: not a statement
+                 String guid,
+                        ^
+org\h2\dynamic\SET_MESSAGE.java:78: error: ';' expected
+                 String guid,
+                            ^
+org\h2\dynamic\SET_MESSAGE.java:79: error: ';' expected
+                 String nameMethod) throws java.sql.SQLException {
+                                  ^
+org\h2\dynamic\SET_MESSAGE.java:79: error: not a statement
+                 String nameMethod) throws java.sql.SQLException {
+                                                   ^
+org\h2\dynamic\SET_MESSAGE.java:79: error: ';' expected
+                 String nameMethod) throws java.sql.SQLException {
+                                                                ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: illegal start of expression
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+    ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+               ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                               ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: not a statement
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                    ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                                       ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: not a statement
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                                                        ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                                                                     ^
+35 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:21: error: illegal start of expression
+    void setTableContent(java.sql.Connection con,
+    ^
+org\h2\dynamic\SET_MESSAGE.java:21: error: ';' expected
+    void setTableContent(java.sql.Connection con,
+                        ^
+org\h2\dynamic\SET_MESSAGE.java:22: error: ';' expected
+                                      String guid,
+                                            ^
+org\h2\dynamic\SET_MESSAGE.java:22: error: not a statement
+                                      String guid,
+                                             ^
+org\h2\dynamic\SET_MESSAGE.java:22: error: ';' expected
+                                      String guid,
+                                                 ^
+org\h2\dynamic\SET_MESSAGE.java:24: error: ';' expected
+                                      String dateMessage,
+                                            ^
+org\h2\dynamic\SET_MESSAGE.java:24: error: not a statement
+                                      String dateMessage,
+                                             ^
+org\h2\dynamic\SET_MESSAGE.java:24: error: ';' expected
+                                      String dateMessage,
+                                                        ^
+org\h2\dynamic\SET_MESSAGE.java:26: error: ';' expected
+                                      java.io.InputStream soapMessage,
+                                          ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: ';' expected
+                                      String stateMessage) throws Exception {
+                                            ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: not a statement
+                                      String stateMessage) throws Exception {
+                                             ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: ';' expected
+                                      String stateMessage) throws Exception {
+                                                         ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: not a statement
+                                      String stateMessage) throws Exception {
+                                                                  ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: ';' expected
+                                      String stateMessage) throws Exception {
+                                                                           ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                        ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                        ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: not a statement
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                         ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                                   ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: not a statement
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                                                    ^
+org\h2\dynamic\SET_MESSAGE.java:53: error: ';' expected
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+                                                                                                 ^
+org\h2\dynamic\SET_MESSAGE.java:77: error: ';' expected
+    int getAktID(java.sql.Connection con,
+                ^
+org\h2\dynamic\SET_MESSAGE.java:78: error: ';' expected
+                 String guid,
+                       ^
+org\h2\dynamic\SET_MESSAGE.java:78: error: not a statement
+                 String guid,
+                        ^
+org\h2\dynamic\SET_MESSAGE.java:78: error: ';' expected
+                 String guid,
+                            ^
+org\h2\dynamic\SET_MESSAGE.java:79: error: ';' expected
+                 String nameMethod) throws java.sql.SQLException {
+                                  ^
+org\h2\dynamic\SET_MESSAGE.java:79: error: not a statement
+                 String nameMethod) throws java.sql.SQLException {
+                                                   ^
+org\h2\dynamic\SET_MESSAGE.java:79: error: ';' expected
+                 String nameMethod) throws java.sql.SQLException {
+                                                                ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: illegal start of expression
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+    ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+               ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                               ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: not a statement
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                    ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                                       ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: not a statement
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                                                        ^
+org\h2\dynamic\SET_MESSAGE.java:113: error: ';' expected
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+                                                                                                     ^
+35 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+ResultSet getTableContent(java.sql.Connection con) throws Exception {
+
+            /**
+     * Метод добавляет данные в таблицы, добавление сообщения.
+     * @param con - Соединение с базой данных.
+     * @param guid - Индивидуальный идентификатор сообщения.
+     * @param nameMethode - Название метода для запроса например "exportOrgRegistry".
+     * @param dateMessage - Дата и время сообщения.
+     * @param nameTypeEn - Тип сообщения "Запрос" или "Ответ".
+     * @param soapMessage - Сообщение целиком.
+     * @param stateMessage - Статус сообщения, возможно описание ошибки.
+     * @return java.sql.PreparedStatement для базы данных, так как это является процедурой для H2.
+     * @throws Exception
+     */
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    /**
+
+     * @param con - Соединение с базой данных.
+     * @param nameTypeEn -
+     * @return
+     * @throws java.sql.SQLException
+     */
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    /**
+     * Метод возвращает "ID" из таблице "AKT", для таблицы "OBMEN_OPERATION".
+     * Получает "GUID" сообщения, если не находит его в таблице "AKT", то создаёт новую запись.
+     * В любом случае вернет "ID", таблицы "AKT".
+     * @param con - соединение с базой данных.
+     * @param guid - индивидуальный идентификатор сообщения.
+     * @param nameMethod - имя метода для запроса например "exportOrgRegistry".
+     * @return int "ID" таблицы "AKT".
+     * @throws java.sql.SQLException
+     */
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    /**
+     * Добавляет запись в таблицу "AKT", "GUID" и "ID" с таблицы "SPR_NAME_METHOD".
+     * @param con - соединение с базой данных.
+     * @param guid - индивидуальный идентификатор сообщения.
+     * @param nameMethod - - имя метода для запроса например "exportOrgRegistry".
+     * @throws java.sql.SQLException
+     */
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setInt(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+    }
+}
+$$ [42000-191]
+2016-02-12 16:30:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:30:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð”Ð°Ð½Ð½Ð°Ñ� Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ� Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚Ñ�Ñ�: "getFunctions"
+Feature not supported: "getFunctions" [50100-191]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:367)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.reloadChildren(DBNDatabaseNode.java:600)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNodeContent(DBNDatabaseNode.java:301)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.refreshNode(DBNDatabaseNode.java:282)
+	at org.jkiss.dbeaver.ui.actions.navigator.NavigatorHandlerRefresh$1.run(NavigatorHandlerRefresh.java:120)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-12 16:31:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:37: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:39: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+                     ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:37: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:39: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+                     ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+     /**
+     * Метод добавляет данные в таблицы, добавление сообщения.
+     * @param con - Соединение с базой данных.
+     * @param guid - Индивидуальный идентификатор сообщения.
+     * @param nameMethode - Название метода для запроса, например "exportOrgRegistry".
+     * @param dateMessage - Дата и время сообщения.
+     * @param nameTypeEn - Тип сообщения "Запрос" или "Ответ".
+     * @param soapMessage - Сообщение целиком.
+     * @param stateMessage - Статус сообщения, возможно описание ошибки.
+     * @return java.sql.PreparedStatement для базы данных, так как это является процедурой для H2.
+     * @throws Exception
+     */
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    /**
+     * Метод возвращает "ID" из справочника "SPR_TYPE_OPERATION".
+     * @param con - соединение с базой данных.
+     * @param nameTypeEn - имя типа сообщения, "ID" которого необходимо вернуть.
+     * @return int "ID" из справочника "SPR_TYPE_OPERATION".
+     * @throws java.sql.SQLException
+     */
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    /**
+     * Метод возвращает "ID" из таблице "AKT", для таблицы "OBMEN_OPERATION".
+     * Получает "GUID" сообщения, если не находит его в таблице "AKT", то создаёт новую запись.
+     * В любом случае вернет "ID", таблицы "AKT".
+     * @param con - соединение с базой данных.
+     * @param guid - индивидуальный идентификатор сообщения.
+     * @param nameMethod - имя метода для запроса, например "exportOrgRegistry".
+     * @return int "ID" таблицы "AKT".
+     * @throws java.sql.SQLException
+     */
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    /**
+     * Добавляет запись в таблицу "AKT", "GUID" и "ID" с таблицы "SPR_NAME_METHOD".
+     * @param con - соединение с базой данных.
+     * @param guid - индивидуальный идентификатор сообщения.
+     * @param nameMethod - - имя метода для запроса, например "exportOrgRegistry".
+     * @throws java.sql.SQLException
+     */
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setInt(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:33:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:19: error: repeated modifier
+    static void setTableContent(java.sql.Connection con,
+    ^
+1 error
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:19: error: repeated modifier
+    static void setTableContent(java.sql.Connection con,
+    ^
+1 error
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+     /**
+     * Метод добавляет данные в таблицы, добавление сообщения.
+     * @param con - Соединение с базой данных.
+     * @param guid - Индивидуальный идентификатор сообщения.
+     * @param nameMethode - Название метода для запроса, например "exportOrgRegistry".
+     * @param dateMessage - Дата и время сообщения.
+     * @param nameTypeEn - Тип сообщения "Запрос" или "Ответ".
+     * @param soapMessage - Сообщение целиком.
+     * @param stateMessage - Статус сообщения, возможно описание ошибки.
+     * @return java.sql.PreparedStatement для базы данных, так как это является процедурой для H2.
+     * @throws Exception
+     */
+    static void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    /**
+     * Метод возвращает "ID" из справочника "SPR_TYPE_OPERATION".
+     * @param con - соединение с базой данных.
+     * @param nameTypeEn - имя типа сообщения, "ID" которого необходимо вернуть.
+     * @return int "ID" из справочника "SPR_TYPE_OPERATION".
+     * @throws java.sql.SQLException
+     */
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    /**
+     * Метод возвращает "ID" из таблице "AKT", для таблицы "OBMEN_OPERATION".
+     * Получает "GUID" сообщения, если не находит его в таблице "AKT", то создаёт новую запись.
+     * В любом случае вернет "ID", таблицы "AKT".
+     * @param con - соединение с базой данных.
+     * @param guid - индивидуальный идентификатор сообщения.
+     * @param nameMethod - имя метода для запроса, например "exportOrgRegistry".
+     * @return int "ID" таблицы "AKT".
+     * @throws java.sql.SQLException
+     */
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    /**
+     * Добавляет запись в таблицу "AKT", "GUID" и "ID" с таблицы "SPR_NAME_METHOD".
+     * @param con - соединение с базой данных.
+     * @param guid - индивидуальный идентификатор сообщения.
+     * @param nameMethod - - имя метода для запроса, например "exportOrgRegistry".
+     * @throws java.sql.SQLException
+     */
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setInt(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:34:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+                     ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+                     ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setInt(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:35:55 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:7: error: repeated modifier
+    public static void setTableContent(java.sql.Connection con,
+    ^
+org\h2\dynamic\SET_MESSAGE.java:7: error: repeated modifier
+    public static void setTableContent(java.sql.Connection con,
+           ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:7: error: repeated modifier
+    public static void setTableContent(java.sql.Connection con,
+    ^
+org\h2\dynamic\SET_MESSAGE.java:7: error: repeated modifier
+    public static void setTableContent(java.sql.Connection con,
+           ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    public static void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    public static int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    public static int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    public static void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setInt(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:36:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+                     ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+                     ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    static void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setInt(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:38:40 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+                     ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:38:56 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:39:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:42:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, (long) getAktID(con, guid, nameMethode));
+                             ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, (long) getAktID(con, guid, nameMethode));
+                             ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, (long) getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:42:38 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    int getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:43:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:25: error: non-static method getAktID(Connection,String,String) cannot be referenced from a static context
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    long getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:44:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:69: error: non-static method addAKT(Connection,String,String) cannot be referenced from a static context
+                addAKT(con, guid, nameMethod);
+                ^
+2 errors
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:27: error: non-static method getTypeOperation(Connection,String) cannot be referenced from a static context
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+                      ^
+org\h2\dynamic\SET_MESSAGE.java:69: error: non-static method addAKT(Connection,String,String) cannot be referenced from a static context
+                addAKT(con, guid, nameMethod);
+                ^
+2 errors
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    static long getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]
+2016-02-12 16:44:38 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "org\h2\dynamic\SET_MESSAGE.java:69: error: non-static method addAKT(Connection,String,String) cannot be referenced from a static context
+                addAKT(con, guid, nameMethod);
+                ^
+1 error
+"
+Syntax error in SQL statement "org\h2\dynamic\SET_MESSAGE.java:69: error: non-static method addAKT(Connection,String,String) cannot be referenced from a static context
+                addAKT(con, guid, nameMethod);
+                ^
+1 error
+"; SQL statement:
+CREATE ALIAS SET_MESSAGE AS $$
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethode,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setLong(1, getAktID(con, guid, nameMethode));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setLong(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+    }
+
+    static int getTypeOperation(java.sql.Connection con, String nameTypeEn) throws java.sql.SQLException {
+
+        int typeOperationID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+        if (rs.next()) {
+            typeOperationID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено " + nameTypeEn + " в таблице \"SPR_TYPE_OPERATION.NAME_TYPE_EN\"!");
+        }
+        return typeOperationID;
+    }
+
+    static long getAktID(java.sql.Connection con,
+                 String guid,
+                 String nameMethod) throws java.sql.SQLException {
+
+        boolean stateGetID = true;
+        int answerID = 0;
+        int tempError = 0;
+        java.sql.ResultSet rs;
+
+        while (stateGetID) {
+
+            tempError++;
+
+            if (tempError > 5) {
+                throw new java.sql.SQLException("Не найдено данных в таблице \"AKT\"!");
+            }
+
+            rs = con.createStatement().executeQuery(
+                    "select ID from AKT ob WHERE GUID = " + guid);
+            if (rs.next()) {
+                answerID = rs.getInt("ID");
+                stateGetID = false;
+            } else {
+                addAKT(con, guid, nameMethod);
+            }
+        }
+        return answerID;
+    }
+
+    void addAKT(java.sql.Connection con, String guid, String nameMethod) throws java.sql.SQLException {
+
+        int nameMethodID;
+
+        java.sql.ResultSet rs = con.createStatement().executeQuery(
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+        if (rs.next()) {
+            nameMethodID = rs.getInt("ID");
+        } else {
+            throw new java.sql.SQLException("Не найдено данных в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
+        }
+        java.sql.PreparedStatement psAKT = con.prepareStatement(
+                "INSERT  INTO AKT(" +
+                        "ID, " +
+                        "GUID, " +
+                        "NAME_METHOD) " +
+                        "VALUES(DEFAULT, ?, ?)");
+        psAKT.setString(1, guid);
+        psAKT.setLong(2, nameMethodID);
+        psAKT.executeUpdate();
+
+        try {
+            if (!psAKT.isClosed()) psAKT.close();
+            if (!rs.isClosed()) rs.close();
+        } catch (Exception e) {
+        }
+
+    }
+$$ [42000-191]

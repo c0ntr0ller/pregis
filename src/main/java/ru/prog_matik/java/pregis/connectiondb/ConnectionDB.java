@@ -7,10 +7,10 @@ import java.sql.SQLException;
 
 public class ConnectionDB implements AutoCloseable {
 
-    private static JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:file:/db/pregisdb", "", "");;
+    private JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:file:/db/pregisdb", "", "");;
 
 
-    public static Connection getConnectionDB() throws SQLException {
+    public Connection getConnectionDB() throws SQLException {
 
         return cp.getConnection();
     }

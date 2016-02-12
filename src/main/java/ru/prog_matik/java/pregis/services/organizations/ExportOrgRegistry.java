@@ -32,7 +32,6 @@ public class ExportOrgRegistry {
         AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
         answer.getResult(result, resultHolder);
 
-
         logger.debug("Successful.");
     }
 

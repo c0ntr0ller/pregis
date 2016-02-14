@@ -1,6 +1,7 @@
 package ru.prog_matik.java.pregis;
 
 import ru.prog_matik.java.pregis.connectiondb.ConnectionDB;
+import ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -8,8 +9,13 @@ import ru.prog_matik.java.pregis.connectiondb.ConnectionDB;
  */
 public class ProgramAction {
 
-    private ConnectionDB connectionDB = new ConnectionDB();
-
-
+    public void callExportOrgRegistry() {
+        ExportOrgRegistry reg = new ExportOrgRegistry();
+        try {
+            reg.callExportOrgRegistry();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

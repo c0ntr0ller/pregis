@@ -1,4 +1,4 @@
-package ru.prog_matik.java.pregis.connectiondb;
+package ru.prog_matik.java.pregis.connectiondb.storegeprocedure;
 
 /**
  * Хранимая процедура тут только хранится.
@@ -11,7 +11,7 @@ public class setMessageStoredProcedure {
      * Метод добавляет данные в таблицы, добавление сообщения.
      * @param con - Соединение с базой данных.
      * @param guid - Индивидуальный идентификатор сообщения.
-     * @param nameMethode - Название метода для запроса, например "exportOrgRegistry".
+     * @param nameMethod - Название метода для запроса, например "exportOrgRegistry".
      * @param dateMessage - Дата и время сообщения.
      * @param nameTypeEn - Тип сообщения "Запрос" или "Ответ".
      * @param soapMessage - Сообщение целиком.
@@ -21,7 +21,7 @@ public class setMessageStoredProcedure {
      */
     void setTableContent(java.sql.Connection con,
                                       String guid,
-                                      String nameMethode,
+                                      String nameMethod,
                                       String dateMessage,
                                       String nameTypeEn,
                                       java.io.InputStream soapMessage,
@@ -37,11 +37,13 @@ public class setMessageStoredProcedure {
                         "STATE_MESSAGE) " +
                         "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
 
-        ps.setInt(1, getAktID(con, guid, nameMethode));
+        ps.setInt(1, getAktID(con, guid, nameMethod));
         ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
         ps.setInt(3, getTypeOperation(con, nameTypeEn));
         ps.setBlob(4, soapMessage);
         ps.setString(5, stateMessage);
+        ps.executeUpdate();
+        if (!ps.isClosed()) ps.close();
     }
 
     /**
@@ -56,7 +58,7 @@ public class setMessageStoredProcedure {
         int typeOperationID;
 
         java.sql.ResultSet rs = con.createStatement().executeQuery(
-                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = " + nameTypeEn);
+                "select ID from SPR_TYPE_OPERATION ob WHERE NAME_TYPE_EN = \'" + nameTypeEn + "\'");
         if (rs.next()) {
             typeOperationID = rs.getInt("ID");
         } else {
@@ -93,13 +95,14 @@ public class setMessageStoredProcedure {
             }
 
             rs = con.createStatement().executeQuery(
-                    "select ID from AKT ob WHERE GUID = " + guid);
+                    "select ID from AKT WHERE GUID = \'" + guid + "\'");
             if (rs.next()) {
                 answerID = rs.getInt("ID");
                 stateGetID = false;
             } else {
                 addAKT(con, guid, nameMethod);
             }
+            if (!rs.isClosed()) rs.close();
         }
         return answerID;
     }
@@ -116,7 +119,7 @@ public class setMessageStoredProcedure {
         int nameMethodID;
 
         java.sql.ResultSet rs = con.createStatement().executeQuery(
-                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = " + nameMethod);
+                "select ID from SPR_NAME_METHOD ob WHERE NAME_METHOD = \'" + nameMethod + "\'");
         if (rs.next()) {
             nameMethodID = rs.getInt("ID");
         } else {
@@ -137,6 +140,5 @@ public class setMessageStoredProcedure {
             if (!rs.isClosed()) rs.close();
         } catch (Exception e) {
         }
-
     }
 }

@@ -11,12 +11,12 @@ public class AnswerHandlerExportOrgRegistry {
 
     public void getResult(ExportOrgRegistryResult result, Holder<ResultHeader> resultHolder) {
 
-        if (result.getErrorMessage() != null) {
+        if (result.getErrorMessage() == null) {
             List<ExportOrgRegistryResultType> exList = result.getOrgData();
             for (ExportOrgRegistryResultType resultType : exList) {
 
 //                <ns5:OrgData>
-                resultType.getOrgRootEntityGUID();
+                System.out.println(resultType.getOrgRootEntityGUID());
 
 //              <ns5:OrgVersion>
                 resultType.getOrgVersion().getOrgVersionGUID();
@@ -24,7 +24,7 @@ public class AnswerHandlerExportOrgRegistry {
                 resultType.getOrgVersion().isIsActual();
 
 //                <ns5:Legal>
-                resultType.getOrgVersion().getLegal().getShortName();
+                System.out.println(resultType.getOrgVersion().getLegal().getShortName());
                 resultType.getOrgVersion().getLegal().getFullName();
                 resultType.getOrgVersion().getLegal().getOGRN();
                 resultType.getOrgVersion().getLegal().getStateRegistrationDate();

@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
@@ -14,16 +9,24 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-
+/**
+ * Класс служит для перехвата сообщения и последующего его подписания.
+ */
 public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
+    /**
+     * Метод перехватывает сообщения.
+     * @param messageContext - перехваченное сообщение.
+     * @return
+     */
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
-//        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         RequestSiginet requestSiginet = new RequestSiginet();
         SOAPMessage msg = messageContext.getMessage();
 
@@ -32,47 +35,52 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
         if (outboundProperty) {
             try {
 
-//                msg.writeTo(byteStream);
-                System.out.println("\nOriginal Message: \n");
-                msg.writeTo(System.out);
-                System.out.println("\n");
+//                Вывод в консоль сформированного сообщения без подписи.
+//                System.out.println("\nOriginal Message: \n");
+//                msg.writeTo(System.out);
+//                System.out.println("\n");
 
-                msg.getSOAPPart().getEnvelope().removeNamespaceDeclaration("SOAP-ENV");
-                msg.saveChanges();
                 msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();
                 msg.saveChanges();
 
+                try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
+                    msg.writeTo(outputStream);
+                }
 
-//                requestSiginet.signRequest(soapEnvelope.getOwnerDocument());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//            System.out.println("\nOutbound message:");
+        } else {
+//            System.out.println("\nInbound message:");
 
-//                msg = MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(requestSiginet.signRequest(byteStream).toByteArray()));
+            try {
 
+                try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "inbound")) {
+                    msg.writeTo(outputStream);
+                }
+
+//            Вывод сообщение запроса
+//            System.out.println("\nMessage: \n");
+//            msg.writeTo(System.out);
+//            System.out.println("\n");
+
+//            Вывод заголовка сообщения
+//            printHeaders(msg.getMimeHeaders());
 
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println(e.getMessage());
             }
-            System.out.println("\nOutbound message:");
-        } else {
-            System.out.println("\nInbound message:");
-        }
-
-        try {
-
-            System.out.println("\nMessage: \n");
-            msg.writeTo(System.out);
-            System.out.println("\n");
-
-            printHeaders(msg.getMimeHeaders());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
         }
         return true;
     }
 
+    /**
+     * Метод служит для вывода заголовка сообщения в консоль.
+     * @param headers заголовок сообщения.
+     */
     private void printHeaders(MimeHeaders headers) {
 
         System.out.println();

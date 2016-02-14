@@ -10,8 +10,16 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_servi
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+import java.util.ResourceBundle;
 
+/**
+ * Класс содержит параметры и реализует методы для обмена информацией по модулю "hcs-organizations-registry-service".
+ * Наследуется от интерфейса "RegOrgPortsType".
+ */
 class OrgRegistryTransfer implements RegOrgPortsType {
+
+    private static final String USER_NAME = ResourceBundle.getBundle("application").getString("config.ws.user");
+    private static final String PASSWORD = ResourceBundle.getBundle("application").getString("config.ws.password");
 
     /*
     Гайд по получению "SenderID":
@@ -38,8 +46,8 @@ class OrgRegistryTransfer implements RegOrgPortsType {
         RegOrgPortsType port = service.getRegOrgPort();
 
         BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
+        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_NAME);
+        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
 
         return port.exportOrgRegistry(exportOrgRegistryRequest, header, header0);
@@ -52,7 +60,7 @@ class OrgRegistryTransfer implements RegOrgPortsType {
      * @param header - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
      * @param importDataProviderRequest - Тело письма содержащее бизнес логику.
      * @param header0 - Заголовок письма полученый в ответ от сервера.
-     * @return ExportOrgRegistryResult
+     * @return ImportResult
      * @throws Fault
      */
     @Override
@@ -62,8 +70,8 @@ class OrgRegistryTransfer implements RegOrgPortsType {
         RegOrgPortsType port = service.getRegOrgPort();
 
         BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
+        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_NAME);
+        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
 
         return port.importDataProvider(importDataProviderRequest, header, header0);
@@ -76,7 +84,7 @@ class OrgRegistryTransfer implements RegOrgPortsType {
      * @param header - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
      * @param exportDataProviderRequest - Тело письма содержащее бизнес логику.
      * @param header0 - Заголовок письма полученый в ответ от сервера.
-     * @return ExportOrgRegistryResult
+     * @return ExportDataProviderResult
      * @throws Fault
      */
     @Override
@@ -86,8 +94,8 @@ class OrgRegistryTransfer implements RegOrgPortsType {
         RegOrgPortsType port = service.getRegOrgPort();
 
         BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
+        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_NAME);
+        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
 
         return port.exportDataProvider(exportDataProviderRequest, header, header0);
@@ -100,7 +108,7 @@ class OrgRegistryTransfer implements RegOrgPortsType {
      * @param header - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
      * @param importSubsidiaryRequest - Тело письма содержащее бизнес логику.
      * @param header0 - Заголовок письма полученый в ответ от сервера.
-     * @return ExportOrgRegistryResult
+     * @return ImportResult
      * @throws Fault
      */
     @Override
@@ -110,8 +118,8 @@ class OrgRegistryTransfer implements RegOrgPortsType {
         RegOrgPortsType port = service.getRegOrgPort();
 
         BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
+        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_NAME);
+        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
 
         return port.importSubsidiary(importSubsidiaryRequest, header, header0);

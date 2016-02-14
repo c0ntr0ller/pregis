@@ -1,7 +1,6 @@
 package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
-import org.apache.xml.security.utils.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,7 +8,6 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import ru.CryptoPro.JCP.KeyStore.HDImage.HDImageStore;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -46,6 +44,10 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+/**
+ * Класс подписывает наш отправляемый запрос.
+ * Который мы получаем из класса ClientMessageHandler.
+ */
 public class RequestSiginet {
 
     private Logger logger = Logger.getLogger(RequestSiginet.class);
@@ -162,11 +164,14 @@ public class RequestSiginet {
         final SignedDataObjects dataObjects = new SignedDataObjects(dataObj);
 
         signer.sign(dataObjects, nodeToSign, SignatureAppendingStrategies.AsFirstChild);
-        System.out.println("XAdES-BES signature completed.\n");
+        logger.info("XAdES-BES signature completed.");
+//        System.out.println("XAdES-BES signature completed.\n");
+
 
         String mes = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(sourceDocument);
         mes = mes.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
-        System.out.println(mes);
+//        Вывод подписанного сообщения в консоль.
+//        System.out.println(mes);
 
 //        Проверка подписи.
 //        try {

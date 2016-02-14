@@ -28,7 +28,6 @@ import javax.xml.ws.Holder;
 })
 public interface RegOrgPortsType {
 
-
     /**
      * экспорт сведений об организациях
      * 

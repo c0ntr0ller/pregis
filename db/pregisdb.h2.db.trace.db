@@ -12738,3 +12738,13 @@ Feature not supported: "getFunctions" [50100-191]
 	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-02-15 13:31:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Ð¡Ð¸Ð½Ñ‚Ð°ÐºÑ�Ð¸Ñ‡ÐµÑ�ÐºÐ°Ñ� Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð² Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ð¸ SQL "';
+--COMMENT ON COLUMN ORGANIZATION.KPP IS '[*]КПП';
+--COMMENT ON COLUMN ORGANIZATION.OKOPF IS 'ОКОПФ"
+Syntax error in SQL statement "';
+--COMMENT ON COLUMN ORGANIZATION.KPP IS '[*]КПП';
+--COMMENT ON COLUMN ORGANIZATION.OKOPF IS 'ОКОПФ"; SQL statement:
+';
+--COMMENT ON COLUMN ORGANIZATION.KPP IS 'КПП';
+--COMMENT ON COLUMN ORGANIZATION.OKOPF IS 'ОКОПФ [42000-191]

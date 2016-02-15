@@ -2,12 +2,7 @@ package ru.prog_matik.java.pregis;
 
 
 import ru.CryptoPro.JCP.JCP;
-import ru.prog_matik.java.pregis.connectiondb.ConnectionDB;
-import ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry;
 import ru.prog_matik.java.pregis.signet.Configure;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
 
 public class Main {
     public static void main(String[] args) throws Exception {

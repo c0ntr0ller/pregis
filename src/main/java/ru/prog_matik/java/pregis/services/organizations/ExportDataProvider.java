@@ -1,65 +1,72 @@
 package ru.prog_matik.java.pregis.services.organizations;
 
+import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.Fault;
+import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
+import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
 
 public class ExportDataProvider {
 
-    private Holder<ResultHeader> resultHolder = new Holder<>();
+    private Logger logger = Logger.getLogger(ExportDataProvider.class);
 
-//    private ExportDataProviderResult exportDataProvider(ExportDataProviderRequest exportDataProviderRequest, ISRequestHeader isRequestHeader, Holder<ResultHeader> resultHolder) throws Fault {
-//
-//        RegOrgService service = new RegOrgService();
-//        RegOrgPortsType port = service.getRegOrgPort();
-//
-//        BindingProvider provider = (BindingProvider) port;
-//        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
-//        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
-//        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
-//
-//        return port.exportDataProvider(exportDataProviderRequest, isRequestHeader, resultHolder);
-//    }
+    private static final String NAME_METHOD = "exportDataProvider";
 
-    public void callExportDataProvide() throws Fault {
+    public void callExportDataProvide() {
 
         OrgRegistryTransfer transfer = new OrgRegistryTransfer();
 
-        ExportDataProviderResult result = transfer.exportDataProvider(getExportDataProviderRequest(), getHeader(), resultHolder);
-        System.out.println();
-        System.err.println(result.getErrorMessage().getErrorCode());
-        System.err.println(result.getErrorMessage().getDescription());
+        ISRequestHeader header = getHeader();
 
-        System.out.println("getResultHeader Date: " + getResultHeader().getDate());
-        System.out.println("getResultHeader MessageGUID: " + getResultHeader().getMessageGUID());
+        Holder<ResultHeader> resultHolder = new Holder<>();
 
+        ExportDataProviderResult result;
+        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
+
+        try {
+            result = transfer.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
+        } catch (Fault fault) {
+            saveToBase.setRequestError(header, NAME_METHOD, fault);
+            logger.error(fault.getMessage());
+            fault.printStackTrace();
+            return;
+        }
+
+        saveToBase.setRequest(header, NAME_METHOD);
+
+        saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
+
+        logger.info("Successful.");
     }
 
     private ExportDataProviderRequest getExportDataProviderRequest() {
 
         ExportDataProviderRequest exportDataProviderRequest = new ExportDataProviderRequest();
         exportDataProviderRequest.setId("signed-data-container");
-        exportDataProviderRequest.setIsActual(true);
+//        exportDataProviderRequest.setIsActual(true);
 
         return exportDataProviderRequest;
     }
 
     private ISRequestHeader getHeader() {
 
-        ISRequestHeader isRequestHeader = new ISRequestHeader();
-        isRequestHeader.setDate(OtherFormat.getDateNow());
-        isRequestHeader.setMessageGUID(OtherFormat.getRandomGUID());
+        ISRequestHeader requestHeader = new ISRequestHeader();
+//        requestHeader.setSenderID(BaseOrganization.getSenderID());
+        requestHeader.setMessageGUID(OtherFormat.getRandomGUID());
+        requestHeader.setDate(OtherFormat.getDateNow());
 
-        return isRequestHeader;
+        return requestHeader;
     }
 
-    private ResultHeader getResultHeader() {
-        return resultHolder.value;
-    }
+//    private ResultHeader getResultHeader() {
+//        return resultHolder.value;
+//    }
 
 }

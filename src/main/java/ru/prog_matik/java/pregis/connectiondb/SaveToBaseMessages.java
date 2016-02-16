@@ -13,9 +13,9 @@ import java.sql.*;
 /**
  * Класс добавляет данные в базу данных, что-то похожее на лог, для хранения всех запросов и ответов.
  */
-public class SaveToBase {
+public class SaveToBaseMessages {
 
-    private Logger logger = Logger.getLogger(SaveToBase.class);
+    private Logger logger = Logger.getLogger(SaveToBaseMessages.class);
 
     private Connection connection;
     private String stateMessage = "OK";
@@ -62,6 +62,7 @@ public class SaveToBase {
             stateBuilder.append(errorMessage.getDescription());
             stateBuilder.append("\n");
             stateBuilder.append(errorMessage.getStackTrace());
+            logger.error(stateBuilder.toString());
         }
 
         try (FileInputStream inputStream = new FileInputStream(file)) {

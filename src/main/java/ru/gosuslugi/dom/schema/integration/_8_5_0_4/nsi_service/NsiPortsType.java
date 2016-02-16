@@ -1,10 +1,7 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
@@ -26,6 +23,7 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ImportOrganizationWorksR
  * 
  */
 @WebService(name = "NsiPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.4/nsi-service/")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration._8_5_0.ObjectFactory.class,

@@ -3,6 +3,7 @@ package ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_serv
 
 import ru.gosuslugi.dom.schema.integration._8_5_0.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.*;
 

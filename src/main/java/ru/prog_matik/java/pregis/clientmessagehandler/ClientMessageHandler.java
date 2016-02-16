@@ -46,6 +46,9 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();
                 msg.saveChanges();
+//                Debug
+                System.out.println("\nOutbound message:");
+                msg.writeTo(System.out);
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
                     msg.writeTo(outputStream);
@@ -54,9 +57,9 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            System.out.println("\nOutbound message:");
+
         } else {
-//            System.out.println("\nInbound message:");
+            System.out.println("\nInbound message:");
 
             try {
 
@@ -65,17 +68,15 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 }
 
 //            Вывод сообщение запроса
-//            System.out.println("\nMessage: \n");
-//            msg.writeTo(System.out);
-//            System.out.println("\n");
+            System.out.println("\nMessage: \n");
+            msg.writeTo(System.out);
+            System.out.println("\n");
 
 //            Вывод заголовка сообщения
 //            printHeaders(msg.getMimeHeaders());
-                logger.info(msg);
 
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println(e.getMessage());
             }
         }
         return true;

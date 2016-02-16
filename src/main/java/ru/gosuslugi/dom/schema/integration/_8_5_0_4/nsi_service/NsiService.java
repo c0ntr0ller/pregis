@@ -1,6 +1,7 @@
 
 package ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service;
 
+import javax.jws.HandlerChain;
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;
 import java.net.MalformedURLException;
@@ -16,6 +17,7 @@ import java.net.URL;
  * 
  */
 @WebServiceClient(name = "NsiService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.4/nsi-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-nsi-service/services/Nsi")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class NsiService
     extends Service
 {

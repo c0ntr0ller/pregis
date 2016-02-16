@@ -22,17 +22,9 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 
 //        Start
-
-        new ProgramAction().callExportOrgRegistry();
-//        ExportOrgRegistry reg = new ExportOrgRegistry();
-//        reg.sendMessage();
-//        reg.callExportOrgRegistry();
-
-//        ExportDataProvider exportDataProvider = new ExportDataProvider();
-//        exportDataProvider.callExportDataProvide();
-
-//        ExportNsiList exportNsiList = new ExportNsiList();
-//        exportNsiList.callExportNsiList();
+//        new ProgramAction().callExportOrgRegistry();
+//        new ProgramAction().callExportDataProvider();
+        new ProgramAction().callExportNsiList();
 
     }
 }

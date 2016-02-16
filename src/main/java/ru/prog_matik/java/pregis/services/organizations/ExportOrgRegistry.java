@@ -6,7 +6,7 @@ import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_service.Fault;
-import ru.prog_matik.java.pregis.connectiondb.SaveToBase;
+import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
@@ -23,7 +23,7 @@ public class ExportOrgRegistry {
      * Метод во временной реализации, создаёт запрос на указанных данных.
      * В дальнейшем необходимо реализовать его так, что бы ему передавали объект класса ExportOrgRegistryRequest с параметроми.
      */
-    public void callExportOrgRegistry() throws Exception {
+    public ExportOrgRegistryResult callExportOrgRegistry() throws Exception {
 
         String nameMethod = "exportOrgRegistry";
 
@@ -33,7 +33,7 @@ public class ExportOrgRegistry {
 
         ISRequestHeader header = getHeader();
 
-        SaveToBase saveToBase = new SaveToBase();
+        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         ExportOrgRegistryResult result;
 
@@ -43,18 +43,20 @@ public class ExportOrgRegistry {
             saveToBase.setRequestError(header, nameMethod, fault);
             logger.error(fault.getMessage());
             fault.printStackTrace();
-            return;
+            return null;
         }
 
         saveToBase.setRequest(header, nameMethod);
 
         saveToBase.setResult(resultHolder.value, nameMethod, result.getErrorMessage());
 
-        AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
-
-        answer.setOrgRegistryResultToBase(result);
+//        AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
+//
+//        answer.setOrgRegistryResultToBase(result);
 
         logger.info("Successful.");
+
+        return result;
     }
 
     /**
@@ -68,9 +70,9 @@ public class ExportOrgRegistry {
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
-        list.setOGRN("1116027009702"); // Test
+//        list.setOGRN("1116027009702"); // Test ООО "ЖЭУ-1" какой-то г. Иваново.
 //        list.setKPP("540201001"); // Test
-//        list.setOGRN("1125476111903");
+        list.setOGRN("1125476111903");
 
 
         if (list.getOGRN() == null && list.getOGRNIP() == null &&

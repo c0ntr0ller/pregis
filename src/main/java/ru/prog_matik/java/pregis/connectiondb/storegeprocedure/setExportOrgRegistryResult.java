@@ -35,7 +35,7 @@ public class setExportOrgRegistryResult {
                    String kpp) throws SQLException {
 
         java.sql.PreparedStatement ps = con.prepareStatement(
-                "MERGE  INTO EXPORT_ORG_REGISTRY_RESULT(" +
+                "MERGE INTO EXPORT_ORG_REGISTRY_RESULT(" +
                         "ID, " +
                         "RESULT_OBJECT, " +
                         "ORGANIZATION_ID) " +

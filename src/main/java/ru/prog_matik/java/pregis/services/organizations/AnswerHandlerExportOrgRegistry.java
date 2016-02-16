@@ -1,15 +1,120 @@
 package ru.prog_matik.java.pregis.services.organizations;
 
+import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration._8_5_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResultType;
+import ru.prog_matik.java.pregis.connectiondb.ConnectionDB;
 
 import javax.xml.ws.Holder;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class AnswerHandlerExportOrgRegistry {
+class AnswerHandlerExportOrgRegistry {
 
-    public void getResult(ExportOrgRegistryResult result, Holder<ResultHeader> resultHolder) {
+    private Logger logger = Logger.getLogger(AnswerHandlerExportOrgRegistry.class);
+
+    void setOrgRegistryResultToBase(ExportOrgRegistryResult result) {
+
+        if (result.getErrorMessage() == null) {
+
+            Connection connection;
+
+            try {
+
+                Map mapOrg = getOrgData(result);
+                connection = ConnectionDB.getConnectionDB();
+
+                CallableStatement cs = connection.prepareCall("{CALL SET_EXPORT_ORG_REGISTRY_RESULT(?, ?, ?, ?, ?, ?)}");
+
+                cs.setObject(1, result);
+                cs.setString(2, mapOrg.get("getFullName").toString());
+                cs.setString(3, mapOrg.get("getShortName").toString());
+                cs.setString(4, mapOrg.get("getOGRN").toString());
+                cs.setString(5, mapOrg.get("getINN").toString());
+                cs.setString(6, mapOrg.get("getKPP").toString());
+
+                int isResultSet = cs.executeUpdate();
+                logger.info("setMessageToBase: CallableStatement.executeUpdate() - " + isResultSet);
+
+                if (!cs.isClosed()) cs.close();
+                if (!connection.isClosed()) connection.close();
+                ConnectionDB.close();
+
+            } catch (SQLException e) {
+                logger.fatal("Ошибка при коннекте или ещё с чем, в общем при работе с БД!", e);
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Map getOrgData(ExportOrgRegistryResult result) {
+
+        Map<String, String> mapOrg = new HashMap<>();
+
+        List<ExportOrgRegistryResultType> exList = result.getOrgData();
+
+        for (ExportOrgRegistryResultType resultType : exList) {
+
+//                <ns5:Legal>
+            if (resultType.getOrgVersion().getSubsidiary() != null) {
+//                Если Обособленное подразделение
+                resultType.getOrgVersion().getSubsidiary().getFullName();
+                resultType.getOrgVersion().getSubsidiary().getShortName();
+                resultType.getOrgVersion().getSubsidiary().getOGRN();
+                resultType.getOrgVersion().getSubsidiary().getINN();
+                resultType.getOrgVersion().getSubsidiary().getKPP();
+                resultType.getOrgVersion().getSubsidiary().getOKOPF();
+                resultType.getOrgVersion().getSubsidiary().getAddress();
+                resultType.getOrgVersion().getSubsidiary().getFIASHouseGuid();
+
+                resultType.getOrgVersion().getSubsidiary().getActivityEndDate();
+                resultType.getOrgVersion().getSubsidiary().getSourceName();
+                resultType.getOrgVersion().getSubsidiary().getVersionNumber();
+                resultType.getOrgVersion().getSubsidiary().getStatusVersion();
+                resultType.getOrgVersion().getSubsidiary().getParentOrg();
+                resultType.getOrgVersion().getSubsidiary().getParentOrg().getRegOrgVersion();
+
+            } else if (resultType.getOrgVersion().getEntrp() != null) {
+
+//                Если Индивидуальный предприниматель
+                resultType.getOrgVersion().getEntrp().getFirstName();
+                resultType.getOrgVersion().getEntrp().getSurname();
+                resultType.getOrgVersion().getEntrp().getINN();
+                resultType.getOrgVersion().getEntrp().getOGRNIP();
+                resultType.getOrgVersion().getEntrp().getPatronymic();
+                resultType.getOrgVersion().getEntrp().getSex();
+                resultType.getOrgVersion().getEntrp().getStateRegistrationDate();
+
+            } else if (resultType.getOrgVersion().getLegal() != null) {
+
+//                Если Юридическое лицо
+                mapOrg.put("getFullName", resultType.getOrgVersion().getLegal().getFullName());
+                mapOrg.put("getShortName", resultType.getOrgVersion().getLegal().getShortName());
+                mapOrg.put("getOGRN", resultType.getOrgVersion().getLegal().getOGRN());
+                mapOrg.put("getINN", resultType.getOrgVersion().getLegal().getINN());
+                mapOrg.put("getKPP", resultType.getOrgVersion().getLegal().getKPP());
+                mapOrg.put("getOKOPF", resultType.getOrgVersion().getLegal().getOKOPF());
+                mapOrg.put("getAddress", resultType.getOrgVersion().getLegal().getAddress());
+                mapOrg.put("getFIASHouseGuid", resultType.getOrgVersion().getLegal().getFIASHouseGuid());
+
+                logger.info(resultType.getOrgVersion().getLegal().getActivityEndDate());
+                logger.info(resultType.getOrgVersion().getLegal().getCommercialName());
+                logger.info(resultType.getOrgVersion().getLegal().getStateRegistrationDate());
+
+            }
+        }
+        return mapOrg;
+    }
+
+
+    void getResult(ExportOrgRegistryResult result, Holder<ResultHeader> resultHolder) {
 
         if (result.getErrorMessage() == null) {
             List<ExportOrgRegistryResultType> exList = result.getOrgData();
@@ -24,7 +129,7 @@ public class AnswerHandlerExportOrgRegistry {
                 resultType.getOrgVersion().isIsActual();
 
 //                <ns5:Legal>
-                System.out.println(resultType.getOrgVersion().getLegal().getShortName());
+                resultType.getOrgVersion().getLegal().getShortName();
                 resultType.getOrgVersion().getLegal().getFullName();
                 resultType.getOrgVersion().getLegal().getOGRN();
                 resultType.getOrgVersion().getLegal().getStateRegistrationDate();

@@ -1,6 +1,7 @@
 package ru.prog_matik.java.pregis.connectiondb;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration._8_5_0.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration._8_5_0.HeaderType;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -16,15 +17,15 @@ public class SaveToBase {
 
     private Logger logger = Logger.getLogger(SaveToBase.class);
 
-    Connection connection;
+    private Connection connection;
+    private String stateMessage = "OK";
 
     /**
      * Метод получает параметры "Запроса" и добавляет их в базу данных.
      * @param headerRequest - заголовок запроса (содержит дату и идентификатор сообщения).
-     * @param stateMessage - получает состояние сообщения.
      * @param nameMethod - имя метода.
      */
-    public void setRequest(HeaderType headerRequest, String stateMessage, String nameMethod) {
+    public void setRequest(HeaderType headerRequest, String nameMethod) {
 
         String typeOperation = "Request";
         File file = new File("temp" + File.separator + "outbound");
@@ -42,23 +43,62 @@ public class SaveToBase {
     /**
      * Метод получает параметры "Ответа" и добавляет их в базу данных.
      * @param headerRequest - заголовок ответа (содержит дату и идентификатор сообщения).
-     * @param stateMessage - получает состояние сообщения.
+     * @param errorMessage - получает состояние сообщения об ошибки (если имеется).
      * @param nameMethod - имя метода.
      */
-    public void setResult(HeaderType headerRequest, String stateMessage, String nameMethod) {
+    public void setResult(HeaderType headerRequest, String nameMethod, ErrorMessageType errorMessage) {
 
         String typeOperation = "Result";
 
         File file = new File("temp" + File.separator + "inbound");
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
 
+        StringBuilder stateBuilder = new StringBuilder("OK");
+
+        if (errorMessage != null) {
+            stateBuilder.setLength(0);
+            stateBuilder.append(errorMessage.getErrorCode());
+            stateBuilder.append("\n");
+            stateBuilder.append(errorMessage.getDescription());
+            stateBuilder.append("\n");
+            stateBuilder.append(errorMessage.getStackTrace());
+        }
+
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, inputStream, stateMessage);
+            setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, inputStream, stateBuilder.toString());
             file.deleteOnExit();
         } catch (IOException e) {
             logger.error(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Метод необходимо вызывать в случаях возникновения экстренных ошибок.
+     * Добавлять в исключения try-catch.
+     * @param headerRequest - заголовок запроса (содержит дату и идентификатор сообщения).
+     * @param nameMethod - имя метода.
+     * @param fault - объект ошибки веб-сервиса, от куда можно извлечь ошибки.
+     */
+    public void setRequestError(HeaderType headerRequest, String nameMethod, Exception fault) {
+
+        StringBuilder stateBuilder = new StringBuilder("OK");
+
+        stateBuilder.setLength(0);
+        stateBuilder.append("Ошибка!");
+        stateBuilder.append("\n");
+        stateBuilder.append(fault.getMessage());
+        stateBuilder.append("\n");
+        StackTraceElement[] traceElements = fault.getStackTrace();
+
+        for (int i = 0; i < traceElements.length; i++) {
+            stateBuilder.append(traceElements[i].toString());
+            stateBuilder.append("\n");
+        }
+
+        stateMessage = stateBuilder.toString();
+
+        setRequest(headerRequest, nameMethod);
     }
 
     /**
@@ -117,6 +157,5 @@ public class SaveToBase {
 
         return String.format("%s-%s-%s %s:%s:%s", date.getYear(), date.getMonth(), date.getDay(), date.getHour(), date.getMinute(), date.getSecond());
     }
-
 
 }

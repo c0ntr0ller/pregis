@@ -9,6 +9,7 @@ import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry_servi
 import ru.prog_matik.java.pregis.connectiondb.SaveToBase;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
+
 import javax.xml.ws.Holder;
 
 /**
@@ -26,8 +27,6 @@ public class ExportOrgRegistry {
 
         String nameMethod = "exportOrgRegistry";
 
-        StringBuilder stateBuilder = new StringBuilder("OK");
-
         Holder<ResultHeader> resultHolder = new Holder<>();
 
         OrgRegistryTransfer transfer = new OrgRegistryTransfer();
@@ -36,49 +35,31 @@ public class ExportOrgRegistry {
 
         SaveToBase saveToBase = new SaveToBase();
 
-        ExportOrgRegistryResult result = null;
+        ExportOrgRegistryResult result;
 
         try {
             result = transfer.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
         } catch (Fault fault) {
-            stateBuilder.setLength(0);
-            stateBuilder.append("Нет ответа!");
-            stateBuilder.append("\n");
-            stateBuilder.append(fault.getMessage());
-            stateBuilder.append("\n");
-            StackTraceElement[] traceElements = fault.getStackTrace();
-            for (int i = 0; i < traceElements.length; i++) {
-                stateBuilder.append(traceElements[i].toString());
-                stateBuilder.append("\n");
-            }
-            saveToBase.setRequest(header, stateBuilder.toString(), nameMethod);
+            saveToBase.setRequestError(header, nameMethod, fault);
             logger.error(fault.getMessage());
             fault.printStackTrace();
             return;
         }
 
-        saveToBase.setRequest(header, stateBuilder.toString(), nameMethod);
+        saveToBase.setRequest(header, nameMethod);
 
-        if (result != null && result.getErrorMessage() != null) {
-            stateBuilder.setLength(0);
-            stateBuilder.append(result.getErrorMessage().getErrorCode());
-            stateBuilder.append("\n");
-            stateBuilder.append(result.getErrorMessage().getDescription());
-            stateBuilder.append("\n");
-            stateBuilder.append(result.getErrorMessage().getStackTrace());
-        }
-
-        saveToBase.setResult(resultHolder.value, stateBuilder.toString(), nameMethod);
+        saveToBase.setResult(resultHolder.value, nameMethod, result.getErrorMessage());
 
         AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
 
-        answer.getResult(result, resultHolder);
+        answer.setOrgRegistryResultToBase(result);
 
         logger.info("Successful.");
     }
 
     /**
      * Метод формирует необходимые данные для запроса.
+     *
      * @return ExportOrgRegistryRequest готовый объект для запроса.
      * @throws PreGISException
      */
@@ -87,8 +68,10 @@ public class ExportOrgRegistry {
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
         ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
-//        list.setKPP("540201001");
-        list.setOGRN("1125476111903");
+        list.setOGRN("1116027009702"); // Test
+//        list.setKPP("540201001"); // Test
+//        list.setOGRN("1125476111903");
+
 
         if (list.getOGRN() == null && list.getOGRNIP() == null &&
                 list.getOrgRootEntityGUID() == null && list.getOrgVersionGUID() == null)

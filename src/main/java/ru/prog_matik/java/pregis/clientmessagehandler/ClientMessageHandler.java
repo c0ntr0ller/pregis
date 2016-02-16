@@ -1,5 +1,6 @@
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
+import org.apache.log4j.Logger;
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
 
 import javax.xml.namespace.QName;
@@ -20,10 +21,12 @@ import java.util.Set;
  */
 public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
+    private Logger logger = Logger.getLogger(ClientMessageHandler.class);
+
     /**
      * Метод перехватывает сообщения.
      * @param messageContext - перехваченное сообщение.
-     * @return
+     * @return boolean true.
      */
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
@@ -68,6 +71,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
 //            Вывод заголовка сообщения
 //            printHeaders(msg.getMimeHeaders());
+                logger.info(msg);
 
             } catch (Exception e) {
                 e.printStackTrace();

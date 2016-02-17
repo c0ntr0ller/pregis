@@ -4,8 +4,14 @@ import org.apache.log4j.Logger;
 import ru.CryptoPro.JCP.JCP;
 import ru.CryptoPro.JCP.KeyStore.HDImage.HDImageStore;
 
-import java.io.*;
-import java.security.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.util.ResourceBundle;
 
@@ -27,6 +33,10 @@ public class Configure {
     static {
 
 //        Инициализация криптопровайдера
+//        Старый вариант, для проверки.
+//        if (!JCPXMLDSigInit.isInitialized())
+//            JCPXMLDSigInit.init();
+
         if (!ru.CryptoPro.JCPxml.XmlInit.isInitialized())
             ru.CryptoPro.JCPxml.XmlInit.init();
 

@@ -8,6 +8,7 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import ru.CryptoPro.JCP.JCP;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -42,7 +43,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Класс подписывает наш отправляемый запрос.
@@ -94,8 +98,10 @@ public class RequestSiginet {
 //        Сертификат для проверки.
         X509Certificate cert = (X509Certificate) keyStore.getCertificate(Configure.getKeyStoreAlias());
 
+
 //        Ключ подписи.
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
+
 
 //        Алгоритмы.
 
@@ -107,9 +113,10 @@ public class RequestSiginet {
                     @Override
                     public MessageDigest getEngine(String digestAlgorithmURI) throws UnsupportedAlgorithmException {
 
-                        final String digestAlgOid = "1.2.643.2.2.9";
+                        final String digestAlgOid = JCP.GOST_DIGEST_OID;
 
                         try {
+//                            return MessageDigest.getInstance("GOST3411");
                             return MessageDigest.getInstance(digestAlgOid);
                         } catch (NoSuchAlgorithmException e) {
                             throw new UnsupportedAlgorithmException(e.getMessage(), digestAlgorithmURI, e);
@@ -130,7 +137,8 @@ public class RequestSiginet {
 
                     @Override
                     public Algorithm getCanonicalizationAlgorithmForSignature() {
-                        return new ExclusiveCanonicalXMLWithoutComments();
+                        return new GenericAlgorithm("http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+//                        return new ExclusiveCanonicalXMLWithoutComments();
                     }
 
                     @Override
@@ -159,7 +167,7 @@ public class RequestSiginet {
 
         final DataObjectDesc dataObj = new DataObjectReference(referenceURI);
         dataObj.withTransform(new EnvelopedSignatureTransform());
-         dataObj.withTransform(new ExclusiveCanonicalXMLWithoutComments());
+        dataObj.withTransform(new ExclusiveCanonicalXMLWithoutComments());
 
         final SignedDataObjects dataObjects = new SignedDataObjects(dataObj);
 
@@ -170,6 +178,7 @@ public class RequestSiginet {
 
         String mes = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(sourceDocument);
         mes = mes.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
+//        mes = mes.replace("CN=\"Тестовый УЦ ООО \\\"КРИПТО-ПРО\\\"\", O=\"ООО \\\"КРИПТО-ПРО\\\"\", ", "CN=Тестовый УЦ ООО \"КРИПТО-ПРО\",O=ООО \"КРИПТО-ПРО\",");
 //        Вывод подписанного сообщения в консоль.
 //        System.out.println(mes);
 
@@ -261,4 +270,5 @@ public class RequestSiginet {
 
         return doc;
     } // removeNamespace
+
 }

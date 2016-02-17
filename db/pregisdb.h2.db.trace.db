@@ -14988,3 +14988,12 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:C:/andryha/p
 	at org.h2.mvstore.FileStore.open(FileStore.java:172)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:342)
 	... 33 more
+2016-02-17 23:58:55 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-190]
+2016-02-17 23:59:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-190]
+2016-02-18 00:00:03 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-190]

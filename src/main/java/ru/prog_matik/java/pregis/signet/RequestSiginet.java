@@ -9,6 +9,7 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import ru.CryptoPro.JCP.JCP;
+import ru.CryptoPro.JCP.tools.Array;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -34,19 +35,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.security.KeyStore;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.io.*;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Класс подписывает наш отправляемый запрос.
@@ -64,7 +61,7 @@ public class RequestSiginet {
      */
     public SOAPMessage signRequest(Document sourceDocument) throws Exception {
 
-
+        Security.addProvider(new BouncyCastleProvider());
 
 //        Документ и узел подписи.
 //        Ищем по указанаму параметру место для подписи.
@@ -73,6 +70,9 @@ public class RequestSiginet {
 //        Исходный документ.
 
 //        Удаляем лишние пространства имен (namespace) в XML, которые добавляются автоматически. Выравниваем документ.
+        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setNamespaceAware(true);
+
         sourceDocument = removeNamespace(sourceDocument);
 //        Закончил. Моя реализация красивости.
 
@@ -97,13 +97,14 @@ public class RequestSiginet {
 
 //        Сертификат для проверки.
         X509Certificate cert = (X509Certificate) keyStore.getCertificate(Configure.getKeyStoreAlias());
-
+        System.out.println(cert.getPublicKey().getAlgorithm() + " " + cert.getSigAlgOID() + " " + cert.getSigAlgName());
 
 //        Ключ подписи.
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
 
 
 //        Алгоритмы.
+
 
         final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
 
@@ -114,6 +115,7 @@ public class RequestSiginet {
                     public MessageDigest getEngine(String digestAlgorithmURI) throws UnsupportedAlgorithmException {
 
                         final String digestAlgOid = JCP.GOST_DIGEST_OID;
+//                        final String digestAlgOid = JCP.GOST_EL_SIGN_OID;
 
                         try {
 //                            return MessageDigest.getInstance("GOST3411");
@@ -172,6 +174,7 @@ public class RequestSiginet {
         final SignedDataObjects dataObjects = new SignedDataObjects(dataObj);
 
         signer.sign(dataObjects, nodeToSign, SignatureAppendingStrategies.AsFirstChild);
+
         logger.info("XAdES-BES signature completed.");
 //        System.out.println("XAdES-BES signature completed.\n");
 
@@ -217,6 +220,7 @@ public class RequestSiginet {
      * @throws IOException
      * @throws SAXException
      */
+//    private byte[] removeNamespace(Document document) throws XMLStreamException, ParserConfigurationException, IOException, SAXException {
     private Document removeNamespace(Document document) throws XMLStreamException, ParserConfigurationException, IOException, SAXException {
 
         DOMImplementationLS ls = (DOMImplementationLS) document.getImplementation().getFeature("LS", "3.0");
@@ -261,6 +265,7 @@ public class RequestSiginet {
             message = message.replaceAll("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"", "");
         } // for
 
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder docBuilder = dbf.newDocumentBuilder();
@@ -268,7 +273,15 @@ public class RequestSiginet {
         InputSource inputSource = new InputSource(readerMessage);
         Document doc = docBuilder.parse(inputSource);
 
+//        Test MODE
+//        try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "dump.xml")) {
+//            outputStream.write(message.getBytes());  // дамп SOAP
+//            outputStream.flush();
+//        }
+//        byte[] finalPaymentDoc = Array.readFile("temp" + File.separator + "dump.xml");  // дамп SOAP
+
         return doc;
+//        return finalPaymentDoc;
     } // removeNamespace
 
 }

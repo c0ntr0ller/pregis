@@ -1,6 +1,12 @@
 package ru.prog_matik.java.pregis.signet;
 
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.engines.IDEAEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,10 +30,7 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by andryha on 17.02.2016.
@@ -36,13 +39,50 @@ public class VerBou {
 
     public static void main(String[] args) {
         Security.addProvider(new BouncyCastleProvider());
-        String secretKey = "r7RoTcRp8FbrqpMKkKjgRw+278Wx+iVtQY2M7pe9fFg=";
-
-        File file = new File("temp" + File.separator + "dump.xml");
-        verify(file);
-
+//        String secretKey = "r7RoTcRp8FbrqpMKkKjgRw+278Wx+iVtQY2M7pe9fFg=";
+//
+//        File file = new File("temp" + File.separator + "dump.xml");
+//        verify(file);
+        encryptData();
 
     }
+
+    public static void encryptData() {
+
+        PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new IDEAEngine()));  // Шифр
+        String key = "x-392kla%3$*1f";            // Kлюч
+
+        System.out.println("Введи значение:");
+        Scanner scanner = new Scanner(System.in);
+
+        // Получить содержимое из текстового поля
+        byte[] inBytes = scanner.next().getBytes();
+
+        // Инициализировать шифр. 'true' указывает шифрование
+        cipher.init(true, new KeyParameter(key.getBytes()));
+
+        // Определить минимальный размер выходного буфера
+        byte[] outBytes = new byte[cipher.getOutputSize(inBytes.length)];
+
+        // 'len' - это возвращенная реальная длина
+        int len = cipher.processBytes(inBytes, 0, inBytes.length, outBytes, 0);
+        try
+        {
+            // Обработать последний блок в буфере, начиная с позиции 'len'
+            cipher.doFinal(outBytes, len);
+
+            // Обновить текстовое поле новой зашифрованной строкой
+            System.out.println("Зашифровано: " + (new String(Hex.encode(outBytes))));
+
+            // Отладочное сообщение
+            System.out.println("encrypted: " + new String(Hex.encode(outBytes)));
+        }
+        catch(CryptoException e)
+        {
+            System.out.println("Exception: " + e.toString());
+        }
+    }
+
 
     public static boolean verify(final File file) {
 

@@ -1,6 +1,7 @@
 package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,7 +10,6 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import ru.CryptoPro.JCP.JCP;
-import ru.CryptoPro.JCP.tools.Array;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -35,15 +35,16 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Класс подписывает наш отправляемый запрос.
@@ -253,14 +254,18 @@ public class RequestSiginet {
             } // if
         } // for
 
-        String prefix;
+        String prefix = ":";
+
+//        Если удаляем пространства имен без префикса
+//        String prefix;
 
         for (Object s : removeNamespace.keySet()) {
 
             if (s != null)
                 prefix = ":" + s.toString();
-            else
-                prefix = "";
+//        Если удаляем пространства имен без префикса
+//            else
+//                prefix = "";
 
             message = message.replaceAll("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"", "");
         } // for
@@ -272,6 +277,8 @@ public class RequestSiginet {
         StringReader readerMessage = new StringReader(message);
         InputSource inputSource = new InputSource(readerMessage);
         Document doc = docBuilder.parse(inputSource);
+        doc.normalizeDocument();
+//        doc
 
 //        Test MODE
 //        try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "dump.xml")) {

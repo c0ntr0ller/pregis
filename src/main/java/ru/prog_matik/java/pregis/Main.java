@@ -10,6 +10,7 @@ public class Main {
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
+
 //        Инициализация сертификатов и Крипто-ПРО
         System.setProperty("com.sun.security.enableCRLDP", "true");
         System.setProperty("com.ibm.security.enableCRLDP", "true");
@@ -21,6 +22,7 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStore", Configure.getTrustStorePath());
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 
+//        Security.addProvider(new BouncyCastleProvider());
 //        Start
 //        new ProgramAction().callExportOrgRegistry();
 //        new ProgramAction().callExportDataProvider();

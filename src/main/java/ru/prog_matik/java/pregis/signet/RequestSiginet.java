@@ -93,7 +93,6 @@ public class RequestSiginet {
         final String referenceURI = "#" + signingId;
 
 //        Ключ подписи и сертификат.
-
         KeyStore keyStore = Configure.getKeyStore();
 
 //        Сертификат для проверки.
@@ -102,9 +101,9 @@ public class RequestSiginet {
 
 //        Ключ подписи.
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
+        System.out.println("PrivateKey: " + privateKey.getAlgorithm());
 
-
-//        Алгоритмы.
+        //        Алгоритмы.
 
 
         final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
@@ -121,6 +120,7 @@ public class RequestSiginet {
                         try {
 //                            return MessageDigest.getInstance("GOST3411");
                             return MessageDigest.getInstance(digestAlgOid);
+//                            return MessageDigest.getInstance(digestAlgOid, "BC");
                         } catch (NoSuchAlgorithmException e) {
                             throw new UnsupportedAlgorithmException(e.getMessage(), digestAlgorithmURI, e);
                         }
@@ -187,11 +187,11 @@ public class RequestSiginet {
 //        System.out.println(mes);
 
 //        Проверка подписи.
-//        try {
-//            VerifySignet.verify(sourceDocument);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            VerifySignet.verify(sourceDocument);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         return toMessage(mes);

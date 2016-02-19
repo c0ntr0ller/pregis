@@ -1,4 +1,4 @@
-package ru.prog_matik.java.pregis.signet;
+package ru.prog_matik.java.pregis.signet.del;
 
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.engines.IDEAEngine;
@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import ru.prog_matik.java.pregis.signet.Configure;
 import xades4j.XAdES4jException;
 import xades4j.providers.CertificateValidationException;
 import xades4j.providers.CertificateValidationProvider;

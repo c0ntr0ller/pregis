@@ -1,4 +1,4 @@
-package ru.prog_matik.java.pregis.signet;
+package ru.prog_matik.java.pregis.signet.del;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
@@ -11,6 +11,7 @@ import ru.CryptoPro.CAdES.CAdESType;
 import ru.CryptoPro.CAdES.exception.CAdESException;
 import ru.CryptoPro.JCP.JCP;
 import ru.CryptoPro.JCP.tools.Array;
+import ru.prog_matik.java.pregis.signet.Configure;
 
 import java.io.File;
 import java.io.FileInputStream;

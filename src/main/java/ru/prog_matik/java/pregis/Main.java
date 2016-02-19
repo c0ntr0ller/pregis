@@ -25,7 +25,7 @@ public class Main {
 //        Security.addProvider(new BouncyCastleProvider());
 //        Start
 //        new ProgramAction().callExportOrgRegistry();
-//        new ProgramAction().callExportDataProvider();
+//        new ProgramAction().callExportDataProvider(); // Просто запрос организации
         new ProgramAction().callExportNsiList();
 
     }

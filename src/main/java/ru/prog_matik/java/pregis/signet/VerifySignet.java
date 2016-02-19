@@ -3,6 +3,7 @@ package ru.prog_matik.java.pregis.signet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import ru.prog_matik.java.pregis.signet.Configure;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.providers.CertificateValidationProvider;
 import xades4j.providers.impl.DefaultMessageDigestProvider;
@@ -14,6 +15,7 @@ import javax.xml.crypto.dsig.XMLSignature;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.cert.CertStore;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.Collection;
@@ -49,6 +51,7 @@ public class VerifySignet {
         } // if
 
 //              Проверка цепочки сертификатов включена
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         final CertificateValidationProvider validationProvider = new PKIXCertificateValidationProvider(
                 trustStore, true, intermediateCertsAndCRLStore);
 

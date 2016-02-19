@@ -19,6 +19,11 @@ public class ProgramAction {
     private ExportOrgRegistryResult exportOrgRegistryResult;
     private ImportResult importResult;
 
+    /**
+     * Получение "SenderID".
+     * отправляем запрос exportOrgRegistry получаем данные организации, извлекаем необходимое,
+     * отправляем запрос "importDataProvider - allocateSenderID", получаем "SenderID".
+     */
     public void callExportOrgRegistry() {
 
         ExportOrgRegistry reg = new ExportOrgRegistry();

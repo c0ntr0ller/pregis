@@ -35,10 +35,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -97,15 +94,27 @@ public class RequestSiginet {
 
 //        Сертификат для проверки.
         X509Certificate cert = (X509Certificate) keyStore.getCertificate(Configure.getKeyStoreAlias());
-        System.out.println(cert.getPublicKey().getAlgorithm() + " " + cert.getSigAlgOID() + " " + cert.getSigAlgName());
+//        System.out.println(cert.getPublicKey().getAlgorithm() + " " + cert.getSigAlgOID() + " " + cert.getSigAlgName());
 
 //        Ключ подписи.
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
-        System.out.println("PrivateKey: " + privateKey.getAlgorithm());
+//        System.out.println("PrivateKey: " + privateKey.getAlgorithm());
+
+//        Ключ не из хранилища КРИПТО-ПРО
+//        KeyStore p12 = KeyStore.getInstance("pkcs12", new BouncyCastleProvider());
+//
+//        try (FileInputStream inP12 = new FileInputStream("data" + File.separator + "dubovik.p12.pfx")){
+//            p12.load(inP12, "123456".toCharArray());
+//        }
+//        X509Certificate gostCert = (X509Certificate) p12.getCertificate("cp_exported");
+//        System.out.println("Bouncy Castle Cert: " + gostCert.getPublicKey());
+//        PrivateKey gostPrivate = (PrivateKey) p12.getKey("cp_exported", null);
+
 
         //        Алгоритмы.
 
 
+//        final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(gostCert, gostPrivate);
         final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
 
         final xades4j.production.XadesSigningProfile sigProf = new XadesBesSigningProfile(keyingProvider)
@@ -114,8 +123,8 @@ public class RequestSiginet {
                     @Override
                     public MessageDigest getEngine(String digestAlgorithmURI) throws UnsupportedAlgorithmException {
 
+//                        final String digestAlgOid = "1.2.643.2.2.9";
                         final String digestAlgOid = JCP.GOST_DIGEST_OID;
-//                        final String digestAlgOid = JCP.GOST_EL_SIGN_OID;
 
                         try {
 //                            return MessageDigest.getInstance("GOST3411");

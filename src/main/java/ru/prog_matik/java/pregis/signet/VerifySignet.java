@@ -12,6 +12,8 @@ import xades4j.verification.XadesVerificationProfile;
 import xades4j.verification.XadesVerifier;
 
 import javax.xml.crypto.dsig.XMLSignature;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,7 +35,13 @@ public class VerifySignet {
      */
     public static void verify(Document sourceDocument) throws Exception {
 
-        final KeyStore trustStore = Configure.getTrustStore();
+//        final KeyStore trustStore = Configure.getTrustStore();
+
+        final InputStream inputStream = new FileInputStream("data/trust_store.jks");
+        final KeyStore trustStore = KeyStore.getInstance("JKS");
+
+        trustStore.load(inputStream, "123456".toCharArray());
+        inputStream.close();
 
         Collection intermediateCertsAndCRLs = Collections.emptyList();
 
@@ -51,7 +59,7 @@ public class VerifySignet {
         } // if
 
 //              Проверка цепочки сертификатов включена
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+//        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         final CertificateValidationProvider validationProvider = new PKIXCertificateValidationProvider(
                 trustStore, true, intermediateCertsAndCRLStore);
 

@@ -1,7 +1,6 @@
 package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -35,8 +34,14 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.*;
-import java.security.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +64,7 @@ public class RequestSiginet {
      */
     public SOAPMessage signRequest(Document sourceDocument) throws Exception {
 
-        Security.addProvider(new BouncyCastleProvider());
+//        Security.addProvider(new BouncyCastleProvider());
 
 //        Документ и узел подписи.
 //        Ищем по указанаму параметру место для подписи.
@@ -196,11 +201,11 @@ public class RequestSiginet {
 //        System.out.println(mes);
 
 //        Проверка подписи.
-        try {
-            VerifySignet.verify(sourceDocument);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            VerifySignet.verify(sourceDocument);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 
         return toMessage(mes);

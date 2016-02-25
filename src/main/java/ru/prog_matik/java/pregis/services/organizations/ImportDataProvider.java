@@ -50,6 +50,7 @@ public class ImportDataProvider {
 
         ImportDataProviderRequest.DataProvider provider = new ImportDataProviderRequest.DataProvider();
         provider.setRemoveSenderID(removeSenderID);
+        provider.setTransportGUID(OtherFormat.getRandomGUID());
 
         ImportDataProviderRequest request = new ImportDataProviderRequest();
         request.setId("signed-data-container");

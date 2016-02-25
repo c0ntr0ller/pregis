@@ -2,7 +2,10 @@ package ru.prog_matik.java.pregis;
 
 import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
+import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseOrganization;
+import ru.prog_matik.java.pregis.services.house.ExportCAChData;
+import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
 import ru.prog_matik.java.pregis.services.nsi.ExportNsiList;
 import ru.prog_matik.java.pregis.services.organizations.ExportDataProvider;
 import ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry;
@@ -45,6 +48,12 @@ public class ProgramAction {
         }
     }
 
+    public void removeSenderID() {
+        ImportDataProvider provider = new ImportDataProvider();
+        provider.removeSenderID(BaseOrganization.getSenderID());
+    }
+
+
     public void callExportDataProvider() {
 
         ExportDataProvider dataProvider = new ExportDataProvider();
@@ -55,6 +64,16 @@ public class ProgramAction {
     public void callExportNsiList() {
         ExportNsiList nsiList = new ExportNsiList();
         nsiList.callExportNsiList();
+    }
+
+    public void callExportStatusCAChData() {
+        ExportStatusCAChData statusCAChData = new ExportStatusCAChData();
+        statusCAChData.callExportStatusCAChData();
+    }
+
+    public void callExportCAChData() {
+        ExportCAChData caChData = new ExportCAChData();
+        caChData.callExportCAChData();
     }
 
 }

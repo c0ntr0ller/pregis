@@ -5,7 +5,6 @@ import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListRequest;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListResult;
 import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service.Fault;
-import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
@@ -21,7 +20,7 @@ public class ExportNsiList {
 
     public void callExportNsiList() {
 
-        headerHolder = new Holder<>(getHeader());
+        headerHolder = new Holder<>(OtherFormat.getRequestHeader());
 
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
@@ -58,15 +57,6 @@ public class ExportNsiList {
         return exportNsiListRequest;
     }
 
-    private RequestHeader getHeader() {
-
-        RequestHeader requestHeader = new RequestHeader();
-        requestHeader.setSenderID(BaseOrganization.getSenderID());
-        requestHeader.setMessageGUID(OtherFormat.getRandomGUID());
-        requestHeader.setDate(OtherFormat.getDateNow());
-
-        return requestHeader;
-    }
 
 //    private RequestHeader getResultHeader() {
 //        return headerHolder.value;

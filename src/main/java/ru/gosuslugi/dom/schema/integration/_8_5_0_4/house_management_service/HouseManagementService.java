@@ -3,6 +3,7 @@ package ru.gosuslugi.dom.schema.integration._8_5_0_4.house_management_service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.jws.HandlerChain;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
@@ -20,6 +21,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "HouseManagementService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.5.0.4/house-management-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-home-management-service/services/HomeManagement")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class HouseManagementService
     extends Service
 {
@@ -86,7 +88,7 @@ public class HouseManagementService
         return super.getPort(new QName("http://dom.gosuslugi.ru/schema/integration/8.5.0.4/house-management-service/", "HouseManagementPort"), HouseManagementPortsType.class, features);
     }
 
-    private static URL __getWsdlLocation() {
+    public static URL __getWsdlLocation() {
         if (HOUSEMANAGEMENTSERVICE_EXCEPTION!= null) {
             throw HOUSEMANAGEMENTSERVICE_EXCEPTION;
         }

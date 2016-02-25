@@ -48,8 +48,11 @@ public class Main {
 
 //        Start
 //        new ProgramAction().callExportOrgRegistry();
+//        new ProgramAction().removeSenderID();
 //        new ProgramAction().callExportDataProvider(); // Просто запрос организации
         new ProgramAction().callExportNsiList();
+//        new ProgramAction().callExportStatusCAChData();
+//        new ProgramAction().callExportCAChData();
 
     }
 }

@@ -1,5 +1,8 @@
 package ru.prog_matik.java.pregis.other;
 
+import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
+import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -37,7 +40,29 @@ public class OtherFormat {
      * @return
      */
     public static String getRandomGUID() {
-
         return UUID.randomUUID().toString();
+    }
+
+    /**
+     * Метод возвращает значение по умолчанию (идентификатор) для цифровой подписи.
+     * Именно это значение "signed-data-container", ищет в документе XML перехватчик и подписывает его.
+     * @return
+     */
+    public static String getId() {
+        return "signed-data-container";
+    }
+
+    /**
+     * Метод возвращает готовый заголовок запроса с "SenderID".
+     * @return
+     */
+    public static RequestHeader getRequestHeader() {
+
+        RequestHeader requestHeader = new RequestHeader();
+        requestHeader.setSenderID(BaseOrganization.getSenderID());
+        requestHeader.setMessageGUID(getRandomGUID());
+        requestHeader.setDate(getDateNow());
+
+        return requestHeader;
     }
 }

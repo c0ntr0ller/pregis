@@ -1,12 +1,8 @@
 package ru.prog_matik.java.pregis;
 
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import ru.CryptoPro.JCP.JCP;
 import ru.prog_matik.java.pregis.signet.Configure;
-
-import java.security.Security;
-import java.util.ResourceBundle;
 
 public class Main {
     public static void main(String[] args) throws Exception {

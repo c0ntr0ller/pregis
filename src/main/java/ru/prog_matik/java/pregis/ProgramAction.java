@@ -1,15 +1,15 @@
 package ru.prog_matik.java.pregis;
 
-import ru.gosuslugi.dom.schema.integration._8_5_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.organizations_registry.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_6_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry_common.ExportOrgRegistryResult;
 import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseOrganization;
 import ru.prog_matik.java.pregis.services.house.ExportCAChData;
 import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
 import ru.prog_matik.java.pregis.services.nsi.ExportNsiList;
-import ru.prog_matik.java.pregis.services.organizations.ExportDataProvider;
-import ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry;
-import ru.prog_matik.java.pregis.services.organizations.ImportDataProvider;
+import ru.prog_matik.java.pregis.services.organizations.common.service.ExportDataProvider;
+import ru.prog_matik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
+import ru.prog_matik.java.pregis.services.organizations.common.service.ImportDataProvider;
 
 /**
  * Класс будет обращаться ко всем объектам.

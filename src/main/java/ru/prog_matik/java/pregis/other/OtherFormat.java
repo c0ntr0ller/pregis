@@ -1,6 +1,7 @@
 package ru.prog_matik.java.pregis.other;
 
-import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_6_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_6_0.RequestHeader;
 import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -8,12 +9,16 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
 /**
  * Вспомогательный класс, для различных данных.
  */
 public class OtherFormat {
+
+    public static final String USER_NAME = ResourceBundle.getBundle("application").getString("config.ws.user");
+    public static final String PASSWORD = ResourceBundle.getBundle("application").getString("config.ws.password");
 
     /**
      * Метод возвращает текущею дату и время.
@@ -50,6 +55,20 @@ public class OtherFormat {
      */
     public static String getId() {
         return "signed-data-container";
+    }
+
+    /**
+     * Метод формирует заголовок сообщения без "SenderID".
+     *
+     * @return ISRequestHeader
+     */
+    public static ISRequestHeader getISRequestHeader() {
+
+        ISRequestHeader isRequestHeader = new ISRequestHeader();
+        isRequestHeader.setDate(getDateNow());
+        isRequestHeader.setMessageGUID(getRandomGUID());
+
+        return isRequestHeader;
     }
 
     /**

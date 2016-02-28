@@ -46,7 +46,7 @@ wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension
 
 Services
 wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-services-service-8.5.0.4.wsdl
-wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -Xno-addressing-databinding -keep -encoding UTF-8 -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-services-service-8.5.0.4.wsdl
+wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -XadditionalHeaders -Xno-addressing-databinding -keep -encoding UTF-8 -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-services-service-8.5.0.4.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-organization-service/services/Organization
 
 All
 wsimport -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xdebug -Xnocompile -Xendorsed -XadditionalHeaders -Xno-addressing-databinding -keep -encoding UTF-8 -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\*.wsdl

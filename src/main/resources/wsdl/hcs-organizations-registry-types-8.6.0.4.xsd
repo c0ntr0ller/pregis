@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:tns="http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:base="http://dom.gosuslugi.ru/schema/integration/8.6.0.4/" targetNamespace="http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.6.0.4/" schemaLocation="hcs-basetypes-8.6.0.4.xsd"/>
+	<!--Импорт сведений об обособленных подразделениях-->
+	<xs:element name="importSubsidiaryRequest">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element name="Subsidiary" maxOccurs="100">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="base:SubsidiaryImportType">
+										<xs:sequence>
+											<xs:element ref="base:TransportGUID"/>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+		<xs:key name="importShareEncbrDataRequest_TransportGUIDKey">
+			<xs:selector xpath=".//base:TransportGUID"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<!--Асинхронные мтоды-->
+	<xs:element name="getStateResult">
+		<xs:annotation>
+			<xs:documentation>Возврат статуса отправленного сообщения</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseAsyncResponseType">
+					<xs:choice minOccurs="0">
+						<xs:element ref="base:ErrorMessage"/>
+						<xs:element name="ImportResult" type="base:CommonResultType" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

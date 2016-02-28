@@ -1,12 +1,14 @@
 package ru.prog_matik.java.pregis.services.nsi;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_5_0.RequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi.ExportNsiListResult;
-import ru.gosuslugi.dom.schema.integration._8_5_0_4.nsi_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_6_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_6_0.ResultHeader;
+import ru.gosuslugi.dom.schema.integration._8_6_0_4.nsi_common.ExportNsiListRequest;
+import ru.gosuslugi.dom.schema.integration._8_6_0_4.nsi_common.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration._8_6_0_4.nsi_common_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
+import ru.prog_matik.java.pregis.services.nsi.common.service.NsiPortsTypeImpl;
 
 import javax.xml.ws.Holder;
 
@@ -16,11 +18,11 @@ public class ExportNsiList {
 
     private static final String NAME_METHOD = "exportNsiList";
 
-    private Holder<RequestHeader> headerHolder;
-
     public void callExportNsiList() {
 
-        headerHolder = new Holder<>(OtherFormat.getRequestHeader());
+        ISRequestHeader requestHeader = OtherFormat.getISRequestHeader();
+
+        Holder<ResultHeader> headerHolder = new Holder<>();
 
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
@@ -29,16 +31,16 @@ public class ExportNsiList {
         NsiPortsTypeImpl portsType = new NsiPortsTypeImpl();
 
         try {
-            result = portsType.exportNsiList(getExportNsiListRequest(), headerHolder);
+            result = portsType.exportNsiList(getExportNsiListRequest(), requestHeader, headerHolder);
 
 
         } catch (Fault fault) {
-            saveToBase.setRequestError(headerHolder.value, NAME_METHOD, fault);
+            saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
             logger.error(fault.getMessage());
             fault.printStackTrace();
             return;
         }
-        saveToBase.setRequest(headerHolder.value, NAME_METHOD);
+        saveToBase.setRequest(requestHeader, NAME_METHOD);
 
         saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
 

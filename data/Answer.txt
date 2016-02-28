@@ -83,7 +83,7 @@ Message:
 2016-02-16 22:58:52,478 3635 [main] INFO  ru.prog_matik.java.pregis.clientmessagehandler.ClientMessageHandler.handleMessage()  - com.sun.xml.internal.messaging.saaj.soap.ver1_1.Message1_1Impl@8cbb86
 2016-02-16 22:58:54,108 5265 [main] INFO  ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages.setMessageToBase()  - setMessageToBase: CallableStatement.executeUpdate() - 0
 2016-02-16 22:58:54,111 5268 [main] INFO  ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages.setMessageToBase()  - setMessageToBase: CallableStatement.executeUpdate() - 0
-2016-02-16 22:58:54,111 5268 [main] INFO  ru.prog_matik.java.pregis.services.organizations.ExportOrgRegistry.callExportOrgRegistry()  - Successful.
+2016-02-16 22:58:54,111 5268 [main] INFO  ExportOrgRegistry.callExportOrgRegistry()  - Successful.
 2016-02-16 22:58:57,098 8255 [main] INFO  ru.prog_matik.java.pregis.signet.RequestSiginet.signRequest()  - XAdES-BES signature completed.
 
 Message:
@@ -104,7 +104,7 @@ Message:
 2016-02-16 22:58:57,905 9062 [main] INFO  ru.prog_matik.java.pregis.clientmessagehandler.ClientMessageHandler.handleMessage()  - com.sun.xml.internal.messaging.saaj.soap.ver1_1.Message1_1Impl@130090a
 2016-02-16 22:58:57,915 9072 [main] INFO  ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages.setMessageToBase()  - setMessageToBase: CallableStatement.executeUpdate() - 0
 2016-02-16 22:58:57,920 9077 [main] INFO  ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages.setMessageToBase()  - setMessageToBase: CallableStatement.executeUpdate() - 0
-2016-02-16 22:58:57,920 9077 [main] INFO  ru.prog_matik.java.pregis.services.organizations.ImportDataProvider.getImportDataProviderRequest()  - Successful.
+2016-02-16 22:58:57,920 9077 [main] INFO  ImportDataProvider.getImportDataProviderRequest()  - Successful.
 org.h2.jdbc.JdbcSQLException: Метод "SET_ORGANIZATION (null, parameter count: 6)" не найден
 Method "SET_ORGANIZATION (null, parameter count: 6)" not found; SQL statement:
  CALL SET_ORGANIZATION(?, ?, ?, ?, ?, ?)  [90087-190]

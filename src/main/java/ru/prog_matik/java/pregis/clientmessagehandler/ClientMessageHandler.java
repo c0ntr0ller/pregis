@@ -1,19 +1,22 @@
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
 import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.*;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,6 +51,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 msg.saveChanges();
 //                Debug
                 System.out.println("\nOutbound message:");
+                printHeaders(msg.getMimeHeaders());
                 msg.writeTo(System.out);
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
@@ -108,5 +112,4 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     public void close(MessageContext context) {
     }
-
 }

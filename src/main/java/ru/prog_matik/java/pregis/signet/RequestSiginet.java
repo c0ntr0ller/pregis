@@ -2,6 +2,7 @@ package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -9,6 +10,7 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import ru.CryptoPro.JCP.JCP;
+import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -76,7 +78,18 @@ public class RequestSiginet {
         final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
 
-        sourceDocument = removeNamespace(sourceDocument);
+//        Temp
+        DeleteNamespace del = new DeleteNamespace();
+        Map map = del.getRemoveNamespace(sourceDocument);
+
+        NamedNodeMap attributes = sourceDocument.getChildNodes().item(0).getChildNodes().item(0).getChildNodes().item(0).getAttributes();
+        del.removeNamespace(attributes, map);
+        attributes = sourceDocument.getChildNodes().item(0).getChildNodes().item(1).getChildNodes().item(0).getAttributes();
+        del.removeNamespace(attributes, map);
+
+//        Temp
+
+//        sourceDocument = removeNamespace(sourceDocument);
 //        Закончил. Моя реализация красивости.
 
 
@@ -288,7 +301,6 @@ public class RequestSiginet {
             message = message.replaceAll("xmlns" + prefix + "=\"" + removeNamespace.get(s) + "\"", "");
         } // for
 
-
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder docBuilder = dbf.newDocumentBuilder();
@@ -296,8 +308,6 @@ public class RequestSiginet {
         InputSource inputSource = new InputSource(readerMessage);
         Document doc = docBuilder.parse(inputSource);
         doc.normalizeDocument();
-
-
 
 //        doc
 

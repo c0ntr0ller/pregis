@@ -3,6 +3,7 @@ package ru.prog_matik.java.pregis.clientmessagehandler;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
+import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,6 +35,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
         RequestSiginet requestSiginet = new RequestSiginet();
+        DeleteNamespace deleteNamespace = new DeleteNamespace();
         SOAPMessage msg = messageContext.getMessage();
 
         Boolean outboundProperty = (Boolean) messageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
@@ -46,7 +48,11 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 //                msg.writeTo(System.out);
 //                System.out.println("\n");
 
-                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+//                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+
+//                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();
                 msg.saveChanges();
 //                Debug

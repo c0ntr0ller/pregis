@@ -1,9 +1,9 @@
 package ru.prog_matik.java.pregis;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,7 +24,8 @@ import java.util.Map;
  */
 public class TestMain {
 
-    private static String mes = "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Header><ISRequestHeader xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\"><Date>2016-03-08T23:21:56.517+06:00</Date><MessageGUID>7b824087-412b-4aa5-9b99-8afbd52bdb15</MessageGUID></ISRequestHeader></S:Header><S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>";
+    private static String mes = "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+            "<S:Header><ISRequestHeader xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\"><Date>2016-03-08T23:21:56.517+06:00</Date><MessageGUID>7b824087-412b-4aa5-9b99-8afbd52bdb15</MessageGUID></ISRequestHeader></S:Header><S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>";
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException {
 
@@ -98,6 +99,24 @@ public class TestMain {
 
     public static void addSpace(Document document) {
 
-//        document.getFirstChild()
+//        DeleteNamespace del = new DeleteNamespace();
+
+        document.getFirstChild().setTextContent("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "            <S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>");
+//        NodeList lis = document.getChildNodes();
+//        document.getChildNodes().item(0).
+
+//        System.out.println(del.getMessage(document.getChildNodes().item(0).getChildNodes().item(0).getOwnerDocument()));
+//        System.out.println(document.getChildNodes().item(0).getChildNodes().item(1));
+
+//        document.getFirstChild().setTextContent("\n");
+//        Element element = document.createElement("Test");
+//        document.getFirstChild().appendChild(element);
+//        element.appendChild(document.createTextNode("\n\t"));
+//        Text text = document.createTextNode("\n");
+//        Element element = document.getDocumentElement();
+//        document.getFirstChild().appendChild(text);
+//        document.getFirstChild().getFirstChild().getFirstChild().getFirstChild().appendChild(document.createTextNode("\n\t\t"));
+//        document.getChildNodes().item(0).getChildNodes().item(0).appendChild(document.createTextNode("\n\t"));
     }
 }

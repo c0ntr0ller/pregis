@@ -2,6 +2,8 @@ package ru.prog_matik.java.pregis.signet.del;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -19,7 +21,7 @@ import java.util.Map;
  */
 public class DeleteNamespace {
 
-    public Map getRemoveNamespace(Document doc) throws XMLStreamException {
+    private Map getRemoveNamespace(Document doc) throws XMLStreamException {
 
         String message = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
         message = message.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
@@ -52,13 +54,36 @@ public class DeleteNamespace {
         return removeNamespace;
     }
 
-    public void removeNamespace(NamedNodeMap attributes, Map mapRemoveNamespace) throws XMLStreamException {
+    public void removeNamespace(Document document) throws XMLStreamException {
+
+        Map mapRemoveNamespace = getRemoveNamespace(document);
+
+        NamedNodeMap attributes = document.getChildNodes().item(0).getChildNodes().item(0).getChildNodes().item(0).getAttributes();
+        removeAttribute(attributes, mapRemoveNamespace);
+
+        attributes = document.getChildNodes().item(0).getChildNodes().item(1).getChildNodes().item(0).getAttributes();
+        removeAttribute(attributes, mapRemoveNamespace);
+
+    }
+
+    private void removeAttribute(NamedNodeMap attributes, Map mapRemoveNamespace) {
 
         for (Object o : mapRemoveNamespace.keySet()) {
             if (o != null) {
                 attributes.removeNamedItem("xmlns:" + o.toString());
             }
         } // for
+    }
+
+    public String getMessage(Document document) {
+
+        DOMImplementationLS ls = (DOMImplementationLS) document.getImplementation().getFeature("LS", "3.0");
+        LSSerializer serializer = ls.createLSSerializer();
+        serializer.getDomConfig().setParameter("format-pretty-print", true);
+
+        String message = serializer.writeToString(document);
+        message = message.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
+        return message;
     }
 
 }

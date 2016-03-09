@@ -86,7 +86,6 @@ public class RequestSiginet {
         del.removeNamespace(attributes, map);
         attributes = sourceDocument.getChildNodes().item(0).getChildNodes().item(1).getChildNodes().item(0).getAttributes();
         del.removeNamespace(attributes, map);
-
 //        Temp
 
 //        sourceDocument = removeNamespace(sourceDocument);
@@ -215,11 +214,11 @@ public class RequestSiginet {
 //        System.out.println(mes);
 
 //        Проверка подписи.
-//        try {
-//            VerifySignet.verify(sourceDocument);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            VerifySignet.verify(sourceDocument);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         return toMessage(mes);
@@ -308,6 +307,18 @@ public class RequestSiginet {
         InputSource inputSource = new InputSource(readerMessage);
         Document doc = docBuilder.parse(inputSource);
         doc.normalizeDocument();
+
+//        Проверка канонизации не помогло.
+//        byte[] canMessage;
+//
+//        try {
+//            Canonicalizer canonicalizer = Canonicalizer.getInstance("http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+//            canMessage = canonicalizer.canonicalizeSubtree(doc);
+//            doc = docBuilder.parse(new ByteArrayInputStream(canMessage));
+//        } catch (InvalidCanonicalizerException | CanonicalizationException e) {
+//            e.printStackTrace();
+//        }
+
 
 //        doc
 

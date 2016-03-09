@@ -1,11 +1,9 @@
 package ru.prog_matik.java.pregis;
 
-import org.jcp.xml.dsig.internal.dom.DOMUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import ru.prog_matik.java.pregis.signet.RequestSiginet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,6 +47,7 @@ public class TestMain {
         remove(attributes);
 
 //        doc.getDomConfig().setParameter("format-pretty-print", true);
+        addSpace(doc);
 
         String mesout = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
         System.out.println(mesout);
@@ -95,5 +94,10 @@ public class TestMain {
             } // if
         } // for
         return removeNamespace;
+    }
+
+    public static void addSpace(Document document) {
+
+//        document.getFirstChild()
     }
 }

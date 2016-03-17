@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.Attachments;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.Attachments;
 
 
 /**
@@ -37,7 +37,7 @@ import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.Attachments
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}Attachment"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}Attachment"/>
  *         &lt;element name="AttachmentHASH">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -61,12 +61,12 @@ import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.Attachments
     "attachmentHASH"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.ContractType.AgreementAttachment.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.services.CompletedWorksByPeriodType.NewAct.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.services.CompletedWorksByPeriodExportType.Act.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.disclosure.Section13 .BringToJusticeFact.OffenceDoc.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.BaseDocuments.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.Optional.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ContractType.AgreementAttachment.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.disclosure.Section13 .BringToJusticeFact.OffenceDoc.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.BaseDocuments.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.Optional.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.services.CompletedWorksByPeriodType.NewAct.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.services.CompletedWorksByPeriodExportType.Act.class,
     Attachments.class
 })
 public class AttachmentType {

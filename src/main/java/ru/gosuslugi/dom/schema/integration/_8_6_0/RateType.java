@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
+ *                   &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
- *                   &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
+ *                   &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
+ *                   &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -48,9 +48,9 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
- *                   &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
- *                   &lt;element name="T3" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
+ *                   &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
+ *                   &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
+ *                   &lt;element name="T3" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -162,8 +162,8 @@ public class RateType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
-     *         &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
+     *         &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
+     *         &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -245,7 +245,7 @@ public class RateType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
+     *         &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -300,9 +300,9 @@ public class RateType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
-     *         &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
-     *         &lt;element name="T3" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}VolumeType"/>
+     *         &lt;element name="T1" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
+     *         &lt;element name="T2" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
+     *         &lt;element name="T3" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}VolumeType"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>

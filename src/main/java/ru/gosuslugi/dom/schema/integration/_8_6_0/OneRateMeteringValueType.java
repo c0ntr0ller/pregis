@@ -23,7 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="MeteringValue" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}MeteringValueType"/>
+ *         &lt;element name="MeteringValue" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}MeteringValueType"/>
  *         &lt;element name="ReadoutDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="ReadingsSource" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -43,8 +43,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration._8_6_0.OneRateMeteringValueKindType.CurrentValue.class,
     ru.gosuslugi.dom.schema.integration._8_6_0.OneRateMeteringValueKindType.ControlValue.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.ControlValue.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.device_metering.ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.ControlValue.class
 })
 public class OneRateMeteringValueType {
 

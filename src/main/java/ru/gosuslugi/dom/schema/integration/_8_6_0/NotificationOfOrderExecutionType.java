@@ -54,8 +54,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="RecipientINN" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}INNType"/>
- *                   &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}KPPType" minOccurs="0"/>
+ *                   &lt;element name="RecipientINN" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}INNType"/>
+ *                   &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}KPPType" minOccurs="0"/>
  *                   &lt;element name="BankName">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -64,9 +64,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                       &lt;/restriction>
  *                     &lt;/simpleType>
  *                   &lt;/element>
- *                   &lt;element name="RecipientBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}BIKType"/>
- *                   &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AccountType"/>
- *                   &lt;element name="RecipientAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AccountType"/>
+ *                   &lt;element name="RecipientBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}BIKType"/>
+ *                   &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AccountType"/>
+ *                   &lt;element name="RecipientAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AccountType"/>
  *                   &lt;element name="RecipientName">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -85,9 +85,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}OrderID"/>
- *                   &lt;element name="PaymentDocumentGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AccountNumber" minOccurs="0"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}OrderID"/>
+ *                   &lt;element name="PaymentDocumentGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AccountNumber" minOccurs="0"/>
  *                   &lt;element name="OrderNum">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -97,7 +97,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                     &lt;/simpleType>
  *                   &lt;/element>
  *                   &lt;element name="OrderDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *                   &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}MoneyPositiveType"/>
+ *                   &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}MoneyPositiveType"/>
  *                   &lt;element name="PaymentPurpose">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -134,8 +134,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "orderInfo"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.bills.ExportNotificationsOfOrderExecutionResultType.NotificationOfOrderExecutionWithStatus.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.payment.ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.payment.ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.bills.ExportNotificationsOfOrderExecutionResultType.NotificationOfOrderExecutionWithStatus.class
 })
 public class NotificationOfOrderExecutionType {
 
@@ -229,9 +229,9 @@ public class NotificationOfOrderExecutionType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}OrderID"/>
-     *         &lt;element name="PaymentDocumentGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AccountNumber" minOccurs="0"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}OrderID"/>
+     *         &lt;element name="PaymentDocumentGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AccountNumber" minOccurs="0"/>
      *         &lt;element name="OrderNum">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -241,7 +241,7 @@ public class NotificationOfOrderExecutionType {
      *           &lt;/simpleType>
      *         &lt;/element>
      *         &lt;element name="OrderDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
-     *         &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}MoneyPositiveType"/>
+     *         &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}MoneyPositiveType"/>
      *         &lt;element name="PaymentPurpose">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -502,8 +502,8 @@ public class NotificationOfOrderExecutionType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="RecipientINN" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}INNType"/>
-     *         &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}KPPType" minOccurs="0"/>
+     *         &lt;element name="RecipientINN" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}INNType"/>
+     *         &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}KPPType" minOccurs="0"/>
      *         &lt;element name="BankName">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -512,9 +512,9 @@ public class NotificationOfOrderExecutionType {
      *             &lt;/restriction>
      *           &lt;/simpleType>
      *         &lt;/element>
-     *         &lt;element name="RecipientBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}BIKType"/>
-     *         &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AccountType"/>
-     *         &lt;element name="RecipientAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AccountType"/>
+     *         &lt;element name="RecipientBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}BIKType"/>
+     *         &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AccountType"/>
+     *         &lt;element name="RecipientAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AccountType"/>
      *         &lt;element name="RecipientName">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">

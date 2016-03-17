@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.services.HMServicesTarifsDocType;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.services.HMServicesTarifsDocType;
 
 
 /**
@@ -40,7 +40,7 @@ import ru.gosuslugi.dom.schema.integration._8_6_0_4.services.HMServicesTarifsDoc
  *           &lt;/simpleType>
  *         &lt;/element>
  *         &lt;element name="ApproveDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="Attachment" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AttachmentType"/>
+ *         &lt;element name="Attachment" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AttachmentType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

@@ -21,12 +21,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}OrderID"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}PaymentDocumentNumber"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}OrderID"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}PaymentDocumentNumber"/>
  *         &lt;choice>
- *           &lt;element name="HSType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
- *           &lt;element name="MSType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
- *           &lt;element name="ASType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
+ *           &lt;element name="HSType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
+ *           &lt;element name="MSType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
+ *           &lt;element name="ASType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
  *         &lt;/choice>
  *         &lt;element name="Amount">
  *           &lt;simpleType>
@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "amount"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.bills.ImportAcknowledgmentRequest.AcknowledgmentRequestInfo.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.bills.ImportAcknowledgmentRequest.AcknowledgmentRequestInfo.class
 })
 public class AcknowledgmentRequestInfoType {
 

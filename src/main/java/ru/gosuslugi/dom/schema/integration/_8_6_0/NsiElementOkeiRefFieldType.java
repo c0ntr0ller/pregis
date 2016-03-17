@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="NsiElementOkeiRefFieldType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}NsiElementFieldType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}NsiElementFieldType">
  *       &lt;sequence>
- *         &lt;element name="Code" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}nsiCodeType" minOccurs="0"/>
+ *         &lt;element name="Code" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}nsiCodeType" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>

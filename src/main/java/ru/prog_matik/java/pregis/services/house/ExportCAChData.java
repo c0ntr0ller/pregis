@@ -3,18 +3,15 @@ package ru.prog_matik.java.pregis.services.house;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration._8_6_0.RequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_6_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.ExportCAChRequest;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.ExportCAChResult;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ExportCAChRequest;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ExportCAChResult;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
 
-/**
- * Created by andryha on 25.02.2016.
- */
 public class ExportCAChData {
 
     private static final Logger logger = Logger.getLogger(ExportCAChData.class);

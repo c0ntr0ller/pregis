@@ -5,8 +5,8 @@ import ru.gosuslugi.dom.schema.integration._8_6_0.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration._8_6_0.ImportResult;
 import ru.gosuslugi.dom.schema.integration._8_6_0.RegOrgType;
 import ru.gosuslugi.dom.schema.integration._8_6_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry_common.ImportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.ImportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 

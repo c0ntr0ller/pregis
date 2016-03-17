@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="NsiElementFiasAddressRefFieldType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}NsiElementFieldType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}NsiElementFieldType">
  *       &lt;sequence>
  *         &lt;element name="NsiRef" minOccurs="0">
  *           &lt;complexType>

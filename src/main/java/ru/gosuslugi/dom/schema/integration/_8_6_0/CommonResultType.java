@@ -24,8 +24,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType" minOccurs="0"/>
- *         &lt;element name="TransportGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
+ *         &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType" minOccurs="0"/>
+ *         &lt;element name="TransportGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
  *         &lt;choice>
  *           &lt;sequence>
  *             &lt;element name="UniqueNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -34,7 +34,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *           &lt;element name="Error" maxOccurs="unbounded">
  *             &lt;complexType>
  *               &lt;complexContent>
- *                 &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}ErrorMessageType">
+ *                 &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}ErrorMessageType">
  *                 &lt;/extension>
  *               &lt;/complexContent>
  *             &lt;/complexType>
@@ -57,7 +57,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "error"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.ImportResult.CommonResult.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ImportResult.CommonResult.class
 })
 public class CommonResultType {
 
@@ -207,7 +207,7 @@ public class CommonResultType {
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
-     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}ErrorMessageType">
+     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}ErrorMessageType">
      *     &lt;/extension>
      *   &lt;/complexContent>
      * &lt;/complexType>

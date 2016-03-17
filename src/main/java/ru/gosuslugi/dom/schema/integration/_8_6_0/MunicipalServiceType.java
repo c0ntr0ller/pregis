@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.services.ExportMSRSOResultType;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.services.ExportMSRSOResultType;
 
 
 /**
@@ -23,10 +23,10 @@ import ru.gosuslugi.dom.schema.integration._8_6_0_4.services.ExportMSRSOResultTy
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="MSType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}nsiRef"/>
+ *         &lt;element name="MSType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}nsiRef"/>
  *         &lt;element name="StartDateFrom" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="StartDateTo" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="AccountingType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}nsiRef" minOccurs="0"/>
+ *         &lt;element name="AccountingType" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}nsiRef" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -44,7 +44,7 @@ import ru.gosuslugi.dom.schema.integration._8_6_0_4.services.ExportMSRSOResultTy
 })
 @XmlSeeAlso({
     ExportMSRSOResultType.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.services.ImportMSRSORequest.MSRSO.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.services.ImportMSRSORequest.MSRSO.class
 })
 public class MunicipalServiceType {
 

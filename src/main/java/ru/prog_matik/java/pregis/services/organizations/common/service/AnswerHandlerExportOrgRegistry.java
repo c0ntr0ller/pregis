@@ -2,8 +2,8 @@ package ru.prog_matik.java.pregis.services.organizations.common.service;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration._8_6_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry_common.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry_common.ExportOrgRegistryResultType;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.ExportOrgRegistryResultType;
 import ru.prog_matik.java.pregis.connectiondb.ConnectionDB;
 
 import javax.xml.ws.Holder;
@@ -80,7 +80,7 @@ class AnswerHandlerExportOrgRegistry {
 
                 resultType.getOrgVersion().getSubsidiary().getActivityEndDate();
                 resultType.getOrgVersion().getSubsidiary().getSourceName();
-                resultType.getOrgVersion().getSubsidiary().getVersionNumber();
+//                resultType.getOrgVersion().getSubsidiary().getVersionNumber();
                 resultType.getOrgVersion().getSubsidiary().getStatusVersion();
                 resultType.getOrgVersion().getSubsidiary().getParentOrg();
                 resultType.getOrgVersion().getSubsidiary().getParentOrg().getRegOrgVersion();

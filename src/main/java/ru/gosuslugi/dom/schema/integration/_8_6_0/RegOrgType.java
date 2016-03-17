@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}orgRootEntityGUID"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}orgRootEntityGUID"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,10 +32,10 @@ import javax.xml.bind.annotation.XmlType;
     "orgRootEntityGUID"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.inspection.ScheduledExaminationSubjectInfoType.Organization.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.inspection.ScheduledExaminationSubjectInfoType.Individual.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.inspection.UnscheduledExaminationSubjectInfoType.Organization.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.inspection.UnscheduledExaminationSubjectInfoType.Individual.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.inspection.ScheduledExaminationSubjectInfoType.Organization.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.inspection.ScheduledExaminationSubjectInfoType.Individual.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.inspection.UnscheduledExaminationSubjectInfoType.Organization.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.inspection.UnscheduledExaminationSubjectInfoType.Individual.class
 })
 public class RegOrgType {
 

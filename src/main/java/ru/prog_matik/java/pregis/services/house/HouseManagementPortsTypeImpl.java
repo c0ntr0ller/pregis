@@ -1,19 +1,17 @@
 package ru.prog_matik.java.pregis.services.house;
 
 import ru.gosuslugi.dom.schema.integration._8_6_0.*;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.*;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.*;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management_service.HouseManagementService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
-/**
- * Created by andryha on 25.02.2016.
- */
+
 public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
 
     @Override

@@ -1,7 +1,8 @@
 @echo off
 @rem Необходимо указать каталог, куда будут сформированы файлы для Java.
 @rem Необходимо указать каталог, откуда будут взяты файлы wsdl.
-@rem Например: wsdl_import.bat "C:\andryha\project\workspace_for_git\PreGIS\src\main\java" "C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl" "8.6.0.4"
+@rem Необходимо указать версию файлов wsdl.
+@rem Например: wsdl_import.bat "C:\andryha\project\workspace_for_git\PreGIS\src\main\java" "C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl" "8.6.0.6"
 @echo.
 @echo Формирования Java объектов из wsdl файлов сервиса ГИС ЖКХ.
 @echo.

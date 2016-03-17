@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}HeaderType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}HeaderType">
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>

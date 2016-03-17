@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}HeaderType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}HeaderType">
  *       &lt;sequence>
- *         &lt;element name="SenderID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
+ *         &lt;element name="SenderID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>

@@ -18,10 +18,10 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="BaseAsyncResponseType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}BaseType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}BaseType">
  *       &lt;sequence>
- *         &lt;element name="RequestState" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}AsyncRequestStateType"/>
- *         &lt;element name="MessageGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
+ *         &lt;element name="RequestState" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}AsyncRequestStateType"/>
+ *         &lt;element name="MessageGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -36,20 +36,20 @@ import javax.xml.bind.annotation.XmlType;
     "messageGUID"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.payment.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.bills.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.nsi_common.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.nsi.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.disclosure.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.device_metering.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry_common.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.organizations_registry.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.licenses.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.inspection.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.infrastructure.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.services.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.house_management.GetStateResult.class,
-    ru.gosuslugi.dom.schema.integration._8_6_0_4.fas.GetStateResult.class
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.infrastructure.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.nsi.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.bills.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.services.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.fas.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.device_metering.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.disclosure.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.payment.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.inspection.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.nsi_common.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry.GetStateResult.class,
+    ru.gosuslugi.dom.schema.integration._8_6_0_6.licenses.GetStateResult.class
 })
 public class BaseAsyncResponseType
     extends BaseType

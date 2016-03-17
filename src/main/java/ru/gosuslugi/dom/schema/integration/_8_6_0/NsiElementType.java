@@ -23,8 +23,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Code" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}nsiCodeType"/>
- *         &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}GUIDType"/>
+ *         &lt;element name="Code" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}nsiCodeType"/>
+ *         &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}GUIDType"/>
  *         &lt;choice>
  *           &lt;element name="Modified" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *           &lt;sequence>
@@ -33,8 +33,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *           &lt;/sequence>
  *         &lt;/choice>
  *         &lt;element name="IsActual" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="NsiElementField" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}NsiElementFieldType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="ChildElement" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.4/}NsiElementType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="NsiElementField" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}NsiElementFieldType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ChildElement" type="{http://dom.gosuslugi.ru/schema/integration/8.6.0.6/}NsiElementType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

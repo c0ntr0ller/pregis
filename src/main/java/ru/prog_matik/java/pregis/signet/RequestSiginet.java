@@ -1,10 +1,7 @@
 package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -12,7 +9,6 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import ru.CryptoPro.JCP.JCP;
-import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.algorithms.Algorithm;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -38,7 +34,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -172,7 +171,8 @@ public class RequestSiginet {
 
                     @Override
                     public Algorithm getCanonicalizationAlgorithmForTimeStampProperties() {
-                        return new ExclusiveCanonicalXMLWithoutComments();
+//                        return new ExclusiveCanonicalXMLWithoutComments();
+                        return new GenericAlgorithm("http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
                     }
 
                     @Override

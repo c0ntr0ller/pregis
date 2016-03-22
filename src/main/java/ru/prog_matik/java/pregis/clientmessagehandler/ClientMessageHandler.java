@@ -1,23 +1,20 @@
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
 import ru.prog_matik.java.pregis.signet.RequestSiginet;
 import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.*;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,8 +45,8 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 //                msg.writeTo(System.out);
 //                System.out.println("\n");
 
-//                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument());
-                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+//                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
+                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
                 requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
 
 //                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());

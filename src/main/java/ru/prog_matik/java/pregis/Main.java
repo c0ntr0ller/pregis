@@ -1,8 +1,11 @@
 package ru.prog_matik.java.pregis;
 
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import ru.CryptoPro.JCP.JCP;
 import ru.prog_matik.java.pregis.signet.Configure;
+
+import java.security.Security;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -26,7 +29,7 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStore", Configure.getTrustStorePath());
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 
-//        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastleProvider());
 //
 //        System.setProperty("javax.net.debug", "all");
 //

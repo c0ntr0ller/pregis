@@ -1,6 +1,7 @@
 package ru.prog_matik.java.pregis.signet;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -34,14 +35,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.security.KeyStore;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.io.*;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,33 +100,38 @@ public class RequestSiginet {
         final Node nodeToSign = nodes.item(0);
         final String referenceURI = "#" + signingId;
 
+        Security.addProvider(new BouncyCastleProvider());
+
 //        Ключ подписи и сертификат.
-        KeyStore keyStore = Configure.getKeyStore();
+//        KeyStore keyStore = Configure.getKeyStore();
 
 //        Сертификат для проверки.
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate(Configure.getKeyStoreAlias());
+//        X509Certificate cert = (X509Certificate) keyStore.getCertificate(Configure.getKeyStoreAlias());
 //        System.out.println(cert.getPublicKey().getAlgorithm() + " " + cert.getSigAlgOID() + " " + cert.getSigAlgName());
 
 //        Ключ подписи.
-        PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
+//        PrivateKey privateKey = (PrivateKey) keyStore.getKey(Configure.getKeyStoreAlias(), Configure.getKeyStorePassword());
 //        System.out.println("PrivateKey: " + privateKey.getAlgorithm());
 
 //        Ключ не из хранилища КРИПТО-ПРО
-//        KeyStore p12 = KeyStore.getInstance("pkcs12", new BouncyCastleProvider());
+        KeyStore p12 = KeyStore.getInstance("pkcs12", new BouncyCastleProvider());
 ////
-//        try (FileInputStream inP12 = new FileInputStream("data" + File.separator + "dubovik.p12.pfx")){
-//            p12.load(inP12, "123456".toCharArray());
-//        }
-//        X509Certificate gostCert = (X509Certificate) p12.getCertificate("cp_exported");
-////        System.out.println("Bouncy Castle Cert: " + gostCert.getPublicKey());
-//        PrivateKey gostPrivate = (PrivateKey) p12.getKey("cp_exported", null);
+        try (FileInputStream inP12 = new FileInputStream("data" + File.separator + "dubovik.p12.pfx")){
+            p12.load(inP12, "123456".toCharArray());
+        }
+        X509Certificate gostCert = (X509Certificate) p12.getCertificate("cp_exported");
+//        System.out.println("Bouncy Castle Cert: " + gostCert.getPublicKey());
+        PrivateKey gostPrivate = (PrivateKey) p12.getKey("cp_exported", null);
 
+        KeyStore.PasswordProtection protection = new KeyStore.PasswordProtection("123456".toCharArray());
+        KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry) p12.getEntry("cp_exported", protection);
 
         //        Алгоритмы.
 
 
-//        final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(gostCert, gostPrivate);
-        final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
+        KeyingDataProvider keyingProvider = new DirectKeyingDataProvider((X509Certificate) keyEntry.getCertificate(), keyEntry.getPrivateKey());
+//        final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(gostCert, gostPrivate); bouncy
+//        final KeyingDataProvider keyingProvider = new DirectKeyingDataProvider(cert, privateKey);
 
         final xades4j.production.XadesSigningProfile sigProf = new XadesBesSigningProfile(keyingProvider)
 
@@ -144,8 +144,8 @@ public class RequestSiginet {
 
                         try {
 //                            return MessageDigest.getInstance("GOST3411");
-                            return MessageDigest.getInstance(digestAlgOid);
-//                            return MessageDigest.getInstance(digestAlgOid, "BC");
+//                            return MessageDigest.getInstance(digestAlgOid);
+                            return MessageDigest.getInstance("GOST3411", new BouncyCastleProvider());
                         } catch (NoSuchAlgorithmException e) {
                             throw new UnsupportedAlgorithmException(e.getMessage(), digestAlgorithmURI, e);
                         }

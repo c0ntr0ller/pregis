@@ -1,0 +1,11 @@
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Header>
+        <ISRequestHeader xmlns="http://dom.gosuslugi.ru/schema/integration/8.6.0.6/" xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.6.0.6/organizations-registry-common/">
+            <Date>2016-03-22T10:30:35.873+06:00</Date>
+            <MessageGUID>66517df0-24f6-4d7e-99fe-3a76e35a6bec</MessageGUID>
+        </ISRequestHeader>
+    </S:Header>
+    <S:Body>
+        <ns2:exportDataProviderRequest xmlns:ns2="http://dom.gosuslugi.ru/schema/integration/8.6.0.6/organizations-registry-common/" xmlns="http://dom.gosuslugi.ru/schema/integration/8.6.0.6/" Id="signed-data-container"></ns2:exportDataProviderRequest>
+    </S:Body>
+</S:Envelope>

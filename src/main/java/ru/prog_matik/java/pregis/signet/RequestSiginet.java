@@ -145,7 +145,7 @@ public class RequestSiginet {
                         try {
 //                            return MessageDigest.getInstance("GOST3411");
 //                            return MessageDigest.getInstance(digestAlgOid);
-                            return MessageDigest.getInstance("GOST3411", new BouncyCastleProvider());
+                            return MessageDigest.getInstance("GOST3410EL", new BouncyCastleProvider());
                         } catch (NoSuchAlgorithmException e) {
                             throw new UnsupportedAlgorithmException(e.getMessage(), digestAlgorithmURI, e);
                         }

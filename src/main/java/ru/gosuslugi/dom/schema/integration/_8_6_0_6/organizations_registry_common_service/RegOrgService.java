@@ -14,7 +14,7 @@ import java.net.URL;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "RegOrgService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.4/organizations-registry-common-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-org-registry-common-service/services/OrgRegistryCommon?wsdl")
+@WebServiceClient(name = "RegOrgService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.6.0.7/organizations-registry-common-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-org-registry-common-service/services/OrgRegistryCommon?wsdl")
 @HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class RegOrgService
     extends Service
@@ -22,8 +22,8 @@ public class RegOrgService
 
     private final static URL REGORGSERVICE_WSDL_LOCATION;
     private final static WebServiceException REGORGSERVICE_EXCEPTION;
-    private final static QName REGORGSERVICE_QNAME = new QName("http://dom.gosuslugi.ru/schema/integration/8.7.0.4/organizations-registry-common-service/", "RegOrgService");
-//    private final static QName REGORGSERVICE_QNAME = new QName("http://dom.gosuslugi.ru/schema/integration/8.6.0.6/organizations-registry-common-service/", "RegOrgService");
+//    private final static QName REGORGSERVICE_QNAME = new QName("http://dom.gosuslugi.ru/schema/integration/8.7.0.4/organizations-registry-common-service/", "RegOrgService");
+    private final static QName REGORGSERVICE_QNAME = new QName("http://dom.gosuslugi.ru/schema/integration/8.6.0.7/organizations-registry-common-service/", "RegOrgService");
 
     static {
         URL url = null;
@@ -68,7 +68,7 @@ public class RegOrgService
      */
     @WebEndpoint(name = "RegOrgPort")
     public RegOrgPortsType getRegOrgPort() {
-        return super.getPort(new QName("http://dom.gosuslugi.ru/schema/integration/8.7.0.4/organizations-registry-common-service/", "RegOrgPort"), RegOrgPortsType.class);
+        return super.getPort(new QName("http://dom.gosuslugi.ru/schema/integration/8.6.0.6/organizations-registry-common-service/", "RegOrgPort"), RegOrgPortsType.class);
     }
 
     /**
@@ -80,7 +80,7 @@ public class RegOrgService
      */
     @WebEndpoint(name = "RegOrgPort")
     public RegOrgPortsType getRegOrgPort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://dom.gosuslugi.ru/schema/integration/8.7.0.4/organizations-registry-common-service/", "RegOrgPort"), RegOrgPortsType.class, features);
+        return super.getPort(new QName("http://dom.gosuslugi.ru/schema/integration/8.6.0.6/organizations-registry-common-service/", "RegOrgPort"), RegOrgPortsType.class, features);
     }
 
     public static URL __getWsdlLocation() {

@@ -1,7 +1,6 @@
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
 import org.apache.log4j.Logger;
-import ru.prog_matik.java.pregis.signet.RequestSiginet;
 import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.namespace.QName;
@@ -31,7 +30,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
      */
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
-        RequestSiginet requestSiginet = new RequestSiginet();
+//        RequestSiginet requestSiginet = new RequestSiginet();
         DeleteNamespace deleteNamespace = new DeleteNamespace();
         SOAPMessage msg = messageContext.getMessage();
 
@@ -47,7 +46,8 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
 //                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
                 deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
-                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+                msg = new SendFileToSign().sendMessageForSign(msg);
+//                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
 
 //                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();

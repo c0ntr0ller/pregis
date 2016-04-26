@@ -1,3 +1,18 @@
+Изменить в форму XSD hcs-basetypes
+	<xs:element name="ISRequestHeader">
+		<xs:annotation>
+			<xs:documentation>Заголовок запроса</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:HeaderType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
+
 wsimport -b C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-organizations-registry-service-8.5.0.4.wsdl -d C:\andryha\project\workspace_for_git\PreGIS\src\main\java -extension -Xnocompile -Xendorsed -keep -s C:\andryha\project\workspace_for_git\PreGIS\src\main\java -encoding UTF-8 -catalog C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\catalog.xml -verbose C:\andryha\project\workspace_for_git\PreGIS\src\main\resources\wsdl\hcs-organizations-registry-service-8.5.0.4.wsdl -wsdllocation https://54.76.42.99:60045/ext-bus-org-registry-service/services/OrgRegistry?wsdl
 
 RegOrg

@@ -1,6 +1,7 @@
 package ru.prog_matik.java.pregis.clientmessagehandler;
 
 import org.apache.log4j.Logger;
+import ru.prog_matik.java.pregis.signet.RequestSiginet;
 import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.namespace.QName;
@@ -30,7 +31,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
      */
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
-//        RequestSiginet requestSiginet = new RequestSiginet();
+        RequestSiginet requestSiginet = new RequestSiginet();
         DeleteNamespace deleteNamespace = new DeleteNamespace();
         SOAPMessage msg = messageContext.getMessage();
 
@@ -44,8 +45,8 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 //                msg.writeTo(System.out);
 //                System.out.println("\n");
 
-//                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
-                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
+                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
+//                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
                 msg = new SendFileToSign().sendMessageForSign(msg);
 //                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
 
@@ -68,10 +69,12 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
         } else {
             System.out.println("\nInbound message:");
 
+
             try {
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "inbound")) {
                     msg.writeTo(outputStream);
+                    msg.writeTo(System.out);
                 }
 
 //            Вывод сообщение запроса

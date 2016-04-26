@@ -1,15 +1,18 @@
 package ru.prog_matik.java.pregis.services.organizations.common.service;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_6_0.ISRequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.RegOrgService;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 /**
@@ -38,7 +41,27 @@ public class ExportOrgRegistry {
         ExportOrgRegistryResult result;
 
         try {
-            result = transfer.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
+
+            RegOrgService service = new RegOrgService();
+            RegOrgPortsType port = service.getRegOrgPort();
+
+
+            BindingProvider provider = (BindingProvider) port;
+            provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "test");
+            provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "SDldfls4lz5@!82d");
+//            provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://127.0.0.1:8080/ext-bus-org-registry-common-service/services/OrgRegistryCommon");
+//            provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://dom.gosuslugi.ru/schema/integration/8.7.0.4/organizations-registry-common-service/");
+//            provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "https://54.76.42.99:60045//ext-bus-org-registry-common-service/services/OrgRegistryCommon");
+            provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
+//            provider.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, RegOrgService.__getWsdlLocation().toString());
+//        provider.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY , true);
+//        provider.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY , "http://dom.gosuslugi.ru/schema/integration/8.5.0.2/organizations-registry/");
+//        provider.getRequestContext().put( "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory", sendSOAPMessage.certificateInitialize());
+
+//            return port.exportOrgRegistry(exportOrgRegistryRequest);
+
+//            result = transfer.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
+            result = port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
         } catch (Fault fault) {
             saveToBase.setRequestError(header, nameMethod, fault);
             logger.error(fault.getMessage());

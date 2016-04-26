@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/signature-test-service/"
+    xmlns:st="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/signature-test/" 
+    xmlns:base="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:ns="http://www.w3.org/2000/09/xmldsig#"
+    targetNamespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/signature-test-service/">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/signature-test/" schemaLocation="hcs-signature-test-types-8.7.0.4.xsd" />
+            <xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/" schemaLocation="hcs-basetypes-8.7.0.4.xsd" />
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="Fault">
+        <wsdl:part name="Fault" element="base:Fault" />
+    </wsdl:message>
+    <wsdl:message name="testSignatureRequest">
+        <wsdl:part name="testSignatureRequest" element="st:testSignatureRequest"/>
+    </wsdl:message>
+    <wsdl:message name="testSignatureResponse">
+        <wsdl:part name="testSignatureResponse" element="st:testSignatureResponse"/>
+    </wsdl:message>
+    <wsdl:message name="RequestHeader">
+        <wsdl:part name="Header" element="base:RequestHeader"/>
+    </wsdl:message>
+    <wsdl:message name="ResultHeader">
+        <wsdl:part name="Header" element="base:ResultHeader"/>
+    </wsdl:message>
+    <wsdl:portType name="SignatureTestPortType">
+        <wsdl:operation name="testSignature">
+            <wsdl:documentation>Проверить подпись сообщения</wsdl:documentation>
+            <wsdl:input message="tns:testSignatureRequest" />
+            <wsdl:output message="tns:testSignatureResponse" />
+            <wsdl:fault name="InvalidRequest" message="tns:Fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="SignatureTestBinding" type="tns:SignatureTestPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="testSignature">
+            <soap:operation soapAction="urn:testSignature" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RequestHeader" part="Header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+                <soap:header message="tns:ResultHeader" part="Header" use="literal"/>
+            </wsdl:output>
+		    <wsdl:fault name="InvalidRequest">
+				<soap:fault name="InvalidRequest" use="literal"/>
+			</wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="SignatureTestService">
+        <wsdl:documentation>Сервис тестирования ЭП интеграции</wsdl:documentation>
+        <wsdl:port name="SignatureTestPort" binding="tns:SignatureTestBinding" >
+            <soap:address location="http://dom.gosuslugi.ru/integration/services/SignatureTest" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

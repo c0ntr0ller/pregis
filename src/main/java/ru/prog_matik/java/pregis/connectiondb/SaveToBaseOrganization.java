@@ -1,8 +1,8 @@
 package ru.prog_matik.java.pregis.connectiondb;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_6_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportOrgRegistryResult;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

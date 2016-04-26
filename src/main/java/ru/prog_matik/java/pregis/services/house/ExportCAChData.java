@@ -1,12 +1,11 @@
 package ru.prog_matik.java.pregis.services.house;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_6_0.RequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ExportCAChRequest;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management.ExportCAChResult;
-import ru.gosuslugi.dom.schema.integration._8_6_0_6.house_management_service.Fault;
-import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
+import ru.gosuslugi.dom.schema.integration._8_7_0.RequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.ExportCAChRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.ExportCAChResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
@@ -48,9 +47,9 @@ public class ExportCAChData {
 
     private ExportCAChRequest getExportCAChRequest() {
         ExportCAChRequest request = new ExportCAChRequest();
-        ExportCAChRequest.Criteria criteria = new ExportCAChRequest.Criteria();
-        criteria.setUOGUID(BaseOrganization.getSenderID());
-        request.getCriteria().add(criteria);
+//        ExportCAChRequest.Criteria criteria = new ExportCAChRequest.Criteria();
+//        criteria.setUOGUID(BaseOrganization.getSenderID());
+//        request.getCriteria().add(criteria);
         request.setId(OtherFormat.getId());
         return request;
     }

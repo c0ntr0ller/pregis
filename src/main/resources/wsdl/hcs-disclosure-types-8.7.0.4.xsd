@@ -1,0 +1,1654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:tns="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/disclosure/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:base="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/" targetNamespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/disclosure/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.4/" schemaLocation="hcs-basetypes-8.7.0.4.xsd"/>
+	<!--Запросы-->
+	<xs:element name="importDisclosureRequest">
+		<xs:annotation>
+			<xs:documentation>Импорт сведений для формирования раскрытия УО. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseType">
+					<xs:sequence>
+						<xs:element ref="base:TransportGUID"/>
+						<xs:element name="Section1">
+							<xs:annotation>
+								<xs:documentation>Раздел 1. Информация об управляющей организации, товариществе, кооперативе</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="tns:Section1_1" minOccurs="1"/>
+									<xs:element ref="tns:Section1_2" minOccurs="1"/>
+									<xs:element ref="tns:Section1_3" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="tns:Section2"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+		<xs:key name="importDisclosureRequest_TransportGUIDKey">
+			<xs:selector xpath=".//base:TransportGUID"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<!--Типы асинхронного обмена-->
+	<xs:element name="getStateResult">
+		<xs:annotation>
+			<xs:documentation>Возврат статуса отправленного сообщения</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="base:BaseAsyncResponseType">
+					<xs:choice minOccurs="0">
+						<xs:element ref="base:ErrorMessage"/>
+						<xs:element name="ImportResult" type="base:CommonResultType" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--Раздел 1. Информация об управляющей организации, товариществе, кооперативе.-->
+	<xs:element name="Section1_1">
+		<xs:annotation>
+			<xs:documentation>Раздел 1.1. Общая информация об управляющей организации, товариществе, кооперативе.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:SubSection1ElementType">
+					<xs:sequence>
+						<xs:element name="GeneralInformation">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Director">
+										<xs:annotation>
+											<xs:documentation>Руководитель управляющей компании</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Surname">
+													<xs:annotation>
+														<xs:documentation>Фамилия</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="60"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="FirstName">
+													<xs:annotation>
+														<xs:documentation>Имя</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="60"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="Patronymic">
+													<xs:annotation>
+														<xs:documentation>Отчество</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="60"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ChairmanPhones" type="tns:String1000Type">
+										<xs:annotation>
+											<xs:documentation>Контактный номер председателя (только для ТСЖ, ЖСК, иного потребительского кооператива)</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Timetable" minOccurs="7" maxOccurs="7">
+										<xs:annotation>
+											<xs:documentation>Режим работы, в т. ч. часы личного приема граждан  </xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="DayTimetable">
+													<xs:annotation>
+														<xs:documentation>Режим работы дня недели</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:choice>
+															<xs:element name="WorkDay">
+																<xs:annotation>
+																	<xs:documentation>Рабочий день</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="WorkingTime" type="tns:TimesType">
+																			<xs:annotation>
+																				<xs:documentation>Режим работы организации</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="BreakingTime" type="tns:TimesType" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Перерыв в работе организации</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="ReceptionOfCitizens" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Часы приема граждан</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:complexContent>
+																					<xs:extension base="tns:TimesType">
+																						<xs:choice>
+																							<xs:element name="EachWeek" type="xs:boolean">
+																								<xs:annotation>
+																									<xs:documentation>Еженедельно</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																							<xs:element name="Comment" type="tns:String1000Type" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Комментарий относительно часов приема граждан</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																						</xs:choice>
+																					</xs:extension>
+																				</xs:complexContent>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="Holiday" type="xs:boolean" fixed="true">
+																<xs:annotation>
+																	<xs:documentation>Выходной</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:choice>
+														<xs:attribute name="weekDay">
+															<xs:annotation>
+																<xs:documentation>день недели</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:enumeration value="1"/>
+																	<xs:enumeration value="2"/>
+																	<xs:enumeration value="3"/>
+																	<xs:enumeration value="4"/>
+																	<xs:enumeration value="5"/>
+																	<xs:enumeration value="6"/>
+																	<xs:enumeration value="7"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="DispatchService">
+										<xs:annotation>
+											<xs:documentation>Сведения о работе диспетчерской службы</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:choice>
+													<xs:element name="Address" type="base:FIASHouseGUIDType">
+														<xs:annotation>
+															<xs:documentation>Адрес диспетчерской службы</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="AOGUID" type="base:GUIDType" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Родительский элемент (населенный пункт или улица) по справочнику ФИАС</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:choice>
+												<xs:element name="Phones" type="base:String255Type" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Контактные телефоны диспетчерской службы</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="Timetable" type="tns:String1500Type" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Режим работы диспетчерской службы</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="FederalSubjectShare">
+										<xs:annotation>
+											<xs:documentation>Доля участия субъекта Российской Федерации в уставном капитале организации</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:minInclusive value="0"/>
+												<xs:fractionDigits value="2" fixed="false"/>
+												<xs:totalDigits value="5"/>
+												<xs:maxInclusive value="100.00"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="MunicipalityShare">
+										<xs:annotation>
+											<xs:documentation>Доля участия муниципального образования в уставном капитале организации</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:minInclusive value="0"/>
+												<xs:fractionDigits value="2" fixed="false"/>
+												<xs:totalDigits value="5"/>
+												<xs:maxInclusive value="100.00"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RegularStaffing">
+										<xs:annotation>
+											<xs:documentation>Штатная численность (определяется по количеству заключенных трудовых договоров), в т .ч. административный персонал, инженеры, рабочие</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="AdministrativeStaff">
+													<xs:annotation>
+														<xs:documentation>Штатная численность административного персонала</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:nonNegativeInteger">
+															<xs:minInclusive value="0"/>
+															<xs:maxInclusive value="9999"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="Engineers">
+													<xs:annotation>
+														<xs:documentation>Штатная численность инженеров</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:nonNegativeInteger">
+															<xs:minInclusive value="0"/>
+															<xs:maxInclusive value="9999"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="Workers">
+													<xs:annotation>
+														<xs:documentation>Штатная численность рабочих</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:nonNegativeInteger">
+															<xs:minInclusive value="0"/>
+															<xs:maxInclusive value="9999"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="MembershipInSelfRegulatoryOrganization" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Сведения о членстве управляющей организации, товариществе, кооперативе в саморегулируемой организации</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="OrgName" type="tns:String1000Type" minOccurs="1">
+													<xs:annotation>
+														<xs:documentation>Наименование юридического лица саморегулируемой организации
+ОГРН саморегулируемой организации</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="OGRN" type="base:OGRNType" minOccurs="1">
+													<xs:annotation>
+														<xs:documentation>ОГРН саморегулируемой организации</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+							<xs:unique name="WeekDayUnique">
+								<xs:selector xpath="tns:Timetable/tns:DayTimetable"/>
+								<xs:field xpath="@weekDay"/>
+							</xs:unique>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section1_2">
+		<xs:annotation>
+			<xs:documentation>Раздел 1.2. Сведения об основных показателях финансово-хозяйственной деятельности управляющей организации, товарищества, кооператива.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:SubSection1ElementType">
+					<xs:sequence>
+						<xs:element name="FinancialActivityInformation">
+							<xs:annotation>
+								<xs:documentation>Сведения об основных показателях финансово-хозяйственной деятельности</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AnnualFinancialStatements">
+										<xs:annotation>
+											<xs:documentation>Годовая бухгалтерская отчетность </xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="BaseDocuments" minOccurs="4" maxOccurs="4">
+													<xs:annotation>
+														<xs:documentation>обязательные документы</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="base:AttachmentType">
+																<xs:sequence>
+																	<xs:element name="FormOfFinancialStatement">
+																		<xs:annotation>
+																			<xs:documentation>Форма бухгалтерской отчетности (НСИ 94)</xs:documentation>
+																		</xs:annotation>
+																		<xs:complexType>
+																			<xs:complexContent>
+																				<xs:extension base="base:nsiRef">
+																					<xs:sequence>
+																						<xs:element name="BaseDocumentTypes">
+																							<xs:annotation>
+																								<xs:documentation>Обязательными к раскрытию являются следующий формы документов финансовой отчетности:
+1- Бухгалтерский баланс
+2- Приложение к бухгалтерскому балансу
+3- Отчёт о финансовых результатах
+4- Приложение к отчёту о финансовых результатах
+</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="base:nsiCodeType">
+																									<xs:enumeration value="1"/>
+																									<xs:enumeration value="2"/>
+																									<xs:enumeration value="3"/>
+																									<xs:enumeration value="4"/>
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:extension>
+																			</xs:complexContent>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:extension>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Optional" minOccurs="0" maxOccurs="unbounded">
+													<xs:annotation>
+														<xs:documentation>необязательная часть</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="base:AttachmentType">
+																<xs:choice>
+																	<xs:element name="FormOfFinancialStatement">
+																		<xs:annotation>
+																			<xs:documentation>Форма бухгалтерской отчетности (НСИ 94)</xs:documentation>
+																		</xs:annotation>
+																		<xs:complexType>
+																			<xs:complexContent>
+																				<xs:extension base="base:nsiRef"/>
+																			</xs:complexContent>
+																		</xs:complexType>
+																	</xs:element>
+																	<xs:element name="NameOfFinancialStatement" type="xs:string">
+																		<xs:annotation>
+																			<xs:documentation>Наименование формы бухгалтерской отчетности в произвольной форме</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:choice>
+															</xs:extension>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+										<xs:key name="AnnualFinancialStatementsKey">
+											<xs:selector xpath="tns:BaseDocuments/tns:FormOfFinancialStatement/tns:BaseDocumentTypes"/>
+											<xs:field xpath="."/>
+										</xs:key>
+										<xs:keyref name="BaseDocumentTypeKeyRef" refer="tns:AnnualFinancialStatementsKey">
+											<xs:selector xpath="tns:BaseDocuments/tns:FormOfFinancialStatement/base:Code"/>
+											<xs:field xpath="."/>
+										</xs:keyref>
+									</xs:element>
+									<xs:element name="ManagementServiceIncome" type="base:SmallMoneyPositiveType">
+										<xs:annotation>
+											<xs:documentation>Сведения о доходах, полученных за оказание услуг по управлению многоквартирными домами (по данным раздельного учета доходов и расходов)</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ManagementServiceFlow" type="base:SmallMoneyPositiveType">
+										<xs:annotation>
+											<xs:documentation>Сведения о расходах, понесенных в связи с оказанием услуг по управлению многоквартирными домами (по данным раздельного учета доходов и расходов)</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="SummaryOutstanding">
+										<xs:annotation>
+											<xs:documentation>Общая задолженность управляющей организации (индивидуального предпринимателя) перед ресурсоснабжающими организациями за коммунальные ресурсы</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="ThermalEnergy">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по тепловой энергии</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:simpleContent>
+															<xs:extension base="base:SmallMoneyPositiveType">
+																<xs:attribute name="Heating" type="base:SmallMoneyPositiveType">
+																	<xs:annotation>
+																		<xs:documentation>Общая задолженность по тепловой энергии для нужд отопления (при наличии)</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+																<xs:attribute name="HotWater" type="base:SmallMoneyPositiveType">
+																	<xs:annotation>
+																		<xs:documentation>Общая задолженность по тепловой энергии для нужд горячего водоснабжения (при наличии)</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+															</xs:extension>
+														</xs:simpleContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="HotWater" type="base:SmallMoneyPositiveType">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по горячей воде</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ColdWater" type="base:SmallMoneyPositiveType">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по холодной воде</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="Drainage" type="base:SmallMoneyPositiveType">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по водоотведению</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="GasSupply" type="base:SmallMoneyPositiveType">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по поставки газа</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ElectricalEnergy" type="base:SmallMoneyPositiveType">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по электрической энергии</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="OtherResourcesOrServices" type="base:SmallMoneyPositiveType">
+													<xs:annotation>
+														<xs:documentation>Общая задолженность по прочим ресурсам (услугам)</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Estimates" type="base:AttachmentType" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation>Смета доходов и расходов товарищества или кооператива. Информация заполняется только для поставщиков информации ТСЖ, ЖСК, кооператив; для УО не заполняется.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="EstimatesReport" type="base:AttachmentType" minOccurs="0" maxOccurs="1">
+										<xs:annotation>
+											<xs:documentation>Отчет о выполнении сметы доходов и расходов товарищества или кооператива. Информация заполняется только для поставщиков информации ТСЖ, ЖСК, кооператив; для УО не заполняется.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="ReportPeriodBeginDate" type="xs:date" use="required">
+						<xs:annotation>
+							<xs:documentation>Дата начала отчетного периода</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="ReportPeriodEndDate" type="xs:date" use="required">
+						<xs:annotation>
+							<xs:documentation>Дата конца отчетного периода</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section1_3">
+		<xs:annotation>
+			<xs:documentation>Раздел 1.3. Информация о привлечении об управляющей организации, товарищества, кооператива к административной ответственности за нарушения в сфере управления многоквартирными домами (заполняется по каждому факту привлечения).</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:SubSection1ElementType">
+					<xs:choice>
+						<xs:element name="BringToJusticeFact" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Факт привлечения управляющей организации, товарищества, кооператива к административной ответственности за нарушения в сфере управления многоквартирными домами</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PersonToResponse">
+										<xs:annotation>
+											<xs:documentation>Лицо, привлеченное к административной ответственности</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:choice>
+													<xs:element ref="base:OGRN"/>
+													<xs:element ref="base:OGRNIP"/>
+												</xs:choice>
+												<xs:element ref="base:INN"/>
+												<xs:element name="KPP" type="base:KPPType" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>КПП организации (для юридического лица и его обособленного подразделения)</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="PersonKind" type="base:nsiRef">
+													<xs:annotation>
+														<xs:documentation>Тип лица, привлеченного к административной ответственности</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="JobTitle" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Должность лица, привлеченного к административной ответственности</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="255"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Subject" type="tns:String1500Type">
+										<xs:annotation>
+											<xs:documentation>Предмет административного нарушения</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="SupervisoryAuthority" type="tns:String1500Type">
+										<xs:annotation>
+											<xs:documentation>Наименование контролирующего органа</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="PenaltyAmount" type="base:SmallMoneyType">
+										<xs:annotation>
+											<xs:documentation>Сумма штрафа</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="OffenceDoc">
+										<xs:annotation>
+											<xs:documentation>Документ о применении мер административного воздействия</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:complexContent>
+												<xs:extension base="base:AttachmentType">
+													<xs:sequence>
+														<xs:element name="OffenceDocName" type="tns:String1500Type">
+															<xs:annotation>
+																<xs:documentation>Наименование документа о применении мер административного воздействия</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="Date" type="xs:date">
+															<xs:annotation>
+																<xs:documentation>Дата привлечения к административной ответственности</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:sequence>
+												</xs:extension>
+											</xs:complexContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="EventsToCorrectViolations" type="tns:String1500Type">
+										<xs:annotation>
+											<xs:documentation>Мероприятия, принятые для устранения нарушений, и результаты административного воздействия</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="NoBringToJusticeFact" type="xs:boolean" fixed="true">
+							<xs:annotation>
+								<xs:documentation>Подтверждаю отсутствие фактов привлечения организации в предыдущем календарном году к административной ответственности за нарушения в сфере управления многоквартирными домами</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--Раздел 2. Сведения о многоквартирном доме, управление которым осуществляет управляющая организация, товарищество, кооператив (заполняется по каждому многоквартирному дому).-->
+	<xs:element name="Section2">
+		<xs:annotation>
+			<xs:documentation>Раздел 2. Сведения о многоквартирном доме, управление которым осуществляет управляющая организация, товарищество, кооператив (заполняется по каждому многоквартирному дому)</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="base:TransportGUID"/>
+				<xs:element name="LastEditingDate" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>Дата заполнения/внесения изменений</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:choice>
+					<xs:element name="House" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Сведения о многоквартирном доме, управление которым осуществляет управляющая организация, товарищество, кооператив (заполняется по каждому многоквартирному дому)</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="base:HouseGuid"/>
+								<xs:element ref="tns:Section2_1" minOccurs="0"/>
+								<xs:element ref="tns:Section2_2" minOccurs="0"/>
+								<xs:element ref="tns:Section2_3" minOccurs="0"/>
+								<xs:element ref="tns:Section2_4" minOccurs="0"/>
+								<xs:element ref="tns:Section2_5" minOccurs="0"/>
+								<xs:element ref="tns:Section2_6" minOccurs="1"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="NoHouses" type="xs:boolean" fixed="true">
+						<xs:annotation>
+							<xs:documentation>Подтверждаю отсутствие многоквартирных домов, которыми осуществляется управление</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute name="ReportPeriodBeginDate" type="xs:date" use="required">
+				<xs:annotation>
+					<xs:documentation>Дата начала отчетного периода</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="ReportPeriodEndDate" type="xs:date" use="required">
+				<xs:annotation>
+					<xs:documentation>Дата конца отчетного периода</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section2_1">
+		<xs:annotation>
+			<xs:documentation>Раздел 2.1. Сведения о выполняемых работах (оказываемых услугах) по содержанию и ремонту общего имущества в многоквартирном доме, иных услугах, связанных с достижением целей управления многоквартирным домом (заполняется по каждой выполняемой работе (оказываемой услуге)).</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="WorkOrService" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Сведения об оказываемой работе/услуге</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="WorkType" type="base:nsiRef">
+								<xs:annotation>
+									<xs:documentation>НСИ 59. Работа (услуга)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="WorkCost" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Годовая плановая стоимость работ (услуг)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section2_2">
+		<xs:annotation>
+			<xs:documentation>Раздел 2.2. Сведения об оказываемых коммунальных услугах (заполняется по каждой коммунальной услуге).</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="MunicipalService" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Коммунальная услуга</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Kind" type="base:nsiRef">
+								<xs:annotation>
+									<xs:documentation>НСИ 3. Вид коммунальной услуги</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="TypeOfServiceProvision" type="base:nsiRef">
+								<xs:annotation>
+									<xs:documentation>НСИ 93. Тип предоставления услуги</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ConsumptionTariff" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Тариф, установленный для потребителей</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="BeginDate" type="xs:date">
+								<xs:annotation>
+									<xs:documentation>Дата начала действия тарифа</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="TariffsDescription" type="tns:String1500Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Описание дифференциации тарифов в случаях, предусмотренных законодательством Российской Федерации о государственном регулировании цен (тарифов)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="LivingPremisesMSConsumptionRatio">
+								<xs:annotation>
+									<xs:documentation>Норматив потребления коммунальной услуги в жилых помещениях</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Ratio">
+											<xs:annotation>
+												<xs:documentation>Норматив</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:decimal">
+													<xs:totalDigits value="10"/>
+													<xs:fractionDigits value="2"/>
+													<xs:minInclusive value="0"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BeginDate" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата начала действия норматива</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="OveralMSConsumptionRatio">
+								<xs:annotation>
+									<xs:documentation>Норматив потребления коммунальной услуги на общедомовые нужды</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Ratio">
+											<xs:annotation>
+												<xs:documentation>Норматив</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:decimal">
+													<xs:totalDigits value="10"/>
+													<xs:fractionDigits value="2"/>
+													<xs:minInclusive value="0"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BeginDate" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата начала действия тарифа</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Supplier">
+								<xs:annotation>
+									<xs:documentation>Лицо, осуществляющее поставку коммунального ресурса</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Name" type="base:String255Type">
+											<xs:annotation>
+												<xs:documentation>Наименование лица, осуществляющего поставку коммунального ресурса</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element ref="base:INN"/>
+										<xs:choice>
+											<xs:element ref="base:OGRN"/>
+											<xs:element ref="base:OGRNIP"/>
+										</xs:choice>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SupplyContract">
+								<xs:annotation>
+									<xs:documentation>Реквизиты договора на поставку коммунального ресурса </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Date" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата договора на поставку коммунального ресурса</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Number">
+											<xs:annotation>
+												<xs:documentation>Номер договора на поставку коммунального ресурса</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TariffsLegalAct">
+								<xs:annotation>
+									<xs:documentation>Нормативно-правовой акт, устанавливающий тариф </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Date" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата нормативно-правового акта</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Number">
+											<xs:annotation>
+												<xs:documentation>Номер нормативно-правового акта</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="AgencyName">
+											<xs:annotation>
+												<xs:documentation>Наименование принявшего акт органа</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ConsumptionLegalAct" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Нормативный правовой акт, устанавливающий норматив потребления коммунальной услуги </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Date" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата нормативно-правового акта</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Number">
+											<xs:annotation>
+												<xs:documentation>Номер нормативно-правового акта</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="AgencyName">
+											<xs:annotation>
+												<xs:documentation>Наименование принявшего акт органа</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section2_3">
+		<xs:annotation>
+			<xs:documentation>Раздел 2.3. Сведения об использовании общего имущества в многоквартирном доме (заполняется по каждому используемому объекту общего имущества).</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CommonProperty" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Объект общего имущества</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Name">
+								<xs:annotation>
+									<xs:documentation>Наименование общего имущества</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="base:String255Type">
+										<xs:minLength value="1"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Purpose" type="tns:String1500Type">
+								<xs:annotation>
+									<xs:documentation>Назначение общего имущества</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Square" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Площадь общего имущества (заполняется в отношении помещений и земельных участков)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:decimal">
+										<xs:minInclusive value="0"/>
+										<xs:totalDigits value="10"/>
+										<xs:fractionDigits value="2"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ThirdPartyUsage" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Сведения о передаче во владение и пользование общего имущества третьим лицам (заполняется в случае сдачи в аренду, передачи в безвозмездное пользование и т.п.)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Name">
+											<xs:annotation>
+												<xs:documentation>Наименование владельца (пользователя)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element ref="base:INN"/>
+										<xs:element name="Contract">
+											<xs:annotation>
+												<xs:documentation>Реквизиты договора (номер и дата)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Date" type="xs:date">
+														<xs:annotation>
+															<xs:documentation>Дата договора</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Number">
+														<xs:annotation>
+															<xs:documentation>Номер договора</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="base:String255Type">
+																<xs:minLength value="1"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ContractBeginDate" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата начала действия договора</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="UsageCostPerMonth" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Стоимость по договору в месяц</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="OwnersMeetingProtocol">
+											<xs:annotation>
+												<xs:documentation>Реквизиты протокола общего собрания собственников помещений, на котором принято решение об использовании общедомового имущества</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Date" type="xs:date">
+														<xs:annotation>
+															<xs:documentation>Дата протокола общего собрания собственников помещений</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Number">
+														<xs:annotation>
+															<xs:documentation>Номер протокола общего собрания собственников помещений</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="base:String255Type">
+																<xs:minLength value="1"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section2_4">
+		<xs:annotation>
+			<xs:documentation>Раздел 2.4. Сведения о капитальном ремонте общего имущества в многоквартирном доме.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Overhaul">
+					<xs:annotation>
+						<xs:documentation>Сведения о фонде капитального ремонта</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Owner">
+								<xs:annotation>
+									<xs:documentation>Владелец специального счета</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Name">
+											<xs:annotation>
+												<xs:documentation>Наименование владельца специального счета</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element ref="base:INN"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="OneSqMFee" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Размер взноса на капитальный ремонт на 1 кв. м в соответствии с решением общего собрания собственников помещений в многоквартирном доме</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="OwnersMeetingProtocol">
+								<xs:annotation>
+									<xs:documentation>Реквизиты протокола общего собрания собственников помещений, на котором принято решение о способе формирования фонда капитального ремонта</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Date" type="xs:date">
+											<xs:annotation>
+												<xs:documentation>Дата протокола общего собрания собственников помещений</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Number">
+											<xs:annotation>
+												<xs:documentation>Номер протокола общего собрания собственников помещений</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="base:String255Type">
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AdditionalInfo" type="tns:String1500Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Дополнительная информация</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section2_5">
+		<xs:annotation>
+			<xs:documentation>Раздел 2.5. Сведения о проведенных общих собраниях собственников помещений в многоквартирном доме (заполняется по каждому собранию собственников помещений).
+</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="OwnersMeeting" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Сведения о проведенном общем собрании собственников помещений в многоквартирном доме</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Number">
+								<xs:annotation>
+									<xs:documentation>Номер протокола общего собрания собственников помещений</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="base:String255Type">
+										<xs:minLength value="1"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Decision">
+								<xs:annotation>
+									<xs:documentation>Протокол общего собрания собственников помещений, содержащий результат (решение) собрания</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Date" type="xs:date">
+								<xs:annotation>
+									<xs:documentation>Дата протокола общего собрания собственников помещений</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Section2_6">
+		<xs:annotation>
+			<xs:documentation>Раздел 2.6. Отчет об исполнении управляющей организацией договора управления, а также о выполнении товариществом, кооперативом смет доходов и расходов. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SummaryInfo">
+					<xs:annotation>
+						<xs:documentation>Общая информация о выполняемых работах (оказываемых услугах) по содержанию и текущему ремонту общего имущества</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CarryoversOfFunds">
+								<xs:annotation>
+									<xs:documentation>Переходящие остатки денежных средств </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="BeginOfPeriod">
+											<xs:annotation>
+												<xs:documentation>Переходящие остатки денежных средств на начало периода</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ConsumersPrepayments" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Авансовые платежи потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersOverpayment" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Переходящие остатки денежных средств по задолженности потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersDebt" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Задолженность потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="EndOfPeriod">
+											<xs:annotation>
+												<xs:documentation>Переходящие остатки денежных средств на конец периода</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ConsumersPrepayments" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Авансовые платежи потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersOverpayment" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Переходящие остатки денежных средств по задолженности потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersDebt" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Задолженность потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Charges">
+								<xs:annotation>
+									<xs:documentation>Начислено за услуги (работы) по содержанию и текущему ремонту</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="HouseMaintenance" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Начислено за содержание дома</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="CurrentRepairs" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Начислено за текущий ремонт</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ServiceManagement" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Начислено за услуги управления</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="MoneyRecieved">
+								<xs:annotation>
+									<xs:documentation>Получено денежных средств </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="MoneyFromOwnersOrTenants" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Получено денежных средств от собственников/нанимателей помещений </xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ContributionsFromOwnersOrTenants" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Получено целевых взносов от собственников/нанимателей помещений</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Subsidies" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Получено субсидий</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="FundsFromCommonPropertyUse" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Получено денежных средств от использования общего имущества</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="MiscellaneousIncome" type="base:SmallMoneyPositiveType">
+											<xs:annotation>
+												<xs:documentation>Прочие поступления</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalBalance" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Всего денежных средств с учетом остатков</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CompletedWorkOrService" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Выполненная работа (оказанная услуга) по содержанию общего имущества и текущему ремонту в отчетном периоде</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="WorkRepairType" type="base:nsiRef">
+								<xs:annotation>
+									<xs:documentation>НСИ №13. Работа (услуга) организации</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="WorkRepair" type="tns:String1500Type">
+								<xs:annotation>
+									<xs:documentation>Наименование работы/услуги</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="AnnualActualCost" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Годовая фактическая стоимость, руб.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="WorkPeriod" type="base:nsiRef">
+								<xs:annotation>
+									<xs:documentation>НСИ №92. Периодичность предоставления работы (услуги)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="UnitCost" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Стоимость на единицу измерения, руб</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="WorkQualityClaims">
+					<xs:annotation>
+						<xs:documentation>Информация о наличии претензий по качеству выполненных работ (оказанных услуг)</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Received">
+								<xs:annotation>
+									<xs:documentation>Количество поступивших претензий</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Successful">
+								<xs:annotation>
+									<xs:documentation>Количество удовлетворенных претензий</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Denied">
+								<xs:annotation>
+									<xs:documentation>Количество претензий, в удовлетворении которых отказано</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RecalculationSum" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Сумма произведенного перерасчета</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MunicipalServicesSummary" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Общая информация по предоставленным коммунальным услугам</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CarryoversOfFunds">
+								<xs:annotation>
+									<xs:documentation>Переходящие остатки денежных средств </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="BeginOfPeriod">
+											<xs:annotation>
+												<xs:documentation>Переходящие остатки денежных средств на начало периода</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ConsumersPrepayments" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Авансовые платежи потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersDebt" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Задолженность потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersOverpayment" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Переходящие остатки денежных средств</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="EndOfPeriod">
+											<xs:annotation>
+												<xs:documentation>Переходящие остатки денежных средств на конец периода</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ConsumersPrepayments" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Авансовые платежи потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersDebt" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Задолженность потребителей</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ConsumersOverpayment" type="base:SmallMoneyPositiveType">
+														<xs:annotation>
+															<xs:documentation>Переходящие остатки денежных средств</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MunicipalService" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Коммунальная услуга</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Kind" type="base:nsiRef">
+								<xs:annotation>
+									<xs:documentation>НСИ 3. Вид коммунальной услуги</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="TotalConsumed" type="base:VolumeType">
+								<xs:annotation>
+									<xs:documentation>Общий объем потребления </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ChargesForCustomers" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Начислено потребителям</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="PaidByCustomers" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Оплачено потребителями</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="DebtOfCustomers" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Задолженность потребителей</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SupplierCharged" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Начислено поставщиком (поставщиками) коммунального ресурса</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SupplierPaid" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Оплачено поставщику (поставщикам) коммунального ресурса</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SupplierDebt" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Задолженность перед поставщиком (поставщиками) коммунального ресурса</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SupplierFinesAndPenalties" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Суммы пени и штрафов, уплаченные поставщику(поставщикам) коммунального ресурса</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MunicipalServiceQualityClaims" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Информация о наличии претензий по качеству выполненных работ (оказанных услуг)</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Received">
+								<xs:annotation>
+									<xs:documentation>Количество поступивших претензий</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+										<xs:minInclusive value="0"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Successful">
+								<xs:annotation>
+									<xs:documentation>Количество удовлетворенных претензий</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+										<xs:minInclusive value="0"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Denied">
+								<xs:annotation>
+									<xs:documentation>Количество претензий, в удовлетворении которых отказано</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+										<xs:minInclusive value="0"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RecalculationSum" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Сумма произведенного перерасчета</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="WorkOnClaims" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Информация о ведении претензионно-исковой работы в отношении потребителей-должников</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ClaimsSent">
+								<xs:annotation>
+									<xs:documentation>Направлено претензий потребителям-должникам</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="LawsuitSent">
+								<xs:annotation>
+									<xs:documentation>Направлено исковых заявлений</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:nonNegativeInteger">
+										<xs:maxInclusive value="9999"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ClaimsMoneyRecieved" type="base:SmallMoneyPositiveType">
+								<xs:annotation>
+									<xs:documentation>Получено денежных средств по результатам претензионно-исковой работы</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!--Базовые типы-->
+	<xs:simpleType name="String1500Type">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Строка не более 1500 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1500"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String1000Type">
+		<xs:annotation>
+			<xs:documentation>Скалярный тип. Строка не более 1000 символов.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1000"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="SubSection1ElementType">
+		<xs:annotation>
+			<xs:documentation>Тип подраздела</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="base:TransportGUID"/>
+			<xs:element name="LastEditingDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Дата заполнения/внесения изменений</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DirectorFIOType">
+		<xs:annotation>
+			<xs:documentation>ФИО</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="TimesType">
+		<xs:sequence>
+			<xs:element name="HourFrom">
+				<xs:annotation>
+					<xs:documentation>"С" (час)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="23"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinuteFrom">
+				<xs:annotation>
+					<xs:documentation>"С" (минута)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="59"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="HourTo">
+				<xs:annotation>
+					<xs:documentation>"По" (час)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="23"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinuteTo">
+				<xs:annotation>
+					<xs:documentation> "По" (минута)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="59"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

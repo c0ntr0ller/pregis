@@ -37,8 +37,8 @@ public class Configure {
 //        if (!JCPXMLDSigInit.isInitialized())
 //            JCPXMLDSigInit.init();
 
-        if (!ru.CryptoPro.JCPxml.XmlInit.isInitialized())
-            ru.CryptoPro.JCPxml.XmlInit.init();
+//        if (!ru.CryptoPro.JCPxml.XmlInit.isInitialized())
+//            ru.CryptoPro.JCPxml.XmlInit.init();
 
         setPathAuto();
 

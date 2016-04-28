@@ -19,7 +19,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <pre>
  * &lt;complexType name="NsiElementDateFieldType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiElementFieldType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiElementFieldType">
  *       &lt;sequence>
  *         &lt;element name="Value" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
  *       &lt;/sequence>

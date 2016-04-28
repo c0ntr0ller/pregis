@@ -20,11 +20,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Code" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}nsiCodeType"/>
- *         &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}GUIDType"/>
+ *         &lt;element name="Code" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}nsiCodeType"/>
+ *         &lt;element name="GUID" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}GUIDType"/>
  *         &lt;element name="Name" minOccurs="0">
  *           &lt;simpleType>
- *             &lt;restriction base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}LongTextType">
+ *             &lt;restriction base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}LongTextType">
  *               &lt;maxLength value="1200"/>
  *             &lt;/restriction>
  *           &lt;/simpleType>
@@ -44,15 +44,15 @@ import javax.xml.bind.annotation.XmlType;
     "name"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.ExportSupplyResourceContractRequest.ContractSubject.ServiceType.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.SupplyResourceContractType.ContractSubject.ServiceType.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.SupplyResourceContractType.ContractSubject.MunicipalResource.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.SupplyResourceContractType.ObjectAddress.Pair.ServiceType.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.SupplyResourceContractType.ObjectAddress.Pair.MunicipalResource.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.services.HMServicesTarifsDocType.KU.MServiceType.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.infrastructure.InfrastructureType.OKIType.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.BaseDocuments.FormOfFinancialStatement.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.Optional.FormOfFinancialStatement.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.infrastructure.InfrastructureType.OKIType.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.ExportSupplyResourceContractRequest.ContractSubject.ServiceType.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.SupplyResourceContractType.ContractSubject.ServiceType.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.SupplyResourceContractType.ContractSubject.MunicipalResource.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.SupplyResourceContractType.ObjectAddress.Pair.ServiceType.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.SupplyResourceContractType.ObjectAddress.Pair.MunicipalResource.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.services.HMServicesTarifsDocType.KU.MServiceType.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.BaseDocuments.FormOfFinancialStatement.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.disclosure.Section12 .FinancialActivityInformation.AnnualFinancialStatements.Optional.FormOfFinancialStatement.class
 })
 public class NsiRef {
 

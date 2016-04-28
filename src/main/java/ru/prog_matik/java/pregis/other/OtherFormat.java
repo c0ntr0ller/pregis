@@ -1,6 +1,6 @@
 package ru.prog_matik.java.pregis.other;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
 import ru.gosuslugi.dom.schema.integration._8_7_0.RequestHeader;
 import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 
@@ -62,9 +62,9 @@ public class OtherFormat {
      *
      * @return ISRequestHeader
      */
-    public static ISRequestHeader getISRequestHeader() {
+    public static HeaderType getISRequestHeader() {
 
-        ISRequestHeader isRequestHeader = new ISRequestHeader();
+        HeaderType isRequestHeader = new HeaderType();
         isRequestHeader.setDate(getDateNow());
         isRequestHeader.setMessageGUID(getRandomGUID());
 

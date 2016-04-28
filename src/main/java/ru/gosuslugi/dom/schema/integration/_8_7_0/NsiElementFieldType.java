@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Name" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FieldNameType"/>
+ *         &lt;element name="Name" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FieldNameType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

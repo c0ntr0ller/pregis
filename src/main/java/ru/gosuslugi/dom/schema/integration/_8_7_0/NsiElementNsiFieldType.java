@@ -19,15 +19,15 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="NsiElementNsiFieldType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiElementFieldType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiElementFieldType">
  *       &lt;sequence>
  *         &lt;element name="NsiRef" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="NsiItemRegistryNumber" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiItemRegistryNumberType"/>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ListGroup"/>
+ *                   &lt;element name="NsiItemRegistryNumber" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiItemRegistryNumberType"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ListGroup"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -87,8 +87,8 @@ public class NsiElementNsiFieldType
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="NsiItemRegistryNumber" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiItemRegistryNumberType"/>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ListGroup"/>
+     *         &lt;element name="NsiItemRegistryNumber" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiItemRegistryNumberType"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ListGroup"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>

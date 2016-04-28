@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="RecipientINN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INNType"/>
- *         &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}KPPType" minOccurs="0"/>
+ *         &lt;element name="RecipientINN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INNType"/>
+ *         &lt;element name="RecipientKPP" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}KPPType" minOccurs="0"/>
  *         &lt;element name="BankName">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="BankBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}BIKType"/>
+ *         &lt;element name="BankBIK" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}BIKType"/>
  *         &lt;element name="operatingAccountNumber">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}AccountType"/>
+ *         &lt;element name="CorrespondentBankAccount" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}AccountType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -66,8 +66,8 @@ import javax.xml.bind.annotation.XmlType;
     "correspondentBankAccount"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.payment.ServiceDetailsType.ExecutorInformation.PaymentInformation.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.payment.PaymentDocumentDetailsType.ExecutorInformation.PaymentInformation.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.payment.ServiceDetailsType.ExecutorInformation.PaymentInformation.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.payment.PaymentDocumentDetailsType.ExecutorInformation.PaymentInformation.class
 })
 public class PaymentInformationType {
 

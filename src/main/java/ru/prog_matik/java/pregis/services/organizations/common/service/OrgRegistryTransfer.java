@@ -1,14 +1,15 @@
 package ru.prog_matik.java.pregis.services.organizations.common.service;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
+//import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
 import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportDataProviderResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.RegOrgPortsType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.RegOrgService;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;
@@ -39,7 +40,7 @@ class OrgRegistryTransfer implements RegOrgPortsType {
      * @throws Fault
      */
     @Override
-    public ExportOrgRegistryResult exportOrgRegistry(ExportOrgRegistryRequest exportOrgRegistryRequest, ISRequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ExportOrgRegistryResult exportOrgRegistry(ExportOrgRegistryRequest exportOrgRegistryRequest, HeaderType header, Holder<ResultHeader> header0) throws Fault {
 
         return getPort().exportOrgRegistry(exportOrgRegistryRequest, header, header0);
     }
@@ -71,7 +72,7 @@ class OrgRegistryTransfer implements RegOrgPortsType {
      * @throws Fault
      */
     @Override
-    public ExportDataProviderResult exportDataProvider(ExportDataProviderRequest exportDataProviderRequest, ISRequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ExportDataProviderResult exportDataProvider(ExportDataProviderRequest exportDataProviderRequest, HeaderType header, Holder<ResultHeader> header0) throws Fault {
 
         return getPort().exportDataProvider(exportDataProviderRequest, header, header0);
     }

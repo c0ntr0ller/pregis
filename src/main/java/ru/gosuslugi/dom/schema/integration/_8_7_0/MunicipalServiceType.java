@@ -21,10 +21,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="MSType" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}nsiRef"/>
+ *         &lt;element name="MSType" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}nsiRef"/>
  *         &lt;element name="StartDateFrom" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="StartDateTo" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="AccountingType" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}nsiRef" minOccurs="0"/>
+ *         &lt;element name="AccountingType" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}nsiRef" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

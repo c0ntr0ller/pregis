@@ -1,11 +1,11 @@
 package ru.prog_matik.java.pregis.services.house;
 
 import ru.gosuslugi.dom.schema.integration._8_7_0.*;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.*;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.*;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.HouseManagementService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;

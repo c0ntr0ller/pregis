@@ -35,9 +35,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OGRNIP"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OGRNIP"/>
  *         &lt;element name="StateRegistrationDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INN" minOccurs="0"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INN" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -57,8 +57,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "inn"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.DisqualifiedPersonType.Org.Entrp.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.LicenseOrganizationType.Entrp.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.DisqualifiedPersonType.Org.Entrp.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.LicenseOrganizationType.Entrp.class
 })
 public class EntpsType {
 

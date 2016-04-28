@@ -1,11 +1,11 @@
 package ru.prog_matik.java.pregis.services.organizations.common.service;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
 import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportDataProviderResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
@@ -21,7 +21,7 @@ public class ExportDataProvider {
 
         OrgRegistryTransfer transfer = new OrgRegistryTransfer();
 
-        ISRequestHeader header = getHeader();
+        HeaderType header = getHeader();
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
@@ -53,9 +53,9 @@ public class ExportDataProvider {
         return exportDataProviderRequest;
     }
 
-    private ISRequestHeader getHeader() {
+    private HeaderType getHeader() {
 
-        ISRequestHeader requestHeader = new ISRequestHeader();
+        HeaderType requestHeader = new HeaderType();
 //        requestHeader.setSenderID(BaseOrganization.getSenderID());
         requestHeader.setMessageGUID(OtherFormat.getRandomGUID());
         requestHeader.setDate(OtherFormat.getDateNow());

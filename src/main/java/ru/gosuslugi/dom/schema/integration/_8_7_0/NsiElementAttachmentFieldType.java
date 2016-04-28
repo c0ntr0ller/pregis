@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="NsiElementAttachmentFieldType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiElementFieldType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiElementFieldType">
  *       &lt;sequence>
- *         &lt;element name="Document" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}AttachmentType"/>
+ *         &lt;element name="Document" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}AttachmentType"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>

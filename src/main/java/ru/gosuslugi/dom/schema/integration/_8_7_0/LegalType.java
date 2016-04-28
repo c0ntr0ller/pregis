@@ -22,16 +22,16 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ShortName" minOccurs="0"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FullName"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}CommercialName" minOccurs="0"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OGRN"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ShortName" minOccurs="0"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FullName"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}CommercialName" minOccurs="0"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OGRN"/>
  *         &lt;element name="StateRegistrationDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INN" minOccurs="0"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}KPP" minOccurs="0"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OKOPF" minOccurs="0"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INN" minOccurs="0"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}KPP" minOccurs="0"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OKOPF" minOccurs="0"/>
  *         &lt;element name="Address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIASHouseGUIDType" minOccurs="0"/>
+ *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIASHouseGUIDType" minOccurs="0"/>
  *         &lt;element name="ActivityEndDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -56,11 +56,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "activityEndDate"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.DisqualifiedPersonType.Org.Legal.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.LicenseOrganizationType.Legal.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.LicenseType.LicensingAuthority.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.CorrectLicenseType.LicensingAuthority.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.licenses.AccompanyingDocumentType.Document.DecisionOrg.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.DisqualifiedPersonType.Org.Legal.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.LicenseOrganizationType.Legal.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.LicenseType.LicensingAuthority.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.CorrectLicenseType.LicensingAuthority.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.licenses.AccompanyingDocumentType.Document.DecisionOrg.class
 })
 public class LegalType {
 

@@ -24,8 +24,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Created" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="NsiItemInfo" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiItemInfoType" maxOccurs="unbounded"/>
- *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ListGroup"/>
+ *         &lt;element name="NsiItemInfo" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiItemInfoType" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ListGroup"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

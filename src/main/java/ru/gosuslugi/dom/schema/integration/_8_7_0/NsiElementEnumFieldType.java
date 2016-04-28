@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="NsiElementEnumFieldType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}NsiElementFieldType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}NsiElementFieldType">
  *       &lt;sequence>
  *         &lt;element name="Position" maxOccurs="unbounded" minOccurs="0">
  *           &lt;complexType>

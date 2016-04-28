@@ -54,15 +54,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INN"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INN"/>
  *                   &lt;choice>
- *                     &lt;element name="Entpr" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIOType"/>
+ *                     &lt;element name="Entpr" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIOType"/>
  *                     &lt;element name="Legal">
  *                       &lt;complexType>
  *                         &lt;complexContent>
  *                           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                             &lt;sequence>
- *                               &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}KPP"/>
+ *                               &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}KPP"/>
  *                               &lt;element name="Name">
  *                                 &lt;simpleType>
  *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -77,7 +77,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                       &lt;/complexType>
  *                     &lt;/element>
  *                   &lt;/choice>
- *                   &lt;element name="PaymentInformation" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}PaymentInformationType"/>
+ *                   &lt;element name="PaymentInformation" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}PaymentInformationType"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -88,7 +88,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OrderID"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OrderID"/>
  *                   &lt;element name="OrderDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *                   &lt;element name="OrderNum" minOccurs="0">
  *                     &lt;simpleType>
@@ -98,7 +98,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                       &lt;/restriction>
  *                     &lt;/simpleType>
  *                   &lt;/element>
- *                   &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}MoneyPositiveType"/>
+ *                   &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}MoneyPositiveType"/>
  *                   &lt;element name="PaymentPurpose" minOccurs="0">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -116,19 +116,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                     &lt;/simpleType>
  *                   &lt;/element>
  *                   &lt;choice>
- *                     &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}PaymentDocumentID"/>
- *                     &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}PaymentDocumentNumber"/>
+ *                     &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}PaymentDocumentID"/>
+ *                     &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}PaymentDocumentNumber"/>
  *                     &lt;sequence>
- *                       &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}Year"/>
- *                       &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}Month"/>
+ *                       &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}Year"/>
+ *                       &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}Month"/>
  *                       &lt;choice>
- *                         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}UnifiedAccountNumber"/>
+ *                         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}UnifiedAccountNumber"/>
  *                         &lt;element name="AddressAndConsumer">
  *                           &lt;complexType>
  *                             &lt;complexContent>
  *                               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                                 &lt;sequence>
- *                                   &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIASHouseGUIDType"/>
+ *                                   &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIASHouseGUIDType"/>
  *                                   &lt;element name="Apartment" minOccurs="0">
  *                                     &lt;simpleType>
  *                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -146,8 +146,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                                     &lt;/simpleType>
  *                                   &lt;/element>
  *                                   &lt;choice>
- *                                     &lt;element name="Ind" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIOType"/>
- *                                     &lt;element name="INN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INNType"/>
+ *                                     &lt;element name="Ind" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIOType"/>
+ *                                     &lt;element name="INN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INNType"/>
  *                                   &lt;/choice>
  *                                 &lt;/sequence>
  *                               &lt;/restriction>
@@ -159,13 +159,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                             &lt;complexContent>
  *                               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                                 &lt;sequence>
- *                                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ServiceID"/>
+ *                                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ServiceID"/>
  *                                 &lt;/sequence>
  *                               &lt;/restriction>
  *                             &lt;/complexContent>
  *                           &lt;/complexType>
  *                         &lt;/element>
- *                         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}AccountNumber"/>
+ *                         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}AccountNumber"/>
  *                       &lt;/choice>
  *                     &lt;/sequence>
  *                   &lt;/choice>
@@ -189,8 +189,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "orderInfo"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.bills.ExportNotificationsOfOrderExecutionResultType.NotificationOfOrderExecutionWithStatus.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.payment.ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.bills.ExportNotificationsOfOrderExecutionResultType.NotificationOfOrderExecutionWithStatus.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.payment.ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType.class
 })
 public class NotificationOfOrderExecutionType {
 
@@ -284,7 +284,7 @@ public class NotificationOfOrderExecutionType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OrderID"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OrderID"/>
      *         &lt;element name="OrderDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
      *         &lt;element name="OrderNum" minOccurs="0">
      *           &lt;simpleType>
@@ -294,7 +294,7 @@ public class NotificationOfOrderExecutionType {
      *             &lt;/restriction>
      *           &lt;/simpleType>
      *         &lt;/element>
-     *         &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}MoneyPositiveType"/>
+     *         &lt;element name="Amount" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}MoneyPositiveType"/>
      *         &lt;element name="PaymentPurpose" minOccurs="0">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -312,19 +312,19 @@ public class NotificationOfOrderExecutionType {
      *           &lt;/simpleType>
      *         &lt;/element>
      *         &lt;choice>
-     *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}PaymentDocumentID"/>
-     *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}PaymentDocumentNumber"/>
+     *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}PaymentDocumentID"/>
+     *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}PaymentDocumentNumber"/>
      *           &lt;sequence>
-     *             &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}Year"/>
-     *             &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}Month"/>
+     *             &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}Year"/>
+     *             &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}Month"/>
      *             &lt;choice>
-     *               &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}UnifiedAccountNumber"/>
+     *               &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}UnifiedAccountNumber"/>
      *               &lt;element name="AddressAndConsumer">
      *                 &lt;complexType>
      *                   &lt;complexContent>
      *                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *                       &lt;sequence>
-     *                         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIASHouseGUIDType"/>
+     *                         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIASHouseGUIDType"/>
      *                         &lt;element name="Apartment" minOccurs="0">
      *                           &lt;simpleType>
      *                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -342,8 +342,8 @@ public class NotificationOfOrderExecutionType {
      *                           &lt;/simpleType>
      *                         &lt;/element>
      *                         &lt;choice>
-     *                           &lt;element name="Ind" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIOType"/>
-     *                           &lt;element name="INN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INNType"/>
+     *                           &lt;element name="Ind" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIOType"/>
+     *                           &lt;element name="INN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INNType"/>
      *                         &lt;/choice>
      *                       &lt;/sequence>
      *                     &lt;/restriction>
@@ -355,13 +355,13 @@ public class NotificationOfOrderExecutionType {
      *                   &lt;complexContent>
      *                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *                       &lt;sequence>
-     *                         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ServiceID"/>
+     *                         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ServiceID"/>
      *                       &lt;/sequence>
      *                     &lt;/restriction>
      *                   &lt;/complexContent>
      *                 &lt;/complexType>
      *               &lt;/element>
-     *               &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}AccountNumber"/>
+     *               &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}AccountNumber"/>
      *             &lt;/choice>
      *           &lt;/sequence>
      *         &lt;/choice>
@@ -769,7 +769,7 @@ public class NotificationOfOrderExecutionType {
          *   &lt;complexContent>
          *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *       &lt;sequence>
-         *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIASHouseGUIDType"/>
+         *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIASHouseGUIDType"/>
          *         &lt;element name="Apartment" minOccurs="0">
          *           &lt;simpleType>
          *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -787,8 +787,8 @@ public class NotificationOfOrderExecutionType {
          *           &lt;/simpleType>
          *         &lt;/element>
          *         &lt;choice>
-         *           &lt;element name="Ind" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIOType"/>
-         *           &lt;element name="INN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INNType"/>
+         *           &lt;element name="Ind" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIOType"/>
+         *           &lt;element name="INN" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INNType"/>
          *         &lt;/choice>
          *       &lt;/sequence>
          *     &lt;/restriction>
@@ -952,7 +952,7 @@ public class NotificationOfOrderExecutionType {
          *   &lt;complexContent>
          *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *       &lt;sequence>
-         *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ServiceID"/>
+         *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ServiceID"/>
          *       &lt;/sequence>
          *     &lt;/restriction>
          *   &lt;/complexContent>
@@ -1009,15 +1009,15 @@ public class NotificationOfOrderExecutionType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INN"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INN"/>
      *         &lt;choice>
-     *           &lt;element name="Entpr" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIOType"/>
+     *           &lt;element name="Entpr" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIOType"/>
      *           &lt;element name="Legal">
      *             &lt;complexType>
      *               &lt;complexContent>
      *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *                   &lt;sequence>
-     *                     &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}KPP"/>
+     *                     &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}KPP"/>
      *                     &lt;element name="Name">
      *                       &lt;simpleType>
      *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -1032,7 +1032,7 @@ public class NotificationOfOrderExecutionType {
      *             &lt;/complexType>
      *           &lt;/element>
      *         &lt;/choice>
-     *         &lt;element name="PaymentInformation" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}PaymentInformationType"/>
+     *         &lt;element name="PaymentInformation" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}PaymentInformationType"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -1166,7 +1166,7 @@ public class NotificationOfOrderExecutionType {
          *   &lt;complexContent>
          *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *       &lt;sequence>
-         *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}KPP"/>
+         *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}KPP"/>
          *         &lt;element name="Name">
          *           &lt;simpleType>
          *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">

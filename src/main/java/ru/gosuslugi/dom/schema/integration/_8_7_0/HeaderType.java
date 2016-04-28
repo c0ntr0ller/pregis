@@ -23,7 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Date" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="MessageGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}GUIDType"/>
+ *         &lt;element name="MessageGUID" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}GUIDType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,8 +39,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 @XmlSeeAlso({
     ResultHeader.class,
-    RequestHeader.class,
-    ISRequestHeader.class
+    RequestHeader.class
 })
 public class HeaderType {
 

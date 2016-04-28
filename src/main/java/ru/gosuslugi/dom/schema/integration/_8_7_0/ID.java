@@ -20,7 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Type" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}nsiRef"/>
+ *         &lt;element name="Type" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}nsiRef"/>
  *         &lt;element name="Series" minOccurs="0">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -37,7 +37,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="IssueDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
+ *         &lt;element name="IssueDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -62,7 +62,7 @@ public class ID {
     protected String series;
     @XmlElement(name = "Number", required = true)
     protected String number;
-    @XmlElement(name = "IssueDate")
+    @XmlElement(name = "IssueDate", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar issueDate;
 

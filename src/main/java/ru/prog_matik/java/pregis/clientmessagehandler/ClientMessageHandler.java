@@ -53,6 +53,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 //                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();
                 msg.saveChanges();
+                messageContext.setMessage(msg);
 //                Debug
                 System.out.println("\nOutbound message:");
                 printHeaders(msg.getMimeHeaders());

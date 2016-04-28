@@ -27,9 +27,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="CreateSubsidiary">
  *           &lt;complexType>
  *             &lt;complexContent>
- *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}SubsidiaryType">
+ *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}SubsidiaryType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}orgVersionGUID"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}orgVersionGUID"/>
  *                 &lt;/sequence>
  *               &lt;/extension>
  *             &lt;/complexContent>
@@ -40,7 +40,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}orgVersionGUID"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}orgVersionGUID"/>
  *                   &lt;element name="FullName" minOccurs="0">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -49,15 +49,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                       &lt;/restriction>
  *                     &lt;/simpleType>
  *                   &lt;/element>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INN" minOccurs="0"/>
- *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OKOPF" minOccurs="0"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INN" minOccurs="0"/>
+ *                   &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OKOPF" minOccurs="0"/>
  *                   &lt;element name="Address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIASHouseGUIDType" minOccurs="0"/>
+ *                   &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIASHouseGUIDType" minOccurs="0"/>
  *                   &lt;element name="ActivityEndDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
  *                   &lt;element name="SourceName" minOccurs="0">
  *                     &lt;complexType>
  *                       &lt;simpleContent>
- *                         &lt;extension base="&lt;http://dom.gosuslugi.ru/schema/integration/8.7.0.4/>String255Type">
+ *                         &lt;extension base="&lt;http://dom.gosuslugi.ru/schema/integration/8.7.0.6/>String255Type">
  *                           &lt;attribute name="Date" use="required" type="{http://www.w3.org/2001/XMLSchema}date" />
  *                         &lt;/extension>
  *                       &lt;/simpleContent>
@@ -82,7 +82,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "updateSubsidiary"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry.ImportSubsidiaryRequest.Subsidiary.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry.ImportSubsidiaryRequest.Subsidiary.class
 })
 public class SubsidiaryImportType {
 
@@ -148,9 +148,9 @@ public class SubsidiaryImportType {
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
-     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}SubsidiaryType">
+     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}SubsidiaryType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}orgVersionGUID"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}orgVersionGUID"/>
      *       &lt;/sequence>
      *     &lt;/extension>
      *   &lt;/complexContent>
@@ -207,7 +207,7 @@ public class SubsidiaryImportType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}orgVersionGUID"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}orgVersionGUID"/>
      *         &lt;element name="FullName" minOccurs="0">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -216,15 +216,15 @@ public class SubsidiaryImportType {
      *             &lt;/restriction>
      *           &lt;/simpleType>
      *         &lt;/element>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}INN" minOccurs="0"/>
-     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OKOPF" minOccurs="0"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}INN" minOccurs="0"/>
+     *         &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OKOPF" minOccurs="0"/>
      *         &lt;element name="Address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIASHouseGUIDType" minOccurs="0"/>
+     *         &lt;element name="FIASHouseGuid" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIASHouseGUIDType" minOccurs="0"/>
      *         &lt;element name="ActivityEndDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
      *         &lt;element name="SourceName" minOccurs="0">
      *           &lt;complexType>
      *             &lt;simpleContent>
-     *               &lt;extension base="&lt;http://dom.gosuslugi.ru/schema/integration/8.7.0.4/>String255Type">
+     *               &lt;extension base="&lt;http://dom.gosuslugi.ru/schema/integration/8.7.0.6/>String255Type">
      *                 &lt;attribute name="Date" use="required" type="{http://www.w3.org/2001/XMLSchema}date" />
      *               &lt;/extension>
      *             &lt;/simpleContent>
@@ -470,7 +470,7 @@ public class SubsidiaryImportType {
          * <pre>
          * &lt;complexType>
          *   &lt;simpleContent>
-         *     &lt;extension base="&lt;http://dom.gosuslugi.ru/schema/integration/8.7.0.4/>String255Type">
+         *     &lt;extension base="&lt;http://dom.gosuslugi.ru/schema/integration/8.7.0.6/>String255Type">
          *       &lt;attribute name="Date" use="required" type="{http://www.w3.org/2001/XMLSchema}date" />
          *     &lt;/extension>
          *   &lt;/simpleContent>

@@ -1,7 +1,7 @@
 package ru.prog_matik.java.pregis;
 
 import ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryResult;
 import ru.prog_matik.java.pregis.services.house.ExportCAChData;
 import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
 import ru.prog_matik.java.pregis.services.nsi.ExportNsiList;

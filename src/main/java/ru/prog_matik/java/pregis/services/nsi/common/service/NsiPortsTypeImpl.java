@@ -1,14 +1,14 @@
 package ru.prog_matik.java.pregis.services.nsi.common.service;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
+import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
 import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common.ExportNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common.ExportNsiListResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common_service.NsiPortsType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.nsi_common_service.NsiService;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiItemRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiListRequest;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.NsiPortsType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.NsiService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;
@@ -23,13 +23,13 @@ public class NsiPortsTypeImpl implements NsiPortsType {
 
 
     @Override
-    public ExportNsiListResult exportNsiList(ExportNsiListRequest exportNsiListRequest, ISRequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ExportNsiListResult exportNsiList(ExportNsiListRequest exportNsiListRequest, HeaderType header, Holder<ResultHeader> header0) throws Fault {
 
         return getPort().exportNsiList(exportNsiListRequest, header, header0);
     }
 
     @Override
-    public ExportNsiItemResult exportNsiItem(ExportNsiItemRequest exportNsiItemRequest, ISRequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ExportNsiItemResult exportNsiItem(ExportNsiItemRequest exportNsiItemRequest, HeaderType header, Holder<ResultHeader> header0) throws Fault {
 
         return getPort().exportNsiItem(exportNsiItemRequest, header, header0);
     }

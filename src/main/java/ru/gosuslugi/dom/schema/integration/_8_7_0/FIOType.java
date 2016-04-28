@@ -6,8 +6,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.AccountIndType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_4.payment.Individual;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.AccountIndType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.VotingInitiatorIndType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.payment.Individual;
 
 
 /**
@@ -61,6 +62,7 @@ import ru.gosuslugi.dom.schema.integration._8_7_0_4.payment.Individual;
     "patronymic"
 })
 @XmlSeeAlso({
+    VotingInitiatorIndType.class,
     AccountIndType.class,
     IndType.class,
     Individual.class

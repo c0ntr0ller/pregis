@@ -20,7 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <pre>
  * &lt;complexType name="IndType">
  *   &lt;complexContent>
- *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}FIOType">
+ *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}FIOType">
  *       &lt;sequence>
  *         &lt;element name="Sex">
  *           &lt;simpleType>
@@ -34,8 +34,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;/element>
  *         &lt;element name="DateOfBirth" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;choice>
- *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}SNILS"/>
- *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}ID"/>
+ *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}SNILS"/>
+ *           &lt;element ref="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}ID"/>
  *         &lt;/choice>
  *         &lt;element name="PlaceBirth" minOccurs="0">
  *           &lt;simpleType>
@@ -62,8 +62,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "placeBirth"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.SupplyResourceContractType.Owner.Ind.class,
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.house_management.SupplyResourceContractType.Renter.Ind.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.SupplyResourceContractType.Owner.Ind.class,
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.SupplyResourceContractType.Renter.Ind.class
 })
 public class IndType
     extends FIOType

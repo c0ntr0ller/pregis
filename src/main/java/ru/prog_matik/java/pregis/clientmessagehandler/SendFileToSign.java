@@ -50,7 +50,7 @@ public class SendFileToSign {
             if (answerEntity != null) {
                 long len = answerEntity.getContentLength();
                 if (len != -1) {
-                    answerMessage = toMessage(EntityUtils.toString(answerEntity));
+                    answerMessage = toMessage(EntityUtils.toString(answerEntity).replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", ""));
                 }
             }
 

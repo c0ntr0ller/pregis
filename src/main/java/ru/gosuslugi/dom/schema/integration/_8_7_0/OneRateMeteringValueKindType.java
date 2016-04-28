@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="CurrentValue" maxOccurs="unbounded" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
- *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType">
+ *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType">
  *               &lt;/extension>
  *             &lt;/complexContent>
  *           &lt;/complexType>
@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="ControlValue" maxOccurs="unbounded" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
- *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType">
+ *               &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType">
  *               &lt;/extension>
  *             &lt;/complexContent>
  *           &lt;/complexType>
@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="StartVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType"/>
- *                   &lt;element name="EndVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType"/>
+ *                   &lt;element name="StartVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType"/>
+ *                   &lt;element name="EndVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType"/>
  *                   &lt;choice>
  *                     &lt;element name="PlannedVerification" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *                     &lt;element name="VerificationReason" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}nsiRef"/>
+ *                     &lt;element name="VerificationReason" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}nsiRef"/>
  *                   &lt;/choice>
  *                 &lt;/sequence>
  *               &lt;/restriction>
@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
     "verificationValue"
 })
 @XmlSeeAlso({
-    ru.gosuslugi.dom.schema.integration._8_7_0_4.device_metering.ExportMeteringDeviceHistoryResultType.OneRateDeviceValue.Values.class
+    ru.gosuslugi.dom.schema.integration._8_7_0_6.device_metering.ExportMeteringDeviceHistoryResultType.OneRateDeviceValue.Values.class
 })
 public class OneRateMeteringValueKindType {
 
@@ -176,7 +176,7 @@ public class OneRateMeteringValueKindType {
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
-     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType">
+     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType">
      *     &lt;/extension>
      *   &lt;/complexContent>
      * &lt;/complexType>
@@ -202,7 +202,7 @@ public class OneRateMeteringValueKindType {
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
-     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType">
+     *     &lt;extension base="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType">
      *     &lt;/extension>
      *   &lt;/complexContent>
      * &lt;/complexType>
@@ -230,11 +230,11 @@ public class OneRateMeteringValueKindType {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="StartVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType"/>
-     *         &lt;element name="EndVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}OneRateMeteringValueType"/>
+     *         &lt;element name="StartVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType"/>
+     *         &lt;element name="EndVerificationValue" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}OneRateMeteringValueType"/>
      *         &lt;choice>
      *           &lt;element name="PlannedVerification" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
-     *           &lt;element name="VerificationReason" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.4/}nsiRef"/>
+     *           &lt;element name="VerificationReason" type="{http://dom.gosuslugi.ru/schema/integration/8.7.0.6/}nsiRef"/>
      *         &lt;/choice>
      *       &lt;/sequence>
      *     &lt;/restriction>

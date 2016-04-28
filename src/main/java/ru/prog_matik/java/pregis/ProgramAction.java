@@ -1,7 +1,9 @@
 package ru.prog_matik.java.pregis;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryResult;
+import ru.prog_matik.java.pregis.connectiondb.SaveToBaseOrganization;
+import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.services.house.ExportCAChData;
 import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
 import ru.prog_matik.java.pregis.services.nsi.ExportNsiList;
@@ -14,48 +16,40 @@ import ru.prog_matik.java.pregis.services.organizations.common.service.ExportOrg
  */
 public class ProgramAction {
 
-    private String orgRootEntityGUID;
-
-    private ExportOrgRegistryResult exportOrgRegistryResult;
-    private ImportResult importResult;
-
     /**
      * Получение "SenderID".
-     * отправляем запрос exportOrgRegistry получаем данные организации, извлекаем необходимое,
-     * отправляем запрос "importDataProvider - allocateSenderID", получаем "SenderID".
+     * отправляем запрос exportOrgRegistry получаем данные организации,
+     * отправляем запрос "exportDataProvider", получаем "SenderID" (находится в теге "DataProviderGUID").
      */
-    public void callExportOrgRegistry() {
+    public void getSenderID() throws Exception {
 
-        ExportOrgRegistry reg = new ExportOrgRegistry();
-//        ImportDataProvider pro = new ImportDataProvider();
-        try {
-
-            exportOrgRegistryResult = reg.callExportOrgRegistry();
-            if (exportOrgRegistryResult == null) return;
-
-//            importResult = pro.allocateSenderID(exportOrgRegistryResult.getOrgData().get(0).getOrgRootEntityGUID());
-//            if (importResult == null) return;
-
-//            SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
-//            saveToBaseOrganization.setOrganization(exportOrgRegistryResult, importResult);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        ExportOrgRegistry req = new ExportOrgRegistry();
+        ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
+        if (exportOrgRegistryResult == null) {
+            throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
+        ExportDataProvider dataProvider = new ExportDataProvider();
+        ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
+        if (dataProviderResult == null) {
+            throw new PreGISException("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+        }
+
+        SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
+        saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
+
     }
 
-//    public void removeSenderID() {
-//        ImportDataProvider provider = new ImportDataProvider();
-//        provider.removeSenderID(BaseOrganization.getSenderID());
-//    }
+    public void callExportOrgRegistry() throws Exception {
+
+        ExportOrgRegistry reg = new ExportOrgRegistry();
+        reg.callExportOrgRegistry();
+    }
 
 
     public void callExportDataProvider() {
 
         ExportDataProvider dataProvider = new ExportDataProvider();
         dataProvider.callExportDataProvide();
-
     }
 
     public void callExportNsiList() {

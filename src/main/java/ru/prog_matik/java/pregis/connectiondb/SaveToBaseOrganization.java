@@ -1,7 +1,7 @@
 package ru.prog_matik.java.pregis.connectiondb;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryResult;
 
 import java.sql.CallableStatement;
@@ -20,12 +20,12 @@ public class SaveToBaseOrganization {
 
     /**
      * Метод получает заранее запрошенные данные об организации (exportOrgRegistry) и
-     * о поставщиках данных (imortDataProvider), извлекает необходимые данные и сохраняет в базе данных.
+     * о поставщиках данных (exportDataProvider), извлекает необходимые данные и сохраняет в базе данных.
      * Таблица "ORGANIZATION".
      * @param org - ExportOrgRegistryResult полученные сведенья об организациях.
-     * @param imp - ImportResult полученные сведенья о поставщиках данных
+     * @param dpr - ExportDataProviderResult полученные сведенья о поставщиках данных
      */
-    public void setOrganization(ExportOrgRegistryResult org, ImportResult imp) {
+    public void setOrganization(ExportOrgRegistryResult org, ExportDataProviderResult dpr) {
 
         try {
 
@@ -40,7 +40,7 @@ public class SaveToBaseOrganization {
             cs.setString(3, org.getOrgData().get(0).getOrgVersion().getLegal().getOGRN());
             cs.setString(4, org.getOrgData().get(0).getOrgVersion().getLegal().getINN());
             cs.setString(5, org.getOrgData().get(0).getOrgVersion().getLegal().getKPP());
-            cs.setString(6, imp.getCommonResult().get(0).getGUID()); // SenderID
+            cs.setString(6, dpr.getExportDataProviderResult().get(0).getDataProviderGUID()); // SenderID
             cs.setString(7, org.getOrgData().get(0).getOrgRootEntityGUID());
 
             int isResultSet = cs.executeUpdate();

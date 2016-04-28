@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
-    private Logger logger = Logger.getLogger(ClientMessageHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(ClientMessageHandler.class);
 
     /**
      * Метод перехватывает сообщения.
@@ -58,12 +58,14 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 System.out.println("\nOutbound message:");
                 printHeaders(msg.getMimeHeaders());
                 msg.writeTo(System.out);
+                System.out.println();
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
                     msg.writeTo(outputStream);
                 }
 
             } catch (Exception e) {
+                LOGGER.error("ClientMessageHandler: ", e);
                 e.printStackTrace();
             }
 
@@ -75,7 +77,6 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "inbound")) {
                     msg.writeTo(outputStream);
-                    msg.writeTo(System.out);
                 }
 
 //            Вывод сообщение запроса
@@ -87,6 +88,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 //            printHeaders(msg.getMimeHeaders());
 
             } catch (Exception e) {
+                LOGGER.error("ClientMessageHandler: ", e);
                 e.printStackTrace();
             }
         }

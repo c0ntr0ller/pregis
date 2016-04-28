@@ -8,6 +8,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
@@ -23,6 +24,8 @@ import java.util.ResourceBundle;
  * Created by andryha on 25.04.2016.
  */
 public class SendFileToSign {
+
+    private static final Logger LOGGER = Logger.getLogger(SendFileToSign.class);
 
     public SOAPMessage sendMessageForSign(SOAPMessage soapMessage) {
 
@@ -55,6 +58,7 @@ public class SendFileToSign {
             }
 
         } catch (SOAPException | IOException e) {
+            LOGGER.error("SendFileToSign.sendMessageForSign(): Ошибка отправки файл на подпись. ", e);
             e.printStackTrace();
         }
         return answerMessage;

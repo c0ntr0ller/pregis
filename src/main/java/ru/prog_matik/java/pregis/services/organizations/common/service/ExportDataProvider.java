@@ -17,7 +17,7 @@ public class ExportDataProvider {
 
     private static final String NAME_METHOD = "exportDataProvider";
 
-    public void callExportDataProvide() {
+    public ExportDataProviderResult callExportDataProvide() {
 
         OrgRegistryTransfer transfer = new OrgRegistryTransfer();
 
@@ -34,7 +34,7 @@ public class ExportDataProvider {
             saveToBase.setRequestError(header, NAME_METHOD, fault);
             logger.error(fault.getMessage());
             fault.printStackTrace();
-            return;
+            return null;
         }
 
         saveToBase.setRequest(header, NAME_METHOD);
@@ -42,6 +42,7 @@ public class ExportDataProvider {
         saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
 
         logger.info("Successful.");
+        return result;
     }
 
     private ExportDataProviderRequest getExportDataProviderRequest() {

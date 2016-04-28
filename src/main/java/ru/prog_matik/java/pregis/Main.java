@@ -48,7 +48,8 @@ public class Main {
 //        System.setProperty("jdk.tls.client.protocols", "TLSv1");
 
 //        Start
-        new ProgramAction().callExportOrgRegistry();  // Получение SenderID
+//        new ProgramAction().callExportOrgRegistry();
+        new ProgramAction().getSenderID();  // Получение SenderID
 //        new ProgramAction().removeSenderID();
 //        new ProgramAction().callExportDataProvider(); // Просто запрос организации
 //        new ProgramAction().callExportNsiList();

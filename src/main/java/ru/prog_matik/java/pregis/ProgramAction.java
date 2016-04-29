@@ -6,9 +6,13 @@ import ru.prog_matik.java.pregis.connectiondb.SaveToBaseOrganization;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.services.house.ExportCAChData;
 import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
-import ru.prog_matik.java.pregis.services.nsi.ExportNsiList;
+import ru.prog_matik.java.pregis.services.nsi.common.service.ExportNsiItem;
+import ru.prog_matik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.prog_matik.java.pregis.services.organizations.common.service.ExportDataProvider;
 import ru.prog_matik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
+
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -45,16 +49,32 @@ public class ProgramAction {
         reg.callExportOrgRegistry();
     }
 
-
-    public void callExportDataProvider() {
+    public void callExportDataProvider() throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
 
         ExportDataProvider dataProvider = new ExportDataProvider();
         dataProvider.callExportDataProvide();
     }
 
+    /**
+     * 2.1.2.1	Экспортировать список справочников (exportNsiList).
+     * Позволяет получить перечень справочников с датой последнего изменения каждого справочника.
+     * В зависимости от группы выгружаются либо общесистемные справочники (NSI)
+     * либо справочники расширенного описания объектов жилищного фонда (NSIRAO). По
+     * умолчанию выгружаются общесистемные справочники.
+     */
     public void callExportNsiList() {
         ExportNsiList nsiList = new ExportNsiList();
         nsiList.callExportNsiList();
+    }
+
+    /**
+     * 2.1.2.2	Экспортировать данные справочника (exportNsiItem).
+     * Позволяет получить записи конкретного справочника, а также только те записи справочника,
+     * которые изменились после временной метки ModifiedAfter.
+     */
+    public void callExportNsiItem() {
+        ExportNsiItem nsiItem = new ExportNsiItem();
+        nsiItem.callExportNsiItem();
     }
 
     public void callExportStatusCAChData() {
@@ -66,5 +86,6 @@ public class ProgramAction {
         ExportCAChData caChData = new ExportCAChData();
         caChData.callExportCAChData();
     }
+
 
 }

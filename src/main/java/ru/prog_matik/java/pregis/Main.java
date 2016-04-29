@@ -49,10 +49,11 @@ public class Main {
 
 //        Start
 //        new ProgramAction().callExportOrgRegistry();
-        new ProgramAction().getSenderID();  // Получение SenderID
-//        new ProgramAction().removeSenderID();
+//        new ProgramAction().getSenderID();  // Получение SenderID
+//        new ProgramAction().removeSenderID();  // Упразднен
 //        new ProgramAction().callExportDataProvider(); // Просто запрос организации
-//        new ProgramAction().callExportNsiList();
+//        new ProgramAction().callExportNsiList(); // 1
+        new ProgramAction().callExportNsiItem(); // 2
 //        new ProgramAction().callExportStatusCAChData();
 //        new ProgramAction().callExportCAChData();
 

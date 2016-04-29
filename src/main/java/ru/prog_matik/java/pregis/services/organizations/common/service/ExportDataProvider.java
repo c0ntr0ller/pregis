@@ -6,20 +6,29 @@ import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgService;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 
 public class ExportDataProvider {
 
-    private Logger logger = Logger.getLogger(ExportDataProvider.class);
+    private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);
 
     private static final String NAME_METHOD = "exportDataProvider";
 
-    public ExportDataProviderResult callExportDataProvide() {
+    private final RegOrgService service = new RegOrgService();
+    private final RegOrgPortsType port = service.getRegOrgPort();
 
-        OrgRegistryTransfer transfer = new OrgRegistryTransfer();
+    public ExportDataProvider() throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
+        OtherFormat.setPortSettings(service, port);
+    }
+
+    public ExportDataProviderResult callExportDataProvide() {
 
         HeaderType header = getHeader();
 
@@ -29,10 +38,10 @@ public class ExportDataProvider {
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         try {
-            result = transfer.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
+            result = port.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
         } catch (Fault fault) {
             saveToBase.setRequestError(header, NAME_METHOD, fault);
-            logger.error(fault.getMessage());
+            LOGGER.error(fault.getMessage());
             fault.printStackTrace();
             return null;
         }
@@ -41,7 +50,7 @@ public class ExportDataProvider {
 
         saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
 
-        logger.info("Successful.");
+        LOGGER.info("Successful.");
         return result;
     }
 

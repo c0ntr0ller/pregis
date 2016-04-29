@@ -7,6 +7,10 @@ import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Service;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
@@ -73,7 +77,7 @@ public class OtherFormat {
 
     /**
      * Метод возвращает готовый заголовок запроса с "SenderID".
-     * @return
+     * @return RequestHeader готовый заголовок с содержанием "SenderID".
      */
     public static RequestHeader getRequestHeader() {
 
@@ -83,5 +87,23 @@ public class OtherFormat {
         requestHeader.setDate(getDateNow());
 
         return requestHeader;
+    }
+
+    /**
+     * Метод, введен для упрощения, он вызывается при каждом запросе к сервису ГИС ЖКХ,
+     * добавляет необходимые атрибуты для авторизации (получения доступа к ГИС ЖКХ).
+     * @param service - объект класса, для подключения, наследник "Service"
+     * @param port - объект которому назначаются параметры для соединения с сервисом ГИС ЖКХ.
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws MalformedURLException
+     */
+    public static void setPortSettings(Service service, Object port) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, MalformedURLException {
+
+        BindingProvider provider = (BindingProvider) port;
+        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
+        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
+        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
     }
 }

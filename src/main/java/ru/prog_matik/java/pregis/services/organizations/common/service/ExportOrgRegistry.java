@@ -6,18 +6,29 @@ import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryResult;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgService;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.exception.PreGISException;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 
 /**
  * Класс для запроса "экспорт сведений об организациях" ("hcs-organizations-registry-service").
  */
 public class ExportOrgRegistry {
 
-    private Logger logger = Logger.getLogger(ExportOrgRegistry.class);
+    private static final Logger LOGGER = Logger.getLogger(ExportOrgRegistry.class);
+
+    private final RegOrgService service = new RegOrgService();
+    private final RegOrgPortsType port = service.getRegOrgPort();
+
+    public ExportOrgRegistry() throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
+        OtherFormat.setPortSettings(service, port);
+    }
 
     /**
      * Метод во временной реализации, создаёт запрос на указанных данных.
@@ -29,8 +40,6 @@ public class ExportOrgRegistry {
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
-        OrgRegistryTransfer transfer = new OrgRegistryTransfer();
-
         HeaderType header = getHeader();
 
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
@@ -38,11 +47,11 @@ public class ExportOrgRegistry {
         ExportOrgRegistryResult result;
 
         try {
+            result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
 
-            result = transfer.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
         } catch (Fault fault) {
             saveToBase.setRequestError(header, nameMethod, fault);
-            logger.error(fault.getMessage());
+            LOGGER.error(fault.getMessage());
             fault.printStackTrace();
             return null;
         }
@@ -55,7 +64,7 @@ public class ExportOrgRegistry {
 //
 //        answer.setOrgRegistryResultToBase(result);
 
-        logger.info("Successful.");
+        LOGGER.info("Successful.");
 
         return result;
     }

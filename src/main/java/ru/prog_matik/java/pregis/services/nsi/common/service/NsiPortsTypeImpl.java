@@ -11,8 +11,9 @@ import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.NsiPortsT
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.NsiService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 
 /**
  * Класс реализует методы интерфейса "NsiPortsType", который служит для обмена справочников. Синхронный.
@@ -38,11 +39,15 @@ public class NsiPortsTypeImpl implements NsiPortsType {
 
         NsiService service = new NsiService();
         NsiPortsType port = service.getNsiPort();
-
-        BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
-        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, NsiService.__getWsdlLocation().toString());
+        try {
+            OtherFormat.setPortSettings(service, port);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | MalformedURLException e) {
+            e.printStackTrace();
+        }
+//        BindingProvider provider = (BindingProvider) port;
+//        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
+//        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
+//        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, NsiService.__getWsdlLocation().toString());
 
         return port;
     }

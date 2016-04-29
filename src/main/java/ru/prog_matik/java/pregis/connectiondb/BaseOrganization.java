@@ -6,22 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Класс будет получать из базы нужную информацию.
+ * Класс "Singleton", будет получать из базы "SenderID".
  * Created by andryha on 17.02.2016.
  */
 public class BaseOrganization {
 
-    private static Logger logger = Logger.getLogger(BaseOrganization.class);
+    private static final Logger LOGGER = Logger.getLogger(BaseOrganization.class);
 
     private static Connection connection;
+    private static String senderID;
+    private static BaseOrganization baseOrganization = null;
 
-    /**
-     * Метод извлекает из базы данных идентификатор отправителя "SenderID".
-     * @return String идентификатор отправителя "SenderID".
-     */
-    public static String getSenderID() {
-
-        String senderID = "";
+    private BaseOrganization() {
 
         try {
 
@@ -39,10 +35,23 @@ public class BaseOrganization {
             if (connection != null || !connection.isClosed()) connection.close();
 
         } catch (SQLException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
-        logger.info("Получен SenderID: " + senderID);
+        LOGGER.info("Получен SenderID: " + senderID);
+    }
+
+    /**
+     * Метод извлекает из базы данных идентификатор отправителя "SenderID".
+     * @return String идентификатор отправителя "SenderID".
+     */
+    public static String getSenderID() {
+
+        if (baseOrganization != null)
+            baseOrganization = new BaseOrganization();
+
         return senderID;
     }
+
+
 }

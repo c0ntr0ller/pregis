@@ -23,6 +23,7 @@ public class RegOrgPortsTypeImpl implements RegOrgPortsType {
     /**
      * Метод формирует запрос и отправляет на серавер.
      * Импорт сведений об обособленном подразделении.
+     * Упразднен.
      *
      * @param header - Обязательный загаловок сообщения (Дата, идентификатор сообщения).
      * @param importSubsidiaryRequest - Тело письма содержащее бизнес логику.

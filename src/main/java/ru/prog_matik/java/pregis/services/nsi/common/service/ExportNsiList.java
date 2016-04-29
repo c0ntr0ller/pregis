@@ -1,4 +1,4 @@
-package ru.prog_matik.java.pregis.services.nsi;
+package ru.prog_matik.java.pregis.services.nsi.common.service;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
@@ -8,13 +8,12 @@ import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiListResu
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
-import ru.prog_matik.java.pregis.services.nsi.common.service.NsiPortsTypeImpl;
 
 import javax.xml.ws.Holder;
 
 public class ExportNsiList {
 
-    private Logger logger = Logger.getLogger(ExportNsiList.class);
+    private static final Logger LOGGER = Logger.getLogger(ExportNsiList.class);
 
     private static final String NAME_METHOD = "exportNsiList";
 
@@ -33,10 +32,9 @@ public class ExportNsiList {
         try {
             result = portsType.exportNsiList(getExportNsiListRequest(), requestHeader, headerHolder);
 
-
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
-            logger.error(fault.getMessage());
+            LOGGER.error(fault.getMessage());
             fault.printStackTrace();
             return;
         }
@@ -44,7 +42,7 @@ public class ExportNsiList {
 
         saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
 
-        logger.info("Successful.");
+        LOGGER.info("Successful.");
 
     }
 
@@ -52,7 +50,8 @@ public class ExportNsiList {
 
         ExportNsiListRequest exportNsiListRequest = new ExportNsiListRequest();
         exportNsiListRequest.setId("signed-data-container");
-
+//        exportNsiListRequest.setListGroup("NSIRAO");
+//        exportNsiListRequest.setListGroup("NSI");
 
 //        exportNsiListRequest.setSignature(new SignatureType());
 

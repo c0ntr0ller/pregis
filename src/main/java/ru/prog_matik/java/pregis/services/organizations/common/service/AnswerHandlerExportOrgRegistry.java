@@ -19,7 +19,7 @@ class AnswerHandlerExportOrgRegistry {
     private Logger logger = Logger.getLogger(AnswerHandlerExportOrgRegistry.class);
 
     /**
-     * Пока не работает, подерживает только сериализацию объекто в что очень не удобно.
+     * Пока не работает, подерживает только сериализацию объектов что очень не удобно.
      * @param result
      */
     void setOrgRegistryResultToBase(ExportOrgRegistryResult result) {

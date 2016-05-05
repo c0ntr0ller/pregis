@@ -1,12 +1,12 @@
 package ru.prog_matik.java.pregis.services.organizations.service;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0.RequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry.ImportSubsidiaryRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_service.RegOrgPortsType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_service.RegOrgService;
+import ru.gosuslugi.dom.schema.integration.base.ImportResult;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.services.organizations_registry.ImportSubsidiaryRequest;
+import ru.gosuslugi.dom.schema.integration.services.organizations_registry_service.Fault;
+import ru.gosuslugi.dom.schema.integration.services.organizations_registry_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration.services.organizations_registry_service.RegOrgService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;
@@ -29,7 +29,7 @@ public class RegOrgPortsTypeImpl implements RegOrgPortsType {
      * @param importSubsidiaryRequest - Тело письма содержащее бизнес логику.
      * @param header0 - Заголовок письма полученый в ответ от сервера.
      * @return ImportResult
-     * @throws ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_service.Fault
+     * @throws ru.gosuslugi.dom.schema.integration.services.organizations_registry_service.Fault
      */
     @Override
     public ImportResult importSubsidiary(ImportSubsidiaryRequest importSubsidiaryRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {

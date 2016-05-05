@@ -31,6 +31,7 @@ public class SendFileToSign {
 
         String login = ResourceBundle.getBundle("application").getString("config.websign.user");
         String password = ResourceBundle.getBundle("application").getString("config.websign.password");
+        String url = ResourceBundle.getBundle("application").getString("config.websign.url");
         SOAPMessage answerMessage = null;
 
         try {
@@ -46,7 +47,8 @@ public class SendFileToSign {
                     .build();
 
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost post = new HttpPost("http://172.16.0.221:8080/signingfile");
+            HttpPost post = new HttpPost(url);
+//            HttpPost post = new HttpPost("http://172.16.0.221:8080/signingfile");
             post.setEntity(entity);
             CloseableHttpResponse response = httpClient.execute(post);
             HttpEntity answerEntity = response.getEntity();

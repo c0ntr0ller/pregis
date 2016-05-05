@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry-service/" xmlns:ro="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry/" xmlns:base="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/" xmlns:ns="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry-service/">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry/" schemaLocation="hcs-organizations-registry-types-8.7.0.7.xsd"/>
+			<xs:import namespace="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/" schemaLocation="hcs-basetypes-8.7.0.7.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="RequestHeader">
+		<wsdl:part name="Header" element="base:RequestHeader"/>
+	</wsdl:message>
+	<wsdl:message name="ResultHeader">
+		<wsdl:part name="Header" element="base:ResultHeader"/>
+	</wsdl:message>
+	<wsdl:message name="Fault">
+		<wsdl:part name="Fault" element="base:Fault"/>
+	</wsdl:message>
+	<wsdl:message name="importSubsidiaryRequest">
+		<wsdl:part name="importSubsidiaryRequest" element="ro:importSubsidiaryRequest"/>
+	</wsdl:message>
+	<wsdl:message name="importSubsidiaryResult">
+		<wsdl:part name="importSubsidiaryResult" element="base:ImportResult"/>
+	</wsdl:message>
+	<wsdl:portType name="RegOrgPortsType">
+		<wsdl:operation name="importSubsidiary">
+			<wsdl:documentation>импорт сведений об обособленном подразделении</wsdl:documentation>
+			<wsdl:input message="tns:importSubsidiaryRequest"/>
+			<wsdl:output message="tns:importSubsidiaryResult"/>
+			<wsdl:fault name="InvalidRequest" message="tns:Fault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="RegOrgBinding" type="tns:RegOrgPortsType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="importSubsidiary">
+			<soap:operation soapAction="urn:importSubsidiary"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+				<soap:header message="tns:RequestHeader" part="Header" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+				<soap:header message="tns:ResultHeader" part="Header" use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="InvalidRequest">
+				<soap:fault name="InvalidRequest" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="RegOrgService">
+		<wsdl:port name="RegOrgPort" binding="tns:RegOrgBinding">
+			<soap:address location="http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-regestry-service/"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

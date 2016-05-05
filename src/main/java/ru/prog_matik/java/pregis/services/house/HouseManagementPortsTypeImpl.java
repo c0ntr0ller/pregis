@@ -1,14 +1,13 @@
 package ru.prog_matik.java.pregis.services.house;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.*;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.*;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.ImportResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.services.house_management.*;
+import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 
@@ -25,7 +24,7 @@ public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
     }
 
 //    @Override
-//    public ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult importShareEncbrData(ImportShareEncbrDataRequest importShareEncbrDataRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
+//    public ru.gosuslugi.dom.schema.integration.base.ImportResult importShareEncbrData(ImportShareEncbrDataRequest importShareEncbrDataRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
 //        return null;
 //    }
 //
@@ -56,7 +55,7 @@ public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
     }
 
     @Override
-    public ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult importAccountData(ImportAccountRequest importAccountDataRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ru.gosuslugi.dom.schema.integration.base.ImportResult importAccountData(ImportAccountRequest importAccountDataRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
         return null;
     }
 
@@ -66,7 +65,7 @@ public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
     }
 
     @Override
-    public ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult importPublicPropertyContract(ImportPublicPropertyContractRequest importPublicPropertyContractRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ru.gosuslugi.dom.schema.integration.base.ImportResult importPublicPropertyContract(ImportPublicPropertyContractRequest importPublicPropertyContractRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
         return null;
     }
 
@@ -76,12 +75,12 @@ public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
     }
 
     @Override
-    public ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult importNotificationData(ImportNotificationRequest importNotificationRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ru.gosuslugi.dom.schema.integration.base.ImportResult importNotificationData(ImportNotificationRequest importNotificationRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
         return null;
     }
 
     @Override
-    public ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult importVotingProtocol(ImportVotingProtocolRequest importVotingProtocolRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ru.gosuslugi.dom.schema.integration.base.ImportResult importVotingProtocol(ImportVotingProtocolRequest importVotingProtocolRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
         return null;
     }
 
@@ -112,7 +111,7 @@ public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
     }
 
     @Override
-    public ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult importSupplyResourceContractData(ImportSupplyResourceContractRequest importSupplyResourceContractRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
+    public ru.gosuslugi.dom.schema.integration.base.ImportResult importSupplyResourceContractData(ImportSupplyResourceContractRequest importSupplyResourceContractRequest, RequestHeader header, Holder<ResultHeader> header0) throws Fault {
         return null;
     }
 
@@ -125,11 +124,7 @@ public class HouseManagementPortsTypeImpl implements HouseManagementPortsType {
 
         HouseManagementService service = new HouseManagementService();
         HouseManagementPortsType port = service.getHouseManagementPort();
-
-        BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
-        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, HouseManagementService.__getWsdlLocation().toString());
+        OtherFormat.setPortSettings(service, port);
 
         return port;
     }

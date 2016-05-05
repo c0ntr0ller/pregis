@@ -1,8 +1,8 @@
 package ru.prog_matik.java.pregis.connectiondb;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_7_0.ErrorMessageType;
-import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
+import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;

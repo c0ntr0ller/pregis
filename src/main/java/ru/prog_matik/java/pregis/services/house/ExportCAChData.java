@@ -1,11 +1,11 @@
 package ru.prog_matik.java.pregis.services.house;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration._8_7_0.RequestHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.ExportCAChRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management.ExportCAChResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChRequest;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChResult;
+import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 

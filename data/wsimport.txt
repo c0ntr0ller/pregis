@@ -1,14 +1,5 @@
-Изменить в форму XSD hcs-basetypes
-	<xs:element name="ISRequestHeader">
-		<xs:annotation>
-			<xs:documentation>Заголовок запроса</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="tns:HeaderType"/>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
+Следует заменить название каталога версии например "8.7.0" на "base", a "8.7.0.7" на services.
+ Тогда из версии к версии не нужно будет переписывать существующий код из других пакетов.
 
 
 @HandlerChain(file = "handler/ClientMessage_handler.xml")

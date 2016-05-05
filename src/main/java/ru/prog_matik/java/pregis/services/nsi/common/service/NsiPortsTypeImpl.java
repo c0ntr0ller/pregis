@@ -1,14 +1,14 @@
 package ru.prog_matik.java.pregis.services.nsi.common.service;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
-import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common.ExportNsiListResult;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.Fault;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.NsiPortsType;
-import ru.gosuslugi.dom.schema.integration._8_7_0_6.nsi_common_service.NsiService;
+import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemRequest;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListRequest;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiPortsType;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;

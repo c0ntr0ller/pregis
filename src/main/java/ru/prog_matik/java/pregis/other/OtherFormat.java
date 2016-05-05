@@ -1,7 +1,7 @@
 package ru.prog_matik.java.pregis.other;
 
-import ru.gosuslugi.dom.schema.integration._8_7_0.HeaderType;
-import ru.gosuslugi.dom.schema.integration._8_7_0.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.prog_matik.java.pregis.connectiondb.BaseOrganization;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -9,8 +9,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
@@ -27,7 +25,7 @@ public class OtherFormat {
     /**
      * Метод возвращает текущею дату и время.
      * Например для поля Date.
-     * @return
+     * @return XMLGregorianCalendar возвращает текущею дату и время.
      */
     public static XMLGregorianCalendar getDateNow() {
 
@@ -46,7 +44,7 @@ public class OtherFormat {
     /**
      * Метод формирует рандомное значение для индивидуального номера письма.
      * Поле MessageGUID.
-     * @return
+     * @return String индивидуальный номер.
      */
     public static String getRandomGUID() {
         return UUID.randomUUID().toString();
@@ -55,7 +53,7 @@ public class OtherFormat {
     /**
      * Метод возвращает значение по умолчанию (идентификатор) для цифровой подписи.
      * Именно это значение "signed-data-container", ищет в документе XML перехватчик и подписывает его.
-     * @return
+     * @return String "signed-data-container", идентификатор по которому определяется элемент подписи запроса.
      */
     public static String getId() {
         return "signed-data-container";
@@ -64,7 +62,7 @@ public class OtherFormat {
     /**
      * Метод формирует заголовок сообщения без "SenderID".
      *
-     * @return ISRequestHeader
+     * @return ISRequestHeader заголовок сообщения без "SenderID".
      */
     public static HeaderType getISRequestHeader() {
 
@@ -94,12 +92,8 @@ public class OtherFormat {
      * добавляет необходимые атрибуты для авторизации (получения доступа к ГИС ЖКХ).
      * @param service - объект класса, для подключения, наследник "Service"
      * @param port - объект которому назначаются параметры для соединения с сервисом ГИС ЖКХ.
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws MalformedURLException
      */
-    public static void setPortSettings(Service service, Object port) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, MalformedURLException {
+    public static void setPortSettings(Service service, Object port) {
 
         BindingProvider provider = (BindingProvider) port;
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);

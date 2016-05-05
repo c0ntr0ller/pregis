@@ -1,10 +1,10 @@
 //package ru.prog_matik.java.pregis.services.organizations.common.service;
 //
 //import org.apache.log4j.Logger;
-//import ru.gosuslugi.dom.schema.integration._8_7_0.ISRequestHeader;
-//import ru.gosuslugi.dom.schema.integration._8_7_0.ImportResult;
-//import ru.gosuslugi.dom.schema.integration._8_7_0.RegOrgType;
-//import ru.gosuslugi.dom.schema.integration._8_7_0.ResultHeader;
+//import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
+//import ru.gosuslugi.dom.schema.integration.base.ImportResult;
+//import ru.gosuslugi.dom.schema.integration.base.RegOrgType;
+//import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 //import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ImportDataProviderRequest;
 //import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
 //import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;

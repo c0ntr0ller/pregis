@@ -1,8 +1,6 @@
 package ru.prog_matik.java.pregis.services.organizations.common.service;
 
 //import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
-import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ExportOrgRegistryRequest;
@@ -10,6 +8,8 @@ import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_commo
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgPortsType;
 import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.RegOrgService;
+import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.BindingProvider;

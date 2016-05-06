@@ -9,7 +9,6 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_servi
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_service.RegOrgService;
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 /**
@@ -37,10 +36,11 @@ public class RegOrgPortsTypeImpl implements RegOrgPortsType {
         RegOrgService service = new RegOrgService();
         RegOrgPortsType port = service.getRegOrgPort();
 
-        BindingProvider provider = (BindingProvider) port;
-        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
-        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
-        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
+        OtherFormat.setPortSettings(service, port);
+//        BindingProvider provider = (BindingProvider) port;
+//        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
+//        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
+//        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, RegOrgService.__getWsdlLocation().toString());
 
         return port.importSubsidiary(importSubsidiaryRequest, header, header0);
     }

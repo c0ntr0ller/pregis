@@ -1,19 +1,17 @@
 
 package ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+
+import javax.jws.*;
+import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.ws.Holder;
 
 
 /**
@@ -24,6 +22,7 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
  */
 @WebService(name = "RegOrgPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry-common-service/")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration.base.ObjectFactory.class,

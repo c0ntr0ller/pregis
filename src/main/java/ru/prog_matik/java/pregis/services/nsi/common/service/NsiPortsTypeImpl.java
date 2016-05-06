@@ -12,8 +12,6 @@ import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiServic
 import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 
 /**
  * Класс реализует методы интерфейса "NsiPortsType", который служит для обмена справочников. Синхронный.
@@ -39,11 +37,8 @@ public class NsiPortsTypeImpl implements NsiPortsType {
 
         NsiService service = new NsiService();
         NsiPortsType port = service.getNsiPort();
-        try {
             OtherFormat.setPortSettings(service, port);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | MalformedURLException e) {
-            e.printStackTrace();
-        }
+
 //        BindingProvider provider = (BindingProvider) port;
 //        provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
 //        provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);

@@ -1,14 +1,11 @@
 
 package ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service;
 
+import javax.jws.HandlerChain;
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -18,6 +15,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "RegOrgService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry-common-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-org-registry-common-service/services/OrgRegistryCommon")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class RegOrgService
     extends Service
 {

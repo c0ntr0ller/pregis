@@ -1,17 +1,15 @@
 
 package ru.gosuslugi.dom.schema.integration.services.organizations_registry_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry.ImportSubsidiaryRequest;
+
+import javax.jws.*;
+import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.ws.Holder;
 
 
 /**
@@ -22,6 +20,7 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry.Impor
  */
 @WebService(name = "RegOrgPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/organizations-registry-service/")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration.services.organizations_registry.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration.base.ObjectFactory.class,

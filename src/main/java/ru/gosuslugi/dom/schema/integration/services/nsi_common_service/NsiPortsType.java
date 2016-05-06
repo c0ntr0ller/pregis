@@ -1,19 +1,17 @@
 
 package ru.gosuslugi.dom.schema.integration.services.nsi_common_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemRequest;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListRequest;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListResult;
+
+import javax.jws.*;
+import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.ws.Holder;
 
 
 /**
@@ -24,6 +22,7 @@ import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListResu
  */
 @WebService(name = "NsiPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/nsi-common-service/")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration.base.ObjectFactory.class,
     org.w3._2000._09.xmldsig_.ObjectFactory.class,

@@ -47,7 +47,7 @@ public class BaseOrganization {
      */
     public static String getSenderID() {
 
-        if (baseOrganization != null)
+        if (baseOrganization == null)
             baseOrganization = new BaseOrganization();
 
         return senderID;

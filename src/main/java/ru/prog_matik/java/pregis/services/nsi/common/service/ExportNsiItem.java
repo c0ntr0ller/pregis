@@ -47,7 +47,7 @@ public class ExportNsiItem {
 
         saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
 
-        LOGGER.info("Successful.");
+        LOGGER.info("ExportNsiItem - Successful.");
     }
 
     /**

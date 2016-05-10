@@ -52,8 +52,9 @@ public class Main {
 //        new ProgramAction().getSenderID();  // Получение SenderID
 //        new ProgramAction().removeSenderID();  // Упразднен
 //        new ProgramAction().callExportDataProvider(); // Просто запрос организации
-        new ProgramAction().callExportNsiList(); // 1
+//        new ProgramAction().callExportNsiList(); // 1
 //        new ProgramAction().callExportNsiItem(); // 2
+        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
 //        new ProgramAction().callExportStatusCAChData();
 //        new ProgramAction().callExportCAChData();
 

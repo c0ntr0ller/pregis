@@ -1,14 +1,11 @@
 
 package ru.gosuslugi.dom.schema.integration.services.nsi_common_service_async;
 
+import javax.jws.HandlerChain;
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -20,6 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "NsiServiceAsync", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/nsi-common-service-async/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-nsi-common-service/services/NsiCommonAsync")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class NsiServiceAsync
     extends Service
 {

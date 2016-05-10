@@ -8,6 +8,7 @@ import ru.prog_matik.java.pregis.services.house.ExportCAChData;
 import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
 import ru.prog_matik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.prog_matik.java.pregis.services.nsi.common.service.ExportNsiList;
+import ru.prog_matik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
 import ru.prog_matik.java.pregis.services.organizations.common.service.ExportDataProvider;
 import ru.prog_matik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 
@@ -20,6 +21,7 @@ import java.net.MalformedURLException;
  */
 public class ProgramAction {
 
+//    Надо смотреть в следующих версиях вроде упразднили.
     /**
      * Получение "SenderID".
      * отправляем запрос exportOrgRegistry получаем данные организации,
@@ -75,6 +77,14 @@ public class ProgramAction {
     public void callExportNsiItem() {
         ExportNsiItem nsiItem = new ExportNsiItem();
         nsiItem.callExportNsiItem();
+    }
+
+    /**
+     * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
+     */
+    public void callExportDataProviderNsiItem() {
+        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem();
+        dataProviderNsiItem.callExportDataProviderNsiItem();
     }
 
     public void callExportStatusCAChData() {

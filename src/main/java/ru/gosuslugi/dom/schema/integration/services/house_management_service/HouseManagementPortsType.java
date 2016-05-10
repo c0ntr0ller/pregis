@@ -1,42 +1,14 @@
 
 package ru.gosuslugi.dom.schema.integration.services.house_management_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.services.house_management.*;
+
+import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
-import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportAccountRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportAccountResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportMeteringDeviceDataResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusCAChRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusCAChResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusPublicPropertyContractRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusPublicPropertyContractResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportSupplyResourceContractRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportSupplyResourceContractResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportVotingProtocolRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportVotingProtocolResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportCharterRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportContractRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportHouseOMSRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportHouseRSORequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportHouseUORequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportNotificationRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportPublicPropertyContractRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportSupplyResourceContractRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportVotingProtocolRequest;
 
 
 /**
@@ -47,6 +19,7 @@ import ru.gosuslugi.dom.schema.integration.services.house_management.ImportVotin
  */
 @WebService(name = "HouseManagementPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/house-management-service/")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration.services.house_management.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration.base.ObjectFactory.class,

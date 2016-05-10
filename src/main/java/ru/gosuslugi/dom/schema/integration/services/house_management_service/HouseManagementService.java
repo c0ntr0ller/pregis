@@ -1,6 +1,7 @@
 
 package ru.gosuslugi.dom.schema.integration.services.house_management_service;
 
+import javax.jws.HandlerChain;
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;
 import java.net.MalformedURLException;
@@ -16,6 +17,7 @@ import java.net.URL;
  * 
  */
 @WebServiceClient(name = "HouseManagementService", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/house-management-service/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-home-management-service/services/HomeManagement")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class HouseManagementService
     extends Service
 {

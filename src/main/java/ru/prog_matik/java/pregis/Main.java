@@ -48,13 +48,13 @@ public class Main {
 //        System.setProperty("jdk.tls.client.protocols", "TLSv1");
 
 //        Start
-//        new ProgramAction().callExportOrgRegistry();
+        new ProgramAction().callExportOrgRegistry();
 //        new ProgramAction().getSenderID();  // Получение SenderID
 //        new ProgramAction().removeSenderID();  // Упразднен
 //        new ProgramAction().callExportDataProvider(); // Просто запрос организации
 //        new ProgramAction().callExportNsiList(); // 1
 //        new ProgramAction().callExportNsiItem(); // 2
-        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
+//        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
 //        new ProgramAction().callExportStatusCAChData();
 //        new ProgramAction().callExportCAChData();
 

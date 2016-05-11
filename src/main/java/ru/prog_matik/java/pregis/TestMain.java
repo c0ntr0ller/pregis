@@ -1,9 +1,12 @@
 package ru.prog_matik.java.pregis;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
+import ru.gosuslugi.dom.schema.integration.services.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.services.bills.PaymentDocumentType;
+import ru.prog_matik.java.pregis.other.OtherFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,5 +122,35 @@ public class TestMain {
 //        document.getFirstChild().appendChild(text);
 //        document.getFirstChild().getFirstChild().getFirstChild().getFirstChild().appendChild(document.createTextNode("\n\t\t"));
 //        document.getChildNodes().item(0).getChildNodes().item(0).appendChild(document.createTextNode("\n\t"));
+
+//        Просто проба платежного документа
+
+        ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
+        paymentDocument.setAccountGuid("1000438819"); // лиц счет клиента
+//        paymentDocument.setPaymentDocumentNumber(); //Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
+//        Банковские реквизиты
+//        paymentDocument.getPaymentInformation().setRecipientINN("5404465096"); //ИНН получателя платежа
+//        paymentDocument.getPaymentInformation().setRecipientKPP("540201001"); //КПП получателя платежа
+//        paymentDocument.getPaymentInformation().setBankName("ОАО \"УралСиб\""); //Наименование банка получателя платежа
+//        paymentDocument.getPaymentInformation().setPaymentRecipient(); //Наименование получателя
+        paymentDocument.getPaymentInformation().setBankBIK("045004725");  //БИК банка получателя
+        paymentDocument.getPaymentInformation().setOperatingAccountNumber("40702810232000000061");  //Номер расчетного счета
+//        paymentDocument.getPaymentInformation().setCorrespondentBankAccount("123456");  //Корр. счет банка получателя
+
+        paymentDocument.getAddressInfo().setLivingPersonsNumber((byte) 1); // Количество проживающих
+        paymentDocument.getAddressInfo().setResidentialSquare(new BigDecimal(31.3)); // Жилая площадь
+//        paymentDocument.getAddressInfo().setHeatedArea(new BigDecimal()); // Отапливаемая площадь
+        paymentDocument.getAddressInfo().setTotalSquare(new BigDecimal(55.8)); //* Общая площадь для ЛС
+
+        PaymentDocumentType.ChargeInfo chargeInfo = new PaymentDocumentType.ChargeInfo();
+//        chargeInfo.set
+
+        paymentDocument.getChargeInfo().add(chargeInfo);
+
+        ImportPaymentDocumentRequest request = new ImportPaymentDocumentRequest();
+        request.setMonth(05);
+        request.setYear((short) 2016);
+        request.setId(OtherFormat.getId());
+        request.getPaymentDocument().add(paymentDocument);
     }
 }

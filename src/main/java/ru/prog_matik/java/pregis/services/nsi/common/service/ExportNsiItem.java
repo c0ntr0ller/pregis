@@ -59,7 +59,8 @@ public class ExportNsiItem {
         ExportNsiItemRequest request = new ExportNsiItemRequest();
         request.setId("signed-data-container");
         request.setListGroup("NSI"); // Обязательный атрибут
-        request.setRegistryNumber(BigInteger.valueOf(225)); // Обязательный атрибут
+        request.setRegistryNumber(BigInteger.valueOf(2)); // Обязательный атрибут
+//        request.setRegistryNumber(BigInteger.valueOf(225)); // Обязательный атрибут
 
         return request;
     }

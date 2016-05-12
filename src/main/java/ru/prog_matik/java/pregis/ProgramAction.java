@@ -4,13 +4,17 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.prog_matik.java.pregis.connectiondb.SaveToBaseOrganization;
 import ru.prog_matik.java.pregis.exception.PreGISException;
+import ru.prog_matik.java.pregis.services.bills.ExportPaymentDocumentData;
+import ru.prog_matik.java.pregis.services.bills.ImportPaymentDocumentData;
 import ru.prog_matik.java.pregis.services.house.ExportCAChData;
 import ru.prog_matik.java.pregis.services.house.ExportStatusCAChData;
+import ru.prog_matik.java.pregis.services.house_management.ExportAccountData;
 import ru.prog_matik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.prog_matik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.prog_matik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
 import ru.prog_matik.java.pregis.services.organizations.common.service.ExportDataProvider;
 import ru.prog_matik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
+import ru.prog_matik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -86,6 +90,50 @@ public class ProgramAction {
         ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem();
         dataProviderNsiItem.callExportDataProviderNsiItem();
     }
+
+    /**
+     * Метод, импорт сведений о платежных документах.
+     */
+    public void callImportPaymentDocumentData() {
+        ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData();
+        importPaymentDocumentData.callImportPaymentDocumentData();
+    }
+
+    /**
+     * Метод, экспорт сведений о платежных документах.
+     */
+    public void callExportPaymentDocumentData() {
+        ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData();
+        paymentDocumentData.callExportPaymentDocumentData();
+    }
+
+    /**
+     * Метод асинхронный, экспорт реквизитов платежных документов для банков.
+     */
+    public void callExportPaymentDocumentDetails() {
+
+        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
+        details.callExportPaymentDocumentDetails();
+    }
+
+    /**
+     * Метод асинхронный, получить ответ, экспорт реквизитов платежных документов для банков.
+     */
+    public void getStateExportPaymentDocumentDetails() {
+        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
+        details.getStateExportPaymentDocumentDetails();
+    }
+
+
+    /**
+     * Метод, экспорт сведений о лицевых счетах.
+     */
+    public void callExportAccountData() {
+        ExportAccountData accountData =  new ExportAccountData();
+        accountData.callExportAccountData();
+    }
+
+
 
     public void callExportStatusCAChData() {
         ExportStatusCAChData statusCAChData = new ExportStatusCAChData();

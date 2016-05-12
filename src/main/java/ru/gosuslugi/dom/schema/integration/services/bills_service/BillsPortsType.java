@@ -1,26 +1,15 @@
 
 package ru.gosuslugi.dom.schema.integration.services.bills_service;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.bills.CloseHousePaymentPeriodRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportNotificationsOfOrderExecutionRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportNotificationsOfOrderExecutionResult;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportOrgPeriodRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportOrgPeriodResult;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportPaymentDocumentResult;
-import ru.gosuslugi.dom.schema.integration.services.bills.ImportAcknowledgmentRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ImportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.OpenOrgPaymentPeriodRequest;
+import ru.gosuslugi.dom.schema.integration.services.bills.*;
+
+import javax.jws.*;
+import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.ws.Holder;
 
 
 /**
@@ -31,6 +20,7 @@ import ru.gosuslugi.dom.schema.integration.services.bills.OpenOrgPaymentPeriodRe
  */
 @WebService(name = "BillsPortsType", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/bills-service/")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration.services.bills.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration.base.ObjectFactory.class,

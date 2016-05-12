@@ -1,14 +1,11 @@
 
 package ru.gosuslugi.dom.schema.integration.services.payment_service_async;
 
+import javax.jws.HandlerChain;
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -18,6 +15,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "PaymentsServiceAsync", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/payment-service-async/", wsdlLocation = "https://54.76.42.99:60045/ext-bus-payment-service/services/PaymentAsync")
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 public class PaymentsServiceAsync
     extends Service
 {

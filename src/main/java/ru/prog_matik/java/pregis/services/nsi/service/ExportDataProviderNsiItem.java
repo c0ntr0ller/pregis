@@ -45,6 +45,12 @@ public class ExportDataProviderNsiItem {
 
         try {
             result = port.exportDataProviderNsiItem(getExportDataProviderNsiItemRequest(), requestHeader, headerHolder);
+//            List<NsiElementType> nsiElements = result.getNsiItem().getNsiElement();
+//            for (NsiElementType nsiElement : nsiElements) {
+//                nsiElement.
+//            }
+
+
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);

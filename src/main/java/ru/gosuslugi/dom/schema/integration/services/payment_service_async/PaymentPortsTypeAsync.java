@@ -1,13 +1,6 @@
 
 package ru.gosuslugi.dom.schema.integration.services.payment_service_async;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 import ru.gosuslugi.dom.schema.integration.base.AckRequest;
 import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
@@ -16,6 +9,11 @@ import ru.gosuslugi.dom.schema.integration.services.payment.ExportPaymentDocumen
 import ru.gosuslugi.dom.schema.integration.services.payment.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.services.payment.ImportNotificationsOfOrderExecutionCancellationRequest;
 import ru.gosuslugi.dom.schema.integration.services.payment.ImportNotificationsOfOrderExecutionRequest;
+
+import javax.jws.*;
+import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.ws.Holder;
 
 
 /**
@@ -26,6 +24,7 @@ import ru.gosuslugi.dom.schema.integration.services.payment.ImportNotificationsO
  */
 @WebService(name = "PaymentPortsTypeAsync", targetNamespace = "http://dom.gosuslugi.ru/schema/integration/8.7.0.7/payment-service-async/")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@HandlerChain(file = "handler/ClientMessage_handler.xml")
 @XmlSeeAlso({
     ru.gosuslugi.dom.schema.integration.services.payment.ObjectFactory.class,
     ru.gosuslugi.dom.schema.integration.base.ObjectFactory.class,

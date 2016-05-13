@@ -7,12 +7,16 @@ import ru.prog_matik.java.pregis.signet.del.DeleteNamespace;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,6 +30,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     /**
      * Метод перехватывает сообщения.
+     *
      * @param messageContext - перехваченное сообщение.
      * @return boolean true.
      */
@@ -47,7 +52,9 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
                 msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
 //                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
-                msg = new SendFileToSign().sendMessageForSign(msg);
+
+                if (isSignIDState(msg))
+                    msg = new SendFileToSign().sendMessageForSign(msg);
 //                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
 
 //                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
@@ -80,9 +87,9 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 }
 
 //            Вывод сообщение запроса
-            System.out.println("\nMessage: \n");
-            msg.writeTo(System.out);
-            System.out.println("\n");
+                System.out.println("\nMessage: \n");
+                msg.writeTo(System.out);
+                System.out.println("\n");
 
 //            Вывод заголовка сообщения
 //            printHeaders(msg.getMimeHeaders());
@@ -97,6 +104,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     /**
      * Метод служит для вывода заголовка сообщения в консоль.
+     *
      * @param headers заголовок сообщения.
      */
     private void printHeaders(MimeHeaders headers) {
@@ -120,5 +128,32 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     public void close(MessageContext context) {
+    }
+
+    private boolean isSignIDState(SOAPMessage message) {
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            message.writeTo(outputStream);
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            XMLStreamReader reader = factory.createXMLStreamReader(new ByteArrayInputStream(outputStream.toByteArray()));
+
+            while (reader.hasNext()) {
+                if (reader.next() == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.isAttributeSpecified(0)) {
+                        for (int i = 0; i < reader.getAttributeCount(); i++) {
+                            if ("Id".equalsIgnoreCase(reader.getAttributeLocalName(i))) {
+                                return ("signed-data-container".equalsIgnoreCase(reader.getAttributeValue(i)));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException | SOAPException | XMLStreamException e) {
+            LOGGER.error("ClientMessageHandler: ", e);
+            e.printStackTrace();
+        }
+        LOGGER.error("ClientMessageHandler: Не найден элемент для подписи.");
+        return false;
     }
 }

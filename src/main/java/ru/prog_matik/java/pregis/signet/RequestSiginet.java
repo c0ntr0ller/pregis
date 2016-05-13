@@ -311,6 +311,9 @@ public class RequestSiginet {
 //        }
 //        byte[] finalPaymentDoc = Array.readFile("temp" + File.separator + "dump.xml");  // дамп SOAP
 
+        message = serializer.writeToString(doc);
+        message = message.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
+
         return toMessage(message);
 //        return doc;
 //        return finalPaymentDoc;

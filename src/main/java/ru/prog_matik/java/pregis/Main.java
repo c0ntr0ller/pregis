@@ -51,14 +51,15 @@ public class Main {
 //        new ProgramAction().callExportOrgRegistry();
 //        new ProgramAction().getSenderID();  // Получение SenderID
 //        new ProgramAction().removeSenderID();  // Упразднен
-//        new ProgramAction().callExportDataProvider(); // Просто запрос организации
+        new ProgramAction().callExportDataProvider(); // Просто запрос организации
 //        new ProgramAction().callExportNsiList(); // 1
 //        new ProgramAction().callExportNsiItem(); // 2
 //        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
 //        new ProgramAction().callExportAccountData(); // экспорт сведений о лицевых счетах.
 //        new ProgramAction().callImportPaymentDocumentData(); // импорт сведений о платежных документах.
 //        new ProgramAction().callExportPaymentDocumentData(); // экспорт сведений о платежных документах.
-        new ProgramAction().callExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
+
+//        new ProgramAction().callExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
 //        new ProgramAction().getStateExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
 
 //        new ProgramAction().callExportStatusCAChData();

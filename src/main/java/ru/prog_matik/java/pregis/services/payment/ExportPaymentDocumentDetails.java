@@ -1,9 +1,13 @@
 package ru.prog_matik.java.pregis.services.payment;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
+import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.payment.ExportPaymentDocumentDetailsRequest;
 import ru.gosuslugi.dom.schema.integration.services.payment.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.services.payment.Individual;
 import ru.gosuslugi.dom.schema.integration.services.payment_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.services.payment_service_async.PaymentPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.services.payment_service_async.PaymentsServiceAsync;
@@ -56,6 +60,7 @@ public class ExportPaymentDocumentDetails {
 
         try {
             request = portAsync.exportPaymentDocumentDetails(getExportPaymentDocumentDetailsRequest(), requestHeader, headerHolder);
+//            request.getAck();
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
             LOGGER.error(fault.getMessage());
@@ -77,23 +82,37 @@ public class ExportPaymentDocumentDetails {
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         GetStateRequest request = new GetStateRequest();
-        request.setMessageGUID("");
+//        request.setMessageGUID("df8a3635-0a20-40dd-aff8-51651d28075d");
+//        request.setMessageGUID("9310875e-7b2a-4377-844b-a3a04fb95e14");
+        request.setMessageGUID("bb720824-d0a2-4f57-a1d4-97742f86de81");
 
+        GetStateResult result;
         try {
-            GetStateResult result = portAsync.getState(request, requestHeader, headerHolder);
+            result = portAsync.getState(request, requestHeader, headerHolder);
+            GetStateResult.ExportPaymentDocumentDetailsResult answer = result.getExportPaymentDocumentDetailsResult();
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, "getState", fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();
+            return;
         }
 
+        saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
 
     }
 
     private ExportPaymentDocumentDetailsRequest getExportPaymentDocumentDetailsRequest() {
 
         ExportPaymentDocumentDetailsRequest request = new ExportPaymentDocumentDetailsRequest();
+        request.setId(OtherFormat.getId());
         request.setPaymentDocumentID("00АА001470-01-6051");
+//        request.setPaymentDocumentID("30АА001481-01-6051");
+        request.setAmountRequired(new ExportPaymentDocumentDetailsRequest.AmountRequired());
+        Individual individual = new Individual();
+        individual.setFirstName("АНТОНИНА");
+        individual.setSurname("СКРИПНИКОВА");
+        individual.setPatronymic("ФЕДОРОВНА");
+        request.getAmountRequired().setIndividual(individual);
 
         return request;
     }

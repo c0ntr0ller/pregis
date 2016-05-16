@@ -2,7 +2,7 @@
   <jws:handler-chain>
     <jws:handler>
       <jws:handler-name>ClientMessageHandler</jws:handler-name>
-      <jws:handler-class>ru.prog_matik.java.pregis.clientmessagehandler.ClientMessageHandler</jws:handler-class>
+      <jws:handler-class>ru.progmatik.java.pregis.clientmessagehandler.ClientMessageHandler</jws:handler-class>
     </jws:handler>
   </jws:handler-chain>
 </jws:handler-chains>

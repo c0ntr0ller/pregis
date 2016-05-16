@@ -7,8 +7,8 @@
 //import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 //import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common.ImportDataProviderRequest;
 //import ru.gosuslugi.dom.schema.integration._8_7_0_6.organizations_registry_common_service.Fault;
-//import ru.prog_matik.java.pregis.connectiondb.SaveToBaseMessages;
-//import ru.prog_matik.java.pregis.other.OtherFormat;
+//import SaveToBaseMessages;
+//import OtherFormat;
 //
 //import javax.xml.ws.Holder;
 //

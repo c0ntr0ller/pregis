@@ -12,14 +12,13 @@
         <param name="File" value="log/application.log"/>
         <param name="Append" value="true"/>
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'"/>
-        <param name="MaxBackupIndex" value="10"/>
         <param name="Encoding" value="UTF-8"/>
         <layout class="org.apache.log4j.EnhancedPatternLayout">
             <param name="ConversionPattern" value="%d{ISO8601} [%-5p][%-16.16t][%30c] - %m%n"/>
         </layout>
     </appender>
 
-    <logger name="ru.prog_matik">
+    <logger name="ru.progmatik">
         <level  value="INFO"/>
         <appender-ref ref="file"/>
     </logger>

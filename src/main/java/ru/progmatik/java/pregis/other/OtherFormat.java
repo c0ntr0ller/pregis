@@ -1,5 +1,6 @@
 package ru.progmatik.java.pregis.other;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
@@ -99,5 +100,15 @@ public class OtherFormat {
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
+    }
+
+    /**
+     * Метод, получает текст и возвращает MD5 его сумму.
+     * @param text текст.
+     * @return String MD5 сумма текста.
+     */
+    public static String getMD5(String text) {
+        String md5Hex = DigestUtils.md5Hex(text);
+        return md5Hex;
     }
 }

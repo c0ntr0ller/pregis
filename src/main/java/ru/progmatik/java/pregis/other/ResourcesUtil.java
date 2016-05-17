@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.other;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.exception.PreGISException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +36,19 @@ public class ResourcesUtil {
         instance();
         return properties;
     }
+
+    /**
+     * Метод, берет с файла параметров ОГРН компании и возвращает его.
+     * @return String ОГРН компании.
+     */
+    public String getOGRNCompany() throws PreGISException {
+        if (properties.getProperty("config.ogrn") == null) {
+            LOGGER.error("ResourcesUtil: Не указан ОГРН компании в файле параметров \"settings\\application.properties\".");
+            throw new PreGISException("ResourcesUtil: Не указан ОГРН компании в файле параметров \"settings\\application.properties\".");
+        }
+
+        return properties.getProperty("config.ogrn");
+    }
     /**
      * <p>Метод открывает файл параметров, в котором хранятся параметры.</p>
      */
@@ -56,4 +70,6 @@ public class ResourcesUtil {
         }
         return properties;
     }
+
+
 }

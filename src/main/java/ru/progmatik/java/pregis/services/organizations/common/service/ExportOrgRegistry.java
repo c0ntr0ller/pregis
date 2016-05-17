@@ -84,7 +84,7 @@ public class ExportOrgRegistry {
 //        list.setOGRN("1116027009702"); // Test ООО "ЖЭУ-1" какой-то г. Иваново.
 //        list.setKPP("540201001"); // Test
 //        list.setOGRN("1125476111903");
-        list.setOGRN(ResourcesUtil.instance().getProperties().getProperty("config.ogrn"));
+        list.setOGRN(ResourcesUtil.instance().getOGRNCompany());
 
 
         if (list.getOGRN() == null && list.getOGRNIP() == null &&

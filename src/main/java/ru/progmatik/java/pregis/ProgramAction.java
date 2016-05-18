@@ -18,12 +18,17 @@ import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Класс будет обращаться ко всем объектам.
  * Created by andryha on 12.02.2016.
  */
 public class ProgramAction {
+
+    private boolean stateRun;
+    private List<String> listState = new ArrayList<>();
 
 //    Надо смотреть в следующих версиях вроде упразднили.
     /**
@@ -33,6 +38,8 @@ public class ProgramAction {
      */
     public void getSenderID() throws Exception {
 
+        listState.clear();
+        listState.add("Запуск получения SenderID...");
         ExportOrgRegistry req = new ExportOrgRegistry();
         ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
         if (exportOrgRegistryResult == null) {
@@ -46,7 +53,7 @@ public class ProgramAction {
 
         SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
         saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-
+        listState.add("SenderID получен!");
     }
 
     public void callExportOrgRegistry() throws Exception {
@@ -145,5 +152,8 @@ public class ProgramAction {
         caChData.callExportCAChData();
     }
 
+    public boolean getStateRun() {
+        return stateRun;
+    }
 
 }

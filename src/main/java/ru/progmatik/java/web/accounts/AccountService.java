@@ -1,4 +1,4 @@
-package ru.progmatik.java.servlets.accounts;
+package ru.progmatik.java.web.accounts;
 
 import java.util.HashMap;
 import java.util.Map;

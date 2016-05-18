@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Вход</title>
+	<sсript type="text/javascript" src="..js/jquery-1.12.3.min.js"> </sсript>
+	<!-- <link rel="stylesheet" href="../css/normalize.css"> -->
+	<link rel="stylesheet" href="../css/login_style.css">
+</head>
+<body>
+	<section class="loginform cf">
+		<form name="login" action="index_submit" method="get" accept-charset="utf-8">
+			<ul>
+				<li>
+					<label for="login">Имя пользователя</label>
+					<input id="login" type="text" name="login" placeholder="yourname" required>
+				</li>
+				<li>
+					<label for="password">Пароль</label>
+					<input id="password" type="password" name="password" placeholder="password" required></li>
+				<li>
+					<button id="butt_login">Войти</button>
+				</li>
+				<li>
+					<div id="error"></div>
+				</li>
+			</ul>
+		</form>
+	</section>
+<script type="text/javascript">
+	$('#butt_login').keyup(function () {
+		login = $('#login').val();
+		password = $('#password').val();
+		$.ajax({
+			url
+		})
+	})
+</script>
+</body>
+</html>

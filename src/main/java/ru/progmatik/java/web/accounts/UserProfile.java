@@ -1,4 +1,4 @@
-package ru.progmatik.java.servlets.accounts;
+package ru.progmatik.java.web.accounts;
 
 /**
  * Класс, описывает профиль пользователя.

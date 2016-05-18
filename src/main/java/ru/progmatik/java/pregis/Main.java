@@ -1,9 +1,16 @@
 package ru.progmatik.java.pregis;
 
 
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
 import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
 import ru.progmatik.java.pregis.signet.Configure;
+import ru.progmatik.java.web.servlets.LoginClient;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -51,6 +58,23 @@ public class Main {
 //        new ProgramAction().callExportOrgRegistry();
         if (BaseOrganization.getSenderID() == null)
             new ProgramAction().getSenderID();  // Получение SenderID
+
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.addServlet(new ServletHolder(new LoginClient()), "/login");
+//        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/api/v1/sessions");
+
+        ResourceHandler resource_handler = new ResourceHandler();
+        resource_handler.setResourceBase("site/html/index.html");
+
+        HandlerList handlers = new HandlerList();
+        handlers.setHandlers(new Handler[]{resource_handler, context});
+
+        Server server = new Server(8080);
+        server.setHandler(handlers);
+
+        server.start();
+        server.join();
+
 //        new ProgramAction().removeSenderID();  // Упразднен
 //        new ProgramAction().callExportDataProvider(); // Просто запрос организации
 //        new ProgramAction().callExportNsiList(); // 1
@@ -58,8 +82,9 @@ public class Main {
 //        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
 //        new ProgramAction().callExportAccountData(); // экспорт сведений о лицевых счетах.
 //        new ProgramAction().callImportPaymentDocumentData(); // импорт сведений о платежных документах.
-//        new ProgramAction().callExportPaymentDocumentData(); // экспорт сведений о платежных документах.
+        new ProgramAction().callExportPaymentDocumentData(); // экспорт сведений о платежных документах.
 
+//        Асинхронный вызов
 //        new ProgramAction().callExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
 //        new ProgramAction().getStateExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
 

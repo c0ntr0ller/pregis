@@ -3,20 +3,19 @@
 <head>
 	<meta charset="utf-8">
 	<title>Вход</title>
-	<!-- <link rel="stylesheet" href="normalize.css"> -->
 	<link rel="stylesheet" href="/css/login_style.css">
 </head>
 <body>
 	<section class="loginform cf">
-		<form name="login" action="/login" method="post" accept-charset="utf-8">
+		<form name="loginform" action="/login" method="post" accept-charset="utf-8">
 			<ul>
 				<li>
 					<label for="username">Имя пользователя</label>
-					<input type="text" name="username" placeholder="yourname" required>
+					<input type="text" name="login" placeholder="логин" required>
 				</li>
 				<li>
 					<label for="password">Пароль</label>
-					<input type="password" name="password" placeholder="password" required></li>
+					<input type="password" name="password" placeholder="пароль" required></li>
 				<li>
 					<input type="submit" value="Войти">
 				</li>

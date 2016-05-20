@@ -12,10 +12,12 @@ import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
+import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 /**
  * Класс для запроса "экспорт сведений об организациях" ("hcs-organizations-registry-service").
@@ -26,9 +28,15 @@ public class ExportOrgRegistry {
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
+    private List<String> listState;
 
     public ExportOrgRegistry() throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
         OtherFormat.setPortSettings(service, port);
+    }
+
+    public ExportOrgRegistry(List<String> listState) throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+        this();
+        this.listState = listState;
     }
 
     /**
@@ -36,6 +44,8 @@ public class ExportOrgRegistry {
      * В дальнейшем необходимо реализовать его так, что бы ему передавали объект класса ExportOrgRegistryRequest с параметроми.
      */
     public ExportOrgRegistryResult callExportOrgRegistry() throws Exception {
+
+        listState.add(TextForLog.FORMED_REQUEST);
 
         String nameMethod = "exportOrgRegistry";
 
@@ -48,9 +58,11 @@ public class ExportOrgRegistry {
         ExportOrgRegistryResult result;
 
         try {
+            listState.add(TextForLog.SENDING_REQUEST);
             result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
-
+            listState.add(TextForLog.RECEIVED_RESPONSE + nameMethod);
         } catch (Fault fault) {
+            listState.add(TextForLog.ERROR_RESPONSE + nameMethod);
             saveToBase.setRequestError(header, nameMethod, fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();

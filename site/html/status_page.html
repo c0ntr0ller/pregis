@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Статус выполнения</title>
+    <script type="text/javascript">
+        var ws;
+
+        function init() {
+            ws = new WebSocket("ws://localhost:8080/status");
+            ws.onopen = function (event) {
+
+            }
+            ws.onmessage = function (event) {
+                var $textarea = document.getElementById("messages");
+                $textarea.value = $textarea.value + event.data + "\n";
+            }
+            ws.onclose = function (event) {
+
+            }
+        };
+
+    </script>
+</head>
+<body>
+    <h1>Состояние сервиса</h1>
+    <h3>лог выполнения:</h3>
+    <div id="showstatus">
+        <textarea id="messages" rows="20" cols="50" readonly="readonly"></textarea>
+    </div>
+</body>
+</html>

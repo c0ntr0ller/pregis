@@ -38,9 +38,10 @@ public class ProgramAction {
      */
     public void getSenderID() throws Exception {
 
-        listState.clear();
+        stateRun = true; // взводим флаг в состояния выполнения метода
+        listState.clear(); // очищаем предыдущий лог.
         listState.add("Запуск получения SenderID...");
-        ExportOrgRegistry req = new ExportOrgRegistry();
+        ExportOrgRegistry req = new ExportOrgRegistry(listState);
         ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
         if (exportOrgRegistryResult == null) {
             throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
@@ -152,6 +153,12 @@ public class ProgramAction {
         caChData.callExportCAChData();
     }
 
+    /**
+     * Метод, возвращает состояние выполнения какого либо метода.
+     * Если статус "true", т.е. что то выполняется, значит мы не будем запускать новый метод,
+     * а обратимся к получению лога операций.
+     * @return boolean состояние выполнения любого метода.
+     */
     public boolean getStateRun() {
         return stateRun;
     }

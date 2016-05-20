@@ -10,7 +10,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
 import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
 import ru.progmatik.java.pregis.signet.Configure;
-import ru.progmatik.java.web.servlets.LoginClient;
+import ru.progmatik.java.web.servlets.web.LoginClient;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -61,10 +61,14 @@ public class Main {
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient()), "/login");
+//        context.addServlet(LoginTest.class, "/");
+//        context.addServlet(new ServletHolder(new LoginTest()), "/");
 //        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/api/v1/sessions");
 
         ResourceHandler resource_handler = new ResourceHandler();
-        resource_handler.setResourceBase("site/html/index.html");
+        resource_handler.setDirectoriesListed(true);  // в конце убрать
+        resource_handler.setWelcomeFiles(new String[]{"/html/login.html"});
+        resource_handler.setResourceBase("site");
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{resource_handler, context});

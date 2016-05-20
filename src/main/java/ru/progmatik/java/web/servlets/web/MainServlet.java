@@ -1,7 +1,6 @@
 package ru.progmatik.java.web.servlets.web;
 
 import org.apache.log4j.Logger;
-import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.web.accounts.AccountService;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * Класс, будет иметь все кнопки для операций.
@@ -29,9 +27,9 @@ public class MainServlet extends HttpServlet {
         accountService = ProfileSingleton.instance().getAccountService();
     }
 
-    public MainServlet(ProgramAction action) {
-
-    }
+//    public MainServlet(ProgramAction action) {
+//
+//    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,9 +51,9 @@ public class MainServlet extends HttpServlet {
                 case "getSenderID":
 
             }
-            Map map = request.getParameterMap();
-            map.keySet().
-            request.getRequestDispatcher("/status").forward(request, response);
+//            Map map = request.getParameterMap();
+//            map.keySet().
+//            request.getRequestDispatcher("/status").forward(request, response);
         }
     }
 

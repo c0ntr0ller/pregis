@@ -9,6 +9,7 @@ import ru.progmatik.java.web.accounts.UserProfile;
 import ru.progmatik.java.web.freemarkergen.PageGenerator;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import java.util.Map;
 /**
  * Класс, обработки http запроса модуля "Авторизация".
  */
+@WebServlet(name = "LoginClient", urlPatterns = "/login")
 public class LoginClient extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LoginClient.class);
@@ -50,7 +52,7 @@ public class LoginClient extends HttpServlet {
         showPage(request, response, "", HttpServletResponse.SC_OK);
     }
 
-    private void showPage(HttpServletRequest request, HttpServletResponse response,
+    public void showPage(HttpServletRequest request, HttpServletResponse response,
                           String errorMessage, int statusCode) throws ServletException, IOException {
 
         Map<String, Object> pageVariables = new HashMap<>();

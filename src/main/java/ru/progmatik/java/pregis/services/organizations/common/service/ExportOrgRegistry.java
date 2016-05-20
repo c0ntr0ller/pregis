@@ -25,6 +25,7 @@ import java.util.List;
 public class ExportOrgRegistry {
 
     private static final Logger LOGGER = Logger.getLogger(ExportOrgRegistry.class);
+    private static final String NAME_METHOD = "exportOrgRegistry";
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
@@ -45,9 +46,7 @@ public class ExportOrgRegistry {
      */
     public ExportOrgRegistryResult callExportOrgRegistry() throws Exception {
 
-        listState.add(TextForLog.FORMED_REQUEST);
-
-        String nameMethod = "exportOrgRegistry";
+        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
@@ -60,18 +59,19 @@ public class ExportOrgRegistry {
         try {
             listState.add(TextForLog.SENDING_REQUEST);
             result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
-            listState.add(TextForLog.RECEIVED_RESPONSE + nameMethod);
+            listState.add(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            listState.add(TextForLog.ERROR_RESPONSE + nameMethod);
-            saveToBase.setRequestError(header, nameMethod, fault);
+            listState.add(TextForLog.ERROR_RESPONSE + NAME_METHOD);
+            listState.add(fault.getMessage());
+            saveToBase.setRequestError(header, NAME_METHOD, fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();
             return null;
         }
 
-        saveToBase.setRequest(header, nameMethod);
+        saveToBase.setRequest(header, NAME_METHOD);
 
-        saveToBase.setResult(resultHolder.value, nameMethod, result.getErrorMessage());
+        saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
 
 //        AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
 //

@@ -10,16 +10,19 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgService;
 import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 public class ExportDataProvider {
 
     private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);
 
     private static final String NAME_METHOD = "exportDataProvider";
+    private List<String> listState;
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
@@ -28,8 +31,13 @@ public class ExportDataProvider {
         OtherFormat.setPortSettings(service, port);
     }
 
+    public ExportDataProvider(List<String> listState) {
+        this.listState = listState;
+    }
+
     public ExportDataProviderResult callExportDataProvide() {
 
+        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
         HeaderType header = getHeader();
 
         Holder<ResultHeader> resultHolder = new Holder<>();
@@ -38,8 +46,12 @@ public class ExportDataProvider {
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         try {
+            listState.add(TextForLog.SENDING_REQUEST + NAME_METHOD);
             result = port.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
+            listState.add(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
+            listState.add(TextForLog.ERROR_RESPONSE + NAME_METHOD);
+            listState.add(fault.getMessage());
             saveToBase.setRequestError(header, NAME_METHOD, fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();

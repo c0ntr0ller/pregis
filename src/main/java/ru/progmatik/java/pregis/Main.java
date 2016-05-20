@@ -10,6 +10,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
 import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
 import ru.progmatik.java.pregis.signet.Configure;
+import ru.progmatik.java.web.servlets.socket.WebSocketChatServlet;
 import ru.progmatik.java.web.servlets.web.LoginClient;
 
 public class Main {
@@ -61,6 +62,7 @@ public class Main {
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient()), "/login");
+        context.addServlet(new ServletHolder(new WebSocketChatServlet()), "/status");
 //        context.addServlet(LoginTest.class, "/");
 //        context.addServlet(new ServletHolder(new LoginTest()), "/");
 //        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/api/v1/sessions");

@@ -3,5 +3,38 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+  <display-name>ПреГИС</display-name>
+
+  <servlet>
+    <servlet-name>LoginClient</servlet-name>
+    <servlet-class>ru.progmatik.java.web.servlets.web.LoginClient</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>WebSocketChatServlet</servlet-name>
+    <servlet-class>ru.progmatik.java.web.servlets.socket.WebSocketChatServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>LoginClient</servlet-name>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>WebSocketChatServlet</servlet-name>
+    <url-pattern>/status</url-pattern>
+  </servlet-mapping>
+
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+  <welcome-file-list>
+    <welcome-file>html/index.html</welcome-file>
+  </welcome-file-list>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+  </login-config>
+
 </web-app>

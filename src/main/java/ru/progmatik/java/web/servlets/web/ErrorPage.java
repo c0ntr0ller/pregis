@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Класс, сурвлет выводит страницу если возникли ошибки.
  */
-@WebServlet(name = "ErrorPage", urlPatterns = "/")
+@WebServlet(name = "ErrorPage", urlPatterns = "/error")
 public class ErrorPage extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LoginClient.class);

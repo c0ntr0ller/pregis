@@ -44,17 +44,19 @@ public class ProgramAction {
         ExportOrgRegistry req = new ExportOrgRegistry(listState);
         ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
         if (exportOrgRegistryResult == null) {
+            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
             throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
-        ExportDataProvider dataProvider = new ExportDataProvider();
+        ExportDataProvider dataProvider = new ExportDataProvider(listState);
         ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
         if (dataProviderResult == null) {
+            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
             throw new PreGISException("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
 
         SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
         saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-        listState.add("SenderID получен!");
+        listState.add("SenderID успешно получен!");
     }
 
     public void callExportOrgRegistry() throws Exception {

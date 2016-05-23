@@ -31,7 +31,8 @@ public class ExportDataProvider {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportDataProvider(List<String> listState) {
+    public ExportDataProvider(List<String> listState) throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+        this();
         this.listState = listState;
     }
 

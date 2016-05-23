@@ -13,6 +13,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +31,7 @@ public class ExportOrgRegistry {
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
     private List<String> listState;
+    private ClientService clientService;
 
     public ExportOrgRegistry() throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
         OtherFormat.setPortSettings(service, port);
@@ -40,13 +42,19 @@ public class ExportOrgRegistry {
         this.listState = listState;
     }
 
+    public ExportOrgRegistry(ClientService clientService) throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+        this();
+        this.clientService = clientService;
+    }
+
     /**
      * Метод во временной реализации, создаёт запрос на указанных данных.
      * В дальнейшем необходимо реализовать его так, что бы ему передавали объект класса ExportOrgRegistryRequest с параметроми.
      */
     public ExportOrgRegistryResult callExportOrgRegistry() throws Exception {
 
-        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
+//        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
@@ -57,12 +65,16 @@ public class ExportOrgRegistry {
         ExportOrgRegistryResult result;
 
         try {
-            listState.add(TextForLog.SENDING_REQUEST);
+            clientService.sendMessage(TextForLog.SENDING_REQUEST);
+//            listState.add(TextForLog.SENDING_REQUEST);
             result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
-            listState.add(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+//            listState.add(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            listState.add(TextForLog.ERROR_RESPONSE + NAME_METHOD);
-            listState.add(fault.getMessage());
+            clientService.sendMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
+//            listState.add(TextForLog.ERROR_RESPONSE + NAME_METHOD);
+            clientService.sendMessage(fault.getMessage());
+//            listState.add(fault.getMessage());
             saveToBase.setRequestError(header, NAME_METHOD, fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();
@@ -77,6 +89,7 @@ public class ExportOrgRegistry {
 //
 //        answer.setOrgRegistryResultToBase(result);
 
+        clientService.sendMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
         LOGGER.info("Successful.");
 
         return result;

@@ -5,9 +5,15 @@
     <title>ПреГИС</title>
 </head>
 <body>
-    <h1>Сервис обмена информации с ГИС ЖКХ</h1>
-    <div>
-        <button id="getSenderID" name="getSenderID" type="button" value="getSenderID" formaction="/main" formmethod="post">Получить SenderID</button>
-    </div>
+<h1>Сервис обмена информации с ГИС ЖКХ</h1>
+<div>
+    <form name="mainform" action="/main" method="post" accept-charset="utf-8">
+        <button name="getSenderID" type="submit" value="getSenderID">Получить SenderID</button>
+        <br>
+        <br>
+        <button name="getHouseUO" type="submit" value="getHouseUO">Получить данные МКД</button>
+    </form>
+
+</div>
 </body>
 </html>

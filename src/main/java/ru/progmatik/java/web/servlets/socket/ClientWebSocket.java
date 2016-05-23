@@ -6,45 +6,43 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 @SuppressWarnings("UnusedDeclaration")
 @WebSocket
-public class ChatWebSocket {
-    private ChatService chatService;
+public class ClientWebSocket {
+    private ClientService clientService;
     private Session session;
 
-    public ChatWebSocket(ChatService chatService) {
-        this.chatService = chatService;
+    public ClientWebSocket(ClientService clientService) {
+        this.clientService = clientService;
     }
 
     @OnWebSocketConnect
     public void onOpen(Session session) {
-        chatService.add(this);
+        clientService.add(this);
         this.session = session;
     }
 
     @OnWebSocketMessage
     public void onMessage(String data) {
 
-        int timePause = 5000;
-
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                chatService.sendMessage(data);
-            }
-        }, timePause);
+        clientService.sendMessage(data);
+//        int timePause = 5000;
+//
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//
+//            @Override
+//            public void run() {
+//                clientService.sendMessage(data);
+//            }
+//        }, timePause);
 
     }
 
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
-        chatService.remove(this);
+        clientService.remove(this);
     }
 
     public void sendString(String data) {

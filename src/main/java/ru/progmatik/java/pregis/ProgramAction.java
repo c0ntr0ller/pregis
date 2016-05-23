@@ -15,6 +15,7 @@ import ru.progmatik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportDataProvider;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -30,7 +31,13 @@ public class ProgramAction {
     private boolean stateRun;
     private List<String> listState = new ArrayList<>();
 
-//    Надо смотреть в следующих версиях вроде упразднили.
+    private final ClientService clientService;
+
+    public ProgramAction(ClientService clientService) {
+        this.clientService = clientService;
+    }
+
+    //    Надо смотреть в следующих версиях вроде упразднили.
     /**
      * Получение "SenderID".
      * отправляем запрос exportOrgRegistry получаем данные организации,
@@ -39,24 +46,33 @@ public class ProgramAction {
     public void getSenderID() throws Exception {
 
         stateRun = true; // взводим флаг в состояния выполнения метода
-        listState.clear(); // очищаем предыдущий лог.
-        listState.add("Запуск получения SenderID...");
-        ExportOrgRegistry req = new ExportOrgRegistry(listState);
+
+//        listState.clear(); // очищаем предыдущий лог.
+//        listState.add("Запуск получения SenderID...");
+        clientService.sendMessage("Запуск получения SenderID...");
+        ExportOrgRegistry req = new ExportOrgRegistry(clientService);
+//        ExportOrgRegistry req = new ExportOrgRegistry(listState);
         ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
         if (exportOrgRegistryResult == null) {
-            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+            clientService.sendMessage("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+//            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+            stateRun = false;
             throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
         ExportDataProvider dataProvider = new ExportDataProvider(listState);
         ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
         if (dataProviderResult == null) {
             listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+            stateRun = false;
             throw new PreGISException("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
 
         SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
         saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-        listState.add("SenderID успешно получен!");
+        clientService.sendMessage("SenderID успешно получен!");
+//        listState.add("SenderID успешно получен!");
+
+        stateRun = false; // взводим флаг в состояние откл.
     }
 
     public void callExportOrgRegistry() throws Exception {
@@ -99,6 +115,13 @@ public class ProgramAction {
     public void callExportDataProviderNsiItem() {
         ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem();
         dataProviderNsiItem.callExportDataProviderNsiItem();
+    }
+
+    /**
+     * Метод, получаем данные о МКД из ГИС ЖКХ.
+     */
+    public void callExportHouseData() {
+        System.out.println("ImportHouseUORequest");
     }
 
     /**
@@ -161,8 +184,18 @@ public class ProgramAction {
      * а обратимся к получению лога операций.
      * @return boolean состояние выполнения любого метода.
      */
-    public boolean getStateRun() {
+    public boolean isStateRun() {
         return stateRun;
     }
 
+    /**
+     * Метод, задаёт состояние выполнения какого либо метода.
+     * К сожелению бывают такие ситуации, когда возникают ошибки, в этот самый момент
+     * не удаётся установить флаг в положение откл.
+     * Предоставил такую возможность исключительно для таких ситуаций.
+     * Если возникла ошибка вызвать и поставить откл. (false).
+     */
+    public void setStateRunOff() {
+        this.stateRun = false;
+    }
 }

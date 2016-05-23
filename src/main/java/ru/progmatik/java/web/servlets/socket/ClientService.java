@@ -4,15 +4,20 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ChatService {
-    private Set<ChatWebSocket> webSockets;
+public class ClientService {
+    private Set<ClientWebSocket> webSockets;
+//    private final List<String> dataList = new ArrayList<>();
 
-    public ChatService() {
+    public ClientService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
     public void sendMessage(String data) {
-        for (ChatWebSocket user : webSockets) {
+
+//        if (webSockets == null) {
+//
+//        }
+        for (ClientWebSocket user : webSockets) {
             try {
                 user.sendString(data);
             } catch (Exception e) {
@@ -21,11 +26,11 @@ public class ChatService {
         }
     }
 
-    public void add(ChatWebSocket webSocket) {
+    public void add(ClientWebSocket webSocket) {
         webSockets.add(webSocket);
     }
 
-    public void remove(ChatWebSocket webSocket) {
+    public void remove(ClientWebSocket webSocket) {
         webSockets.remove(webSocket);
     }
 

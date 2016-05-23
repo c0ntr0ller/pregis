@@ -7,7 +7,7 @@
         var ws;
 
         function init() {
-            ws = new WebSocket("ws://localhost:8080/status");
+            ws = new WebSocket("ws://localhost:8080/websocket");
             ws.onopen = function (event) {
 
             }
@@ -18,11 +18,10 @@
             ws.onclose = function (event) {
 
             }
-        };
-
+        }
     </script>
 </head>
-<body>
+<body onload="init();">
     <h1>Состояние сервиса</h1>
     <h3>лог выполнения:</h3>
     <div id="showstatus">

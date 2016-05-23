@@ -105,7 +105,10 @@ public class LoginClient extends HttpServlet {
         }
 
         accountService.addSession(request.getSession().getId(), profile);
-        showPage(request, response, "Привет мой господин!", HttpServletResponse.SC_OK);
+
+        response.sendRedirect("/main");
+//        request.getRequestDispatcher("/main").forward(request, response);
+//        showPage(request, response, "Привет мой господин!", HttpServletResponse.SC_OK);
 //        response.setContentType("text/xml;charset=utf-8");
 //        response.setStatus(HttpServletResponse.SC_OK);
 //        response.getWriter().print("Привет мой господин!");

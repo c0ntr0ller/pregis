@@ -8,10 +8,11 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
-import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
 import ru.progmatik.java.pregis.signet.Configure;
-import ru.progmatik.java.web.servlets.socket.WebSocketChatServlet;
+import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
 import ru.progmatik.java.web.servlets.web.LoginClient;
+import ru.progmatik.java.web.servlets.web.MainServlet;
+import ru.progmatik.java.web.servlets.web.StatusServlet;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -57,12 +58,17 @@ public class Main {
 
 //        Start
 //        new ProgramAction().callExportOrgRegistry();
-        if (BaseOrganization.getSenderID() == null)
-            new ProgramAction().getSenderID();  // Получение SenderID
+
+//        if (BaseOrganization.getSenderID() == null)
+//            action.getSenderID();  // Получение SenderID
+        WebSocketClientServlet webSocketClientServlet = new WebSocketClientServlet();
+        ProgramAction action = new ProgramAction(webSocketClientServlet.getClientService());
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient()), "/login");
-        context.addServlet(new ServletHolder(new WebSocketChatServlet()), "/status");
+        context.addServlet(new ServletHolder(new MainServlet(action)), "/main");
+        context.addServlet(new ServletHolder(new StatusServlet(action)), "/status");
+        context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
 //        context.addServlet(LoginTest.class, "/");
 //        context.addServlet(new ServletHolder(new LoginTest()), "/");
 //        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/api/v1/sessions");
@@ -88,7 +94,7 @@ public class Main {
 //        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
 //        new ProgramAction().callExportAccountData(); // экспорт сведений о лицевых счетах.
 //        new ProgramAction().callImportPaymentDocumentData(); // импорт сведений о платежных документах.
-        new ProgramAction().callExportPaymentDocumentData(); // экспорт сведений о платежных документах.
+//        new ProgramAction().callExportPaymentDocumentData(); // экспорт сведений о платежных документах.
 
 //        Асинхронный вызов
 //        new ProgramAction().callExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.

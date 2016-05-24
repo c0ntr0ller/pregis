@@ -12,7 +12,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.ResourceBundle;
 import java.util.UUID;
 
 /**
@@ -20,8 +19,10 @@ import java.util.UUID;
  */
 public class OtherFormat {
 
-    public static final String USER_NAME = ResourceBundle.getBundle("application").getString("config.ws.user");
-    public static final String PASSWORD = ResourceBundle.getBundle("application").getString("config.ws.password");
+//    public static final String USER_NAME = ResourceBundle.getBundle("application").getString("config.ws.user");
+//    public static final String PASSWORD = ResourceBundle.getBundle("application").getString("config.ws.password");
+    private static final String USER_NAME = ResourcesUtil.instance().getProperties().getProperty("config.ws.user");
+    private static final String PASSWORD = ResourcesUtil.instance().getProperties().getProperty("config.ws.password");
 
     /**
      * Метод возвращает текущею дату и время.

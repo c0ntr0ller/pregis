@@ -16,8 +16,6 @@ import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -33,16 +31,16 @@ public class ExportOrgRegistry {
     private List<String> listState;
     private ClientService clientService;
 
-    public ExportOrgRegistry() throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
+    public ExportOrgRegistry() {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportOrgRegistry(List<String> listState) throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+    public ExportOrgRegistry(List<String> listState) {
         this();
         this.listState = listState;
     }
 
-    public ExportOrgRegistry(ClientService clientService) throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+    public ExportOrgRegistry(ClientService clientService) {
         this();
         this.clientService = clientService;
     }
@@ -51,7 +49,7 @@ public class ExportOrgRegistry {
      * Метод во временной реализации, создаёт запрос на указанных данных.
      * В дальнейшем необходимо реализовать его так, что бы ему передавали объект класса ExportOrgRegistryRequest с параметроми.
      */
-    public ExportOrgRegistryResult callExportOrgRegistry() throws Exception {
+    public ExportOrgRegistryResult callExportOrgRegistry() {
 
         clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
 //        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
@@ -76,8 +74,13 @@ public class ExportOrgRegistry {
             clientService.sendMessage(fault.getMessage());
 //            listState.add(fault.getMessage());
             saveToBase.setRequestError(header, NAME_METHOD, fault);
-            LOGGER.error(fault.getMessage());
+            LOGGER.error("ExportOrgRegistry: ", fault);
             fault.printStackTrace();
+            return null;
+        } catch (PreGISException e) {
+            clientService.sendMessage(e.getMessage());
+            LOGGER.error("ExportOrgRegistry: ", e);
+            e.printStackTrace();
             return null;
         }
 
@@ -89,8 +92,16 @@ public class ExportOrgRegistry {
 //
 //        answer.setOrgRegistryResultToBase(result);
 
-        clientService.sendMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
-        LOGGER.info("Successful.");
+        if (result.getErrorMessage() != null) {
+            clientService.sendMessage(TextForLog.ERROR_MESSAGE);
+            clientService.sendMessage(TextForLog.ERROR_CODE + result.getErrorMessage().getErrorCode());
+            clientService.sendMessage(TextForLog.ERROR_DESCRIPION + result.getErrorMessage().getDescription());
+            LOGGER.error("ExportOrgRegistry: " + result.getErrorMessage().getErrorCode() + "\n" +
+                    result.getErrorMessage().getDescription()  + "\n" + result.getErrorMessage().getStackTrace());
+        } else {
+            clientService.sendMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
+            LOGGER.info("Successful.");
+        }
 
         return result;
     }

@@ -3,7 +3,6 @@ package ru.progmatik.java.pregis;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.SaveToBaseOrganization;
-import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.house.ExportCAChData;
@@ -21,6 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -35,6 +36,7 @@ public class ProgramAction {
 
     public ProgramAction(ClientService clientService) {
         this.clientService = clientService;
+        this.clientService.setProgramAction(this);
     }
 
     //    Надо смотреть в следующих версиях вроде упразднили.
@@ -43,36 +45,40 @@ public class ProgramAction {
      * отправляем запрос exportOrgRegistry получаем данные организации,
      * отправляем запрос "exportDataProvider", получаем "SenderID" (находится в теге "DataProviderGUID").
      */
-    public void getSenderID() throws Exception {
+    public void getSenderID() {
 
         stateRun = true; // взводим флаг в состояния выполнения метода
 
 //        listState.clear(); // очищаем предыдущий лог.
 //        listState.add("Запуск получения SenderID...");
-        clientService.sendMessage("Запуск получения SenderID...");
+        clientService.sendMessage("<b>Запуск получения SenderID...</b>");
         ExportOrgRegistry req = new ExportOrgRegistry(clientService);
 //        ExportOrgRegistry req = new ExportOrgRegistry(listState);
         ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
         if (exportOrgRegistryResult == null) {
             clientService.sendMessage("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
 //            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
-            stateRun = false;
-            throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+//            stateRun = false;
+//            throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
         ExportDataProvider dataProvider = new ExportDataProvider(listState);
         ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
-        if (dataProviderResult == null) {
-            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
-            stateRun = false;
-            throw new PreGISException("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+        if (dataProviderResult == null || exportOrgRegistryResult.getErrorMessage() == null) {
+            clientService.sendMessage("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+//            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+//            stateRun = false;
+//            throw new PreGISException("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
         }
 
-        SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
-        saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-        clientService.sendMessage("SenderID успешно получен!");
+        if (exportOrgRegistryResult.getErrorMessage() == null) {
+            SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
+            saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
+            clientService.sendMessage("SenderID успешно получен!");
 //        listState.add("SenderID успешно получен!");
-
-        stateRun = false; // взводим флаг в состояние откл.
+        } else {
+            clientService.sendMessage("Возникли ошибки, SenderID не получен!");
+        }
+        setStateRunOff(); // взводим флаг в состояние откл.
     }
 
     public void callExportOrgRegistry() throws Exception {
@@ -121,7 +127,20 @@ public class ProgramAction {
      * Метод, получаем данные о МКД из ГИС ЖКХ.
      */
     public void callExportHouseData() {
-        System.out.println("ImportHouseUORequest");
+        setStateRunOn();
+        int timePause = 5000;
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                System.err.println("ImportHouseUORequest");
+                setStateRunOff();
+            }
+        }, timePause);
+
+
     }
 
     /**
@@ -196,6 +215,15 @@ public class ProgramAction {
      * Если возникла ошибка вызвать и поставить откл. (false).
      */
     public void setStateRunOff() {
+        clientService.sendMessage("::setButtonState(false)");
         this.stateRun = false;
+    }
+
+    /**
+     * Метод, задаёт состояние выполнения какого либо метода.
+     * Устанавливает флаг в состояние выполняется (true).
+     */
+    private void setStateRunOn() {
+        this.stateRun = true;
     }
 }

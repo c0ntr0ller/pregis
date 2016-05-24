@@ -27,6 +27,7 @@ public class ClientWebSocket {
     public void onMessage(String data) {
 
         clientService.sendMessage(data);
+        clientService.callCommanans(data);  // убрать
 //        int timePause = 5000;
 //
 //        Timer timer = new Timer();

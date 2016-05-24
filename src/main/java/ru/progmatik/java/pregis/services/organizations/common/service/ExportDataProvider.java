@@ -11,10 +11,9 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
 import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 public class ExportDataProvider {
@@ -22,18 +21,24 @@ public class ExportDataProvider {
     private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);
 
     private static final String NAME_METHOD = "exportDataProvider";
+    private ClientService clientService;
     private List<String> listState;
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
 
-    public ExportDataProvider() throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
+    public ExportDataProvider() {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportDataProvider(List<String> listState) throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+    public ExportDataProvider(List<String> listState) {
         this();
         this.listState = listState;
+    }
+
+    public ExportDataProvider(ClientService clientService) {
+        this();
+        this.clientService = clientService;
     }
 
     public ExportDataProviderResult callExportDataProvide() {

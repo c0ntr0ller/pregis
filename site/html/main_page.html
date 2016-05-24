@@ -3,17 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>ПреГИС</title>
+    <script type="text/javascript" src="/js/main_page.js"></script>
 </head>
-<body>
+<body onload="init();">
 <h1>Сервис обмена информации с ГИС ЖКХ</h1>
 <div>
-    <form name="mainform" action="/main" method="post" accept-charset="utf-8">
-        <button name="getSenderID" type="submit" value="getSenderID">Получить SenderID</button>
+    <form name="mainform" accept-charset="utf-8">
+        <button id="getSenderID" type="button" value="getSenderID" onclick="sendMessage('getSenderID');" ${buttonState}>Получить SenderID</button>
         <br>
         <br>
-        <button name="getHouseUO" type="submit" value="getHouseUO">Получить данные МКД</button>
+        <button id="getHouseUO" type="button" value="getHouseUO" onclick="sendMessage('getHouseUO');" ${buttonState}>Получить данные МКД</button>
+        <br><br>
+        <button id="getHouse" name="getHouse" type="button" onclick="sendMessage('getHouse');" ${buttonState}>Получить SenderID
+        </button>
     </form>
-
 </div>
+<div id="showstatus">
+    <h1>Состояние сервиса</h1>
+    <h3>лог выполнения:</h3>
+    <textarea id="messages" rows="20" cols="50" readonly="readonly"></textarea>
+</div>
+
 </body>
 </html>

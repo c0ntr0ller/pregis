@@ -12,6 +12,8 @@ function init() {
         var inMessage = event.data;
         if (inMessage.includes('::setButtonState(false)')) {
             setButtonState(false);
+        } else if (inMessage.includes('::setButtonState(true)')) {
+            setButtonState(true);
         } else {
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";
@@ -23,15 +25,17 @@ function init() {
     ws.onerror = function (evt) {
         console.log("The following error occurred: " + evt.data);
     }
-}
-;
-function sendMessage(message) {
+};
+function sendMessage(message) {    
     setButtonState(true);
     ws.send(message);
-}
-;
+};
 function setButtonState(state) {
     var allButton = document.getElementsByTagName('BUTTON').length;
     var buttons = document.getElementsByTagName('BUTTON');
     for (var i = 0; i < allButton; i++) buttons[i].disabled=state;
+}
+function getSessionID(tesxt) {
+    var sessionID = document.cookie;
+    sendMessage(sessionID + " : " + tesxt);
 }

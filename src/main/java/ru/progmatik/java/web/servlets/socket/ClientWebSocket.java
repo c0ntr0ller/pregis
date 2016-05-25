@@ -1,10 +1,7 @@
 package ru.progmatik.java.web.servlets.socket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -21,13 +18,14 @@ public class ClientWebSocket {
     public void onOpen(Session session) {
         clientService.add(this);
         this.session = session;
+        clientService.sendListMessages(this);
     }
 
     @OnWebSocketMessage
     public void onMessage(String data) {
 
         clientService.sendMessage(data);
-        clientService.callCommanans(data);  // убрать
+        clientService.callCommands(data);  // убрать
 //        int timePause = 5000;
 //
 //        Timer timer = new Timer();
@@ -39,6 +37,11 @@ public class ClientWebSocket {
 //            }
 //        }, timePause);
 
+    }
+
+    @OnWebSocketError
+    public void onError(Throwable t) {
+        t.printStackTrace();
     }
 
     @OnWebSocketClose

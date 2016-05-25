@@ -50,7 +50,7 @@ public class MainServlet extends HttpServlet {
 
         if (checkLogin(request, response)) {
             showPageMain(request, response);
-//            if (action.isStateRun()) {
+//            if (action.isRunning()) {
 ////            response.sendRedirect("/status");
 ////            request.getRequestDispatcher("/status").forward(request, response);
 //                showPageState(request, response);
@@ -64,7 +64,7 @@ public class MainServlet extends HttpServlet {
 
         Map<String, Object> pageVariables = new HashMap<>();
 
-        if (action.isStateRun()) {
+        if (action.isRunning()) {
             pageVariables.put("buttonState", "disabled");
         } else {
             pageVariables.put("buttonState", "");
@@ -101,35 +101,35 @@ public class MainServlet extends HttpServlet {
         return true;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("Получил POST");
-
-        if (checkLogin(request, response)) {
-
-            System.err.println(request.getParameterNames().nextElement());
-
-            switch (request.getParameterNames().nextElement()) {
-                case "getSenderID":
-                    if (!action.isStateRun()) {
-                        action.getSenderID();
-//                        response.sendRedirect("/status");
-                        showPageMain(request, response);
-//                        request.getRequestDispatcher("/status").forward(request, response);
-                    }
-                    break;
-                case "getHouseUO":
-                    if (!action.isStateRun())
-                        action.callExportHouseData();
-                    break;
-                default:
-                    new ErrorPage("Неизвестная команда", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    break;
-            }
-        }
-//            Map map = request.getParameterMap();
-//            map.keySet().
-//            request.getRequestDispatcher("/status").forward(request, response);
-    }
+//    @Override
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        System.err.println("Получил POST");
+//
+//        if (checkLogin(request, response)) {
+//
+//            System.err.println(request.getParameterNames().nextElement());
+//
+//            switch (request.getParameterNames().nextElement()) {
+//                case "getSenderID":
+//                    if (!action.isRunning()) {
+//                        action.getSenderID();
+////                        response.sendRedirect("/status");
+//                        showPageMain(request, response);
+////                        request.getRequestDispatcher("/status").forward(request, response);
+//                    }
+//                    break;
+//                case "getHouseUO":
+//                    if (!action.isRunning())
+//                        action.callExportHouseData();
+//                    break;
+//                default:
+//                    new ErrorPage("Неизвестная команда", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//                    break;
+//            }
+//        }
+////            Map map = request.getParameterMap();
+////            map.keySet().
+////            request.getRequestDispatcher("/status").forward(request, response);
+//    }
 
 }

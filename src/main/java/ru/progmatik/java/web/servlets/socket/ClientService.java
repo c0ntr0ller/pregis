@@ -1,17 +1,17 @@
 package ru.progmatik.java.web.servlets.socket;
 
 import ru.progmatik.java.pregis.ProgramAction;
-import ru.progmatik.java.web.servlets.web.ErrorPage;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientService {
     private Set<ClientWebSocket> webSockets;
     private ProgramAction action;
-//    private final List<String> dataList = new ArrayList<>();
+    private final List<String> dataList = new ArrayList<>();
 
     public ClientService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -26,42 +26,55 @@ public class ClientService {
                 System.out.println(e.getMessage());
             }
         }
+        dataList.add(data);
     }
 
     public void setProgramAction(ProgramAction action) {
         this.action = action;
     }
 
-    public void callCommanans(String command) {
+    public void callCommands(String command) {
 
-        switch (command) {
-            case "getSenderID":
-                if (!action.isStateRun()) {
+        if (action.isRunning()) {
+            sendMessage("Уже выполнятся другая операция!");
+        } else {
+            switch (command) {
+                case "getSenderID":
                     action.getSenderID();
-                }
-                break;
-            case "getHouseUO":
-                if (!action.isStateRun())
+                    break;
+                case "getHouseUO":
                     action.callExportHouseData();
-                break;
-            case "getHouse":
-                if (!action.isStateRun())
+                    break;
+                case "getHouse":
                     action.callExportHouseData();
-                break;
-            default:
-                new ErrorPage("Неизвестная команда", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                break;
+                    break;
+                default:
+                    sendMessage("Неизвестная команда: " + command);
+                    action.setStateRunOff(); // Откл. бл. кнопки.
+                    break;
+            }
         }
     }
 
 
     /**
      * Метод, добавляет сообщение в очередь.
+     * Если какой-то метод выполняется, а браузер закрыт, то после открытия отобразиться весь лог. (или после перезагрузки страницы)
      *
      * @param message сообщение.
      */
     public void addMessage(String message) {
+        sendMessage(message);
+    }
 
+    /**
+     * Метод, отправляет все сообщения находящиееся в списке.
+     */
+    public void sendListMessages(ClientWebSocket webSocket) {
+
+        for (String data : dataList) {
+            webSocket.sendString(data);
+        }
     }
 
     public void add(ClientWebSocket webSocket) {

@@ -18,8 +18,6 @@ import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,7 +28,7 @@ import java.util.TimerTask;
 public class ProgramAction {
 
     private boolean stateRun;
-    private List<String> listState = new ArrayList<>();
+//    private List<String> listState = new ArrayList<>();
 
     private final ClientService clientService;
 
@@ -47,36 +45,41 @@ public class ProgramAction {
      */
     public void getSenderID() {
 
-        stateRun = true; // взводим флаг в состояния выполнения метода
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
 
 //        listState.clear(); // очищаем предыдущий лог.
 //        listState.add("Запуск получения SenderID...");
-        clientService.sendMessage("<b>Запуск получения SenderID...</b>");
+        clientService.addMessage("Запуск получения SenderID...");
         ExportOrgRegistry req = new ExportOrgRegistry(clientService);
 //        ExportOrgRegistry req = new ExportOrgRegistry(listState);
         ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
         if (exportOrgRegistryResult == null) {
-            clientService.sendMessage("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+            clientService.addMessage("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
 //            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
 //            stateRun = false;
 //            throw new PreGISException("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+            setStateRunOff(); // взводим флаг в состояние откл.
+            return;
         }
-        ExportDataProvider dataProvider = new ExportDataProvider(listState);
+
+        ExportDataProvider dataProvider = new ExportDataProvider(clientService);
         ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
-        if (dataProviderResult == null || exportOrgRegistryResult.getErrorMessage() == null) {
-            clientService.sendMessage("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+        if (dataProviderResult == null) {
+            clientService.addMessage("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
 //            listState.add("ExportOrgRegistryResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
 //            stateRun = false;
 //            throw new PreGISException("ExportDataProviderResult: Не вернулся ответ от срвиса ГИС ЖКХ!");
+            setStateRunOff(); // взводим флаг в состояние откл.
+            return;
         }
 
-        if (exportOrgRegistryResult.getErrorMessage() == null) {
+        if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
             SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
             saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-            clientService.sendMessage("SenderID успешно получен!");
+            clientService.addMessage("SenderID успешно получен!");
 //        listState.add("SenderID успешно получен!");
         } else {
-            clientService.sendMessage("Возникли ошибки, SenderID не получен!");
+            clientService.addMessage("Возникли ошибки, SenderID не получен!");
         }
         setStateRunOff(); // взводим флаг в состояние откл.
     }
@@ -203,7 +206,7 @@ public class ProgramAction {
      * а обратимся к получению лога операций.
      * @return boolean состояние выполнения любого метода.
      */
-    public boolean isStateRun() {
+    public boolean isRunning() {
         return stateRun;
     }
 
@@ -224,6 +227,7 @@ public class ProgramAction {
      * Устанавливает флаг в состояние выполняется (true).
      */
     private void setStateRunOn() {
+        clientService.sendMessage("::setButtonState(true)");
         this.stateRun = true;
     }
 }

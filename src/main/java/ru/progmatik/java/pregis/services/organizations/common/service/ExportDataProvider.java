@@ -14,7 +14,6 @@ import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
-import java.util.List;
 
 public class ExportDataProvider {
 
@@ -22,18 +21,12 @@ public class ExportDataProvider {
 
     private static final String NAME_METHOD = "exportDataProvider";
     private ClientService clientService;
-    private List<String> listState;
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
 
     public ExportDataProvider() {
         OtherFormat.setPortSettings(service, port);
-    }
-
-    public ExportDataProvider(List<String> listState) {
-        this();
-        this.listState = listState;
     }
 
     public ExportDataProvider(ClientService clientService) {
@@ -43,7 +36,7 @@ public class ExportDataProvider {
 
     public ExportDataProviderResult callExportDataProvide() {
 
-        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        clientService.addMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
         HeaderType header = getHeader();
 
         Holder<ResultHeader> resultHolder = new Holder<>();
@@ -52,12 +45,12 @@ public class ExportDataProvider {
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         try {
-            listState.add(TextForLog.SENDING_REQUEST + NAME_METHOD);
+            clientService.addMessage(TextForLog.SENDING_REQUEST + NAME_METHOD);
             result = port.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
-            listState.add(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            clientService.addMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            listState.add(TextForLog.ERROR_RESPONSE + NAME_METHOD);
-            listState.add(fault.getMessage());
+            clientService.addMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
+            clientService.addMessage(fault.getMessage());
             saveToBase.setRequestError(header, NAME_METHOD, fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();
@@ -68,7 +61,17 @@ public class ExportDataProvider {
 
         saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
 
-        LOGGER.info("Successful.");
+        if (result.getErrorMessage() != null) {
+            clientService.addMessage(TextForLog.ERROR_MESSAGE);
+            clientService.addMessage(TextForLog.ERROR_CODE + result.getErrorMessage().getErrorCode());
+            clientService.addMessage(TextForLog.ERROR_DESCRIPION + result.getErrorMessage().getDescription());
+            LOGGER.error("ExportOrgRegistry: " + result.getErrorMessage().getErrorCode() + "\n" +
+                    result.getErrorMessage().getDescription()  + "\n" + result.getErrorMessage().getStackTrace());
+        } else {
+            clientService.addMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
+            LOGGER.info("Successful.");
+        }
+
         return result;
     }
 

@@ -16,7 +16,6 @@ import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
-import java.util.List;
 
 /**
  * Класс для запроса "экспорт сведений об организациях" ("hcs-organizations-registry-service").
@@ -28,16 +27,10 @@ public class ExportOrgRegistry {
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
-    private List<String> listState;
     private ClientService clientService;
 
     public ExportOrgRegistry() {
         OtherFormat.setPortSettings(service, port);
-    }
-
-    public ExportOrgRegistry(List<String> listState) {
-        this();
-        this.listState = listState;
     }
 
     public ExportOrgRegistry(ClientService clientService) {
@@ -52,7 +45,6 @@ public class ExportOrgRegistry {
     public ExportOrgRegistryResult callExportOrgRegistry() {
 
         clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
-//        listState.add(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
@@ -64,15 +56,11 @@ public class ExportOrgRegistry {
 
         try {
             clientService.sendMessage(TextForLog.SENDING_REQUEST);
-//            listState.add(TextForLog.SENDING_REQUEST);
             result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
             clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
-//            listState.add(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
             clientService.sendMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
-//            listState.add(TextForLog.ERROR_RESPONSE + NAME_METHOD);
             clientService.sendMessage(fault.getMessage());
-//            listState.add(fault.getMessage());
             saveToBase.setRequestError(header, NAME_METHOD, fault);
             LOGGER.error("ExportOrgRegistry: ", fault);
             fault.printStackTrace();

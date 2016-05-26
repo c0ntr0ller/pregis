@@ -8,7 +8,7 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.Fault;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgPortsType;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgService;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.web.servlets.socket.ClientService;
@@ -21,6 +21,7 @@ public class ExportDataProvider {
 
     private static final String NAME_METHOD = "exportDataProvider";
     private ClientService clientService;
+    private AnswerProcessing answerProcessing;
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
@@ -29,48 +30,52 @@ public class ExportDataProvider {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportDataProvider(ClientService clientService) {
+    public ExportDataProvider(ClientService clientService, AnswerProcessing answerProcessing) {
         this();
         this.clientService = clientService;
+        this.answerProcessing = answerProcessing;
     }
 
     public ExportDataProviderResult callExportDataProvide() {
 
-        clientService.addMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
         HeaderType header = getHeader();
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
         ExportDataProviderResult result;
-        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
+//        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         try {
-            clientService.addMessage(TextForLog.SENDING_REQUEST + NAME_METHOD);
+            clientService.sendMessage(TextForLog.SENDING_REQUEST + NAME_METHOD);
             result = port.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
-            clientService.addMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            clientService.addMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
-            clientService.addMessage(fault.getMessage());
-            saveToBase.setRequestError(header, NAME_METHOD, fault);
-            LOGGER.error(fault.getMessage());
-            fault.printStackTrace();
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, header, clientService, LOGGER, fault);
+//            clientService.sendMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
+//            clientService.sendMessage(fault.getMessage());
+//            saveToBase.setRequestError(header, NAME_METHOD, fault);
+//            LOGGER.error(fault.getMessage());
+//            fault.printStackTrace();
             return null;
         }
 
-        saveToBase.setRequest(header, NAME_METHOD);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), clientService, LOGGER);
 
-        saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
-
-        if (result.getErrorMessage() != null) {
-            clientService.addMessage(TextForLog.ERROR_MESSAGE);
-            clientService.addMessage(TextForLog.ERROR_CODE + result.getErrorMessage().getErrorCode());
-            clientService.addMessage(TextForLog.ERROR_DESCRIPION + result.getErrorMessage().getDescription());
-            LOGGER.error("ExportOrgRegistry: " + result.getErrorMessage().getErrorCode() + "\n" +
-                    result.getErrorMessage().getDescription()  + "\n" + result.getErrorMessage().getStackTrace());
-        } else {
-            clientService.addMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
-            LOGGER.info("Successful.");
-        }
+//        saveToBase.setRequest(header, NAME_METHOD);
+//
+//        saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
+//
+//        if (result.getErrorMessage() != null) {
+//            clientService.sendMessage(TextForLog.ERROR_MESSAGE);
+//            clientService.sendMessage(TextForLog.ERROR_CODE + result.getErrorMessage().getErrorCode());
+//            clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + result.getErrorMessage().getDescription());
+//            LOGGER.error("ExportOrgRegistry: " + result.getErrorMessage().getErrorCode() + "\n" +
+//                    result.getErrorMessage().getDescription()  + "\n" + result.getErrorMessage().getStackTrace());
+//        } else {
+//            clientService.sendMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
+//            LOGGER.info("Successful.");
+//        }
 
         return result;
     }

@@ -69,9 +69,6 @@ public class Main {
         context.addServlet(new ServletHolder(new LoginClient()), "/login");
         context.addServlet(new ServletHolder(new MainServlet(action)), "/main");
         context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
-//        context.addServlet(LoginTest.class, "/");
-//        context.addServlet(new ServletHolder(new LoginTest()), "/");
-//        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/api/v1/sessions");
         context.getSessionHandler().getSessionManager().setMaxInactiveInterval(360); // Время сессии
 
         ResourceHandler resource_handler = new ResourceHandler();

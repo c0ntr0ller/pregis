@@ -8,8 +8,8 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.Fault;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgPortsType;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgService;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -28,6 +28,7 @@ public class ExportOrgRegistry {
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
     private ClientService clientService;
+    private AnswerProcessing answerProcessing;
 
     public ExportOrgRegistry() {
         OtherFormat.setPortSettings(service, port);
@@ -36,6 +37,11 @@ public class ExportOrgRegistry {
     public ExportOrgRegistry(ClientService clientService) {
         this();
         this.clientService = clientService;
+    }
+
+    public ExportOrgRegistry(ClientService clientService, AnswerProcessing answerProcessing) {
+        this(clientService);
+        this.answerProcessing = answerProcessing;
     }
 
     /**
@@ -50,7 +56,7 @@ public class ExportOrgRegistry {
 
         HeaderType header = getHeader();
 
-        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
+//        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         ExportOrgRegistryResult result;
 
@@ -58,38 +64,17 @@ public class ExportOrgRegistry {
             clientService.sendMessage(TextForLog.SENDING_REQUEST);
             result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
             clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+
         } catch (Fault fault) {
-            clientService.sendMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
-            clientService.sendMessage(fault.getMessage());
-            saveToBase.setRequestError(header, NAME_METHOD, fault);
-            LOGGER.error("ExportOrgRegistry: ", fault);
-            fault.printStackTrace();
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, header, clientService, LOGGER, fault);
             return null;
+
         } catch (PreGISException e) {
-            clientService.sendMessage(e.getMessage());
-            LOGGER.error("ExportOrgRegistry: ", e);
-            e.printStackTrace();
+            answerProcessing.sendClientErrorToClient(clientService, LOGGER, e);
             return null;
         }
 
-        saveToBase.setRequest(header, NAME_METHOD);
-
-        saveToBase.setResult(resultHolder.value, NAME_METHOD, result.getErrorMessage());
-
-//        AnswerHandlerExportOrgRegistry answer = new AnswerHandlerExportOrgRegistry();
-//
-//        answer.setOrgRegistryResultToBase(result);
-
-        if (result.getErrorMessage() != null) {
-            clientService.sendMessage(TextForLog.ERROR_MESSAGE);
-            clientService.sendMessage(TextForLog.ERROR_CODE + result.getErrorMessage().getErrorCode());
-            clientService.sendMessage(TextForLog.ERROR_DESCRIPION + result.getErrorMessage().getDescription());
-            LOGGER.error("ExportOrgRegistry: " + result.getErrorMessage().getErrorCode() + "\n" +
-                    result.getErrorMessage().getDescription()  + "\n" + result.getErrorMessage().getStackTrace());
-        } else {
-            clientService.sendMessage(TextForLog.DONE_RESPONSE + NAME_METHOD);
-            LOGGER.info("Successful.");
-        }
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), clientService, LOGGER);
 
         return result;
     }

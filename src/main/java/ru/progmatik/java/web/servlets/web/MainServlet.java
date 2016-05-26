@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class MainServlet extends HttpServlet {
         try {
             super.init();
             accountService = ProfileSingleton.instance().getAccountService();
-        } catch (ServletException | SQLException e) {
+        } catch (ServletException e) {
             new ErrorPage(e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             LOGGER.error("MainServlet", e);
             e.printStackTrace();

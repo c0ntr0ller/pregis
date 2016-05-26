@@ -7,7 +7,7 @@ function init() {
     ws = new WebSocket("ws://localhost:8080/websocket");
     ws.onopen = function (event) {
 
-    }
+    };
     ws.onmessage = function (event) {
         var inMessage = event.data;
         if (inMessage.includes('::setButtonState(false)')) {
@@ -17,14 +17,17 @@ function init() {
         } else {
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";
+            $textarea.scrollTop = $textarea.scrollHeight;
         }
-    }
+    };
     ws.onclose = function (event) {
-        location.reload(true);
-    }
+        // location.reload(true);
+        document.location.href = '/login';
+    };
     ws.onerror = function (evt) {
         console.log("The following error occurred: " + evt.data);
     }
+
 };
 function sendMessage(message) {    
     setButtonState(true);

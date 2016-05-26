@@ -63,9 +63,9 @@ public class ClientService {
      *
      * @param message сообщение.
      */
-    public void addMessage(String message) {
-        sendMessage(message);
-    }
+//    public void addMessage(String message) {
+//        sendMessage(message);
+//    }
 
     /**
      * Метод, отправляет все сообщения находящиееся в списке.
@@ -75,6 +75,10 @@ public class ClientService {
         for (String data : dataList) {
             webSocket.sendString(data);
         }
+    }
+
+    public void dropDataList() {
+        dataList.clear();
     }
 
     public void add(ClientWebSocket webSocket) {

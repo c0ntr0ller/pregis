@@ -15,7 +15,7 @@ import java.sql.*;
  */
 public class SaveToBaseMessages {
 
-    private Logger logger = Logger.getLogger(SaveToBaseMessages.class);
+    private static final Logger LOGGER = Logger.getLogger(SaveToBaseMessages.class);
 
     private Connection connection;
     private String stateMessage = "OK";
@@ -35,7 +35,7 @@ public class SaveToBaseMessages {
             setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, inputStream, stateMessage);
             file.deleteOnExit();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -62,14 +62,14 @@ public class SaveToBaseMessages {
             stateBuilder.append(errorMessage.getDescription());
             stateBuilder.append("\n");
             stateBuilder.append(errorMessage.getStackTrace());
-            logger.error(stateBuilder.toString());
+            LOGGER.error(stateBuilder.toString());
         }
 
         try (FileInputStream inputStream = new FileInputStream(file)) {
             setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, inputStream, stateBuilder.toString());
             file.deleteOnExit();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -134,7 +134,7 @@ public class SaveToBaseMessages {
             cs.setString(6, stateMessage);
 
             int isResultSet = cs.executeUpdate();
-            logger.info("setMessageToBase: CallableStatement.executeUpdate() - " + isResultSet);
+            LOGGER.info("setMessageToBase: CallableStatement.executeUpdate() - " + isResultSet);
 
             if (!cs.isClosed()) cs.close();
             if (connection != null || !connection.isClosed()) {
@@ -142,7 +142,7 @@ public class SaveToBaseMessages {
             }
 
         } catch (SQLException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
     }

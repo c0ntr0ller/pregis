@@ -17,14 +17,14 @@ public class ProfileSingleton {
 
     private static ProfileSingleton profileSingleton = null;
     private static AccountService accountService;
-    private boolean check;
 
-    public ProfileSingleton() throws SQLException {
+    public ProfileSingleton() {
 
         accountService = new AccountService();
 //        Если нужно можно добавить пользователей здесь, они будут доступны всему приложению.
-        UsersDAO usersDAO = new UsersDAO();
+        UsersDAO usersDAO;
         try {
+            usersDAO = new UsersDAO();
             List<UserProfile> listProfils = usersDAO.getUsers();
             if (listProfils.isEmpty()) {
                 accountService.addNewUser(new UserProfile("admin", OtherFormat.getMD5("admin"), "Администратор сервиса"));
@@ -41,14 +41,14 @@ public class ProfileSingleton {
         }
     }
 
-    public static ProfileSingleton instance() throws SQLException {
+    public static ProfileSingleton instance() {
         if (profileSingleton == null) {
             profileSingleton = new ProfileSingleton();
         }
         return profileSingleton;
     }
 
-    public AccountService getAccountService() throws SQLException {
+    public AccountService getAccountService() {
         instance();
         return accountService;
     }

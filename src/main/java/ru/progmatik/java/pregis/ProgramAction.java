@@ -102,8 +102,10 @@ public class ProgramAction {
      * которые изменились после временной метки ModifiedAfter.
      */
     public void callExportNsiItem() {
+        setStateRunOn();
         ExportNsiItem nsiItem = new ExportNsiItem();
         nsiItem.callExportNsiItem();
+        setStateRunOff();
     }
 
     /**

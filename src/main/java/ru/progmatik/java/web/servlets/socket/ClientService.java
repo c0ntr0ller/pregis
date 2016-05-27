@@ -48,6 +48,12 @@ public class ClientService {
                 case "getHouse":
                     action.callExportHouseData();
                     break;
+                case "getNsiList":
+                    action.callExportNsiList();
+                    break;
+                case "getNsiItem":
+                    action.callExportNsiItem();
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

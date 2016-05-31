@@ -1,8 +1,13 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<!--<!DOCTYPE web-app PUBLIC-->
+ <!--"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"-->
+ <!--"http://java.sun.com/dtd/web-app_2_3.dtd" >-->
 
-<web-app>
+<!--<web-app>-->
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
   <display-name>ПреГИС</display-name>
 
   <servlet>
@@ -11,7 +16,12 @@
   </servlet>
 
   <servlet>
-    <servlet-name>WebSocketChatServlet</servlet-name>
+    <servlet-name>MainServlet</servlet-name>
+    <servlet-class>ru.progmatik.java.web.servlets.web.MainServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>WebSocketClientServlet</servlet-name>
     <servlet-class>ru.progmatik.java.web.servlets.socket.WebSocketClientServlet</servlet-class>
   </servlet>
 
@@ -21,8 +31,13 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>WebSocketChatServlet</servlet-name>
-    <url-pattern>/status</url-pattern>
+    <servlet-name>MainServlet</servlet-name>
+    <url-pattern>/main</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>WebSocketClientServlet</servlet-name>
+    <url-pattern>/websocket</url-pattern>
   </servlet-mapping>
 
   <session-config>

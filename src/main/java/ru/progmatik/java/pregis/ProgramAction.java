@@ -74,7 +74,7 @@ public class ProgramAction {
 
     public void callExportOrgRegistry() throws Exception {
 
-        ExportOrgRegistry reg = new ExportOrgRegistry();
+        ExportOrgRegistry reg = new ExportOrgRegistry(clientService, answerProcessing);
         reg.callExportOrgRegistry();
     }
 
@@ -112,8 +112,8 @@ public class ProgramAction {
      * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
      */
     public void callExportDataProviderNsiItem() {
-        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem();
-        dataProviderNsiItem.callExportDataProviderNsiItem();
+        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
+        dataProviderNsiItem.callExportDataProviderNsiItem(51);
     }
 
     /**

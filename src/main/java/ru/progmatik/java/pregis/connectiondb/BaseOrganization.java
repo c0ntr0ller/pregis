@@ -22,7 +22,7 @@ public class BaseOrganization {
         try {
 
             if (connection == null || connection.isClosed()) {
-                connection = ConnectionDB.getConnectionDB();
+                connection = ConnectionDB.instance().getConnectionDB();
             }
 
             ResultSet rs = connection.createStatement().executeQuery("SELECT SENDER_ID FROM ORGANIZATION");

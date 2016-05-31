@@ -33,12 +33,13 @@ public class ConnectionBaseGRAD implements AutoCloseable {
         if (baseGRAD == null) baseGRAD = new ConnectionBaseGRAD();
         return baseGRAD;
     }
+
     /**
      * Метод создаёт подключение к базе данных Firebird.
      *
      * @return Connection с готовым подключением если все параметры указаны верно.
      */
-    private Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
 
         if (connection == null || connection.isClosed()) {
             try {
@@ -69,17 +70,17 @@ public class ConnectionBaseGRAD implements AutoCloseable {
      */
     private void getAccountBase() {
 
-            if (!ResourcesUtil.instance().getProperties().containsKey("config.database.grad.uri") ||
-                    !ResourcesUtil.instance().getProperties().containsKey("config.database.grad.user") ||
-                    !ResourcesUtil.instance().getProperties().containsKey("config.database.grad.password") ||
-                    !ResourcesUtil.instance().getProperties().containsKey("config.database.grad.role")) {
-                LOGGER.error("ConnectionBaseGRAD: Не указан один из параметров!");
-            } else {
-                databaseURI = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.uri");
-                userName = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.user");
-                password = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.password");
-                role = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.role");
-            }
+        if (!ResourcesUtil.instance().getProperties().containsKey("config.database.grad.uri") ||
+                !ResourcesUtil.instance().getProperties().containsKey("config.database.grad.user") ||
+                !ResourcesUtil.instance().getProperties().containsKey("config.database.grad.password") ||
+                !ResourcesUtil.instance().getProperties().containsKey("config.database.grad.role")) {
+            LOGGER.error("ConnectionBaseGRAD: Не указан один из параметров!");
+        } else {
+            databaseURI = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.uri");
+            userName = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.user");
+            password = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.password");
+            role = ResourcesUtil.instance().getProperties().getProperty("config.database.grad.role");
+        }
     }
 
     /**
@@ -88,11 +89,17 @@ public class ConnectionBaseGRAD implements AutoCloseable {
      * @throws Exception выдаст ошибку, если не удастся удачно закрыть соединение.
      */
     @Override
-    public final void close() throws Exception {
-        if (connection != null) {
-            if (!connection.isClosed())
-                connection.close();
-            LOGGER.info("ConnectionBaseGRAD: Connection closed!");
+    public final void close() {
+        try {
+            if (connection != null) {
+
+                if (!connection.isClosed())
+                    connection.close();
+
+                LOGGER.info("ConnectionBaseGRAD: Connection closed!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

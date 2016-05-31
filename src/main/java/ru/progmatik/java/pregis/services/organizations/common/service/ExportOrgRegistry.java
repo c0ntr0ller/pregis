@@ -30,17 +30,18 @@ public class ExportOrgRegistry {
     private ClientService clientService;
     private AnswerProcessing answerProcessing;
 
-    public ExportOrgRegistry() {
+    private ExportOrgRegistry() {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportOrgRegistry(ClientService clientService) {
-        this();
-        this.clientService = clientService;
-    }
+//    public ExportOrgRegistry(ClientService clientService) {
+//        this();
+//        this.clientService = clientService;
+//    }
 
     public ExportOrgRegistry(ClientService clientService, AnswerProcessing answerProcessing) {
-        this(clientService);
+        this();
+        this.clientService = clientService;
         this.answerProcessing = answerProcessing;
     }
 

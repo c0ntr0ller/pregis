@@ -8,8 +8,10 @@ import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
 import ru.gosuslugi.dom.schema.integration.services.nsi_service.Fault;
 import ru.gosuslugi.dom.schema.integration.services.nsi_service.NsiPortsType;
 import ru.gosuslugi.dom.schema.integration.services.nsi_service.NsiService;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
 import java.math.BigInteger;
@@ -26,57 +28,69 @@ public class ExportDataProviderNsiItem {
     private final NsiService service = new NsiService();
     private final NsiPortsType port = service.getNsiPort();
 
+    private ClientService clientService;
+    private AnswerProcessing answerProcessing;
+
     /**
      * Конструктор, добавляет параметры для соединения.
      */
-    public ExportDataProviderNsiItem() {
+    private ExportDataProviderNsiItem() {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public void callExportDataProviderNsiItem() {
+    /**
+     * Конструктор добавляет параметры для соединения.
+     * @param clientService лог для пользователя.
+     * @param answerProcessing куда сохранять ошибки.
+     */
+    public ExportDataProviderNsiItem(ClientService clientService, AnswerProcessing answerProcessing) {
+        this.clientService = clientService;
+        this.answerProcessing = answerProcessing;
+    }
+
+    /**
+     * Метод, отправляет запрос с кодом справочника (1, 51 или 59), получает в ответ указанный справочник.
+     * @param code код справочника - 1, 51 или 59.
+     */
+    public ExportNsiItemResult callExportDataProviderNsiItem(int code) {
+
+        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();
-//        Создание объекта для сохранения лога сообщений в БД.
-        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         ExportNsiItemResult result;
 
         try {
-            result = port.exportDataProviderNsiItem(getExportDataProviderNsiItemRequest(), requestHeader, headerHolder);
-//            List<NsiElementType> nsiElements = result.getNsiItem().getNsiElement();
-//            for (NsiElementType nsiElement : nsiElements) {
-//                nsiElement.
-//            }
-
-
+            clientService.sendMessage(TextForLog.SENDING_REQUEST);
+            result = port.exportDataProviderNsiItem(getExportDataProviderNsiItemRequest(code), requestHeader, headerHolder);
+            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
-            saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
-            LOGGER.error(fault.getMessage());
-            fault.printStackTrace();
-            return;
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, clientService, LOGGER, fault);
+            return null;
         }
-        saveToBase.setRequest(requestHeader, NAME_METHOD);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), clientService, LOGGER);
 
-        saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
-
-        LOGGER.info("ExportDataProviderNsiItem - Successful.");
+        return result;
     }
 
     /**
      * Метод, формирует объект для дальнейшей передачи его сервису ГИС ЖКХ.
+     * Принимает значение 1, 51 или 59, код справочника.
      * @return ExportDataProviderNsiItemRequest объект с указанными значениями, для передачи сервису ГИС ЖКХ.
      */
-    private ExportDataProviderNsiItemRequest getExportDataProviderNsiItemRequest() {
+    private ExportDataProviderNsiItemRequest getExportDataProviderNsiItemRequest(int code) {
 
         ExportDataProviderNsiItemRequest request = new ExportDataProviderNsiItemRequest();
-//        request.setRegistryNumber(BigInteger.valueOf(1));
+
 
 //        Возможные значения
-//        request.setRegistryNumber(BigInteger.valueOf(51));
-        request.setRegistryNumber(BigInteger.valueOf(59));
+//        request.setRegistryNumber(BigInteger.valueOf(1));  Дополнительные услуги
+//        request.setRegistryNumber(BigInteger.valueOf(51)); Коммунальные услуги
+//        request.setRegistryNumber(BigInteger.valueOf(59)); Работы и услуги организации
+        request.setRegistryNumber(BigInteger.valueOf(code));
 
 //        Дата и время, измененные после которой элементы справочника должны быть возвращены в ответе.
 //        Если не указана, возвращаются все элементы справочника.

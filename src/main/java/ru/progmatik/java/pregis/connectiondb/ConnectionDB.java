@@ -19,13 +19,25 @@ public class ConnectionDB {
     private static JdbcConnectionPool cp = JdbcConnectionPool.create(databaseURI, userName, password);
 
     private static Connection connection;
+    private static ConnectionDB connectionDB;
+
+    private ConnectionDB() {
+
+    }
+
+    public static ConnectionDB instance() {
+        if (connectionDB == null) {
+            connectionDB = new ConnectionDB();
+        }
+        return connectionDB;
+    }
 
     /**
      * Метод статический отдаёт новое подключение.
      * @return Connection новое подключение к базе данных.
      * @throws SQLException
      */
-    public static Connection getConnectionDB() throws SQLException {
+    public Connection getConnectionDB() throws SQLException {
 
         if (connection == null || connection.isClosed())
             connection = cp.getConnection();

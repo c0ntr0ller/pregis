@@ -9,7 +9,7 @@
     <url>http://maven.apache.org</url>
 
     <!--<modules>-->
-        <!--<module>xades4j-master</module>-->
+    <!--<module>xades4j-master</module>-->
     <!--</modules>-->
 
     <properties>
@@ -61,15 +61,15 @@
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.bouncycastle</groupId>-->
-            <!--<artifactId>bcprov-jdk15on</artifactId>-->
-            <!--<version>1.54</version>-->
+        <!--<groupId>org.bouncycastle</groupId>-->
+        <!--<artifactId>bcprov-jdk15on</artifactId>-->
+        <!--<version>1.54</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.bouncycastle</groupId>-->
-            <!--<artifactId>bcpkix-jdk15on</artifactId>-->
-            <!--<version>1.54</version>-->
+        <!--<groupId>org.bouncycastle</groupId>-->
+        <!--<artifactId>bcpkix-jdk15on</artifactId>-->
+        <!--<version>1.54</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -79,22 +79,22 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>com.googlecode.xades4j</groupId>-->
-            <!--<artifactId>xades4j</artifactId>-->
-            <!--<version>1.3.2</version>-->
+        <!--<groupId>com.googlecode.xades4j</groupId>-->
+        <!--<artifactId>xades4j</artifactId>-->
+        <!--<version>1.3.2</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.apache.santuario</groupId>-->
-            <!--<artifactId>xmlsec</artifactId>-->
-            <!--<version>1.5.0</version>-->
+        <!--<groupId>org.apache.santuario</groupId>-->
+        <!--<artifactId>xmlsec</artifactId>-->
+        <!--<version>1.5.0</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>junit</groupId>-->
-            <!--<artifactId>junit</artifactId>-->
-            <!--<version>3.8.1</version>-->
-            <!--<scope>test</scope>-->
+        <!--<groupId>junit</groupId>-->
+        <!--<artifactId>junit</artifactId>-->
+        <!--<version>3.8.1</version>-->
+        <!--<scope>test</scope>-->
         <!--</dependency>-->
 
         <dependency>
@@ -151,6 +151,18 @@
             <version>${org.eclipse.jetty.version}</version>
         </dependency>
 
+        <!--<dependency>-->
+        <!--<groupId>org.eclipse.jetty</groupId>-->
+        <!--<artifactId>jetty-util</artifactId>-->
+        <!--<version>${org.eclipse.jetty.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+        <!--<groupId>org.eclipse.jetty</groupId>-->
+        <!--<artifactId>jetty-plus</artifactId>-->
+        <!--<version>${org.eclipse.jetty.version}</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-servlet</artifactId>
@@ -161,6 +173,12 @@
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-server</artifactId>
             <version>${org.eclipse.jetty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>
@@ -176,22 +194,31 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-api</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/slf4j-api-1.7.14.jar</systemPath>-->
-            <!--<type>jar</type>-->
+        <!--<groupId>org.slf4j</groupId>-->
+        <!--<artifactId>slf4j-api</artifactId>-->
+        <!--<version>${slf4j.version}</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/slf4j-api-1.7.14.jar</systemPath>-->
+        <!--<type>jar</type>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-log4j12</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/slf4j-log4j12-1.7.14.jar</systemPath>-->
-            <!--<type>jar</type>-->
+        <!--<groupId>org.slf4j</groupId>-->
+        <!--<artifactId>slf4j-log4j12</artifactId>-->
+        <!--<version>${slf4j.version}</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/slf4j-log4j12-1.7.14.jar</systemPath>-->
+        <!--<type>jar</type>-->
         <!--</dependency>-->
+
+        <dependency>
+            <groupId>ru.progmatik.java</groupId>
+            <artifactId>giswsdl</artifactId>
+            <!--<version>8.7.2.2</version>-->
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/giswsdl.jar</systemPath>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>

@@ -31,7 +31,7 @@ class AnswerHandlerExportOrgRegistry {
             try {
 
                 Map mapOrg = getOrgData(result);
-                connection = ConnectionDB.getConnectionDB();
+                connection = ConnectionDB.instance().getConnectionDB();
 
                 CallableStatement cs = connection.prepareCall("{CALL SET_EXPORT_ORG_REGISTRY_RESULT(?, ?, ?, ?, ?, ?)}");
 

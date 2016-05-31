@@ -6,8 +6,12 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemRequest;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.Fault;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiPortsType;
+import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiService;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
 import java.math.BigInteger;
@@ -20,46 +24,57 @@ import java.math.BigInteger;
 public class ExportNsiItem {
 
     private static final Logger LOGGER = Logger.getLogger(ExportNsiItem.class);
-
     private static final String NAME_METHOD = "exportNsiItem";
 
-    public void callExportNsiItem() {
+    private final NsiService service = new NsiService();
+    private final NsiPortsType port = service.getNsiPort();
+
+    private ClientService clientService;
+    private AnswerProcessing answerProcessing;
+
+    public ExportNsiItem(ClientService clientService, AnswerProcessing answerProcessing) {
+        OtherFormat.setPortSettings(service, port);
+        this.clientService = clientService;
+        this.answerProcessing = answerProcessing;
+    }
+
+    public ExportNsiItemResult callExportNsiItem(NsiListGroupEnum nsi, BigInteger codeNsi) {
+
+        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
         HeaderType requestHeader = OtherFormat.getISRequestHeader();
 
         Holder<ResultHeader> headerHolder = new Holder<>();
 
-        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
+//        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         ExportNsiItemResult result;
 
-        NsiPortsTypeImpl portsType = new NsiPortsTypeImpl();
-
         try {
-            result = portsType.exportNsiItem(getExportNsiItemRequest(), requestHeader, headerHolder);
+            clientService.sendMessage(TextForLog.SENDING_REQUEST);
+            result = port.exportNsiItem(getExportNsiItemRequest(nsi, codeNsi), requestHeader, headerHolder);
+            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
-            LOGGER.error(fault.getMessage());
-            fault.printStackTrace();
-            return;
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, clientService, LOGGER, fault);
+            return null;
         }
-        saveToBase.setRequest(requestHeader, NAME_METHOD);
 
-        saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), clientService, LOGGER);
 
-        LOGGER.info("ExportNsiItem - Successful.");
+        return result;
     }
 
     /**
      * Метод, формирует объект для дальнейшей передачи его сервису ГИС ЖКХ.
      * @return ExportNsiItemRequest объект с указанными значениями, для передачи сервису ГИС ЖКХ.
      */
-    private ExportNsiItemRequest getExportNsiItemRequest() {
+    private ExportNsiItemRequest getExportNsiItemRequest(NsiListGroupEnum nsi, BigInteger codeNsi) {
 
         ExportNsiItemRequest request = new ExportNsiItemRequest();
         request.setId("signed-data-container");
-        request.setListGroup("NSI"); // Обязательный атрибут
-        request.setRegistryNumber(BigInteger.valueOf(2)); // Обязательный атрибут
+//        request.setListGroup("NSI"); // Обязательный атрибут
+        request.setListGroup(nsi.getNsi()); // Обязательный атрибут
+        request.setRegistryNumber(codeNsi); // Обязательный атрибут
 //        request.setRegistryNumber(BigInteger.valueOf(225)); // Обязательный атрибут
 
         return request;

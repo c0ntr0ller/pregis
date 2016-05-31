@@ -121,7 +121,7 @@ public class SaveToBaseMessages {
         try {
 
             if (connection == null || connection.isClosed()) {
-                connection = ConnectionDB.getConnectionDB();
+                connection = ConnectionDB.instance().getConnectionDB();
             }
 
             CallableStatement cs = connection.prepareCall( "{CALL SET_MESSAGE(?, ?, ?, ?, ?, ?)}" );

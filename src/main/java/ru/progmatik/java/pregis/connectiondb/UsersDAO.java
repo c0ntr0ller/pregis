@@ -21,7 +21,7 @@ public class UsersDAO {
      */
     public UsersDAO() throws SQLException {
 
-        Connection connection = ConnectionDB.getConnectionDB();
+        Connection connection = ConnectionDB.instance().getConnectionDB();
         Statement statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS USERSLOGIN " +
                             "(ID identity not null primary key, " +
@@ -34,7 +34,7 @@ public class UsersDAO {
 
     public List<UserProfile> getUsers() throws SQLException {
 
-        Connection connection = ConnectionDB.getConnectionDB();
+        Connection connection = ConnectionDB.instance().getConnectionDB();
         List<UserProfile> listUsers = new ArrayList<>();
         Statement stmt = connection.createStatement();
         ResultSet resultSet = stmt.executeQuery("SELECT * FROM USERSLOGIN");
@@ -50,7 +50,7 @@ public class UsersDAO {
 
     public void addUser(UserProfile profile) throws SQLException {
 
-        Connection connection = ConnectionDB.getConnectionDB();
+        Connection connection = ConnectionDB.instance().getConnectionDB();
         PreparedStatement ps = connection.prepareStatement("INSERT INTO USERSLOGIN VALUES(DEFAULT , ?, ? ,?)");
         ps.setString(1, profile.getLogin());
         ps.setString(2, OtherFormat.getMD5(profile.getPassword()));

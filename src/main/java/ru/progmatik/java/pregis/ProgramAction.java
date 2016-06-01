@@ -10,16 +10,16 @@ import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house_management.ExportHouseData;
+import ru.progmatik.java.pregis.services.nsi.UpdateReference;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
-import ru.progmatik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
+import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportDataProvider;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
+import java.math.BigInteger;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -72,17 +72,17 @@ public class ProgramAction {
         setStateRunOff(); // взводим флаг в состояние откл.
     }
 
-    public void callExportOrgRegistry() throws Exception {
-
-        ExportOrgRegistry reg = new ExportOrgRegistry(clientService, answerProcessing);
-        reg.callExportOrgRegistry();
-    }
-
-    public void callExportDataProvider() throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
-
-        ExportDataProvider dataProvider = new ExportDataProvider();
-        dataProvider.callExportDataProvide();
-    }
+//    public void callExportOrgRegistry() throws Exception {
+//
+//        ExportOrgRegistry reg = new ExportOrgRegistry(clientService, answerProcessing);
+//        reg.callExportOrgRegistry();
+//    }
+//
+//    public void callExportDataProvider() throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
+//
+//        ExportDataProvider dataProvider = new ExportDataProvider();
+//        dataProvider.callExportDataProvide();
+//    }
 
     /**
      * 2.1.2.1	Экспортировать список справочников (exportNsiList).
@@ -103,8 +103,8 @@ public class ProgramAction {
      */
     public void callExportNsiItem() {
         setStateRunOn();
-        ExportNsiItem nsiItem = new ExportNsiItem();
-        nsiItem.callExportNsiItem();
+        ExportNsiItem nsiItem = new ExportNsiItem(clientService, answerProcessing);
+        nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger("56"));
         setStateRunOff();
     }
 
@@ -112,8 +112,19 @@ public class ProgramAction {
      * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
      */
     public void callExportDataProviderNsiItem() {
-        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
-        dataProviderNsiItem.callExportDataProviderNsiItem(51);
+
+        try {
+            setStateRunOn();
+            clientService.sendMessage("Запуск получения Справочников...");
+            UpdateReference updateReference = new UpdateReference(clientService, answerProcessing);
+            updateReference.updateAllDataProviderNsiItem();
+            setStateRunOff();
+//        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
+//        dataProviderNsiItem.callExportDataProviderNsiItem(51);
+        } catch (Exception e) {
+            clientService.sendMessage("Возникла непредвиденная ошибка!\nОперация прервана!\nТекст ошибки: " + e.getMessage());
+            setStateRunOff();
+        }
     }
 
     /**
@@ -143,8 +154,13 @@ public class ProgramAction {
      * Метод, экспорт сведений о платежных документах.
      */
     public void callExportPaymentDocumentData() {
+
+        setStateRunOn();
+        clientService.sendMessage("Запуск получения ПД...");
         ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData();
         paymentDocumentData.callExportPaymentDocumentData();
+        clientService.sendMessage("Получения ПД завершено.");
+        setStateRunOff();
     }
 
     /**
@@ -169,8 +185,13 @@ public class ProgramAction {
      * Метод, экспорт сведений о лицевых счетах.
      */
     public void callExportAccountData() {
+
+        setStateRunOn();
+        clientService.sendMessage("Запуск получения ЛС...");
         ExportAccountData accountData = new ExportAccountData();
         accountData.callExportAccountData();
+        clientService.sendMessage("Получения ЛС завершено.");
+        setStateRunOff();
     }
 
 

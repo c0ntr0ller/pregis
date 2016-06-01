@@ -60,6 +60,7 @@ public class ConnectionBaseGRAD implements AutoCloseable {
 
             LOGGER.info("ConnectionBaseGRAD: database: " + url + ", username: " + userName + ", role: " + role + ".");
             connection = DriverManager.getConnection(url, properties);
+            connection.setAutoCommit(true);
         }
 
         return connection;

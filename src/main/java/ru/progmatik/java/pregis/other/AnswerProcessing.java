@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
-import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 /**
@@ -43,7 +42,8 @@ public class AnswerProcessing {
      * @param logger сохранение в лог.
      * @param exception ошибка.
      */
-    public void sendClientErrorToClient(ClientService clientService, Logger logger, PreGISException exception) {
+//    public void sendClientErrorToClient(ClientService clientService, Logger logger, PreGISException exception) {
+    public void sendClientErrorToClient(ClientService clientService, Logger logger, Exception exception) {
         clientService.sendMessage(exception.getMessage());
         logger.error(exception);
         exception.printStackTrace();

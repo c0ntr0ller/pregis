@@ -45,14 +45,20 @@ public class ClientService {
                 case "getHouseUO":
                     action.callExportHouseData();
                     break;
-                case "getHouse":
-                    action.callExportHouseData();
+                case "getExportPaymentDocumentData":
+                    action.callExportPaymentDocumentData();
                     break;
                 case "getNsiList":
                     action.callExportNsiList();
                     break;
                 case "getNsiItem":
                     action.callExportNsiItem();
+                    break;
+                case "getExportDataProviderNsiItem":
+                    action.callExportDataProviderNsiItem();
+                    break;
+                case "getExportAccountData":
+                    action.callExportAccountData();
                     break;
                 default:
                     sendMessage("Неизвестная команда: " + command);

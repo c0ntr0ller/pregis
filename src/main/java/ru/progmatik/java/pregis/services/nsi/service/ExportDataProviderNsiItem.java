@@ -32,18 +32,12 @@ public class ExportDataProviderNsiItem {
     private AnswerProcessing answerProcessing;
 
     /**
-     * Конструктор, добавляет параметры для соединения.
-     */
-    private ExportDataProviderNsiItem() {
-        OtherFormat.setPortSettings(service, port);
-    }
-
-    /**
      * Конструктор добавляет параметры для соединения.
      * @param clientService лог для пользователя.
      * @param answerProcessing куда сохранять ошибки.
      */
     public ExportDataProviderNsiItem(ClientService clientService, AnswerProcessing answerProcessing) {
+        OtherFormat.setPortSettings(service, port);
         this.clientService = clientService;
         this.answerProcessing = answerProcessing;
     }

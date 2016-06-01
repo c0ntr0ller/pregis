@@ -74,10 +74,10 @@ public class ReferenceItemGRADDAO {
         Map<String, ReferenceItemDataSet> dataList = new HashMap<String, ReferenceItemDataSet>();
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH WHERE CODE_PARENT='" + codeParent + "'");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH WHERE CODE_PARENT=" + codeParent);
 
             while (resultSet.next()) {
-                dataList.put(resultSet.getString(2), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
+                dataList.put(resultSet.getString(3), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
                         resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
             }
             resultSet.close();
@@ -122,15 +122,17 @@ public class ReferenceItemGRADDAO {
     public void addItem(ReferenceItemDataSet dataSet) {
         try {
             if (dataSet.getId() == null) { // проверяем если у элемента нет id, т.е. его нет в базе, то добавляем
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO SERVICES_GIS_JKH VALUES(DEFAULT , ?, ? ,? ,?, ?)");
+                PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO SERVICES_GIS_JKH(NAME, CODE, UIID, GROUP_NAME, CODE_PARENT) VALUES(?, ? ,? ,?, ?)");
                 ps.setString(1, dataSet.getName());
                 ps.setString(2, dataSet.getCode());
                 ps.setString(3, dataSet.getUiid());
                 ps.setString(4, dataSet.getGroupName());
                 ps.setInt(5, dataSet.getCodeParent());
+                ps.executeUpdate();
                 ps.close();
                 LOGGER.info("Добавлеен элемент в справочник: ID = " + dataSet.getId() + " Name: " + dataSet.getName() +
-                        " Code: " + dataSet.getCode() + " GUID: " + dataSet.getUiid());
+                        " Code: " + dataSet.getCode() + " GUID: " + dataSet.getUiid() + " GROUP_NAME: " + dataSet.getGroupName());
             } else { // иначе проверяем остальные поля и просто обновляем значение в БД.
                 if (!dataSet.getName().isEmpty() && !dataSet.getCode().isEmpty() && !dataSet.getUiid().isEmpty()) {  // перестраховка
                     updateItem(dataSet);

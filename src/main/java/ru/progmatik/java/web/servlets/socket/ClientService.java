@@ -1,5 +1,6 @@
 package ru.progmatik.java.web.servlets.socket;
 
+import com.google.gson.Gson;
 import ru.progmatik.java.pregis.ProgramAction;
 
 import java.util.ArrayList;
@@ -33,7 +34,21 @@ public class ClientService {
         this.action = action;
     }
 
-    public void callCommands(String command) {
+    public void callCommands(String requestFromClient) {
+
+        Gson gson = new Gson();
+        ObjectForJSON json = gson.fromJson(requestFromClient, ObjectForJSON.class);
+        String command = json.getCommand();
+        String value = json.getValue();
+
+        String answerToClient = "Получена команда: " + command;
+        if (!value.isEmpty()) {
+            answerToClient += " значение: " + value + "\n";
+        } else {
+            answerToClient += "\n";
+        }
+
+        sendMessage(answerToClient);  // убрать
 
         if (action.isRunning()) {
             sendMessage("Уже выполнятся другая операция!");
@@ -52,7 +67,7 @@ public class ClientService {
                     action.callExportNsiList();
                     break;
                 case "getNsiItem":
-                    action.callExportNsiItem();
+                    action.callExportNsiItem(value);
                     break;
                 case "getExportDataProviderNsiItem":
                     action.callExportDataProviderNsiItem();

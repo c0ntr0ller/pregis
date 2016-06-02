@@ -9,17 +9,17 @@
 <h1>Сервис обмена информации с ГИС ЖКХ</h1>
 <div>
     <form name="mainform" accept-charset="utf-8">
-        <button id="getSenderID" type="button" value="getSenderID" onclick="sendMessage('getSenderID');" ${buttonState}>Получить SenderID</button>
+        <button id="callSenderID" type="button" onclick="sendMessage('getSenderID');" ${buttonState}>Получить SenderID</button>
         <br>
         <br>
-        <button id="getExportDataProviderNsiItem" name="getExportDataProviderNsiItem" type="button" onclick="sendMessage('getExportDataProviderNsiItem');" ${buttonState}>Синхронизация справочников</button>
+        <button id="sendExportDataProviderNsiItem" type="button" onclick="sendMessage('getExportDataProviderNsiItem');" ${buttonState}>Синхронизация справочников</button>
         <br><br>
-        <button id="getHouseUO" type="button" value="getHouseUO" onclick="sendMessage('getHouseUO');" ${buttonState}>Получить данные МКД</button>
+        <button id="sendHouseUO" type="button" onclick="sendMessage('getHouseUO');" ${buttonState}>Получить данные МКД</button>
         <br><br>
-        <button id="getExportPaymentDocumentData" name="getExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
+        <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
         <br><br>
         <br><br>
-        <button id="getExportAccountData" name="getExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
+        <button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
         <br><br>
         <button id="Error" type="button" value="Error" onclick="getSessionID('Error');" ${buttonState}>ErrorTest</button>
         <br><br>
@@ -27,7 +27,8 @@
         <br><br>
     </form>
     <form name="nsiItemForm" accept-charset="utf-8">
-        <input type="text" id="getNsiItem"/>
+        <label for="getNsiItem">Введите код справочника (убрать в админку)</label><br>
+        <input type="text" id="getNsiItem" placeholder="код справочника"/>
         <button id="sendNsiItem" type="button" onclick="sendMessage('getNsiItem');" ${buttonState}>getNsiItem</button>
         <br><br>
     </form>

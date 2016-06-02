@@ -101,10 +101,24 @@ public class ProgramAction {
      * Позволяет получить записи конкретного справочника, а также только те записи справочника,
      * которые изменились после временной метки ModifiedAfter.
      */
-    public void callExportNsiItem() {
+    public void callExportNsiItem(String codeNsiItem) {
+
         setStateRunOn();
+        try {
+            int code = Integer.valueOf(codeNsiItem);
+        } catch (NumberFormatException ext) {
+            if (codeNsiItem.isEmpty()) {
+                clientService.sendMessage("Не указан код справочника: " +
+                        "\nУкажите пожалуйста код справочника.\nЗапрос прерван!");
+            } else {
+                clientService.sendMessage("Неверный код справочника: " + codeNsiItem +
+                        "\nКод справочника должен содержать число!\nЗапрос прерван!");
+            }
+            setStateRunOff();
+            return;
+        }
         ExportNsiItem nsiItem = new ExportNsiItem(clientService, answerProcessing);
-        nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger("56"));
+        nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
         setStateRunOff();
     }
 
@@ -112,7 +126,8 @@ public class ProgramAction {
      * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
      */
     public void callExportDataProviderNsiItem() {
-
+//        Подумать можно реализовать и для других справочников для сохранения в БД
+//        написать новый метод в классе который будет принимать значение других справочников
         try {
             setStateRunOn();
             clientService.sendMessage("Запуск получения Справочников...");

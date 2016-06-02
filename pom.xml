@@ -219,6 +219,13 @@
             <systemPath>${project.basedir}/lib/giswsdl.jar</systemPath>
             <type>jar</type>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -70,16 +70,6 @@ public class ClientService {
 
 
     /**
-     * Метод, добавляет сообщение в очередь.
-     * Если какой-то метод выполняется, а браузер закрыт, то после открытия отобразиться весь лог. (или после перезагрузки страницы)
-     *
-     * @param message сообщение.
-     */
-//    public void addMessage(String message) {
-//        sendMessage(message);
-//    }
-
-    /**
      * Метод, отправляет все сообщения находящиееся в списке.
      */
     public void sendListMessages(ClientWebSocket webSocket) {

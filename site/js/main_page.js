@@ -1,6 +1,4 @@
-/**
- * Created by andryha on 24.05.2016.
- */
+
 var ws;
 
 function init() {
@@ -31,7 +29,16 @@ function init() {
 };
 function sendMessage(message) {    
     setButtonState(true);
-    ws.send(message);
+    var valueForm = "";
+    if (document.getElementById(message) !== null) {
+        valueForm = document.getElementById(message).value;
+    }
+    var msgJSON = {
+        command: message,
+        value: valueForm
+    };
+    // ws.send(message);
+    ws.send(JSON.stringify(msgJSON));
 };
 function setButtonState(state) {
     var allButton = document.getElementsByTagName('BUTTON').length;

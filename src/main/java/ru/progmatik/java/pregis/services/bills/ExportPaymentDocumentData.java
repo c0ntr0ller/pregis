@@ -73,7 +73,8 @@ public class ExportPaymentDocumentData {
         request.setYear((short) 2016);
         request.setMonth(05);
 //        request.getAccountGuid().add("3cab9a71-d8ae-42b2-8caa-42e92aa9aba2"); // л.с. 1000438820
-        request.getAccountGuid().add("9498a608-2a8c-4f3e-8243-de76bad293b7"); // л.с. 1000438821  80АА001486
+//        request.getAccountGuid().add("9498a608-2a8c-4f3e-8243-de76bad293b7"); // л.с. 1000438821  80АА001486
+        request.getAccountGuid().add("6fe12a9b-2bbf-4248-940d-9dd2ba1d868e"); // л.с. 1000438822  50АА001491
 
         return request;
     }

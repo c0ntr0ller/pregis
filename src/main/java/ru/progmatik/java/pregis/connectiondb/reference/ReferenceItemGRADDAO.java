@@ -154,6 +154,7 @@ public class ReferenceItemGRADDAO {
             ps.setInt(4, newDataset.getCodeParent());
             ps.setInt(5, newDataset.getId());
             ps.setString(6, newDataset.getCode());
+            ps.executeUpdate();
             ps.close();
             LOGGER.info("Обновлен элемент справочника: ID = " + newDataset.getId() +
                     " Code: " + newDataset.getCode() + " GUID: " + newDataset.getUiid());

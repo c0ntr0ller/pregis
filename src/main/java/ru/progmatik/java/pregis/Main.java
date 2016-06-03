@@ -8,7 +8,9 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
-import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.organization.BaseOrganization;
+import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.signet.Configure;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
 import ru.progmatik.java.web.servlets.web.LoginClient;
@@ -79,7 +81,14 @@ public class Main {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{resource_handler, context});
 
-        Server server = new Server(8080);
+        int port;
+        try {
+            port = ResourcesUtil.instance().getWebPort();
+        } catch (PreGISException e) {
+            port = 8080;
+        }
+
+        Server server = new Server(port);
         server.setHandler(handlers);
 
         server.start();

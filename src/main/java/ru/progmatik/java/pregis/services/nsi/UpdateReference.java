@@ -37,8 +37,8 @@ public class UpdateReference {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateReference.class);
 
-    private ClientService clientService;
-    private AnswerProcessing answerProcessing;
+    private final ClientService clientService;
+    private final AnswerProcessing answerProcessing;
     // лист в который будут добавляться элементы не найденные в БД, для последующего добавления или обновления.
     private ArrayList<NsiElementType> listForAdd = new ArrayList<>();
     private TreeSet<BigInteger> codeNsiItemsSet = new TreeSet<>();

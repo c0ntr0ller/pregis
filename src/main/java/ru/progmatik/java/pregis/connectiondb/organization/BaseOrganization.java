@@ -1,6 +1,8 @@
-package ru.progmatik.java.pregis.connectiondb;
+package ru.progmatik.java.pregis.connectiondb.organization;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

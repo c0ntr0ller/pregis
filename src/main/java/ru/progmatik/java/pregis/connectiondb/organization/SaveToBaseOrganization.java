@@ -1,8 +1,9 @@
-package ru.progmatik.java.pregis.connectiondb;
+package ru.progmatik.java.pregis.connectiondb.organization;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

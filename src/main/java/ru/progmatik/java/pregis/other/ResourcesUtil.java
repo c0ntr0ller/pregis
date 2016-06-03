@@ -42,12 +42,12 @@ public class ResourcesUtil {
      * @return String ОГРН компании.
      */
     public String getOGRNCompany() throws PreGISException {
-        if (properties.getProperty("config.ogrn") == null) {
+        if (properties.getProperty("config.company.ogrn") == null) {
             LOGGER.error("ResourcesUtil: Не указан ОГРН компании в файле параметров \"settings\\application.properties\".");
             throw new PreGISException("ResourcesUtil: Не указан ОГРН компании в файле параметров \"settings\\application.properties\".");
         }
 
-        return properties.getProperty("config.ogrn");
+        return properties.getProperty("config.company.ogrn");
     }
     /**
      * <p>Метод открывает файл параметров, в котором хранятся параметры.</p>
@@ -69,6 +69,55 @@ public class ResourcesUtil {
             e.printStackTrace();
         }
         return properties;
+    }
+
+    /**
+     * Метод, получает ID организации в БД ГРАД из файла параметров "application.properties".
+     * Не понятно пока, в ГРАДе куча компаний может быть, сертификат может быть любой из них,
+     * в некоторых случаях может по одному сертификату отправляться несколько компаний.
+     * @return ID организации из БД ГРАД.
+     * @throws PreGISException
+     */
+    public int getCompanyGradId() throws PreGISException {
+
+        int gradId;
+
+        if (properties.getProperty("config.company.gradid") == null) {
+            LOGGER.error("ResourcesUtil: Не указан ID компании из БД ГРАД в файле параметров \"settings\\application.properties\".");
+            throw new PreGISException("ResourcesUtil: Не указан ID компании из БД ГРАД в файле параметров \"settings\\application.properties\".");
+        } else {
+            try {
+                gradId = Integer.valueOf(properties.getProperty("config.company.gradid"));
+            } catch (NumberFormatException e) {
+                LOGGER.error("ResourcesUtil: Указан неверный ID компании из БД ГРАД в файле параметров \"settings\\application.properties\".\n" +
+                        "Значение должно содержать только цифры.");
+                throw new PreGISException("ResourcesUtil: Указан неверный ID компании из БД ГРАД в файле параметров \"settings\\application.properties\".\n" +
+                        "Значение должно содержать только цифры.");
+            }
+        }
+
+        return gradId;
+    }
+
+    public int getWebPort() throws PreGISException {
+
+        int webPort;
+
+        if (properties.getProperty("config.web.ip.port") == null) {
+            LOGGER.error("ResourcesUtil: Не указан порт для web интерфейса в файле параметров \"settings\\application.properties\".");
+            throw new PreGISException("ResourcesUtil: Не указан порт для web интерфейса в файле параметров \"settings\\application.properties\".");
+        } else {
+            try {
+                webPort = Integer.valueOf(properties.getProperty("config.web.ip.port"));
+            } catch (NumberFormatException e) {
+                LOGGER.error("ResourcesUtil: Указан неверный порт для web интерфейса в файле параметров \"settings\\application.properties\".\n" +
+                        "Значение должно содержать только цифры.");
+                throw new PreGISException("ResourcesUtil: Указан неверный порт для web интерфейса в файле параметров \"settings\\application.properties\".\n" +
+                        "Значение должно содержать только цифры.");
+            }
+        }
+
+        return webPort;
     }
 
 

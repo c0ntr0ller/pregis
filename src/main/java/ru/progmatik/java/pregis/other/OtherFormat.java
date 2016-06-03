@@ -3,7 +3,7 @@ package ru.progmatik.java.pregis.other;
 import org.apache.commons.codec.digest.DigestUtils;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.progmatik.java.pregis.connectiondb.BaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.organization.BaseOrganization;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;

@@ -2,7 +2,10 @@
 var ws;
 
 function init() {
-    ws = new WebSocket("ws://localhost:8080/websocket");
+    var host = "ws://" + window.location.hostname +":" + window.location.port + "/websocket";
+    ws = new WebSocket(host);
+    // console.log(host);
+    // ws = new WebSocket("ws://localhost:8080/websocket");
     ws.onopen = function (event) {
 
     };

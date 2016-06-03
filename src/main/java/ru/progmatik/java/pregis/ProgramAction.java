@@ -2,7 +2,7 @@ package ru.progmatik.java.pregis;
 
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.organization.SaveToBaseOrganization;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
@@ -151,7 +151,7 @@ public class ProgramAction {
 
         clientService.sendMessage("Запуск получения сведений о МКД...");
         ExportHouseData houseData = new ExportHouseData(clientService, answerProcessing);
-        houseData.callExportHouseData();
+        houseData.callExportHouseData("b58c5da4-8d62-438f-b11e-d28103220952");
 
         setStateRunOff(); // взводим флаг в состояние откл.
 

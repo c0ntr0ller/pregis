@@ -42,7 +42,7 @@ public class ExportHouseData {
         this.answerProcessing = answerProcessing;
     }
 
-    public void callExportHouseData() {
+    public void callExportHouseData(String fias) {
 
         clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
         Holder<ResultHeader> resultHolder = new Holder<>();
@@ -53,7 +53,7 @@ public class ExportHouseData {
 
         try {
             clientService.sendMessage(TextForLog.SENDING_REQUEST);
-            result = port.exportHouseData(getExportHouseRequest("f20a2f00-c9cf-485f-ac41-92af5b77e29a"), headerRequest, resultHolder);
+            result = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
             clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, clientService, LOGGER, fault);
@@ -120,7 +120,7 @@ public class ExportHouseData {
                 }
 
             } else if (result.getExportHouseResult().getLivingHouse() != null) {
-                clientService.sendMessage("Жилой дом");
+                clientService.sendMessage("Жилой дом: не обрабатывается в системе!");
             }
             clientService.sendMessage("Сведенья о МКД успешно получены!");
         } else {

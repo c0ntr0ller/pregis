@@ -2,22 +2,18 @@ package ru.progmatik.java.pregis;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.*;
 
 /**
  * Created by andryha on 08.03.2016.
@@ -29,29 +25,45 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException {
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-        StringReader readerMessage = new StringReader(mes);
-        InputSource inputSource = new InputSource(readerMessage);
-        Document doc = docBuilder.parse(inputSource);
-        doc.normalizeDocument();
+        System.out.println(InetAddress.getLocalHost().getHostName());
+        System.out.println(Inet4Address.getLocalHost().getHostAddress());
 
-        NamedNodeMap attributes = doc.getChildNodes().item(0).getChildNodes().item(0).getChildNodes().item(0).getAttributes();
+        Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+        for (; n.hasMoreElements();)
+        {
+            NetworkInterface e = n.nextElement();
 
-        for (int i = 0; i < attributes.getLength(); i++) {
-            System.out.println(attributes.item(i));
+            Enumeration<InetAddress> a = e.getInetAddresses();
+            for (; a.hasMoreElements();)
+            {
+                InetAddress addr = a.nextElement();
+                System.out.println("  " + addr.getHostAddress());
+            }
         }
 
-        remove(attributes);
-        attributes = doc.getChildNodes().item(0).getChildNodes().item(1).getChildNodes().item(0).getAttributes();
-        remove(attributes);
-
-//        doc.getDomConfig().setParameter("format-pretty-print", true);
-        addSpace(doc);
-
-        String mesout = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
-        System.out.println(mesout);
+//        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//        dbf.setNamespaceAware(true);
+//        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+//        StringReader readerMessage = new StringReader(mes);
+//        InputSource inputSource = new InputSource(readerMessage);
+//        Document doc = docBuilder.parse(inputSource);
+//        doc.normalizeDocument();
+//
+//        NamedNodeMap attributes = doc.getChildNodes().item(0).getChildNodes().item(0).getChildNodes().item(0).getAttributes();
+//
+//        for (int i = 0; i < attributes.getLength(); i++) {
+//            System.out.println(attributes.item(i));
+//        }
+//
+//        remove(attributes);
+//        attributes = doc.getChildNodes().item(0).getChildNodes().item(1).getChildNodes().item(0).getAttributes();
+//        remove(attributes);
+//
+////        doc.getDomConfig().setParameter("format-pretty-print", true);
+//        addSpace(doc);
+//
+//        String mesout = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
+//        System.out.println(mesout);
 
     }
 

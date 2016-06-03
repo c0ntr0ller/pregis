@@ -8,9 +8,9 @@ function init() {
     };
     ws.onmessage = function (event) {
         var inMessage = event.data;
-        if (inMessage.includes('::setButtonState(false)')) {
+        if (inMessage.indexOf('::setButtonState(false)') != -1) {
             setButtonState(false);
-        } else if (inMessage.includes('::setButtonState(true)')) {
+        } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
             setButtonState(true);
         } else {
             var $textarea = document.getElementById("messages");

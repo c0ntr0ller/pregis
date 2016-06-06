@@ -87,7 +87,7 @@ public class ConnectionBaseGRAD implements AutoCloseable {
     /**
      * Класс наследуется от интерфейса AutoCloseable, для наиболее удобного и выгодного закрытия соединения.
      *
-     * @throws Exception выдаст ошибку, если не удастся удачно закрыть соединение.
+     * @throws SQLException выдаст ошибку, если не удастся удачно закрыть соединение.
      */
     @Override
     public final void close() {

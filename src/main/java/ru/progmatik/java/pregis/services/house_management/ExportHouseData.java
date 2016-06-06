@@ -9,12 +9,15 @@ import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouse
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementPortsType;
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementService;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -42,7 +45,17 @@ public class ExportHouseData {
         this.answerProcessing = answerProcessing;
     }
 
-    public void callExportHouseData(String fias) {
+    public void callExportHouseData() throws PreGISException, SQLException {
+
+        HouseGRADDAO gradDao = new HouseGRADDAO();
+        List<String> fiasList = gradDao.getAllFIAS(); // Берем из процедуры все дома, которые содержат ФИАС
+        for (String itemFias : fiasList) {
+            clientService.sendMessage("Запрос по ФИАС: " + itemFias);
+            getHouseData(itemFias, gradDao);
+        }
+    }
+
+    private void getHouseData(String fias, HouseGRADDAO gradDao) throws SQLException, PreGISException {
 
         clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
         Holder<ResultHeader> resultHolder = new Holder<>();
@@ -65,6 +78,7 @@ public class ExportHouseData {
 
         if (result.getErrorMessage() == null) { // Если нет ошибок
             clientService.sendMessage("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
+            gradDao.setHouseUniqueNumber(fias, result.getExportHouseResult().getHouseUniqueNumber());
             if (result.getExportHouseResult().getApartmentHouse() != null) {
                 clientService.sendMessage("Многоквартирный дом");
 //                        TODO

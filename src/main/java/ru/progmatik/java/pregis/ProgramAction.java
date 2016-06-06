@@ -1,5 +1,6 @@
 package ru.progmatik.java.pregis;
 
+import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.organization.SaveToBaseOrganization;
@@ -27,6 +28,8 @@ import java.math.BigInteger;
  */
 public class ProgramAction {
 
+    private static final Logger LOGGER = Logger.getLogger(ProgramAction.class);
+
     private boolean stateRun;
 
     private final ClientService clientService;
@@ -48,26 +51,32 @@ public class ProgramAction {
 
         clientService.sendMessage("Запуск получения SenderID...");
 
-        ExportOrgRegistry req = new ExportOrgRegistry(clientService, answerProcessing);
-        ExportDataProvider dataProvider = new ExportDataProvider(clientService, answerProcessing);
+        try {
+            ExportOrgRegistry req = new ExportOrgRegistry(clientService, answerProcessing);
+            ExportDataProvider dataProvider = new ExportDataProvider(clientService, answerProcessing);
 
-        ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
+            ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
 
-        if (exportOrgRegistryResult != null) {
+            if (exportOrgRegistryResult != null) {
 
-            ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
+                ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
 
-            if (dataProviderResult != null) {
-                if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
-                    SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
-                    saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-                    clientService.sendMessage("SenderID успешно получен!");
+                if (dataProviderResult != null) {
+                    if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
+                        SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
+                        saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
+                        clientService.sendMessage("SenderID успешно получен!");
+                    }
+                } else {
+                    clientService.sendMessage("Возникли ошибки, SenderID не получен!");
                 }
             } else {
                 clientService.sendMessage("Возникли ошибки, SenderID не получен!");
             }
-        } else {
-            clientService.sendMessage("Возникли ошибки, SenderID не получен!");
+        } catch (Exception e) {
+            clientService.sendMessage(e.toString());
+            LOGGER.error("getSenderID: ", e);
+            e.printStackTrace();
         }
         setStateRunOff(); // взводим флаг в состояние откл.
     }
@@ -117,8 +126,14 @@ public class ProgramAction {
             setStateRunOff();
             return;
         }
-        ExportNsiItem nsiItem = new ExportNsiItem(clientService, answerProcessing);
-        nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
+        try {
+            ExportNsiItem nsiItem = new ExportNsiItem(clientService, answerProcessing);
+            nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
+        } catch (Exception e) {
+            clientService.sendMessage(e.toString());
+            LOGGER.error("callExportNsiItem(): ", e);
+            e.printStackTrace();
+        }
         setStateRunOff();
     }
 
@@ -138,8 +153,10 @@ public class ProgramAction {
 //        dataProviderNsiItem.callExportDataProviderNsiItem(51);
         } catch (Exception e) {
             clientService.sendMessage("Возникла непредвиденная ошибка!\nОперация прервана!\nТекст ошибки: " + e.getMessage());
-            setStateRunOff();
+            LOGGER.error("callExportDataProviderNsiItem(): ", e);
+            e.printStackTrace();
         }
+        setStateRunOff();
     }
 
     /**
@@ -148,10 +165,16 @@ public class ProgramAction {
     public void callExportHouseData() {
 
         setStateRunOn(); // взводим флаг в состояния выполнения метода
+        try {
+            clientService.sendMessage("Запуск получения сведений о МКД...");
+            ExportHouseData houseData = new ExportHouseData(clientService, answerProcessing);
+            houseData.callExportHouseData();
+        } catch (Exception e) {
+            clientService.sendMessage("Возникла непредвиденная ошибка!\nОперация прервана!\nТекст ошибки: " + e.getMessage());
+            LOGGER.error("callExportHouseData(): ", e);
+            e.printStackTrace();
+        }
 
-        clientService.sendMessage("Запуск получения сведений о МКД...");
-        ExportHouseData houseData = new ExportHouseData(clientService, answerProcessing);
-        houseData.callExportHouseData("b58c5da4-8d62-438f-b11e-d28103220952");
 
         setStateRunOff(); // взводим флаг в состояние откл.
 

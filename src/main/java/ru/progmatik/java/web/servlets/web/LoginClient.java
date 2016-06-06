@@ -53,12 +53,13 @@ public class LoginClient extends HttpServlet {
     }
 
     public void showPage(HttpServletRequest request, HttpServletResponse response,
-                          String errorMessage, int statusCode) throws ServletException, IOException {
+                         String errorMessage, int statusCode) throws ServletException, IOException {
 
         Map<String, Object> pageVariables = new HashMap<>();
         pageVariables.put("errorMessage", errorMessage);
 
-        LOGGER.error("ErrorPage: " + errorMessage);
+        if (!errorMessage.isEmpty())
+            LOGGER.error("ErrorPage: " + errorMessage);
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(statusCode);
 

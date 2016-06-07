@@ -4,7 +4,10 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -18,8 +21,8 @@ public class HouseGRADDAO {
      * Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС и добавляет его в List.
      *
      * @return список всех ФИАСов (домов) указаной организации.
-     * @throws SQLException
-     * @throws PreGISException
+     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
+     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
     public List<String> getAllFIAS() throws SQLException, PreGISException {
 
@@ -39,19 +42,15 @@ public class HouseGRADDAO {
 
     /**
      * Метод, задаёт дому уникальный идентификатор присвоенный ГИС ЖКХ.
-     * @throws SQLException
-     * @throws PreGISException
+     * @param fias код дома по ФИАС, для поиска ид дома в системе ГРАД.
+     * @param houseUniqueNumber уникальный номер дома генерируемый ГИС ЖКХ.
+     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
+     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public void setHouseUniqueNumber(String fias, String houseUniqueNumber) throws SQLException, PreGISException {
+    public Integer setHouseUniqueNumber(String fias, String houseUniqueNumber) throws SQLException, PreGISException {
 
-        Integer idHouse = null;
-        ArrayList<String> allListHouseData = getAllHouseFromGrad();
-        for (String itemHouse : allListHouseData) {
-            if (fias.equals(getAllData(itemHouse)[1])) {
-                idHouse = Integer.valueOf(getAllData(itemHouse)[14]);
-                break;
-            }
-        }
+        Integer idHouse = getHouseIdFromGrad(fias);
+
         if (idHouse != null) {
             // ИД дома(:building_id),
             // ИД абонента(:abon_id),
@@ -62,13 +61,116 @@ public class HouseGRADDAO {
             try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
                 cstmt.setInt(1, idHouse);
                 cstmt.setString(4, houseUniqueNumber);
-                cstmt.executeUpdate();
+                int codeReturn = cstmt.executeUpdate();
+                System.err.println("Code return: " + codeReturn);
             } finally {
                 ConnectionBaseGRAD.instance().close();
             }
         } else {
-            throw new PreGISException("setHouseUniqueNumber(): Не удалось найти ID дома в БД ГРАД.");
+            throw new PreGISException("setHouseUniqueNumber(): Не удалось найти ID дома в БД ГРАД. С помощь кода ФИАС: " + fias);
         }
+        return idHouse;
+    }
+
+    /**
+     * Метод, задаёт помещению уникальный идентификатор, присвоенный ГИС ЖКХ.
+     * В БД ГРАД нет отличия помещение или комната, идентификатор вешается на ЛС абонента.
+     * @param idHouse ид дома в БД ГРАД.
+     * @param apartmentNumber номер помещения (квартиры).
+     * @param roomNumber номер комнаты, например в коммунальной квартире.
+     * @param apartmentUniqueNumber уникальный номер помещения.
+     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
+     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
+     */
+    public void setApartmentUniqueNumber(Integer idHouse, String apartmentNumber, String roomNumber, String apartmentUniqueNumber) throws SQLException, PreGISException {
+
+        Integer abonentId = getAbonentIdFromGrad(idHouse, apartmentNumber, roomNumber);
+
+        if (abonentId != null) {
+            // ИД дома(:building_id),
+            // ИД абонента(:abon_id),
+            // ИД прибора учета(:meter_id),
+            // уникальный идентификатор ГИС ЖКХ(:gis_id),
+            // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
+            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, ?, ?, ?, ?)}";
+            try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
+                cstmt.setInt(2, abonentId);
+                cstmt.setString(4, apartmentUniqueNumber);
+                int codeReturn = cstmt.executeUpdate();
+                System.err.println("Apartment code return: " + codeReturn);
+            } finally {
+                ConnectionBaseGRAD.instance().close();
+            }
+        } else {
+            throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
+        }
+    }
+
+    /**
+     * Метод, получает значение номера квартиры и комнаты (если есть), возвращает ИД абонента в БД ГРАД.
+     * @param idHouse ид дома в БД ГРАД.
+     * @param apartmentNumber номер квартиры.
+     * @param roomNumber номер помещения, если есть или null.
+     * @return ИД абонента в БД ГРАД или null.
+     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
+     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
+     */
+    private Integer getAbonentIdFromGrad(Integer idHouse, String apartmentNumber, String roomNumber) throws SQLException, PreGISException {
+
+        Integer abonentId = null;
+
+        ArrayList<String> listData = new ArrayList<>();
+
+        String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + idHouse + ")";
+
+        try (Statement statement = ConnectionBaseGRAD.instance().getConnection().createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
+            while (resultSet.next()) {
+
+                if (apartmentNumber.equalsIgnoreCase(getAllData(resultSet.getString(1))[3])) {
+                    listData.add(resultSet.getString(1));
+                }
+            }
+        } finally {
+            ConnectionBaseGRAD.instance().close();
+        }
+
+        if (listData.size() > 0) {
+            if (listData.size() == 1 && roomNumber == null) {
+                abonentId = Integer.valueOf(getAllData(listData.get(0))[7]);
+            } else if (listData.size() > 1) {
+                if (roomNumber != null) {
+                    for (String itemData : listData) {
+                        if (roomNumber.equalsIgnoreCase(getAllData(itemData)[4])) {
+                            abonentId = Integer.valueOf(getAllData(listData.get(0))[7]);
+                        }
+                    }
+                } else {
+                    throw new PreGISException("Не указана комната!\nИД абонента для помещения: " + apartmentNumber + " не найдена!");
+                }
+            }
+        }
+
+        return abonentId;
+    }
+
+    /**
+     * Метод, получает ИД дома из БД ГРАД по коду ФИАС.
+     * @param fias код дома по ФИАС
+     * @return ИД дома в системе ГРАД.
+     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
+     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
+     */
+    private Integer getHouseIdFromGrad(String fias) throws SQLException, PreGISException {
+
+        Integer idHouse = null;
+        ArrayList<String> allListHouseData = getAllHouseFromGrad();
+        for (String itemHouse : allListHouseData) {
+            if (fias.equals(getAllData(itemHouse)[1])) {
+                idHouse = Integer.valueOf(getAllData(itemHouse)[14]);
+                break;
+            }
+        }
+        return idHouse;
     }
 
     /**
@@ -76,8 +178,8 @@ public class HouseGRADDAO {
      * Из процедуры с первого листа Excel.
      *
      * @return список всех домов с параметрами.
-     * @throws PreGISException
-     * @throws SQLException
+     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
+     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
     private ArrayList<String> getAllHouseFromGrad() throws PreGISException, SQLException {
 

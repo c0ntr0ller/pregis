@@ -33,10 +33,11 @@ public class ProgramAction {
     private boolean stateRun;
 
     private final ClientService clientService;
-    private final AnswerProcessing answerProcessing = new AnswerProcessing();
+    private final AnswerProcessing answerProcessing;
 
     public ProgramAction(ClientService clientService) {
         this.clientService = clientService;
+        this.answerProcessing = new AnswerProcessing(this.clientService);
         this.clientService.setProgramAction(this);
     }
 
@@ -49,11 +50,11 @@ public class ProgramAction {
 
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
-        clientService.sendMessage("Запуск получения SenderID...");
+        answerProcessing.sendMessageToClient("Запуск получения SenderID...");
 
         try {
-            ExportOrgRegistry req = new ExportOrgRegistry(clientService, answerProcessing);
-            ExportDataProvider dataProvider = new ExportDataProvider(clientService, answerProcessing);
+            ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
+            ExportDataProvider dataProvider = new ExportDataProvider(answerProcessing);
 
             ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
 
@@ -65,18 +66,17 @@ public class ProgramAction {
                     if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
                         SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
                         saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-                        clientService.sendMessage("SenderID успешно получен!");
+                        answerProcessing.sendMessageToClient("SenderID успешно получен!");
                     }
                 } else {
-                    clientService.sendMessage("Возникли ошибки, SenderID не получен!");
+                    answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
                 }
             } else {
-                clientService.sendMessage("Возникли ошибки, SenderID не получен!");
+                answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
             }
         } catch (Exception e) {
-            clientService.sendMessage(e.toString());
-            LOGGER.error("getSenderID: ", e);
-            e.printStackTrace();
+            answerProcessing.sendErrorToClient("getSenderID: ", LOGGER, e);
+            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
         }
         setStateRunOff(); // взводим флаг в состояние откл.
     }
@@ -117,22 +117,20 @@ public class ProgramAction {
             int code = Integer.valueOf(codeNsiItem);
         } catch (NumberFormatException ext) {
             if (codeNsiItem.isEmpty()) {
-                clientService.sendMessage("Не указан код справочника: " +
+                answerProcessing.sendMessageToClient("Не указан код справочника: " +
                         "\nУкажите пожалуйста код справочника.\nЗапрос прерван!");
             } else {
-                clientService.sendMessage("Неверный код справочника: " + codeNsiItem +
+                answerProcessing.sendMessageToClient("Неверный код справочника: " + codeNsiItem +
                         "\nКод справочника должен содержать число!\nЗапрос прерван!");
             }
             setStateRunOff();
             return;
         }
         try {
-            ExportNsiItem nsiItem = new ExportNsiItem(clientService, answerProcessing);
+            ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
             nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
         } catch (Exception e) {
-            clientService.sendMessage(e.toString());
-            LOGGER.error("callExportNsiItem(): ", e);
-            e.printStackTrace();
+            answerProcessing.sendErrorToClient("callExportNsiItem(): ", LOGGER, e);
         }
         setStateRunOff();
     }
@@ -145,16 +143,14 @@ public class ProgramAction {
 //        написать новый метод в классе который будет принимать значение других справочников
         try {
             setStateRunOn();
-            clientService.sendMessage("Запуск получения Справочников...");
-            UpdateReference updateReference = new UpdateReference(clientService, answerProcessing);
+            answerProcessing.sendMessageToClient("Запуск получения Справочников...");
+            UpdateReference updateReference = new UpdateReference(answerProcessing);
             updateReference.updateAllDataProviderNsiItem();
             setStateRunOff();
 //        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
 //        dataProviderNsiItem.callExportDataProviderNsiItem(51);
         } catch (Exception e) {
-            clientService.sendMessage("Возникла непредвиденная ошибка!\nОперация прервана!\nТекст ошибки: " + e.getMessage());
-            LOGGER.error("callExportDataProviderNsiItem(): ", e);
-            e.printStackTrace();
+            answerProcessing.sendErrorToClient("callExportDataProviderNsiItem(): ", LOGGER, e);
         }
         setStateRunOff();
     }
@@ -166,13 +162,11 @@ public class ProgramAction {
 
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
-            clientService.sendMessage("Запуск получения сведений о МКД...");
-            ExportHouseData houseData = new ExportHouseData(clientService, answerProcessing);
+            answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
+            ExportHouseData houseData = new ExportHouseData(answerProcessing);
             houseData.callExportHouseData();
         } catch (Exception e) {
-            clientService.sendMessage("Возникла непредвиденная ошибка!\nОперация прервана!\nТекст ошибки: " + e.getMessage());
-            LOGGER.error("callExportHouseData(): ", e);
-            e.printStackTrace();
+            answerProcessing.sendErrorToClient("callExportHouseData(): ", LOGGER, e);
         }
 
 
@@ -194,10 +188,10 @@ public class ProgramAction {
     public void callExportPaymentDocumentData() {
 
         setStateRunOn();
-        clientService.sendMessage("Запуск получения ПД...");
+        answerProcessing.sendMessageToClient("Запуск получения ПД...");
         ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData();
         paymentDocumentData.callExportPaymentDocumentData();
-        clientService.sendMessage("Получения ПД завершено.");
+        answerProcessing.sendMessageToClient("Получения ПД завершено.");
         setStateRunOff();
     }
 
@@ -225,10 +219,10 @@ public class ProgramAction {
     public void callExportAccountData() {
 
         setStateRunOn();
-        clientService.sendMessage("Запуск получения ЛС...");
+        answerProcessing.sendMessageToClient("Запуск получения ЛС...");
         ExportAccountData accountData = new ExportAccountData();
         accountData.callExportAccountData();
-        clientService.sendMessage("Получения ЛС завершено.");
+        answerProcessing.sendMessageToClient("Получения ЛС завершено.");
         setStateRunOff();
     }
 

@@ -11,7 +11,6 @@ import ru.gosuslugi.dom.schema.integration.services.organizations_registry_commo
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
 
@@ -20,25 +19,19 @@ public class ExportDataProvider {
     private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);
 
     private static final String NAME_METHOD = "exportDataProvider";
-    private ClientService clientService;
     private AnswerProcessing answerProcessing;
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
 
-    public ExportDataProvider() {
+    public ExportDataProvider(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);
-    }
-
-    public ExportDataProvider(ClientService clientService, AnswerProcessing answerProcessing) {
-        this();
-        this.clientService = clientService;
         this.answerProcessing = answerProcessing;
     }
 
     public ExportDataProviderResult callExportDataProvide() {
 
-        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         HeaderType header = getHeader();
 
         Holder<ResultHeader> resultHolder = new Holder<>();
@@ -47,11 +40,11 @@ public class ExportDataProvider {
 //        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         try {
-            clientService.sendMessage(TextForLog.SENDING_REQUEST + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST + NAME_METHOD);
             result = port.exportDataProvider(getExportDataProviderRequest(), header, resultHolder);
-            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, header, clientService, LOGGER, fault);
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, header, LOGGER, fault);
 //            clientService.sendMessage(TextForLog.ERROR_RESPONSE + NAME_METHOD);
 //            clientService.sendMessage(fault.getMessage());
 //            saveToBase.setRequestError(header, NAME_METHOD, fault);
@@ -60,7 +53,7 @@ public class ExportDataProvider {
             return null;
         }
 
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), clientService, LOGGER);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), LOGGER);
 
 //        saveToBase.setRequest(header, NAME_METHOD);
 //

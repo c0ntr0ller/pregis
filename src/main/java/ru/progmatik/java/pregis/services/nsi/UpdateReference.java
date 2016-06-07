@@ -13,7 +13,6 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -37,38 +36,36 @@ public class UpdateReference {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateReference.class);
 
-    private final ClientService clientService;
     private final AnswerProcessing answerProcessing;
     // лист в который будут добавляться элементы не найденные в БД, для последующего добавления или обновления.
     private ArrayList<NsiElementType> listForAdd = new ArrayList<>();
     private TreeSet<BigInteger> codeNsiItemsSet = new TreeSet<>();
 
-    public UpdateReference(ClientService clientService, AnswerProcessing answerProcessing) {
-        this.clientService = clientService;
+    public UpdateReference(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
     public void updateAllDataProviderNsiItem() {
 
-        clientService.sendMessage("Обновляю справочник 51 - \"Коммунальные услуги\".");
+        answerProcessing.sendMessageToClient("Обновляю справочник 51 - \"Коммунальные услуги\".");
         if (updateDataProviderNsiItem(51)) {
-            clientService.sendMessage("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
+            answerProcessing.sendMessageToClient("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
         } else {
-            clientService.sendMessage("Возникли ошибки.\nСправочник 51 - \"Коммунальные услуги\": не обновлен!");
+            answerProcessing.sendMessageToClient("Возникли ошибки.\nСправочник 51 - \"Коммунальные услуги\": не обновлен!");
         }
 
-        clientService.sendMessage("Обновляю справочник 59 - \"Работы и услуги организации\".");
+        answerProcessing.sendMessageToClient("Обновляю справочник 59 - \"Работы и услуги организации\".");
         if (updateDataProviderNsiItem(59)) {
-            clientService.sendMessage("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
+            answerProcessing.sendMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
         } else {
-            clientService.sendMessage("Возникли ошибки.\nСправочник 59 - \"Работы и услуги организации\": не обновлен!");
+            answerProcessing.sendMessageToClient("Возникли ошибки.\nСправочник 59 - \"Работы и услуги организации\": не обновлен!");
         }
 
-        clientService.sendMessage("Обновляю справочник 1 - \"Дополнительные услуги\".");
+        answerProcessing.sendMessageToClient("Обновляю справочник 1 - \"Дополнительные услуги\".");
         if (updateDataProviderNsiItem(1)) {
-            clientService.sendMessage("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
+            answerProcessing.sendMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
         } else {
-            clientService.sendMessage("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\": не обновлен!");
+            answerProcessing.sendMessageToClient("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\": не обновлен!");
         }
 
     }
@@ -85,14 +82,14 @@ public class UpdateReference {
         try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
             ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO(connection);
 
-            ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
+            ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(answerProcessing);
             ExportNsiItemResult resultNsi = dataProviderNsiItem.callExportDataProviderNsiItem(codeNsi);
 
-            clientService.sendMessage("Получаю справочники из БД с кодом: " + codeNsi);
+            answerProcessing.sendMessageToClient("Получаю справочники из БД с кодом: " + codeNsi);
             Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi);
 
             if (mapNsiWithCodeNsi == null || resultNsi == null) {
-                clientService.sendMessage("Возникли ошибки, справочники не обновлены!");
+                answerProcessing.sendMessageToClient("Возникли ошибки, справочники не обновлены!");
                 return false;
 
             } else {
@@ -101,18 +98,16 @@ public class UpdateReference {
 
                 if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
 
-                    clientService.sendMessage("Загружаю дополнительные справочники...");
+                    answerProcessing.sendMessageToClient("Загружаю дополнительные справочники...");
                     ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> nsiItemResults = loadOtherNsi();
 
-                    clientService.sendMessage("Обновляю справочники в БД...");
+                    answerProcessing.sendMessageToClient("Обновляю справочники в БД...");
                     addItemsInDB(mapNsiWithCodeNsi, codeNsi, nsiItemResults, gradDAO);
                 }
             }
 
         } catch (SQLException e) {
-            answerProcessing.sendClientErrorToClient(clientService, LOGGER, e);
-            LOGGER.error(e);
-            e.printStackTrace();
+            answerProcessing.sendErrorToClient("updateDataProviderNsiItem(): ", LOGGER, e);
             return false;
         }
         return true;
@@ -190,7 +185,7 @@ public class UpdateReference {
                     } // switch
                 } // for
                 gradDAO.addItem(dataSet);
-                clientService.sendMessage("Добавлен новый элемент в справочник.");
+                answerProcessing.sendMessageToClient("Добавлен новый элемент в справочник.");
             } // if
         } // for
     }
@@ -226,7 +221,7 @@ public class UpdateReference {
     private ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> loadOtherNsi() {
 
         getCodeNsiItem(listForAdd);
-        ExportNsiItem exportNsiItem = new ExportNsiItem(clientService, answerProcessing);
+        ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
         ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> nsiItemResults = new ArrayList<>();
 
         for (BigInteger codeNsi : codeNsiItemsSet) {
@@ -279,7 +274,7 @@ public class UpdateReference {
         }
 
         if (checkFind) {
-            clientService.sendMessage("Не удалось найти родительский элемент!\n" +
+            answerProcessing.sendMessageToClient("Не удалось найти родительский элемент!\n" +
                     "Справочник: " + refFieldType.getNsiRef().getNsiItemRegistryNumber() + "\n" +
                     "Код элемента: " + refFieldType.getNsiRef().getRef().getCode() + "\n" +
                     "GUID элемента: " + refFieldType.getNsiRef().getRef().getGUID());

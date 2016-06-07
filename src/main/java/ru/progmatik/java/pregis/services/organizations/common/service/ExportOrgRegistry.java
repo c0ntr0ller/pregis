@@ -13,7 +13,6 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
 
@@ -27,21 +26,10 @@ public class ExportOrgRegistry {
 
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
-    private ClientService clientService;
     private AnswerProcessing answerProcessing;
 
-    private ExportOrgRegistry() {
+    public ExportOrgRegistry(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);
-    }
-
-//    public ExportOrgRegistry(ClientService clientService) {
-//        this();
-//        this.clientService = clientService;
-//    }
-
-    public ExportOrgRegistry(ClientService clientService, AnswerProcessing answerProcessing) {
-        this();
-        this.clientService = clientService;
         this.answerProcessing = answerProcessing;
     }
 
@@ -51,7 +39,7 @@ public class ExportOrgRegistry {
      */
     public ExportOrgRegistryResult callExportOrgRegistry() {
 
-        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
@@ -62,20 +50,20 @@ public class ExportOrgRegistry {
         ExportOrgRegistryResult result;
 
         try {
-            clientService.sendMessage(TextForLog.SENDING_REQUEST);
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
-            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
 
         } catch (Fault fault) {
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, header, clientService, LOGGER, fault);
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, header, LOGGER, fault);
             return null;
 
         } catch (PreGISException e) {
-            answerProcessing.sendClientErrorToClient(clientService, LOGGER, e);
+            answerProcessing.sendErrorToClient("callExportOrgRegistry(): ", LOGGER, e);
             return null;
         }
 
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), clientService, LOGGER);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), LOGGER);
 
         return result;
     }

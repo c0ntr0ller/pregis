@@ -7,26 +7,32 @@ import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 /**
- * Класс, служит для обработки типичных операций для всех запросов.
+ * Класс, служит передатчиком информации клиетам, в лог файл, в БД.
+ * Обработывает типичные операций для всех запросов.
  * Например: вывод ошибки, сохранение в лог и т.д и т.п..
  */
 public class AnswerProcessing {
 
     private final SaveToBaseMessages saveToBase;
+    private final ClientService clientService;
 
-    public AnswerProcessing() {
+//    public AnswerProcessing() {
+//
+//    }
+
+    public AnswerProcessing(ClientService clientService) {
         saveToBase = new SaveToBaseMessages();
+        this.clientService = clientService;
     }
 
     /**
-     * Метод, обрабатывает ошибки отправленные сервером ГИС ЖКХ.
+     * Метод, обрабатывает ошибки, полученные от сервера ГИС ЖКХ.
      * @param nameMethod имя метода для логирования.
      * @param headerRequest заголовок исходящего сообщения.
-     * @param clientService вывод пользователю.
      * @param logger сохранение в лог.
      * @param fault ошибка полученная от сервера.
      */
-    public void sendServerErrorToClient(String nameMethod, HeaderType headerRequest, ClientService clientService, Logger logger, Exception fault) {
+    public void sendServerErrorToClient(String nameMethod, HeaderType headerRequest, Logger logger, Exception fault) {
         clientService.sendMessage(TextForLog.ERROR_RESPONSE);
         clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + fault.getMessage());
         clientService.sendMessage(nameMethod + ": " + TextForLog.ERROR_ABORT);
@@ -38,14 +44,14 @@ public class AnswerProcessing {
     /**
      * Метод, обрабатывает ошибки, которые вызываем сами.
      * Например: если не указаны обязательные атрибуты.
-     * @param clientService вывод пользователю.
      * @param logger сохранение в лог.
      * @param exception ошибка.
      */
-//    public void sendClientErrorToClient(ClientService clientService, Logger logger, PreGISException exception) {
-    public void sendClientErrorToClient(ClientService clientService, Logger logger, Exception exception) {
-        clientService.sendMessage(exception.getMessage());
-        logger.error(exception);
+//    public void sendErrorToClient(ClientService clientService, Logger logger, PreGISException exception) {
+    public void sendErrorToClient(String methodName, Logger logger, Exception exception) {
+        clientService.sendMessage("Возникла ошибка!\nОперация прервана!\n" +
+                "Текст ошибки: " + exception.getMessage());
+        logger.error(methodName, exception);
         exception.printStackTrace();
     }
 
@@ -56,11 +62,10 @@ public class AnswerProcessing {
      * @param headerRequest заголовок исходящего сообщения.
      * @param headerResponse заголовок входящего сообщения.
      * @param errorMessage ошибка из тела сообщения.
-     * @param clientService вывод сообщения пользователю.
      * @param logger лог для сохранения ошибок.
      */
     public void sendToBaseAndAnotherError(String nameMethod, HeaderType headerRequest, HeaderType headerResponse,
-                                          ErrorMessageType errorMessage, ClientService clientService, Logger logger) {
+                                          ErrorMessageType errorMessage, Logger logger) {
 
         saveToBase.setRequest(headerRequest, nameMethod);
 
@@ -76,5 +81,15 @@ public class AnswerProcessing {
             clientService.sendMessage(TextForLog.DONE_RESPONSE + nameMethod);
             logger.info("Successful.");
         }
+    }
+
+    /**
+     * Метод, отправляет сообщение клиенту.
+     * Если будет клиентских приложений больше, в этот метод можно добавить дополнительные элементы для отправки сообщений.
+     * Т.е. это один метод, который будет отправлять полученное сообщение всем клиентом, которые указаны в этом методе.
+     * @param message сообщение для отправки клиентам.
+     */
+    public void sendMessageToClient(String message) {
+        clientService.sendMessage(message);
     }
 }

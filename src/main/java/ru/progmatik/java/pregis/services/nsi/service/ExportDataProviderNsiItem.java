@@ -11,7 +11,6 @@ import ru.gosuslugi.dom.schema.integration.services.nsi_service.NsiService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.ws.Holder;
 import java.math.BigInteger;
@@ -27,18 +26,14 @@ public class ExportDataProviderNsiItem {
 
     private final NsiService service = new NsiService();
     private final NsiPortsType port = service.getNsiPort();
-
-    private ClientService clientService;
     private AnswerProcessing answerProcessing;
 
     /**
      * Конструктор добавляет параметры для соединения.
-     * @param clientService лог для пользователя.
      * @param answerProcessing куда сохранять ошибки.
      */
-    public ExportDataProviderNsiItem(ClientService clientService, AnswerProcessing answerProcessing) {
+    public ExportDataProviderNsiItem(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);
-        this.clientService = clientService;
         this.answerProcessing = answerProcessing;
     }
 
@@ -48,7 +43,7 @@ public class ExportDataProviderNsiItem {
      */
     public ExportNsiItemResult callExportDataProviderNsiItem(int code) {
 
-        clientService.sendMessage(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
@@ -57,15 +52,15 @@ public class ExportDataProviderNsiItem {
         ExportNsiItemResult result;
 
         try {
-            clientService.sendMessage(TextForLog.SENDING_REQUEST);
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             result = port.exportDataProviderNsiItem(getExportDataProviderNsiItemRequest(code), requestHeader, headerHolder);
-            clientService.sendMessage(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, clientService, LOGGER, fault);
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), clientService, LOGGER);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
 
         return result;
     }

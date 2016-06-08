@@ -188,10 +188,14 @@ public class ProgramAction {
     public void callExportPaymentDocumentData() {
 
         setStateRunOn();
-        answerProcessing.sendMessageToClient("Запуск получения ПД...");
-        ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData();
-        paymentDocumentData.callExportPaymentDocumentData();
-        answerProcessing.sendMessageToClient("Получения ПД завершено.");
+        try {
+            answerProcessing.sendMessageToClient("Запуск получения ПД...");
+            ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData();
+            paymentDocumentData.callExportPaymentDocumentData();
+            answerProcessing.sendMessageToClient("Получения ПД завершено.");
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", LOGGER, e);
+        }
         setStateRunOff();
     }
 
@@ -219,10 +223,14 @@ public class ProgramAction {
     public void callExportAccountData() {
 
         setStateRunOn();
-        answerProcessing.sendMessageToClient("Запуск получения ЛС...");
-        ExportAccountData accountData = new ExportAccountData();
-        accountData.callExportAccountData();
-        answerProcessing.sendMessageToClient("Получения ЛС завершено.");
+        try {
+            answerProcessing.sendMessageToClient("Запуск получения ЛС...");
+            ExportAccountData accountData = new ExportAccountData();
+            accountData.callExportAccountData();
+            answerProcessing.sendMessageToClient("Получения ЛС завершено.");
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callExportAccountData(): ", LOGGER, e);
+        }
         setStateRunOff();
     }
 

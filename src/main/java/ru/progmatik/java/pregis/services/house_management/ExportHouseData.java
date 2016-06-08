@@ -17,7 +17,9 @@ import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Класс, экспорт данных домов.
@@ -48,6 +50,13 @@ public class ExportHouseData {
             answerProcessing.sendMessageToClient("Запрос по ФИАС: " + itemFias);
             getHouseData(itemFias, gradDao);
         }
+        HashMap<String, Integer> mapJd = gradDao.getJDAllFias();
+        if (mapJd != null) {
+            for (Map.Entry<String, Integer> entry : mapJd.entrySet()) {
+
+            }
+
+        }
     }
 
     private void getHouseData(String fias, HouseGRADDAO gradDao) throws SQLException {
@@ -70,9 +79,9 @@ public class ExportHouseData {
 
             if (result.getErrorMessage() == null) { // Если нет ошибок
                 answerProcessing.sendMessageToClient("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
-                int idHouse = gradDao.setHouseUniqueNumber(fias, result.getExportHouseResult().getHouseUniqueNumber());
 
                 if (result.getExportHouseResult().getApartmentHouse() != null) {
+                    int idHouse = gradDao.setHouseUniqueNumber(fias, result.getExportHouseResult().getHouseUniqueNumber());
                     answerProcessing.sendMessageToClient("Многоквартирный дом");
 //                        TODO
                     List<ExportHouseResultType.ApartmentHouse.Entrance> entrances = result.getExportHouseResult().getApartmentHouse().getEntrance();
@@ -112,7 +121,7 @@ public class ExportHouseData {
                                         gradDao.setApartmentUniqueNumber(idHouse, residentialPremise.getPremisesNum(),
                                                 livingRoom.getRoomNumber(), livingRoom.getLivingRoomUniqueNumber());
                                     }
-                                } else {
+                                } else { // Если нет комнат передаем квартиру
 //                                    Добавляем в БД уникальный номер помещения.
                                     gradDao.setApartmentUniqueNumber(idHouse, residentialPremise.getPremisesNum(),
                                             null, residentialPremise.getPremisesUniqueNumber());

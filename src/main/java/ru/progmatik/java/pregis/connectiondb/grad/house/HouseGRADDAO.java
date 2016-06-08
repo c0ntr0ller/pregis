@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -38,6 +40,27 @@ public class HouseGRADDAO {
             return listFIAS;
         else
             return null;
+    }
+
+    /**
+     * Метод, возвращает все найденные жилые дома, т.е. их код дома по ФИАС и ИД из БД ГРАД.
+     *
+     * @return перечень всех жилых домов, ФИАС = ИД дома в БД ГРАД.
+     */
+    public HashMap<String, Integer> getJDAllFias() throws SQLException, PreGISException {
+
+        ArrayList<String> listAllData = getJdAllFias();
+        LinkedHashMap<String, Integer> mapJd = new LinkedHashMap<>();
+        if (listAllData.size() > 1) { // Если в листе вообще есть данные тогда
+            for (String itemData : listAllData) {
+                if (getAllData(itemData)[1] != null && !getAllData(itemData)[1].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
+                    mapJd.put(getAllData(itemData)[1], Integer.valueOf(getAllData(itemData)[10]));
+                }
+            }
+        } else return null; // если в листе нет данных вернем null
+
+        if (mapJd.size() == 0) return null;
+        else return mapJd;
     }
 
     /**
@@ -200,6 +223,32 @@ public class HouseGRADDAO {
         }
 
         return allHouseData;
+    }
+
+    /**
+     * Метод, получает все жилые дома содержащие из БД ГРАД.
+     * @return список жилых домов.
+     */
+    private ArrayList<String> getJdAllFias() throws PreGISException, SQLException {
+
+        ArrayList<String> allJdData = new ArrayList<>();
+
+        String sqlRequest = "SELECT * FROM EX_GIS_LH01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
+
+        try (Statement statement = ConnectionBaseGRAD.instance().getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
+
+            while (resultSet.next()) {
+                if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
+                    allJdData.add(resultSet.getString(1));
+                }
+            }
+        } finally {
+            ConnectionBaseGRAD.instance().close();
+        }
+
+        return allJdData;
+
     }
 
     /**

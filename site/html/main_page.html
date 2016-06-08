@@ -10,26 +10,39 @@
 <div>
     <form name="mainform" accept-charset="utf-8">
         <button id="callSenderID" type="button" onclick="sendMessage('getSenderID');" ${buttonState}>Получить SenderID</button>
-        <br>
-        <br>
-        <button id="sendExportDataProviderNsiItem" type="button" onclick="sendMessage('getExportDataProviderNsiItem');" ${buttonState}>Синхронизация справочников</button>
         <br><br>
-        <button id="sendHouseUO" type="button" onclick="sendMessage('getHouseUO');" ${buttonState}>Получить данные МКД</button>
-        <br><br>
-        <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
-        <br><br>
-        <br><br>
-        <button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
         <br><br>
         <button id="Error" type="button" value="Error" onclick="getSessionID('Error');" ${buttonState}>ErrorTest</button>
         <br><br>
-        <button id="sendNsiList" type="button" onclick="sendMessage('getNsiList');" ${buttonState}>getNsiList</button>
-        <br><br>
     </form>
     <form name="nsiItemForm" accept-charset="utf-8">
+        <br>
+        <h2>Работа со справочниками:</h2>
+        <button id="sendExportDataProviderNsiItem" type="button" onclick="sendMessage('getExportDataProviderNsiItem');" ${buttonState}>Синхронизация справочников</button>
+        <br><br>
+        <button id="sendNsiList" type="button" onclick="sendMessage('getNsiList');" ${buttonState}>getNsiList</button>
+        <br><br>
         <label for="getNsiItem">Введите код справочника (убрать в админку)</label><br>
         <input type="text" id="getNsiItem" placeholder="код справочника"/>
         <button id="sendNsiItem" type="button" onclick="sendMessage('getNsiItem');" ${buttonState}>getNsiItem</button>
+        <br><br>
+    </form>
+    <form name="houseDataForm" accept-charset="utf-8">
+        <br>
+        <h2>Работа с многоквартирными домами:</h2>
+        <button id="sendHouseUO" type="button" onclick="sendMessage('getHouseUO');" ${buttonState}>Получить данные о МКД</button>
+        <br><br>
+    </form>
+    <form name="accountDataForm" accept-charset="utf-8">
+        <br>
+        <h2>Работа с лицевыми счетами:</h2>
+        <button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
+        <br><br>
+    </form>
+    <form name="paymentDocumentData" accept-charset="utf-8">
+        <br>
+        <h2>Работа с платежным документом:</h2>
+        <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
         <br><br>
     </form>
 </div>

@@ -120,5 +120,16 @@ public class ResourcesUtil {
         return webPort;
     }
 
+    public String getCompanyRole() throws PreGISException {
+
+        String role = null;
+
+        if (properties.getProperty("config.company.role") == null) {
+            throw new PreGISException("ResourcesUtil: Не указана роль компнании в файле параметров \"settings\\application.properties\".");
+        } else {
+            role = properties.getProperty("config.company.role");
+        }
+        return role;
+    }
 
 }

@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -26,20 +25,20 @@ public class HouseGRADDAO {
      * @throws SQLException выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public List<String> getAllFIAS() throws SQLException, PreGISException {
+    public LinkedHashMap<String, Integer> getAllFIAS() throws SQLException, PreGISException {
 
         List<String> allListHouseData = getAllHouseFromGrad();
-        List<String> listFIAS = new ArrayList<>();
+        LinkedHashMap<String, Integer> mapFIAS = new LinkedHashMap<String, Integer>();
 
         for (String itemListHouse : allListHouseData) {
             if (getAllData(itemListHouse)[1] != null && !getAllData(itemListHouse)[1].isEmpty()) {
-                listFIAS.add(getAllData(itemListHouse)[1]);
+                mapFIAS.put(getAllData(itemListHouse)[1], Integer.valueOf(getAllData(itemListHouse)[14]));
             }
         }
-        if (listFIAS.size() > 0)
-            return listFIAS;
-        else
+        if (mapFIAS.size() == 0)
             return null;
+        else
+            return mapFIAS;
     }
 
     /**
@@ -47,7 +46,7 @@ public class HouseGRADDAO {
      *
      * @return перечень всех жилых домов, ФИАС = ИД дома в БД ГРАД.
      */
-    public HashMap<String, Integer> getJDAllFias() throws SQLException, PreGISException {
+    public LinkedHashMap<String, Integer> getJDAllFias() throws SQLException, PreGISException {
 
         ArrayList<String> listAllData = getJdAllFias();
         LinkedHashMap<String, Integer> mapJd = new LinkedHashMap<>();
@@ -65,16 +64,14 @@ public class HouseGRADDAO {
 
     /**
      * Метод, задаёт дому уникальный идентификатор присвоенный ГИС ЖКХ.
-     * @param fias код дома по ФИАС, для поиска ид дома в системе ГРАД.
-     * @param houseUniqueNumber уникальный номер дома генерируемый ГИС ЖКХ.
-     * @throws SQLException выкинет ошибку, если будут проблемы с БД.
-     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
+     * @param houseId ИД дома в БД ГРАД.
+     * @param houseUniqueNumber уникальный номер дома генерируемый ГИС ЖКХ.  @throws SQLException выкинет ошибку, если будут проблемы с БД.
      */
-    public Integer setHouseUniqueNumber(String fias, String houseUniqueNumber) throws SQLException, PreGISException {
+    public void setHouseUniqueNumber(Integer houseId, String houseUniqueNumber) throws SQLException {
 
-        Integer idHouse = getHouseIdFromGrad(fias);
+//        Integer idHouse = getHouseIdFromGrad(fias);
 
-        if (idHouse != null) {
+//        if (idHouse != null) {
             // ИД дома(:building_id),
             // ИД абонента(:abon_id),
             // ИД прибора учета(:meter_id),
@@ -82,17 +79,16 @@ public class HouseGRADDAO {
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
             String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, ?, ?, ?, ?)}";
             try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
-                cstmt.setInt(1, idHouse);
+                cstmt.setInt(1, houseId);
                 cstmt.setString(4, houseUniqueNumber);
                 int codeReturn = cstmt.executeUpdate();
                 System.err.println("Code return: " + codeReturn);
             } finally {
                 ConnectionBaseGRAD.instance().close();
             }
-        } else {
-            throw new PreGISException("setHouseUniqueNumber(): Не удалось найти ID дома в БД ГРАД. С помощь кода ФИАС: " + fias);
-        }
-        return idHouse;
+//        } else {
+//            throw new PreGISException("setHouseUniqueNumber(): Не удалось найти ID дома в БД ГРАД. С помощь кода ФИАС: " + fias);
+//        }
     }
 
     /**

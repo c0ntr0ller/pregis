@@ -8,8 +8,9 @@ import ru.gosuslugi.dom.schema.integration.services.house_management.ExportAccou
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementPortsType;
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementService;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 
@@ -25,45 +26,44 @@ public class ExportAccountData {
 
     private final HouseManagementService service = new HouseManagementService();
     private final HouseManagementPortsType port = service.getHouseManagementPort();
+    private AnswerProcessing answerProcessing;
 
     /**
      * Конструктор, добавляет параметры для соединения.
      */
-    public ExportAccountData() {
+    public ExportAccountData(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);
+        this.answerProcessing = answerProcessing;
     }
 
-    public void callExportAccountData() {
+    public ExportAccountResult callExportAccountData(String homeFias) {
 
 //        Создание загаловков сообщений (запроса и ответа)
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();
-//        Создание объекта для сохранения лога сообщений в БД.
-        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         ExportAccountResult result;
 
         try {
-            result = port.exportAccountData(getExportAccountRequest(), requestHeader, headerHolder);
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
+            result = port.exportAccountData(getExportAccountRequest(homeFias), requestHeader, headerHolder);
+            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
-            saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
-            LOGGER.error(fault.getMessage());
-            fault.printStackTrace();
-            return;
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+            return null;
         }
-        saveToBase.setRequest(requestHeader, NAME_METHOD);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
 
-        saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
-
-        LOGGER.info("ExportDataProviderNsiItem - Successful.");
+        return result;
     }
 
-    private ExportAccountRequest getExportAccountRequest() {
+    private ExportAccountRequest getExportAccountRequest(String homeFias) {
 
         ExportAccountRequest request = new ExportAccountRequest();
         request.setId(OtherFormat.getId());
-        request.setFIASHouseGuid("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
+        request.setFIASHouseGuid(homeFias);
 
         return request;
     }

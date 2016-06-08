@@ -17,7 +17,7 @@ import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,21 +45,26 @@ public class ExportHouseData {
     public void callExportHouseData() throws PreGISException, SQLException {
 
         HouseGRADDAO gradDao = new HouseGRADDAO();
-        List<String> fiasList = gradDao.getAllFIAS(); // Берем из процедуры все дома, которые содержат ФИАС
-        for (String itemFias : fiasList) {
-            answerProcessing.sendMessageToClient("Запрос по ФИАС: " + itemFias);
-            getHouseData(itemFias, gradDao);
+//        Обработка МКД
+        LinkedHashMap<String, Integer> fiasMap = gradDao.getAllFIAS(); // Берем из процедуры все дома, которые содержат ФИАС
+        if (fiasMap != null) {
+            for (Map.Entry<String, Integer> entry : fiasMap.entrySet()) {
+                answerProcessing.sendMessageToClient("Запрос по ФИАС: " + entry.getKey());
+                getHouseData(entry.getKey(), entry.getValue(), gradDao);
+            }
         }
-        HashMap<String, Integer> mapJd = gradDao.getJDAllFias();
+
+//          Обработка ЖД.
+        LinkedHashMap<String, Integer> mapJd = gradDao.getJDAllFias();
         if (mapJd != null) {
             for (Map.Entry<String, Integer> entry : mapJd.entrySet()) {
-
+                answerProcessing.sendMessageToClient("Запрос по ФИАС: " + entry.getKey());
+                getHouseData(entry.getKey(), entry.getValue(), gradDao);
             }
-
         }
     }
 
-    private void getHouseData(String fias, HouseGRADDAO gradDao) throws SQLException {
+    private void getHouseData(String fias, Integer houseId, HouseGRADDAO gradDao) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         Holder<ResultHeader> resultHolder = new Holder<>();
@@ -79,11 +84,11 @@ public class ExportHouseData {
 
             if (result.getErrorMessage() == null) { // Если нет ошибок
                 answerProcessing.sendMessageToClient("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
+                gradDao.setHouseUniqueNumber(houseId, result.getExportHouseResult().getHouseUniqueNumber());
 
                 if (result.getExportHouseResult().getApartmentHouse() != null) {
-                    int idHouse = gradDao.setHouseUniqueNumber(fias, result.getExportHouseResult().getHouseUniqueNumber());
                     answerProcessing.sendMessageToClient("Многоквартирный дом");
-//                        TODO
+
                     List<ExportHouseResultType.ApartmentHouse.Entrance> entrances = result.getExportHouseResult().getApartmentHouse().getEntrance();
                     List<ExportHouseResultType.ApartmentHouse.Entrance.ResidentialPremises> residentialPremises;
 
@@ -118,12 +123,12 @@ public class ExportHouseData {
                                         answerProcessing.sendMessageToClient("    Идентификатор комнаты: " + livingRoom.getLivingRoomGUID());
 
                                         // Добавляем в БД уникальный номер комнаты абонента
-                                        gradDao.setApartmentUniqueNumber(idHouse, residentialPremise.getPremisesNum(),
+                                        gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(),
                                                 livingRoom.getRoomNumber(), livingRoom.getLivingRoomUniqueNumber());
                                     }
                                 } else { // Если нет комнат передаем квартиру
 //                                    Добавляем в БД уникальный номер помещения.
-                                    gradDao.setApartmentUniqueNumber(idHouse, residentialPremise.getPremisesNum(),
+                                    gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(),
                                             null, residentialPremise.getPremisesUniqueNumber());
                                 }
                             }
@@ -140,15 +145,18 @@ public class ExportHouseData {
                             answerProcessing.sendMessageToClient("Идентификатор помещения: " + nonResidentialPremise.getPremisesGUID());
 
 //                            Добавляем в БД уникальный номер помещения.
-                            gradDao.setApartmentUniqueNumber(idHouse, nonResidentialPremise.getPremisesNum(),
+                            gradDao.setApartmentUniqueNumber(houseId, nonResidentialPremise.getPremisesNum(),
                                     null, nonResidentialPremise.getPremisesUniqueNumber());
 
                         }
                     }
 
                 } else if (result.getExportHouseResult().getLivingHouse() != null) {  // Узнать что делалать с ними
-                    answerProcessing.sendMessageToClient("Жилой дом: не обрабатывается в системе!");
+                    answerProcessing.sendMessageToClient("Жилой дом");
                     // TODO
+//                    Комнаты пока не обрабатываются
+//                    result.getExportHouseResult().getLivingHouse().getLivingRoom().get(0)
+
                 }
                 answerProcessing.sendMessageToClient("Сведенья о МКД успешно получены!");
 

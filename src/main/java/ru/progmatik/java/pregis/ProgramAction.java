@@ -225,8 +225,8 @@ public class ProgramAction {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("Запуск получения ЛС...");
-            ExportAccountData accountData = new ExportAccountData();
-            accountData.callExportAccountData();
+            ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            accountData.callExportAccountData("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
             answerProcessing.sendMessageToClient("Получения ЛС завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportAccountData(): ", LOGGER, e);

@@ -1,0 +1,90 @@
+.clearfix {
+    *zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both;
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+h2 {
+    text-transform: uppercase;
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #fff;
+}
+body {
+    font-family: 'PT Sans', Arial, Tahoma;
+    background: url('whitey.png');
+    font-size: 12px;
+}
+.container {
+    *zoom: 1;
+    width: 906px;
+    margin: 10px auto;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 30px rgba(0,0,0,0.6);
+}
+.container:before,
+.container:after {
+    display: table;
+    content: "";
+}
+.container:after {
+    clear: both;
+}
+.thumb {
+    color: #eee;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.2) inset;
+    background: url('black-Linen.png');
+    position: relative;
+    width: 300px;
+    height: 200px;
+    float: left;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+.thumb .wrapper {
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+.thumb .wrapper img {
+    width: 300px;
+    height: 200px;
+}
+.thumb .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 30px;
+}
+.settings {
+    box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
+    -moz-box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
+    -webkit-box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
+    border-radius: 30px;
+    position: relative;
+    float: right;
+    margin-top: 20px;
+    margin-right: 30px;
+    /*margin-left: 95%;*/
+    width: 30px;
+    height: 30px;
+}
+.settings img {
+    margin-top: -5px;
+    margin-left: -5px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}

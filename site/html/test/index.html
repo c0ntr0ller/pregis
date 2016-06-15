@@ -4,12 +4,14 @@
 	<meta charset="UTF-8">
 	<title>Preview</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-	<link rel="stylesheet/less" type="text/css" href="html/test/style.less">
+	<link rel="stylesheet" href="html/test/style.css">
 	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.1/less.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="/js/main_page.js"></script>
 </head>
 <body onload="init();">
+<div class="settings">
+	<img src="html/test/settings.png" alt="Настройки">
+</div>
 <div class="container">
 	<div class="thumb">
 		<div class="content">
@@ -123,6 +125,15 @@
             },function(){
                 $(this).children().stop().animate({marginTop: '0%', opacity: 1},600);
             });
+			$('.settings').hover(function () {
+				$(this).css("box-shadow", "0 5px 20px 8px rgba(98,192,192,1)");
+				$(this).css("-moz-box-shadow", "0 5px 20px 8px rgba(98,192,192,1)");
+				$(this).css("-webkit-box-shadow", "0 5px 20px 8px rgba(98,192,192,1)");
+			}, function () {
+				$(this).css("box-shadow", "0 5px 20px 8px rgba(255,255,255,1)");
+				$(this).css("-moz-box-shadow", "0 5px 20px 8px rgba(255,255,255,1)");
+				$(this).css("-webkit-box-shadow", "0 5px 20px 8px rgba(255,255,255,1)");
+			});
         })
     </script>
 </body>

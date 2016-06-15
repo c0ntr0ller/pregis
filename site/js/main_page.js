@@ -7,7 +7,7 @@ function init() {
     // console.log(host);
     // ws = new WebSocket("ws://localhost:8080/websocket");
     ws.onopen = function (event) {
-
+        
     };
     ws.onmessage = function (event) {
         var inMessage = event.data;

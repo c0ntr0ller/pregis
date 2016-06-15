@@ -48,7 +48,7 @@ public class HouseGRADDAO {
      */
     public LinkedHashMap<String, Integer> getJDAllFias() throws SQLException, PreGISException {
 
-        ArrayList<String> listAllData = getJdAllFias();
+        ArrayList<String> listAllData = getJdAllFiasFromGrad();
         LinkedHashMap<String, Integer> mapJd = new LinkedHashMap<>();
         if (listAllData.size() > 1) { // Если в листе вообще есть данные тогда
             for (String itemData : listAllData) {
@@ -181,15 +181,16 @@ public class HouseGRADDAO {
      */
     private Integer getHouseIdFromGrad(String fias) throws SQLException, PreGISException {
 
-        Integer idHouse = null;
-        ArrayList<String> allListHouseData = getAllHouseFromGrad();
-        for (String itemHouse : allListHouseData) {
-            if (fias.equals(getAllData(itemHouse)[1])) {
-                idHouse = Integer.valueOf(getAllData(itemHouse)[14]);
-                break;
-            }
+        LinkedHashMap<String, Integer> mapMkdData = getAllFIAS();
+        LinkedHashMap<String, Integer> mapJdData = getJDAllFias();
+
+        if (mapMkdData.containsKey(fias)) {
+            return mapMkdData.get(fias);
+        } else if (mapJdData.containsKey(fias)) {
+            return mapJdData.get(fias);
+        } else {
+            return null;
         }
-        return idHouse;
     }
 
     /**
@@ -225,7 +226,7 @@ public class HouseGRADDAO {
      * Метод, получает все жилые дома содержащие из БД ГРАД.
      * @return список жилых домов.
      */
-    private ArrayList<String> getJdAllFias() throws PreGISException, SQLException {
+    private ArrayList<String> getJdAllFiasFromGrad() throws PreGISException, SQLException {
 
         ArrayList<String> allJdData = new ArrayList<>();
 

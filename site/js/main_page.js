@@ -1,13 +1,13 @@
 
 var ws;
 
-function init() {
+$(document).ready(function() {
     var host = "ws://" + window.location.hostname +":" + window.location.port + "/websocket";
     ws = new WebSocket(host);
     // console.log(host);
     // ws = new WebSocket("ws://localhost:8080/websocket");
     ws.onopen = function (event) {
-        
+
     };
     ws.onmessage = function (event) {
         var inMessage = event.data;
@@ -29,7 +29,8 @@ function init() {
         console.log("The following error occurred: " + evt.data);
     }
 
-};
+});
+
 function sendMessage(message) {    
     setButtonState(true);
     var valueForm = "";

@@ -8,7 +8,7 @@
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="/js/main_page.js"></script>
 </head>
-<body onload="init();">
+<body>
 <div class="container-settings">
     <div class="settings">
         <img src="html/test/settings.png" alt="Настройки">
@@ -31,9 +31,12 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Logo Design</h2>
+            <h2>Синхронизация справочников</h2>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
+                Импортирует сведенья справочников:
+                <br>1 - Дополнительные услуги.
+                <br>51 - Коммунальные услуги.
+                <br>59 - Работы и услуги организации.
             </p>
         </div>
         <div class="wrapper">
@@ -42,9 +45,9 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Icon Design</h2>
+            <h2>Получить данные о МКД</h2>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
+                Получает уникальные идентификаторы домов и помещений из системы «ГИС ЖКХ».
             </p>
         </div>
         <div class="wrapper">
@@ -53,9 +56,11 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Typography</h2>
+            <h2>Синхронизация лицевых счетов</h2>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
+                Происходит синхронизация лицевых счетов из систем «ГРАД» и «ГИС ЖКХ».<br>
+                Подробнее: если лицевой счет из «ГРАДа» не найден в «ГИС ЖКХ», он будет выгружен в «ГИС ЖКХ».
+                Лицевой счет не найден в «ГРАД», будет закрыт в «ГИС ЖКХ».
             </p>
         </div>
         <div class="wrapper">
@@ -64,9 +69,9 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Illustration</h2>
+            <h2>Выгрузка приборов учета</h2>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
+                Происходит привязка и отправка данных о приборах учета в систему «ГИС ЖКХ».
             </p>
         </div>
         <div class="wrapper">
@@ -75,7 +80,7 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Cards</h2>
+            <h2>Синхронизация показаний приборов учета</h2>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
             </p>
@@ -135,6 +140,25 @@
             $(this).css("box-shadow", "0 5px 20px 8px rgba(255,255,255,1)");
             $(this).css("-moz-box-shadow", "0 5px 20px 8px rgba(255,255,255,1)");
             $(this).css("-webkit-box-shadow", "0 5px 20px 8px rgba(255,255,255,1)");
+        });
+        $('.settings img').mousedown(function () {
+            $(this).css("width", 38);
+            $(this).css("height", 38);
+            $(this).css("margin-top", -10);
+            $(this).css("margin-left", -10);
+            $('.settings').css("width", 20);
+            $('.settings').css("height", 20);
+            $('.settings').css("top", 15);
+            $('.settings').css("right", -65);
+        }).mouseup(function () {
+            $(this).css("width", 40);
+            $(this).css("height", 40);
+            $(this).css("margin-top", -5);
+            $(this).css("margin-left", -5);
+            $('.settings').css("width", 30);
+            $('.settings').css("height", 30);
+            $('.settings').css("top", 10);
+            $('.settings').css("right", -70);
         });
     })
 </script>

@@ -29,11 +29,11 @@ import java.math.BigInteger;
 public class ProgramAction {
 
     private static final Logger LOGGER = Logger.getLogger(ProgramAction.class);
-
-    private boolean stateRun;
-
     private final ClientService clientService;
     private final AnswerProcessing answerProcessing;
+    private boolean stateRun;
+
+
 
     public ProgramAction(ClientService clientService) {
         this.clientService = clientService;

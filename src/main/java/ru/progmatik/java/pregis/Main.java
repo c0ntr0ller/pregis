@@ -10,6 +10,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
 import ru.progmatik.java.pregis.connectiondb.organization.BaseOrganization;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.signet.Configure;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
@@ -18,6 +19,18 @@ import ru.progmatik.java.web.servlets.web.MainServlet;
 import ru.progmatik.java.web.servlets.web.TestServlet;
 
 public class Main {
+
+    static {
+
+        java.net.Authenticator.setDefault(new java.net.Authenticator() {
+
+            @Override
+            protected java.net.PasswordAuthentication getPasswordAuthentication() {
+                return new java.net.PasswordAuthentication(OtherFormat.USER_NAME, OtherFormat.PASSWORD.toCharArray());
+            }
+        });
+    }
+
     public static void main(String[] args) throws Exception {
 
 //        Укажем XMLSignature формировать подпись без разделителей '\n'

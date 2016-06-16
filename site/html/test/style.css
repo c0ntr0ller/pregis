@@ -68,16 +68,21 @@ body {
     left: 0;
     margin: 30px;
 }
+.container-settings {
+    /*background: #aaa;*/
+    margin: 10px auto;
+    width: 906px;
+    height: 15px;
+    position: relative;
+}
 .settings {
     box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
     -moz-box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
     -webkit-box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
     border-radius: 30px;
-    position: relative;
-    float: right;
-    margin-top: 20px;
-    margin-right: 30px;
-    /*margin-left: 95%;*/
+    position: absolute;
+    top: 10px;
+    right: -70px;
     width: 30px;
     height: 30px;
 }

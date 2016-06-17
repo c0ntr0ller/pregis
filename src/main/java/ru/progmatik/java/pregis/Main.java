@@ -84,7 +84,7 @@ public class Main {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient()), "/login");
         context.addServlet(new ServletHolder(new MainServlet(action)), "/main");
-        context.addServlet(new ServletHolder(new TestServlet()), "/test");
+        context.addServlet(new ServletHolder(new TestServlet(action)), "/test");
         context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
         context.getSessionHandler().getSessionManager().setMaxInactiveInterval(600); // Время сессии
 

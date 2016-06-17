@@ -9,6 +9,7 @@
     <script type="text/javascript" src="/js/main_page.js"></script>
 </head>
 <body>
+<noscript>Для корректной работы страницы включите JavaScript в настройках браузера</noscript>
 <div class="container-settings">
     <div class="settings">
         <img src="html/test/settings.png" alt="Настройки">
@@ -82,7 +83,7 @@
         <div class="content">
             <h2>Синхронизация показаний приборов учета</h2>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
+                Отправляет и получает актуальные показания приборов учета.
             </p>
         </div>
         <div class="wrapper">
@@ -91,7 +92,7 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Posters</h2>
+            <h2>Выгрузка платежных документов</h2>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
             </p>
@@ -102,7 +103,7 @@
     </div>
     <div class="thumb">
         <div class="content">
-            <h2>Ipad apps</h2>
+            <h2>Квитирование</h2>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
             </p>
@@ -111,22 +112,31 @@
             <img src="html/test/8.jpg">
         </div>
     </div>
-    <div class="thumb">
+    <div id="exit" class="thumb">
         <div class="content">
-            <h2>Something else</h2>
+            <h2>Выход</h2>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque sollicitudin molestie.
             </p>
         </div>
-        <a href="/main">
-            <div class="wrapper">
-                <img src="html/test/9.jpg">
-            </div>
-        </a>
+        <div class="wrapper">
+            <img src="html/test/9.jpg">
+        </div>
     </div>
 </div>
+<div class="show-state">
+    <img src="html/test/500.gif" alt="Loading..." width="64" height="64">
+    <div class="label-text">Состояние...</div>
+    <div class="button-state"><span>Продолжить</span></div>
+</div>
+<div class="hide-layout"></div>
+
 <script>
     $(function () {
+        alignCenter($('.show-state'));
+        $(window).resize(function () {
+            alignCenter($('.show-state'));
+        });
         $('.wrapper').hover(function () {
             $(this).children().stop().animate({marginTop: '80%', opacity: 0}, 600);
         }, function () {
@@ -160,7 +170,44 @@
             $('.settings').css("top", 10);
             $('.settings').css("right", -70);
         });
-    })
+
+        $('#exit').click(function () {
+            exitRequest();
+        });
+
+        $('.button-state').click(function () {
+            hideState();
+            $(this).hide();
+        }).hide();
+    });
+    function exitRequest() {
+        $.ajax({
+            url: '/login',
+            type: 'DELETE',
+        });
+        ws.close();
+    }
+    ;
+    function showState() {
+
+        $('.hide-layout, .show-state').fadeIn(300);
+//        $('.hide-layout, .show-state').css("display", "block")
+    }
+    ;
+    function hideState() {
+        $('.hide-layout, .show-state').fadeOut(300);
+    }
+    ;
+    // функция принимает элемент, который необходимо центрировать
+    function alignCenter(elem) {
+        elem.css({ // назначение координат left и top
+            left: ($(window).width() - elem.width()) / 2 + 'px',
+            top: ($(window).height() - elem.height()) / 2 + 'px'
+        })
+    };
+    function showButton() {
+        $('.button-state').show();
+    }
 </script>
 </body>
 </html>

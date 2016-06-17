@@ -72,6 +72,7 @@ public class ProgramAction {
                     answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
                 }
             } else {
+                answerProcessing.sendMessageToClient("::setFailed()");
                 answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
             }
         } catch (Exception e) {

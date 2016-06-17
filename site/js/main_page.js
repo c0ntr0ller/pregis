@@ -13,10 +13,15 @@ $(document).ready(function() {
         var inMessage = event.data;
         if (inMessage.indexOf('::setButtonState(false)') != -1) {
             setButtonState(false);
+            showButton();
         } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
             setButtonState(true);
+            showState();
+        } else if (inMessage.indexOf('::setFailed()') != -1) {
+            setFailed();
         } else {
             var $textarea = document.getElementById("messages");
+            $('.label-text').html(inMessage);
             $textarea.value = $textarea.value + inMessage + "\n";
             $textarea.scrollTop = $textarea.scrollHeight;
         }
@@ -52,4 +57,10 @@ function setButtonState(state) {
 function getSessionID(tesxt) {
     var sessionID = document.cookie;
     sendMessage(sessionID + " : " + tesxt);
+}
+function setFailed() {
+    $('.label-text').attr("class", "label-text failed");
+    var cssTemp = $('.show-state img').attr("src");
+    // $('.show-state img').attr("src", "html/test/fail66px.png");
+    $('.show-state img').attr("src", "html/test/ok64px.png");
 }

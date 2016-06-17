@@ -1,5 +1,10 @@
 package ru.progmatik.java.web.servlets.web;
 
+import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.ProgramAction;
+import ru.progmatik.java.web.accounts.AccountService;
+import ru.progmatik.java.web.accounts.ProfileSingleton;
+import ru.progmatik.java.web.accounts.UserProfile;
 import ru.progmatik.java.web.freemarkergen.PageGenerator;
 
 import javax.servlet.ServletException;
@@ -14,13 +19,67 @@ import java.util.Map;
  * Created by andryha on 14.06.2016.
  */
 public class TestServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(TestServlet.class);
+    private ProgramAction action;
+    private AccountService accountService;
+
+    public TestServlet() {
+        try {
+            super.init();
+            accountService = ProfileSingleton.instance().getAccountService();
+        } catch (ServletException e) {
+            new ErrorPage(e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error("TestServlet", e);
+            e.printStackTrace();
+        }
+    }
+
+    public TestServlet(ProgramAction action) {
+        this();
+        this.action = action;
+    }
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (checkLogin(request, response)) {
+            showPage(request, response);
+        }
+    }
+
+    private void showPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> pageVariables = new HashMap<>();
-//        pageVariables.put("errorMessage", errorMessage);
+
+//        if (action.isRunning()) {
+//            pageVariables.put("showState", "hidden=\"false\"");
+//        } else {
+//            pageVariables.put("showState", "hidden=\"true\"");
+//        }
+
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(200);
 
         response.getWriter().println(PageGenerator.instance().getPage("test/index.html", pageVariables));
+    }
+
+    /**
+     * Метод, проверяет, прошел пользователь авторизацию или нет.
+     *
+     * @param request  запрос клиента.
+     * @param response наш ответ.
+     * @return boolean true - если авторизован пользователь, false - если не авторизован.
+     * @throws IOException
+     */
+    private boolean checkLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        Извлекаем id сессии
+        String sessionId = request.getSession().getId();
+//        Получаем профиль по id сессии
+        UserProfile profile = accountService.getUserBySessionId(sessionId);
+//        Если нет профиля отвечает что и так не авторизирован
+        if (profile == null) {
+            response.sendRedirect("/login");
+            return false;
+        }
+        return true;
     }
 }

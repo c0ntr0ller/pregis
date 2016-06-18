@@ -69,13 +69,12 @@ body {
     margin: 30px;
 }
 .container-settings {
-    /*background: #aaa;*/
     margin: 10px auto;
     width: 906px;
     height: 15px;
     position: relative;
 }
-.settings {
+.settings {    
     box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
     -moz-box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
     -webkit-box-shadow: 0 5px 20px 8px rgba(255,255,255,1);
@@ -98,10 +97,10 @@ body {
     bottom: 0;  /* координата снизу */
     filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50); /* прозрачность для IE */
     height: 100%; /* высота на всю страницу */
+    width: 100%; /* ширина на всю страницу */
     opacity: 0.5;  /* прозрачность слоя */
     position: fixed; /* фиксируем элемент на странице*/
     top: 0; /* координата сверху */
-    width: 100%; /* ширина на всю страницу */
     z-index: 998; /* z-index для перекрытия остальных элементов */
     display: none;
 }
@@ -110,22 +109,24 @@ body {
     border: 5px solid rgba(197, 192, 192, .7);
     border-radius: 10px;
     height: 198px;
-    left: 50%;
     position: fixed;
-    top: 50%;
     width: 345px;
     z-index: 999;
     display: none;
 }
-.show-state img {
+.show-state .img {
+    background-image: url("500.gif");
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
     position: relative;
-    left: 40%;
-    top: 30px;
+    left: 50%;
+    margin-left: -32px;
+    top: 22px;
     height: 64px;
     width: 64px;
-    border-radius: 30px;
+    border-radius: 50px;
     border: 1px solid rgba(197, 192, 192,.7);
-    box-shadow: 0 1px 10px  rgba(0,0,0,.4);
+    box-shadow: 0 2px 10px  rgba(0,0,0,.4);
 }
 .label-text {
     position: relative;
@@ -136,8 +137,14 @@ body {
     color: #fff;
     font-size: 15px;
     overflow: auto;
+    max-height: 45px;
+}
+.failed {
+    color: red;
+    font-weight: 600;
 }
 
+/*BUTTON*/
 .button-state {
     clear: both;
     position: absolute;
@@ -185,8 +192,5 @@ body {
     background: linear-gradient(to bottom,#3B3C40 0%,#515459 100%);
     box-shadow: 0 1px 3px rgba(0,0,0,0.25) inset;
 }
-.failed {
-    color: red;
-    font-weight: 600;
-}
+
 

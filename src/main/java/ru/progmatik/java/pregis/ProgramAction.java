@@ -77,7 +77,7 @@ public class ProgramAction {
             }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getSenderID: ", LOGGER, e);
-            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
+//            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
         }
         setStateRunOff(); // взводим флаг в состояние откл.
     }

@@ -49,8 +49,10 @@ public class AnswerProcessing {
      */
 //    public void sendErrorToClient(ClientService clientService, Logger logger, PreGISException exception) {
     public void sendErrorToClient(String methodName, Logger logger, Exception exception) {
+        clientService.sendMessage("::setFailed()");
         clientService.sendMessage("Возникла ошибка!\nОперация прервана!\n" +
                 "Текст ошибки: " + exception.getMessage());
+        clientService.sendMessage("::setFailed()");
         logger.error(methodName, exception);
         exception.printStackTrace();
     }

@@ -30,7 +30,9 @@ public class ClientWebSocket {
     public void onMessage(String data) {
 
 //        clientService.sendMessage(data + "\n");  // убрать
-        clientService.callCommands(data);
+        if (getSessionID(session)) {
+            clientService.callCommands(data);
+        }
 //        int timePause = 5000;
 //
 //        Timer timer = new Timer();
@@ -52,6 +54,7 @@ public class ClientWebSocket {
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
         clientService.remove(this);
+        clientService.checkSession();
     }
 
     public void sendString(String data) {
@@ -62,16 +65,22 @@ public class ClientWebSocket {
         }
     }
 
-    private void getSessionID(Session session) {
+    protected boolean getSessionID(Session session) {
         List<HttpCookie> cookies = session.getUpgradeRequest().getCookies();
         for (HttpCookie cookie : cookies) {
             if ("JSESSIONID".equalsIgnoreCase(cookie.getName())) {
                 if (ProfileSingleton.instance().getAccountService().getUserBySessionId(cookie.getValue()) == null) {
                     sendString("Вы не авторизированы!");
+                    session.close(1008, "Unauthorized");
                     clientService.remove(this);
-                    session.close();
+                    return false;
                 }
             }
         }
+        return true;
+    }
+
+    protected void checkAccount() {
+        getSessionID(session);
     }
 }

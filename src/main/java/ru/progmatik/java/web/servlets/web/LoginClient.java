@@ -130,10 +130,10 @@ public class LoginClient extends HttpServlet {
         } else {
 //            Удаляем профиль из "Map"
             accountService.deleteSession(sessionId);
-            showPage(request, response, "Goodbye!", HttpServletResponse.SC_OK);
-//            response.setContentType("text/html;charset=utf-8");
-//            response.getWriter().println("Goodbye!");
-//            response.setStatus(HttpServletResponse.SC_OK);
+//            showPage(request, response, "Goodbye!", HttpServletResponse.SC_OK);
+            response.setContentType("text/html;charset=utf-8");
+            response.getWriter().println("Goodbye!");
+            response.setStatus(HttpServletResponse.SC_OK);
         }
     }
 }

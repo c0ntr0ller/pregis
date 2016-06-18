@@ -106,4 +106,9 @@ public class ClientService {
         webSockets.remove(webSocket);
     }
 
+    protected void checkSession() {
+        for (ClientWebSocket user : webSockets) {
+                user.checkAccount();
+        }
+    }
 }

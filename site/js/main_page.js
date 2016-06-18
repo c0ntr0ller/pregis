@@ -2,12 +2,14 @@
 var ws;
 
 $(document).ready(function() {
-    var host = "ws://" + window.location.hostname +":" + window.location.port + "/websocket";
-    ws = new WebSocket(host);
-    // console.log(host);
-    // ws = new WebSocket("ws://localhost:8080/websocket");
-    ws.onopen = function (event) {
+getWebConnect();
+});
 
+function getWebConnect() {
+        var host = "ws://" + window.location.hostname +":" + window.location.port + "/websocket";
+    ws = new WebSocket(host);
+    ws.onopen = function (event) {
+        // console.log('Открыто соединение');
     };
     ws.onmessage = function (event) {
         var inMessage = event.data;
@@ -18,23 +20,32 @@ $(document).ready(function() {
             setButtonState(true);
             showState();
         } else if (inMessage.indexOf('::setFailed()') != -1) {
-            setFailed();
+            setFailedLabelText();
         } else {
             var $textarea = document.getElementById("messages");
             $('.label-text').html(inMessage);
             $textarea.value = $textarea.value + inMessage + "\n";
             $textarea.scrollTop = $textarea.scrollHeight;
+            clearLabelText();
         }
     };
     ws.onclose = function (event) {
-        // location.reload(true);
-        document.location.href = '/login';
+        if (event.wasClean) {
+           // console.log('Соединение закрыто чисто');
+        } else if (event.code === 1006 || event.code === 1008) {
+            console.log('Обрыв соединения');
+            // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
+            document.location.href = '/login';
+        } else {
+           console.log('Обрыв соединения'); // например, "убит" процесс сервера
+           console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+        }
+        // getWebConnect();
     };
     ws.onerror = function (evt) {
         console.log("The following error occurred: " + evt.data);
     }
-
-});
+};
 
 function sendMessage(message) {    
     setButtonState(true);
@@ -53,14 +64,20 @@ function setButtonState(state) {
     var allButton = document.getElementsByTagName('BUTTON').length;
     var buttons = document.getElementsByTagName('BUTTON');
     for (var i = 0; i < allButton; i++) buttons[i].disabled=state;
-}
+};
 function getSessionID(tesxt) {
     var sessionID = document.cookie;
     sendMessage(sessionID + " : " + tesxt);
-}
-function setFailed() {
+};
+function setFailedLabelText() {
     $('.label-text').attr("class", "label-text failed");
-    var cssTemp = $('.show-state img').attr("src");
-    // $('.show-state img').attr("src", "html/test/fail66px.png");
-    $('.show-state img').attr("src", "html/test/ok64px.png");
-}
+    var cssTemp = $('.show-state .img').css("background");
+    $('.show-state .img').css("background-image", "url('html/test/error-64px.png')");
+};
+function setOkLabelText() {
+    $('.show-state .img').css("background-image", "url('html/test/ok-64px.png')");
+};
+function clearLabelText() {
+    $('.label-text').attr("class", "label-text");
+    $('.show-state .img').css("background-image", "url('html/test/500.png')");
+};

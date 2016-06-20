@@ -34,7 +34,6 @@ public class ProgramAction {
     private boolean stateRun;
 
 
-
     public ProgramAction(ClientService clientService) {
         this.clientService = clientService;
         this.answerProcessing = new AnswerProcessing(this.clientService);
@@ -102,8 +101,19 @@ public class ProgramAction {
      * умолчанию выгружаются общесистемные справочники.
      */
     public void callExportNsiList() {
-        ExportNsiList nsiList = new ExportNsiList();
-        nsiList.callExportNsiList();
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+        try {
+//            Если будет нужно, переделать как у всех что бы сыпал лог клиенту.
+            ExportNsiList nsiList = new ExportNsiList();
+            nsiList.callExportNsiList();
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("getNsiList: ", LOGGER, e);
+            answerProcessing.sendMessageToClient("::setFailed()");
+            answerProcessing.sendMessageToClient("Возникли ошибки, список справочников не получен!");
+//            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
+        }
     }
 
     /**
@@ -132,8 +142,10 @@ public class ProgramAction {
             nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportNsiItem(): ", LOGGER, e);
+        } finally {
+            setStateRunOff();
         }
-        setStateRunOff();
+
     }
 
     /**
@@ -152,8 +164,10 @@ public class ProgramAction {
 //        dataProviderNsiItem.callExportDataProviderNsiItem(51);
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportDataProviderNsiItem(): ", LOGGER, e);
+        } finally {
+            setStateRunOff();
         }
-        setStateRunOff();
+
     }
 
     /**
@@ -279,5 +293,7 @@ public class ProgramAction {
         this.stateRun = true;
     }
 
-
+    public void checkSessions() {
+        clientService.checkSession();;
+    }
 }

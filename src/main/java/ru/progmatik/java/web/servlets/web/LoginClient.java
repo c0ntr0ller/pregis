@@ -2,6 +2,7 @@ package ru.progmatik.java.web.servlets.web;
 
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.web.accounts.AccountService;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
@@ -34,6 +35,8 @@ public class LoginClient extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(LoginClient.class);
     private final AccountService accountService;
 
+    private ProgramAction action;
+
     /**
      * Конструктор, используется по умолчанию для веб-контейнеров (например "Tomcat").
      */
@@ -42,7 +45,12 @@ public class LoginClient extends HttpServlet {
         accountService = ProfileSingleton.instance().getAccountService();
     }
 
-//    public LoginClient(AccountService accountService) {
+    public LoginClient(ProgramAction action) throws SQLException {
+        this();
+        this.action = action;
+    }
+
+    //    public LoginClient(AccountService accountService) {
 //        this.accountService = accountService;
 //    }
 
@@ -134,6 +142,7 @@ public class LoginClient extends HttpServlet {
             response.setContentType("text/html;charset=utf-8");
             response.getWriter().println("Goodbye!");
             response.setStatus(HttpServletResponse.SC_OK);
+            action.checkSessions();
         }
     }
 }

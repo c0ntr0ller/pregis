@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientService {
+    private final List<String> dataList = new ArrayList<>();
     private Set<ClientWebSocket> webSockets;
     private ProgramAction action;
-    private final List<String> dataList = new ArrayList<>();
 
     public ClientService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -106,7 +106,7 @@ public class ClientService {
         webSockets.remove(webSocket);
     }
 
-    protected void checkSession() {
+    public void checkSession() {
         for (ClientWebSocket user : webSockets) {
                 user.checkAccount();
         }

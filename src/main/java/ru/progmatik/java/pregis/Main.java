@@ -16,7 +16,7 @@ import ru.progmatik.java.pregis.signet.Configure;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
 import ru.progmatik.java.web.servlets.web.LoginClient;
 import ru.progmatik.java.web.servlets.web.MainServlet;
-import ru.progmatik.java.web.servlets.web.TestServlet;
+import ru.progmatik.java.web.servlets.web.IndexServlet;
 
 public class Main {
 
@@ -82,9 +82,9 @@ public class Main {
             action.getSenderID();  // Получение SenderID
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new LoginClient()), "/login");
-        context.addServlet(new ServletHolder(new MainServlet(action)), "/main");
-        context.addServlet(new ServletHolder(new TestServlet(action)), "/test");
+        context.addServlet(new ServletHolder(new LoginClient(action)), "/login");
+        context.addServlet(new ServletHolder(new MainServlet(action)), "/test");
+        context.addServlet(new ServletHolder(new IndexServlet(action)), "/main");
         context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
         context.getSessionHandler().getSessionManager().setMaxInactiveInterval(600); // Время сессии
 

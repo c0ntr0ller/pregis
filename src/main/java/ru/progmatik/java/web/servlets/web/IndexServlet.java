@@ -15,27 +15,24 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by andryha on 14.06.2016.
- */
-public class TestServlet extends HttpServlet {
+public class IndexServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(TestServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(IndexServlet.class);
     private ProgramAction action;
     private AccountService accountService;
 
-    public TestServlet() {
+    public IndexServlet() {
         try {
             super.init();
             accountService = ProfileSingleton.instance().getAccountService();
         } catch (ServletException e) {
             new ErrorPage(e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            LOGGER.error("TestServlet", e);
+            LOGGER.error("IndexServlet", e);
             e.printStackTrace();
         }
     }
 
-    public TestServlet(ProgramAction action) {
+    public IndexServlet(ProgramAction action) {
         this();
         this.action = action;
     }
@@ -59,7 +56,7 @@ public class TestServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(200);
 
-        response.getWriter().println(PageGenerator.instance().getPage("test/index.html", pageVariables));
+        response.getWriter().println(PageGenerator.instance().getPage("index.html", pageVariables));
     }
 
     /**

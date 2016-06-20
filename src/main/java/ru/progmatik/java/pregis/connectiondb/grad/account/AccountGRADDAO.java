@@ -29,7 +29,7 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private void setExcelBasicInformation(int houseID) throws SQLException {
+    private void setBasicInformation(int houseID) throws SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS1(" + houseID + ")";
         ArrayList<BasicInformation> listBasic = new ArrayList<>();
@@ -83,7 +83,7 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private void setExcelRooms(int houseID) throws ParseException, SQLException {
+    private void setRooms(int houseID) throws ParseException, SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
         ArrayList<Rooms> listRooms = new ArrayList();

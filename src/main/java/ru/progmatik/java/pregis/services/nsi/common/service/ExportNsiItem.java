@@ -43,8 +43,6 @@ public class ExportNsiItem {
 
         Holder<ResultHeader> headerHolder = new Holder<>();
 
-//        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
-
         ExportNsiItemResult result;
 
         try {

@@ -14,11 +14,13 @@ function getWebConnect() {
     ws.onmessage = function (event) {
         var inMessage = event.data;
         if (inMessage.indexOf('::setButtonState(false)') != -1) {
-            setButtonState(false);
+            showButton();
         } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
-            setButtonState(true);
+            showState();
         } else if (inMessage.indexOf('::setFailed()') != -1) {
+            setFailedLabelText();
         } else {
+            $('.label-text').html(inMessage);
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";
             $textarea.scrollTop = $textarea.scrollHeight;
@@ -35,7 +37,7 @@ function getWebConnect() {
            console.log('Обрыв соединения'); // например, "убит" процесс сервера
            console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         }
-        getWebConnect();
+        // getWebConnect();
     };
     ws.onerror = function (evt) {
         console.log("The following error occurred: " + evt.data);
@@ -43,7 +45,6 @@ function getWebConnect() {
 };
 
 function sendMessage(message) {    
-    setButtonState(true);
     var valueForm = "";
     if (document.getElementById(message) !== null) {
         valueForm = document.getElementById(message).value;
@@ -55,12 +56,15 @@ function sendMessage(message) {
     // ws.send(message);
     ws.send(JSON.stringify(msgJSON));
 };
-function setButtonState(state) {
-    var allButton = document.getElementsByTagName('BUTTON').length;
-    var buttons = document.getElementsByTagName('BUTTON');
-    for (var i = 0; i < allButton; i++) buttons[i].disabled=state;
+function setFailedLabelText() {
+    $('.label-text').attr("class", "label-text failed");
+    $('.show-state .img').css("background-image", "url('images/fail66px.png')");
+    // $('.show-state .img').css("background-image", "url('images/error-64px.png')");
 };
-function getSessionID(tesxt) {
-    var sessionID = document.cookie;
-    sendMessage(sessionID + " : " + tesxt);
+function setOkLabelText() {
+    $('.show-state .img').css("background-image", "url('images/ok-64px.png')");
+};
+function clearLabelText() {
+    $('.label-text').attr("class", "label-text");
+    $('.show-state .img').css("background-image", "url('images/500.gif')");
 };

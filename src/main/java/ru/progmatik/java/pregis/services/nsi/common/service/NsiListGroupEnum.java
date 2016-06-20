@@ -15,6 +15,16 @@ public enum  NsiListGroupEnum {
         this.nsi = nsi;
     }
 
+    public static NsiListGroupEnum getNsiGroup(String nsiGroup) {
+
+        NsiListGroupEnum[] nsiGroups = NsiListGroupEnum.values();
+        for (NsiListGroupEnum nsiListGroupEnum : nsiGroups) {
+            if (nsiGroup.equalsIgnoreCase(nsiListGroupEnum.getNsi()))
+                return nsiListGroupEnum;
+        }
+        return null;
+    }
+
     public String getNsi() {
         return nsi;
     }

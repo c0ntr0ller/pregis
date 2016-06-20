@@ -25,14 +25,14 @@
 
     <dependencies>
 
-        <!--<dependency>-->
-        <!--<groupId>crypto-pro</groupId>-->
-        <!--<artifactId>JCP</artifactId>-->
-        <!--<version>${cryptopro-jcp.version}</version>-->
-        <!--<scope>system</scope>-->
-        <!--<systemPath>${project.basedir}/lib/JCP.jar</systemPath>-->
-        <!--<type>jar</type>-->
-        <!--</dependency>-->
+        <dependency>
+        <groupId>crypto-pro</groupId>
+        <artifactId>JCP</artifactId>
+        <version>${cryptopro-jcp.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/lib/JCP.jar</systemPath>
+        <type>jar</type>
+        </dependency>
 
         <!--<dependency>-->
         <!--<groupId>crypto-pro</groupId>-->

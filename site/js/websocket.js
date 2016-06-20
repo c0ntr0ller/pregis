@@ -58,8 +58,8 @@ function sendMessage(message) {
 };
 function setFailedLabelText() {
     $('.label-text').attr("class", "label-text failed");
-    $('.show-state .img').css("background-image", "url('images/fail66px.png')");
-    // $('.show-state .img').css("background-image", "url('images/error-64px.png')");
+//    $('.show-state .img').css("background-image", "url('images/fail66px.png')");
+     $('.show-state .img').css("background-image", "url('images/error-64px.png')");
 };
 function setOkLabelText() {
     $('.show-state .img').css("background-image", "url('images/ok-64px.png')");

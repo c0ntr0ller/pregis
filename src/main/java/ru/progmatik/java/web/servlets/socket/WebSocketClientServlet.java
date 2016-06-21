@@ -8,7 +8,7 @@ import javax.servlet.annotation.WebServlet;
 
 @WebServlet(name = "WebSocketClientServlet", urlPatterns = {"/websocket"})
 public class WebSocketClientServlet extends WebSocketServlet {
-    private final static int LOGOUT_TIME = 10 * 60 * 1000;
+    private final static int LOGOUT_TIME = 15 * 60 * 1000;
     private final ClientService clientService;
 
     public WebSocketClientServlet() {
@@ -17,7 +17,7 @@ public class WebSocketClientServlet extends WebSocketServlet {
 
     @Override
     public void configure(WebSocketServletFactory factory) {
-//        factory.getPolicy().setIdleTimeout(LOGOUT_TIME);
+        factory.getPolicy().setIdleTimeout(LOGOUT_TIME);
         factory.setCreator((req, resp) -> new ClientWebSocket(clientService));
     }
 

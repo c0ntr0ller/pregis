@@ -23,6 +23,7 @@ import java.util.Map;
 
 /**
  * Класс, экспорт данных домов.
+ * Получает ФИАСы всех домов из ГРАДа, формирует запрос в ГИС ЖКХ, полученый результат заносит в БД.
  * Получаем данные из системы ГИС ЖКХ.
  */
 public class ExportHouseData {
@@ -42,6 +43,11 @@ public class ExportHouseData {
         this.answerProcessing = answerProcessing;
     }
 
+    /**
+     * Метод, получает из БД ГРАД все дома содержащие ФИАС, создаёт по ним запрос в ГИС ЖКХ.
+     * @throws PreGISException ошибки обработанные приложением.
+     * @throws SQLException ошибки связанные с базой данных.
+     */
     public void callExportHouseData() throws PreGISException, SQLException {
 
         HouseGRADDAO gradDao = new HouseGRADDAO();
@@ -64,6 +70,14 @@ public class ExportHouseData {
         }
     }
 
+    /**
+     * Метод, создаёт запрос в ГИС ЖКХ по ФИАС дому, получает его данные, заносит в БД идентификаторы:
+     * дома, помещении, комнаты.
+     * @param fias код дома по ФИАС.
+     * @param houseId ИД дома из БД ГРАД.
+     * @param gradDao класс для работы с БД ГРАДа.
+     * @throws SQLException
+     */
     private void getHouseData(String fias, Integer houseId, HouseGRADDAO gradDao) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
@@ -158,10 +172,10 @@ public class ExportHouseData {
 //                    result.getExportHouseResult().getLivingHouse().getLivingRoom().get(0)
 
                 }
-                answerProcessing.sendMessageToClient("Сведенья о МКД успешно получены!");
+                answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
 
             } else {
-                answerProcessing.sendMessageToClient("Возникли ошибки, сведенья о МКД не получен!");
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получен!");
             }
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);

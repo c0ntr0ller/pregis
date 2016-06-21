@@ -19,6 +19,8 @@ function getWebConnect() {
             showState();
         } else if (inMessage.indexOf('::setFailed()') != -1) {
             setFailedLabelText();
+        } else if (inMessage.indexOf('::setOkLabelText') != -1) {
+            setOkLabelText();
         } else {
             $('.label-text').html(inMessage);
             var $textarea = document.getElementById("messages");
@@ -29,14 +31,16 @@ function getWebConnect() {
     ws.onclose = function (event) {
         if (event.wasClean) {
            // console.log('Соединение закрыто чисто');
-        } else if (event.code === 1006 || event.code === 1008) {
+        } else if (event.code == 1006 || event.code == 1008 || event.code == 1001) {
             console.log('Обрыв соединения');
             // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
             document.location.href = '/login';
+            console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         } else {
            console.log('Обрыв соединения'); // например, "убит" процесс сервера
            console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         }
+        console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         // getWebConnect();
     };
     ws.onerror = function (evt) {

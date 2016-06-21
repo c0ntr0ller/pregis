@@ -17,7 +17,7 @@ function getWebConnect() {
             setButtonState(false);
         } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
             setButtonState(true);
-        } else if (inMessage.indexOf('::setFailed()') != -1) {
+        } else if (inMessage.indexOf('::setFailed()') != -1 || inMessage.indexOf('::setOkLabelText()') != -1) {
         } else {
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";

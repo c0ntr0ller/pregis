@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class HouseGRADDAO {
 
     /**
-     * Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС и добавляет его в List.
+     * Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС и ИД дома в БД ГРАД, затем добавляет его в Map.
      *
      * @return список всех ФИАСов (домов) указаной организации.
      * @throws SQLException выкинет ошибку, если будут проблемы с БД.
@@ -60,6 +60,39 @@ public class HouseGRADDAO {
 
         if (mapJd.size() == 0) return null;
         else return mapJd;
+    }
+
+    /**
+     * Метод, формирует список всех домов (МКД и ЖД), которые уже получили идентификаторы ГИС ЖКХ.
+     * Пригодные для использования в дальнейшем например импорт ЛС и ПУ.
+     * @return пара ключ-значение ФИАС-ИД ГРАДа.
+     */
+    public LinkedHashMap<String, Integer> getHouseAddedGisJkh() throws SQLException, PreGISException {
+
+        List<String> allListMKD = getAllHouseFromGrad();
+        ArrayList<String> listAllJD = getJdAllFiasFromGrad();
+        LinkedHashMap<String, Integer> mapAllHouseWithIdGis = new LinkedHashMap<String, Integer>();
+
+//        Получение данных из БД о МКД.
+        for (String itemListHouse : allListMKD) {
+            if (getAllData(itemListHouse)[1] != null && !getAllData(itemListHouse)[1].isEmpty() &&
+                    getAllData(itemListHouse)[18] != null && !getAllData(itemListHouse)[18].isEmpty()) {
+                mapAllHouseWithIdGis.put(getAllData(itemListHouse)[1], Integer.valueOf(getAllData(itemListHouse)[14]));
+            }
+        }
+
+//        Получение данных из БД о ЖД.
+        for (String itemData : listAllJD) {
+            if (getAllData(itemData)[1] != null && !getAllData(itemData)[1].isEmpty() &&
+                    getAllData(itemData)[14] != null && !getAllData(itemData)[14].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
+                mapAllHouseWithIdGis.put(getAllData(itemData)[1], Integer.valueOf(getAllData(itemData)[10]));
+            }
+        }
+
+        if (mapAllHouseWithIdGis.size() == 0)
+            return null;
+        else
+            return mapAllHouseWithIdGis;
     }
 
     /**

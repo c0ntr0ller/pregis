@@ -49,25 +49,81 @@ public class UpdateReference {
 
         answerProcessing.sendMessageToClient("Обновляю справочник 51 - \"Коммунальные услуги\".");
         if (updateDataProviderNsiItem(51)) {
-            answerProcessing.sendMessageToClient("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
+            answerProcessing.sendOkMessageToClient("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
         } else {
-            answerProcessing.sendMessageToClient("Возникли ошибки.\nСправочник 51 - \"Коммунальные услуги\": не обновлен!");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 51 - \"Коммунальные услуги\": не обновлен!");
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 59 - \"Работы и услуги организации\".");
         if (updateDataProviderNsiItem(59)) {
-            answerProcessing.sendMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
+            answerProcessing.sendOkMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
         } else {
-            answerProcessing.sendMessageToClient("Возникли ошибки.\nСправочник 59 - \"Работы и услуги организации\": не обновлен!");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 59 - \"Работы и услуги организации\": не обновлен!");
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 1 - \"Дополнительные услуги\".");
         if (updateDataProviderNsiItem(1)) {
-            answerProcessing.sendMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
+            answerProcessing.sendOkMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
         } else {
-            answerProcessing.sendMessageToClient("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\": не обновлен!");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\": не обновлен!");
         }
 
+    }
+
+    /**
+     * Доработать механизм загрузки произвольного справочника.
+     * Мотод, загружает любой другой справочник по его коду в БД. Разработка.
+     * @param codeNsi код справочника.
+     */
+    public void updateNsiItem(Integer codeNsi) {
+
+        listForAdd.clear(); // Очищаем очередь для добавления если в ней что то осталось с предыдущего раза.
+
+        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO(connection);
+
+            ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
+            ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult resultNsi = exportNsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsi.toString()));
+
+            answerProcessing.sendMessageToClient("Получаю справочники из БД с кодом: " + codeNsi);
+            Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi);
+
+            if (mapNsiWithCodeNsi == null || resultNsi == null) {
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки, справочник с кодом: " + codeNsi + "не обновлен!");
+//                return false;
+
+            } else {
+
+//                checkElementInBase(resultNsi, mapNsiWithCodeNsi);
+//                Поиск справочника в БД по его GUID.
+                List<NsiElementType> nsiElements = resultNsi.getNsiItem().getNsiElement();
+                for (NsiElementType nsiElement : nsiElements) {
+                    if (nsiElement.isIsActual()) {
+                        if (!mapNsiWithCodeNsi.containsKey(nsiElement.getCode()) ||
+                                !mapNsiWithCodeNsi.get(nsiElement.getCode()).getUiid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
+
+//                            Мехонизм другой, без подгрузки сразу джобавлять элементы справочника.
+//                            listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
+                        }
+                    }
+                }
+
+//                Посмотреть структуру файла возможно очень отличается.
+//                if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
+//
+//                    answerProcessing.sendMessageToClient("Загружаю дополнительные справочники...");
+//                    ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> nsiItemResults = loadOtherNsi();
+//
+//                    answerProcessing.sendMessageToClient("Обновляю справочники в БД...");
+//                    addItemsInDB(mapNsiWithCodeNsi, codeNsi, nsiItemResults, gradDAO);
+//                }
+            }
+
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("updateNsiItem(): ", LOGGER, e);
+//            return false;
+        }
+//        return true;
     }
 
     /**
@@ -89,7 +145,7 @@ public class UpdateReference {
             Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi);
 
             if (mapNsiWithCodeNsi == null || resultNsi == null) {
-                answerProcessing.sendMessageToClient("Возникли ошибки, справочники не обновлены!");
+//                answerProcessing.sendMessageToClient("Возникли ошибки, справочники не обновлены!");
                 return false;
 
             } else {

@@ -76,7 +76,7 @@ public class ImportAccountData {
             account.setIsUOAccount(true);
             account.setIsRSOAccount(false);
         }
-
+        account.setTransportGUID(OtherFormat.getRandomGUID());
         account.setLivingPersonsNumber((byte) 2);
         request.getAccount().add(account);
 

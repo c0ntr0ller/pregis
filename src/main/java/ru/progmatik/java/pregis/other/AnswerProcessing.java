@@ -33,6 +33,7 @@ public class AnswerProcessing {
      * @param fault ошибка полученная от сервера.
      */
     public void sendServerErrorToClient(String nameMethod, HeaderType headerRequest, Logger logger, Exception fault) {
+        clientService.sendMessage("::setFailed()");
         clientService.sendMessage(TextForLog.ERROR_RESPONSE);
         clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + fault.getMessage());
         clientService.sendMessage(nameMethod + ": " + TextForLog.ERROR_ABORT);
@@ -52,9 +53,27 @@ public class AnswerProcessing {
         clientService.sendMessage("::setFailed()");
         clientService.sendMessage("Возникла ошибка!\nОперация прервана!\n" +
                 "Текст ошибки: " + exception.getMessage());
-        clientService.sendMessage("::setFailed()");
+//        clientService.sendMessage("::setFailed()");
         logger.error(methodName, exception);
         exception.printStackTrace();
+    }
+
+    /**
+     * Метод, просто передаёт пользователю ошибку и сообщение ошибки.
+     * @param message сообщение ошибки.
+     */
+    public void sendErrorToClientNotException(String message) {
+        clientService.sendMessage("::setFailed()");
+        clientService.sendMessage(message);
+    }
+
+    /**
+     * Метод, отправляет клиенту сообщение об успешном выполнении операции.
+     * @param message сообщение.
+     */
+    public void sendOkMessageToClient(String message) {
+        clientService.sendMessage("::setOkLabelText()");
+        clientService.sendMessage(message);
     }
 
     /**
@@ -74,12 +93,14 @@ public class AnswerProcessing {
         saveToBase.setResult(headerResponse, nameMethod, errorMessage);
 
         if (errorMessage != null) {
+            clientService.sendMessage("::setFailed()");
             clientService.sendMessage(TextForLog.ERROR_MESSAGE + nameMethod);
             clientService.sendMessage(TextForLog.ERROR_CODE + errorMessage.getErrorCode());
             clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + errorMessage.getDescription());
-            logger.error("ExportOrgRegistry: " + errorMessage.getErrorCode() + "\n" +
+            logger.error(nameMethod +": " + errorMessage.getErrorCode() + "\n" +
                     errorMessage.getDescription()  + "\n" + errorMessage.getStackTrace());
         } else {
+            clientService.sendMessage("::setOkLabelText()");
             clientService.sendMessage(TextForLog.DONE_RESPONSE + nameMethod);
             logger.info("Successful.");
         }

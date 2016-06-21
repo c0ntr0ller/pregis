@@ -93,6 +93,48 @@ public class ProgramAction {
 //        dataProvider.callExportDataProvide();
 //    }
 
+
+
+    /**
+     * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
+     */
+    public void callExportDataProviderNsiItem() {
+//        Подумать можно реализовать и для других справочников для сохранения в БД
+//        написать новый метод в классе который будет принимать значение других справочников
+        try {
+            setStateRunOn();
+            answerProcessing.sendMessageToClient("Запуск получения Справочников...");
+            UpdateReference updateReference = new UpdateReference(answerProcessing);
+            updateReference.updateAllDataProviderNsiItem();
+            setStateRunOff();
+//        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
+//        dataProviderNsiItem.callExportDataProviderNsiItem(51);
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callExportDataProviderNsiItem(): ", LOGGER, e);
+        } finally {
+            setStateRunOff();
+        }
+
+    }
+
+    /**
+     * Метод, получаем данные о МКД из ГИС ЖКХ.
+     */
+    public void callExportHouseData() {
+
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+        try {
+            answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
+            ExportHouseData houseData = new ExportHouseData(answerProcessing);
+            houseData.callExportHouseData();
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callExportHouseData(): ", LOGGER, e);
+        }
+
+
+        setStateRunOff(); // взводим флаг в состояние откл.
+    }
+
     /**
      * 2.1.2.1	Экспортировать список справочников (exportNsiList).
      * Позволяет получить перечень справочников с датой последнего изменения каждого справочника.
@@ -149,44 +191,20 @@ public class ProgramAction {
     }
 
     /**
-     * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
+     * Метод, экспорт сведений о лицевых счетах.
      */
-    public void callExportDataProviderNsiItem() {
-//        Подумать можно реализовать и для других справочников для сохранения в БД
-//        написать новый метод в классе который будет принимать значение других справочников
+    public void callExportAccountData() {
+
+        setStateRunOn();
         try {
-            setStateRunOn();
-            answerProcessing.sendMessageToClient("Запуск получения Справочников...");
-            UpdateReference updateReference = new UpdateReference(answerProcessing);
-            updateReference.updateAllDataProviderNsiItem();
-            setStateRunOff();
-//        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
-//        dataProviderNsiItem.callExportDataProviderNsiItem(51);
+            answerProcessing.sendMessageToClient("Запуск получения ЛС...");
+            ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            accountData.callExportAccountData("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
+            answerProcessing.sendMessageToClient("Получения ЛС завершено.");
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportDataProviderNsiItem(): ", LOGGER, e);
-        } finally {
-            setStateRunOff();
+            answerProcessing.sendErrorToClient("callExportAccountData(): ", LOGGER, e);
         }
-
-    }
-
-    /**
-     * Метод, получаем данные о МКД из ГИС ЖКХ.
-     */
-    public void callExportHouseData() {
-
-        setStateRunOn(); // взводим флаг в состояния выполнения метода
-        try {
-            answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
-            ExportHouseData houseData = new ExportHouseData(answerProcessing);
-            houseData.callExportHouseData();
-        } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportHouseData(): ", LOGGER, e);
-        }
-
-
-        setStateRunOff(); // взводим флаг в состояние откл.
-
+        setStateRunOff();
     }
 
     /**
@@ -232,22 +250,7 @@ public class ProgramAction {
     }
 
 
-    /**
-     * Метод, экспорт сведений о лицевых счетах.
-     */
-    public void callExportAccountData() {
 
-        setStateRunOn();
-        try {
-            answerProcessing.sendMessageToClient("Запуск получения ЛС...");
-            ExportAccountData accountData = new ExportAccountData(answerProcessing);
-            accountData.callExportAccountData("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
-            answerProcessing.sendMessageToClient("Получения ЛС завершено.");
-        } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportAccountData(): ", LOGGER, e);
-        }
-        setStateRunOff();
-    }
 
 
     public void callExportStatusCAChData() {

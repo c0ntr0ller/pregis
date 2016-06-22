@@ -97,6 +97,7 @@ public class MainServlet extends HttpServlet {
             response.sendRedirect("/login");
             return false;
         }
+//        request.getSession().setMaxInactiveInterval(10);
         return true;
     }
 
@@ -119,7 +120,7 @@ public class MainServlet extends HttpServlet {
 //                    break;
 //                case "getHouseUO":
 //                    if (!action.isRunning())
-//                        action.callExportHouseData();
+//                        action.updateAllHouseData();
 //                    break;
 //                default:
 //                    new ErrorPage("Неизвестная команда", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

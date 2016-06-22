@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportAccountResult;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -32,9 +33,16 @@ public class UpdateAllAccountData {
         LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh();
 
         ExportAccountData accountData = new ExportAccountData(answerProcessing);
+        ExportHouseData exportHouseData = new ExportHouseData(answerProcessing);
 
         for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
+
+            ExportHouseResult exportHouseResult = exportHouseData.callExportHouseData(itemHouse.getKey());
             ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
+
+            if (exportHouseResult == null || exportAccountResult == null) {
+                return false;
+            }
         }
 
         return true;

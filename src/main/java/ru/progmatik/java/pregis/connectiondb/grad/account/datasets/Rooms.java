@@ -59,6 +59,16 @@ public class Rooms {
     private int sharePay;
 
     /**
+     * Идентификатор ЛС в ГИС ЖКХ, используется только при обновлении данных ЛС.
+     */
+    private String AccountGUID;
+
+    /**
+     * Определяет является абонент физическим лицом или юридическим.
+     */
+    private boolean isCompany;
+
+    /**
      * Получить номер ЛС УО (иной идентификатор потребителя).
      * Обязательный.
      * Выпадающий список, один из номеров лицевых счетов, заданный на листе «Основные сведения».
@@ -190,5 +200,37 @@ public class Rooms {
      */
     public void setSharePay(int sharePay) {
         this.sharePay = sharePay;
+    }
+
+    /**
+     * Получить, идентификатор ЛС в ГИС ЖКХ, используется только при обновлении данных ЛС.
+     * @return идентификатор ЛС в ГИС ЖКХ.
+     */
+    public String getAccountGUID() {
+        return AccountGUID;
+    }
+
+    /**
+     * Задать, идентификатор ЛС в ГИС ЖКХ, используется только при обновлении данных ЛС.
+     * @param accountGUID новый идентификатор ЛС в ГИС ЖКХ.
+     */
+    public void setAccountGUID(String accountGUID) {
+        AccountGUID = accountGUID;
+    }
+
+    /**
+     * Получить, статус абоненета, является физическим лицом или юридическим.
+     * @return статус абонента, true - если юр.лицо, false - если физ.лицо.
+     */
+    public boolean isCompany() {
+        return isCompany;
+    }
+
+    /**
+     * Задать, статус абоненета, является физическим лицом или юридическим.
+     * @param company статус абонента, true - если юр.лицо, false - если физ.лицо.
+     */
+    public void setCompany(boolean company) {
+        isCompany = company;
     }
 }

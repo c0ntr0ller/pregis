@@ -59,6 +59,17 @@ public class AnswerProcessing {
     }
 
     /**
+     * Метод, обрабатывает ошибки, отправляет клиенту и в лог.
+     * @param message текст сообщения.
+     * @param logger лог.
+     */
+    public void sendInformationToClientAndLog(String message, Logger logger) {
+        sendErrorToClientNotException(message);
+        logger.info(message);
+
+    }
+
+    /**
      * Метод, просто передаёт пользователю ошибку и сообщение ошибки.
      * @param message сообщение ошибки.
      */

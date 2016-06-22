@@ -1,12 +1,11 @@
-
 var ws;
 
-$(document).ready(function() {
-getWebConnect();
+$(document).ready(function () {
+    getWebConnect();
 });
 
 function getWebConnect() {
-        var host = "ws://" + window.location.hostname +":" + window.location.port + "/websocket";
+    var host = "ws://" + window.location.hostname + ":" + window.location.port + "/websocket";
     ws = new WebSocket(host);
     ws.onopen = function (event) {
         // console.log('Открыто соединение');
@@ -29,18 +28,19 @@ function getWebConnect() {
         }
     };
     ws.onclose = function (event) {
-        if (event.wasClean) {
-           // console.log('Соединение закрыто чисто');
-        } else if (event.code == 1006 || event.code == 1008 || event.code == 1001) {
+        if (parseInt(event.code) === 1006 || parseInt(event.code) === 1008) {
             console.log('Обрыв соединения');
             // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
             document.location.href = '/login';
             console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+        } else if (event.wasClean) {
+            // console.log('Соединение закрыто чисто');
         } else {
-           console.log('Обрыв соединения'); // например, "убит" процесс сервера
-           console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+            console.log('Обрыв соединения'); // например, "убит" процесс сервера
+            console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         }
         console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+        // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
         // getWebConnect();
     };
     ws.onerror = function (evt) {
@@ -48,11 +48,12 @@ function getWebConnect() {
     }
 };
 
-function sendMessage(message) {    
+function sendMessage(message) {
     var valueForm = "";
-    if (document.getElementById(message) !== null) {
-        valueForm = document.getElementById(message).value;
-    }
+    if (ws.readyState != 1) location.reload(true);
+        if (document.getElementById(message) !== null) {
+            valueForm = document.getElementById(message).value;
+        }
     var msgJSON = {
         command: message,
         value: valueForm
@@ -63,7 +64,7 @@ function sendMessage(message) {
 function setFailedLabelText() {
     $('.label-text').attr("class", "label-text failed");
 //    $('.show-state .img').css("background-image", "url('images/fail66px.png')");
-     $('.show-state .img').css("background-image", "url('images/error-64px.png')");
+    $('.show-state .img').css("background-image", "url('images/error-64px.png')");
 };
 function setOkLabelText() {
     $('.show-state .img').css("background-image", "url('images/ok-64px.png')");

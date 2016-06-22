@@ -45,10 +45,11 @@ public class ExportHouseData {
 
     /**
      * Метод, получает из БД ГРАД все дома содержащие ФИАС, создаёт по ним запрос в ГИС ЖКХ.
+     *
      * @throws PreGISException ошибки обработанные приложением.
-     * @throws SQLException ошибки связанные с базой данных.
+     * @throws SQLException    ошибки связанные с базой данных.
      */
-    public void callExportHouseData() throws PreGISException, SQLException {
+    public void updateAllHouseData() throws PreGISException, SQLException {
 
         HouseGRADDAO gradDao = new HouseGRADDAO();
 //        Обработка МКД
@@ -73,30 +74,20 @@ public class ExportHouseData {
     /**
      * Метод, создаёт запрос в ГИС ЖКХ по ФИАС дому, получает его данные, заносит в БД идентификаторы:
      * дома, помещении, комнаты.
-     * @param fias код дома по ФИАС.
+     *
+     * @param fias    код дома по ФИАС.
      * @param houseId ИД дома из БД ГРАД.
      * @param gradDao класс для работы с БД ГРАДа.
      * @throws SQLException
      */
     private void getHouseData(String fias, Integer houseId, HouseGRADDAO gradDao) throws SQLException {
 
-        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-        Holder<ResultHeader> resultHolder = new Holder<>();
-
-        RequestHeader headerRequest = OtherFormat.getRequestHeader();
-
         ExportHouseResult result;
 
         try {
-            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
-            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            result = callExportHouseData(fias);
 
-
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHolder.value,
-                    result.getErrorMessage(), LOGGER);
-
-            if (result.getErrorMessage() == null) { // Если нет ошибок
+            if ( result == null || result.getErrorMessage() == null) { // Если нет ошибок
                 answerProcessing.sendMessageToClient("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
                 gradDao.setHouseUniqueNumber(houseId, result.getExportHouseResult().getHouseUniqueNumber());
 
@@ -168,7 +159,7 @@ public class ExportHouseData {
                 } else if (result.getExportHouseResult().getLivingHouse() != null) {  // Узнать что делалать с ними
                     answerProcessing.sendMessageToClient("Жилой дом");
                     // TODO
-//                    Комнаты пока не обрабатываются
+//                    Комнаты пока не обрабатываются ЖД
 //                    result.getExportHouseResult().getLivingHouse().getLivingRoom().get(0)
 
                 }
@@ -177,14 +168,42 @@ public class ExportHouseData {
             } else {
                 answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получен!");
             }
-        } catch (Fault fault) {
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
+
         } catch (PreGISException e) {
             answerProcessing.sendErrorToClient("getHouseData(): ", LOGGER, e);
         }
 
     }
 
+    public ExportHouseResult callExportHouseData(String fias) {
+
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        Holder<ResultHeader> resultHolder = new Holder<>();
+
+        RequestHeader headerRequest = OtherFormat.getRequestHeader();
+
+        ExportHouseResult result = null;
+
+        try {
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
+            result = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
+            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+
+
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHolder.value,
+                    result.getErrorMessage(), LOGGER);
+        } catch (Fault fault) {
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
+        }
+        return result;
+    }
+
+    /**
+     * Метод, формирует запрос.
+     *
+     * @param fias код дома по ФИАС.
+     * @return готовый запрос в ГИС ЖКХ.
+     */
     private ExportHouseRequest getExportHouseRequest(String fias) {
 
         ExportHouseRequest request = new ExportHouseRequest();

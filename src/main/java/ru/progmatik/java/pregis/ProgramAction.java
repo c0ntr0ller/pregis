@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house_management.ExportHouseData;
+import ru.progmatik.java.pregis.services.house_management.UpdateAllAccountData;
 import ru.progmatik.java.pregis.services.nsi.UpdateReference;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
@@ -126,9 +127,9 @@ public class ProgramAction {
         try {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
             ExportHouseData houseData = new ExportHouseData(answerProcessing);
-            houseData.callExportHouseData();
+            houseData.updateAllHouseData();
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportHouseData(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("updateAllHouseData(): ", LOGGER, e);
         }
 
 
@@ -188,6 +189,16 @@ public class ProgramAction {
             setStateRunOff();
         }
 
+    }
+
+    /**
+     * Метод, синхронизирует данные о лицевых счетах ГИС ЖКХ и БД ГРАД.
+     */
+    public void updateAccountData() {
+        UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
+
+//        Надо что бы возвращало -1 возникли ошибка опер. прервана, 0 - возникли ошибки  операция завершена смотрите лог,
+//        1 - выполнено успешно.
     }
 
     /**

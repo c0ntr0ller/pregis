@@ -1,18 +1,26 @@
 package ru.progmatik.java.pregis.connectiondb.grad.account;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.services.house_management.AccountIndType;
+import ru.gosuslugi.dom.schema.integration.services.house_management.AccountType;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
+import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -21,7 +29,18 @@ import java.util.regex.Pattern;
 public class AccountGRADDAO {
 
     private static final Logger LOGGER = Logger.getLogger(AccountGRADDAO.class);
+    private final AnswerProcessing answerProcessing;
     private SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
+
+    public AccountGRADDAO(AnswerProcessing answerProcessing) {
+        this.answerProcessing = answerProcessing;
+    }
+
+    public void getAccountList(int houseID, ExportHouseResult houseData) {
+
+
+
+    }
 
     /**
      * Метод, получает от метода "createExcel" ид дома и таблицу Excel.
@@ -29,7 +48,7 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private void setBasicInformation(int houseID) throws SQLException {
+    private ArrayList<BasicInformation> getBasicInformation(int houseID) throws SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS1(" + houseID + ")";
         ArrayList<BasicInformation> listBasic = new ArrayList<>();
@@ -75,6 +94,8 @@ public class AccountGRADDAO {
         } finally {
             ConnectionBaseGRAD.instance().close();
         }
+        if (listBasic.size() == 0) return null; // если нет ЛС возвращаем null.
+        return listBasic;
     }
 
     /**
@@ -83,7 +104,7 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private void setRooms(int houseID) throws ParseException, SQLException {
+    private ArrayList<Rooms> getRooms(int houseID) throws ParseException, SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
         ArrayList<Rooms> listRooms = new ArrayList();
@@ -103,6 +124,8 @@ public class AccountGRADDAO {
                     rooms.setNumberApartment(arrayData[4]);
                     rooms.setIdSpaceGISJKH(arrayData[5]);
                     rooms.setSharePay(Integer.valueOf(checkZero(arrayData[6])));
+//                    rooms.setAccountGUID(arrayData[8]); // Саша должен добавить
+//                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
 
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
@@ -112,7 +135,95 @@ public class AccountGRADDAO {
         } finally {
             ConnectionBaseGRAD.instance().close();
         }
+        if (listRooms.size() == 0) return null; // если нет ЛС возвращаем null.
+
+        return listRooms;
     }
+
+    /**
+     * Метод, формирует Map ЛС из БД ГРАД.
+     * Ключ - ЛС, значение - класс Account пригодный для импорта ЛС в ГИС ЖКХ.
+     * @param houseID ИД дома в БД ГРАД.
+     * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
+     * @throws SQLException возможны ошибки БД.
+     */
+    private void convertAccount(int houseID, ExportHouseResult houseData) throws ParseException, SQLException, PreGISException {
+
+        ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID);
+        ArrayList<Rooms> roomsList = getRooms(houseID);
+
+        LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
+
+        if (basicInformationList == null || roomsList == null) {
+            throw new PreGISException("Не найдены лицевые счета для дома с ИД: " + houseID + ".");
+        }
+
+        for (BasicInformation basicInformation : basicInformationList) {
+            int count = 0;
+            for (int i = 0; i < roomsList.size(); i++) {
+
+//                Формируем объект пригодный для импорта в ГИС ЖКХ.
+//                По необходимости в дальнейшем нужно присвоить перед отправкой:
+//                - если новый счет указать TransportGUID, удалить если есть AccountGUID.
+//                - если счет к закрытию указать AccountGUID и isClosed.
+                if (basicInformation.getNumberLS().equals(roomsList.get(i).getNumberLS())) {
+                    ImportAccountRequest.Account account = new ImportAccountRequest.Account();
+//                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно?
+                    account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
+                    account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()));
+                    account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()));
+                    account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()));
+//                    account.setClosed(); // проверить, если в ГИС ЖКХ есть, а в БД ГРАД нет, то установить в ExportAccountData.
+                    AccountType.Accommodation accommodation = new AccountType.Accommodation();
+                    accommodation.setPremisesGUID(roomsList.get(i).getIdSpaceGISJKH()); // временно
+                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias());
+//                    accommodation.setLivingRoomGUID(); // Идентификатор комнаты
+                    accommodation.setSharePercent(new BigDecimal(roomsList.get(i).getSharePay()));
+                    account.getAccommodation().add(accommodation);
+//                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
+
+//                    Сведения о платильщике
+                    account.setPayerInfo(new AccountType.PayerInfo());
+                    if (basicInformation.getOgrnOrOgrnip() == 0) {
+                        account.getPayerInfo().setInd(new AccountIndType());
+                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+                        account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+                        account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
+//                        account.getPayerInfo().getInd().setSex(); // не указан
+//                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
+                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
+//                        account.getPayerInfo().getInd().setID(); // подгрузить справочник NSI 95
+
+                    } else {
+//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
+//                        account.getPayerInfo().setOrg(new RegOrgVersionType());
+//                        account.getPayerInfo().getOrg().setOrgVersionGUID();
+                    }
+                    account.getPayerInfo().setIsRenter(basicInformation.getEmployer() == AnswerYesOrNo.YES);
+
+                    account.setAccountNumber(basicInformation.getNumberLS());
+                    account.setAccountGUID(roomsList.get(i).getAccountGUID());  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+
+                    mapAccount.put(basicInformation.getNumberLS(), account);
+
+                    count++;
+                    roomsList.remove(i);
+                    i--;
+                }
+            }
+            if (count == 1) {
+                continue;
+            } else if (count == 0) {
+                answerProcessing.sendInformationToClientAndLog("Для счета - "
+                        + basicInformation.getNumberLS() + ", не удалось найти соответствие в базе данных.", LOGGER);
+            } else if (count >= 2) {
+                answerProcessing.sendInformationToClientAndLog("Для счета - "
+                        + basicInformation.getNumberLS() + ", найдено более одного соответствия в базе данных.", LOGGER);
+            }
+        }
+    }
+
+
 
     /**
      * Метод, проверяет, если строка пустая или null, то вернет 0.

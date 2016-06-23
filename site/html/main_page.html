@@ -25,7 +25,7 @@
         <br><br>
         <label for="getNsiItem">Введите код справочника (убрать в админку)</label><br>
         <input type="text" id="getNsiItem" placeholder="код справочника"/>
-        <button id="sendNsiItem" type="button" onclick="sendMessage('getNsiItem');" ${buttonState}>getNsiItem</button>
+        <button id="sendNsiItem" type="button" onclick="sendMessage('getNsiItem', $('.getNsiItem').val());" ${buttonState}>getNsiItem</button>
         <br><br>
     </form>
     <form name="houseDataForm" accept-charset="utf-8">

@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.reference;
+package ru.progmatik.java.pregis.connectiondb.grad.reference;
 
 import org.apache.log4j.Logger;
 
@@ -126,15 +126,15 @@ public class ReferenceItemGRADDAO {
                         "INSERT INTO SERVICES_GIS_JKH(NAME, CODE, UIID, GROUP_NAME, CODE_PARENT) VALUES(?, ? ,? ,?, ?)");
                 ps.setString(1, dataSet.getName());
                 ps.setString(2, dataSet.getCode());
-                ps.setString(3, dataSet.getUiid());
+                ps.setString(3, dataSet.getGuid());
                 ps.setString(4, dataSet.getGroupName());
                 ps.setInt(5, dataSet.getCodeParent());
                 ps.executeUpdate();
                 ps.close();
                 LOGGER.info("Добавлеен элемент в справочник: ID = " + dataSet.getId() + " Name: " + dataSet.getName() +
-                        " Code: " + dataSet.getCode() + " GUID: " + dataSet.getUiid() + " GROUP_NAME: " + dataSet.getGroupName());
+                        " Code: " + dataSet.getCode() + " GUID: " + dataSet.getGuid() + " GROUP_NAME: " + dataSet.getGroupName());
             } else { // иначе проверяем остальные поля и просто обновляем значение в БД.
-                if (!dataSet.getName().isEmpty() && !dataSet.getCode().isEmpty() && !dataSet.getUiid().isEmpty()) {  // перестраховка
+                if (!dataSet.getName().isEmpty() && !dataSet.getCode().isEmpty() && !dataSet.getGuid().isEmpty()) {  // перестраховка
                     updateItem(dataSet);
                 }
             }
@@ -149,7 +149,7 @@ public class ReferenceItemGRADDAO {
             PreparedStatement ps = connection.prepareStatement("UPDATE SERVICES_GIS_JKH SET NAME = ?, UIID = ?, " +
                     "GROUP_NAME = ?, CODE_PARENT = ? WHERE ID = ? AND CODE = ?");
             ps.setString(1, newDataset.getName());
-            ps.setString(2, newDataset.getUiid());
+            ps.setString(2, newDataset.getGuid());
             ps.setString(3, newDataset.getGroupName());
             ps.setInt(4, newDataset.getCodeParent());
             ps.setInt(5, newDataset.getId());
@@ -157,7 +157,7 @@ public class ReferenceItemGRADDAO {
             ps.executeUpdate();
             ps.close();
             LOGGER.info("Обновлен элемент справочника: ID = " + newDataset.getId() +
-                    " Code: " + newDataset.getCode() + " GUID: " + newDataset.getUiid());
+                    " Code: " + newDataset.getCode() + " GUID: " + newDataset.getGuid());
         } catch (SQLException e) {
             LOGGER.error(e);
             e.printStackTrace();

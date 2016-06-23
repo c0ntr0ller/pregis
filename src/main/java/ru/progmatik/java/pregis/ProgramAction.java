@@ -3,7 +3,10 @@ package ru.progmatik.java.pregis;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
-import ru.progmatik.java.pregis.connectiondb.organization.SaveToBaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95DAO;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
@@ -22,6 +25,7 @@ import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -76,7 +80,7 @@ public class ProgramAction {
                 answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
             }
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getSenderID: ", LOGGER, e);
+            answerProcessing.sendErrorToClient("getSenderID: ", "\"Получения SenderID\" ", LOGGER, e);
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
         }
         setStateRunOff(); // взводим флаг в состояние откл.
@@ -111,11 +115,27 @@ public class ProgramAction {
 //        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
 //        dataProviderNsiItem.callExportDataProviderNsiItem(51);
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportDataProviderNsiItem(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callExportDataProviderNsiItem(): ", "\"Синхронизации справочников\" ", LOGGER, e);
         } finally {
             setStateRunOff();
         }
 
+    }
+
+    /**
+     * Метод, оновляет данные справочника НСИ-95 "Документ, удостоверяющий личность".
+     *
+     */
+    public void callUpdateNSI95() {
+
+        ReferenceNSI95 nsi95 = new ReferenceNSI95(answerProcessing);
+        try {
+            answerProcessing.sendMessageToClient("Запуск обновления справочника НСИ-95...");
+            nsi95.updateNSI95(new ReferenceNSI95DAO());
+            answerProcessing.sendOkMessageToClient("Справочник НСИ-95 обновлен.");
+        } catch (PreGISException | SQLException e) {
+            answerProcessing.sendErrorToClient("callUpdateNSI95():", "\"Обновления справочника НСИ-95\" ", LOGGER, e);
+        }
     }
 
     /**
@@ -129,7 +149,7 @@ public class ProgramAction {
             ExportHouseData houseData = new ExportHouseData(answerProcessing);
             houseData.updateAllHouseData();
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("updateAllHouseData(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
         }
 
 
@@ -150,7 +170,7 @@ public class ProgramAction {
             ExportNsiList nsiList = new ExportNsiList();
             nsiList.callExportNsiList();
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getNsiList: ", LOGGER, e);
+            answerProcessing.sendErrorToClient("getNsiList: ", "\"Экспорта списков справочников\" ", LOGGER, e);
             answerProcessing.sendMessageToClient("::setFailed()");
             answerProcessing.sendMessageToClient("Возникли ошибки, список справочников не получен!");
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
@@ -184,7 +204,7 @@ public class ProgramAction {
             ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
             nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportNsiItem(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callExportNsiItem(): ", "\"Экспорта данных справочника\" ", LOGGER, e);
         } finally {
             setStateRunOff();
         }
@@ -213,7 +233,7 @@ public class ProgramAction {
             accountData.callExportAccountData("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
             answerProcessing.sendMessageToClient("Получения ЛС завершено.");
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportAccountData(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);
         }
         setStateRunOff();
     }
@@ -238,7 +258,7 @@ public class ProgramAction {
             paymentDocumentData.callExportPaymentDocumentData();
             answerProcessing.sendMessageToClient("Получения ПД завершено.");
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
         }
         setStateRunOff();
     }

@@ -114,6 +114,7 @@ public class HouseGRADDAO {
             try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
                 cstmt.setInt(1, houseId);
                 cstmt.setString(4, houseUniqueNumber);
+                System.out.println(houseId + " : " + houseUniqueNumber);
                 int codeReturn = cstmt.executeUpdate();
                 System.err.println("Code return: " + codeReturn);
             } finally {

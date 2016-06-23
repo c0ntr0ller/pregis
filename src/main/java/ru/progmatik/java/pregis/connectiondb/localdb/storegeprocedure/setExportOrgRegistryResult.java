@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.storegeprocedure;
+package ru.progmatik.java.pregis.connectiondb.localdb.storegeprocedure;
 
 import java.sql.SQLException;
 
@@ -8,45 +8,6 @@ import java.sql.SQLException;
  * Created by andryha on 16.02.2016.
  */
 public class setExportOrgRegistryResult {
-
-    /**
-     * Метод добавляет или изменяет объект ответа "экспорт сведений об организациях", для дальнейшего его использования
-     * в запросе на получения "Sender ID".
-     * Так как организация одна, то соответственно и  реквизиты у неё должны быть одни,
-     * метод при получении последних данных от сервиса ГИС ЖКХ считает их самыми актуальными,
-     * для того что бы не возникало вопроса какие именно актуальные данные,
-     * метод просто на просто обновляет старую запись на новую.
-     *
-     * @param con - подключение к базе данных
-     * @param result - объект, ответ на запрос "экспорт сведений об организациях", метода "exportOrgRegistry".
-     * @param fullName - полное имя организации.
-     * @param shortName - сокращенное имя организации.
-     * @param ogrn - ОГРН.
-     * @param inn - ИНН.
-     * @param kpp - КПП.
-     * @throws SQLException
-     */
-    void setResult(java.sql.Connection con,
-                   java.lang.Object result,
-                   String fullName,
-                   String shortName,
-                   String ogrn,
-                   String inn,
-                   String kpp) throws SQLException {
-
-        java.sql.PreparedStatement ps = con.prepareStatement(
-                "MERGE INTO EXPORT_ORG_REGISTRY_RESULT(" +
-                        "ID, " +
-                        "RESULT_OBJECT, " +
-                        "ORGANIZATION_ID) " +
-                        "KEY(ORGANIZATION_ID) " +
-                        "VALUES(?, ?)");
-        ps.setObject(1, result);
-        ps.setInt(2, getOrganozationID(con, fullName, shortName, ogrn, inn, kpp));
-        ps.executeUpdate();
-
-        if (!ps.isClosed()) ps.close();
-    }
 
     /**
      * Метод получает "ID" таблицы "ORGANIZATION", что бы прявизать объект с полными реквизитами к нужной организации.
@@ -109,6 +70,45 @@ public class setExportOrgRegistryResult {
             }
         }
         return countID;
+    }
+
+    /**
+     * Метод добавляет или изменяет объект ответа "экспорт сведений об организациях", для дальнейшего его использования
+     * в запросе на получения "Sender ID".
+     * Так как организация одна, то соответственно и  реквизиты у неё должны быть одни,
+     * метод при получении последних данных от сервиса ГИС ЖКХ считает их самыми актуальными,
+     * для того что бы не возникало вопроса какие именно актуальные данные,
+     * метод просто на просто обновляет старую запись на новую.
+     *
+     * @param con - подключение к базе данных
+     * @param result - объект, ответ на запрос "экспорт сведений об организациях", метода "exportOrgRegistry".
+     * @param fullName - полное имя организации.
+     * @param shortName - сокращенное имя организации.
+     * @param ogrn - ОГРН.
+     * @param inn - ИНН.
+     * @param kpp - КПП.
+     * @throws SQLException
+     */
+    void setResult(java.sql.Connection con,
+                   java.lang.Object result,
+                   String fullName,
+                   String shortName,
+                   String ogrn,
+                   String inn,
+                   String kpp) throws SQLException {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "MERGE INTO EXPORT_ORG_REGISTRY_RESULT(" +
+                        "ID, " +
+                        "RESULT_OBJECT, " +
+                        "ORGANIZATION_ID) " +
+                        "KEY(ORGANIZATION_ID) " +
+                        "VALUES(?, ?)");
+        ps.setObject(1, result);
+        ps.setInt(2, getOrganozationID(con, fullName, shortName, ogrn, inn, kpp));
+        ps.executeUpdate();
+
+        if (!ps.isClosed()) ps.close();
     }
 
 

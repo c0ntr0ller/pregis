@@ -8,7 +8,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
-import ru.progmatik.java.pregis.connectiondb.organization.BaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.localdb.organization.BaseOrganization;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;

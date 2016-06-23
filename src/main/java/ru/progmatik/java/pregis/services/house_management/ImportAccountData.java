@@ -54,7 +54,7 @@ public class ImportAccountData {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
             return;
         } catch (PreGISException e) {
-            answerProcessing.sendErrorToClient("sendImportAccountData(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("sendImportAccountData(): ", "\"Синхронизация лицевых счетов\" ", LOGGER, e);
             return;
         }
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHolder.value, result.getErrorMessage(), LOGGER);

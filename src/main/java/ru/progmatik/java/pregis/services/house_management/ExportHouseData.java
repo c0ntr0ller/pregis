@@ -166,11 +166,11 @@ public class ExportHouseData {
                 answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
 
             } else {
-                answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получен!");
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получены!");
             }
 
         } catch (PreGISException e) {
-            answerProcessing.sendErrorToClient("getHouseData(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("getHouseData(): ", "\"Получение данных о МКД\" ", LOGGER, e);
         }
 
     }

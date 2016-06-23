@@ -20,7 +20,7 @@ h2 {
     color: #fff;
 }
 body {
-    font-family: 'PT Sans', Arial, Tahoma;
+    font-family: 'PT Sans', sans-serif, Arial, Tahoma;
     background: url('../images/whitey.png');
     font-size: 12px;
 }

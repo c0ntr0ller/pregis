@@ -7,8 +7,11 @@ import ru.gosuslugi.dom.schema.integration.base.NsiElementStringFieldType;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementType;
 import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.reference.ReferenceItemDataSet;
-import ru.progmatik.java.pregis.connectiondb.reference.ReferenceItemGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
+import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95DAO;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
@@ -45,29 +48,50 @@ public class UpdateReference {
         this.answerProcessing = answerProcessing;
     }
 
-    public void updateAllDataProviderNsiItem() {
+    public void updateAllDataProviderNsiItem() throws SQLException, PreGISException {
+
+        int countDone = 0;
 
         answerProcessing.sendMessageToClient("Обновляю справочник 51 - \"Коммунальные услуги\".");
         if (updateDataProviderNsiItem(51)) {
-            answerProcessing.sendOkMessageToClient("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
+            answerProcessing.sendMessageToClient("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
+            countDone++;
         } else {
             answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 51 - \"Коммунальные услуги\": не обновлен!");
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 59 - \"Работы и услуги организации\".");
         if (updateDataProviderNsiItem(59)) {
-            answerProcessing.sendOkMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
+            answerProcessing.sendMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
+            countDone++;
         } else {
             answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 59 - \"Работы и услуги организации\": не обновлен!");
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 1 - \"Дополнительные услуги\".");
         if (updateDataProviderNsiItem(1)) {
-            answerProcessing.sendOkMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
+            answerProcessing.sendMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
+            countDone++;
         } else {
-            answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\": не обновлен!");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\" не обновлен!");
         }
 
+        answerProcessing.sendMessageToClient("Обновляю справочник НСИ-95 - \"Документ, удостоверяющий личность\".");
+        ReferenceNSI95 nsi95 = new ReferenceNSI95(answerProcessing);
+        if (nsi95.updateNSI95(new ReferenceNSI95DAO())) {
+            answerProcessing.sendMessageToClient("Справочник НСИ-95 - \"Документ, удостоверяющий личность\": успешно обновлен!");
+            countDone++;
+        } else {
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки. Справочник НСИ-95 - \"Документ, удостоверяющий личность\" не обновлен!");
+        }
+
+        if (countDone == 4) {
+            answerProcessing.sendOkMessageToClient("\nСправочники успешно обновлены!");
+        } else if (countDone < 4 && countDone > 0) {
+            answerProcessing.sendInformationToClientAndLog("\nСправочники обновлены с ошибками!", LOGGER);
+        } else if (countDone == 0) {
+            answerProcessing.sendErrorToClientNotException("\nВозникли ошибки! Справочники не обновлены!");
+        }
     }
 
     /**
@@ -100,9 +124,9 @@ public class UpdateReference {
                 for (NsiElementType nsiElement : nsiElements) {
                     if (nsiElement.isIsActual()) {
                         if (!mapNsiWithCodeNsi.containsKey(nsiElement.getCode()) ||
-                                !mapNsiWithCodeNsi.get(nsiElement.getCode()).getUiid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
+                                !mapNsiWithCodeNsi.get(nsiElement.getCode()).getGuid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
 
-//                            Мехонизм другой, без подгрузки сразу джобавлять элементы справочника.
+//                            Мехонизм другой, без подгрузки сразу добавлять элементы справочника.
 //                            listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
                         }
                     }
@@ -120,7 +144,7 @@ public class UpdateReference {
             }
 
         } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("updateNsiItem(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("updateNsiItem(): ", "\"Синхронизации справочников\" ", LOGGER, e);
 //            return false;
         }
 //        return true;
@@ -163,7 +187,7 @@ public class UpdateReference {
             }
 
         } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("updateDataProviderNsiItem(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("updateDataProviderNsiItem(): ", "\"Синхронизации справочников\" ", LOGGER, e);
             return false;
         }
         return true;
@@ -181,7 +205,7 @@ public class UpdateReference {
         for (NsiElementType nsiElement : nsiElements) {
             if (nsiElement.isIsActual()) {
                 if (!mapDataSet.containsKey(nsiElement.getCode()) ||
-                        !mapDataSet.get(nsiElement.getCode()).getUiid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
+                        !mapDataSet.get(nsiElement.getCode()).getGuid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
                     listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
                 }
             }
@@ -213,7 +237,7 @@ public class UpdateReference {
                 }
 
                 dataSet.setCode(nsiElement.getCode());
-                dataSet.setUiid(nsiElement.getGUID());
+                dataSet.setGuid(nsiElement.getGUID());
                 dataSet.setCodeParent(codeParent);
 
                 for (NsiElementFieldType field : nsiElement.getNsiElementField()) {

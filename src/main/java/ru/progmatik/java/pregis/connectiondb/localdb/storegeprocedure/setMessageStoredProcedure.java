@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.storegeprocedure;
+package ru.progmatik.java.pregis.connectiondb.localdb.storegeprocedure;
 
 /**
  * Хранимая процедура тут только хранится.
@@ -6,45 +6,6 @@ package ru.progmatik.java.pregis.connectiondb.storegeprocedure;
  */
 public class setMessageStoredProcedure {
 
-
-    /**
-     * Метод добавляет данные в таблицы, добавление сообщения.
-     * @param con - Соединение с базой данных.
-     * @param guid - Индивидуальный идентификатор сообщения.
-     * @param nameMethod - Название метода для запроса, например "exportOrgRegistry".
-     * @param dateMessage - Дата и время сообщения.
-     * @param nameTypeEn - Тип сообщения "Запрос" или "Ответ".
-     * @param soapMessage - Сообщение целиком.
-     * @param stateMessage - Статус сообщения, возможно описание ошибки.
-     * @return java.sql.PreparedStatement для базы данных, так как это является процедурой для H2.
-     * @throws Exception
-     */
-    void setTableContent(java.sql.Connection con,
-                                      String guid,
-                                      String nameMethod,
-                                      String dateMessage,
-                                      String nameTypeEn,
-                                      java.io.InputStream soapMessage,
-                                      String stateMessage) throws Exception {
-
-        java.sql.PreparedStatement ps = con.prepareStatement(
-                "INSERT  INTO OBMEN_OPERATION(" +
-                        "ID, " +
-                        "AKT_ID, " +
-                        "DATE, " +
-                        "TYPE_OPERATION, " +
-                        "SOAPMESSAGE, " +
-                        "STATE_MESSAGE) " +
-                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
-
-        ps.setInt(1, getAktID(con, guid, nameMethod));
-        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
-        ps.setInt(3, getTypeOperation(con, nameTypeEn));
-        ps.setBlob(4, soapMessage);
-        ps.setString(5, stateMessage);
-        ps.executeUpdate();
-        if (!ps.isClosed()) ps.close();
-    }
 
     /**
      * Метод возвращает "ID" из справочника "SPR_TYPE_OPERATION".
@@ -140,5 +101,44 @@ public class setMessageStoredProcedure {
             if (!rs.isClosed()) rs.close();
         } catch (Exception e) {
         }
+    }
+
+    /**
+     * Метод добавляет данные в таблицы, добавление сообщения.
+     * @param con - Соединение с базой данных.
+     * @param guid - Индивидуальный идентификатор сообщения.
+     * @param nameMethod - Название метода для запроса, например "exportOrgRegistry".
+     * @param dateMessage - Дата и время сообщения.
+     * @param nameTypeEn - Тип сообщения "Запрос" или "Ответ".
+     * @param soapMessage - Сообщение целиком.
+     * @param stateMessage - Статус сообщения, возможно описание ошибки.
+     * @return java.sql.PreparedStatement для базы данных, так как это является процедурой для H2.
+     * @throws Exception
+     */
+    void setTableContent(java.sql.Connection con,
+                                      String guid,
+                                      String nameMethod,
+                                      String dateMessage,
+                                      String nameTypeEn,
+                                      java.io.InputStream soapMessage,
+                                      String stateMessage) throws Exception {
+
+        java.sql.PreparedStatement ps = con.prepareStatement(
+                "INSERT  INTO OBMEN_OPERATION(" +
+                        "ID, " +
+                        "AKT_ID, " +
+                        "DATE, " +
+                        "TYPE_OPERATION, " +
+                        "SOAPMESSAGE, " +
+                        "STATE_MESSAGE) " +
+                        "VALUES(DEFAULT, ?, ?, ?, ?, ?)");
+
+        ps.setInt(1, getAktID(con, guid, nameMethod));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateMessage));
+        ps.setInt(3, getTypeOperation(con, nameTypeEn));
+        ps.setBlob(4, soapMessage);
+        ps.setString(5, stateMessage);
+        ps.executeUpdate();
+        if (!ps.isClosed()) ps.close();
     }
 }

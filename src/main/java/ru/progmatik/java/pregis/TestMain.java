@@ -3,6 +3,8 @@ package ru.progmatik.java.pregis;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
+import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95DAO;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
@@ -10,10 +12,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by andryha on 08.03.2016.
@@ -23,23 +26,33 @@ public class TestMain {
     private static String mes = "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
             "<S:Header><ISRequestHeader xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\"><Date>2016-03-08T23:21:56.517+06:00</Date><MessageGUID>7b824087-412b-4aa5-9b99-8afbd52bdb15</MessageGUID></ISRequestHeader></S:Header><S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>";
 
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException {
 
-        System.out.println(InetAddress.getLocalHost().getHostName());
-        System.out.println(Inet4Address.getLocalHost().getHostAddress());
-
-        Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
-        for (; n.hasMoreElements();)
-        {
-            NetworkInterface e = n.nextElement();
-
-            Enumeration<InetAddress> a = e.getInetAddresses();
-            for (; a.hasMoreElements();)
-            {
-                InetAddress addr = a.nextElement();
-                System.out.println("  " + addr.getHostAddress());
-            }
+        ReferenceNSI95DAO dao = new ReferenceNSI95DAO();
+        ArrayList<ReferenceItemDataSet> allItems = dao.getAllItems();
+        for (ReferenceItemDataSet item : allItems) {
+            System.out.println(item);
         }
+
+
+//        System.out.println(ConnectionDB.instance().tableExist("SPR_NSI95"));
+//        System.out.println(DocumentType.BIRTH_CERTIFICATE.ordinal());
+
+//        System.out.println(InetAddress.getLocalHost().getHostName());
+//        System.out.println(Inet4Address.getLocalHost().getHostAddress());
+//
+//        Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+//        for (; n.hasMoreElements();)
+//        {
+//            NetworkInterface e = n.nextElement();
+//
+//            Enumeration<InetAddress> a = e.getInetAddresses();
+//            for (; a.hasMoreElements();)
+//            {
+//                InetAddress addr = a.nextElement();
+//                System.out.println("  " + addr.getHostAddress());
+//            }
+//        }
 
 //        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 //        dbf.setNamespaceAware(true);

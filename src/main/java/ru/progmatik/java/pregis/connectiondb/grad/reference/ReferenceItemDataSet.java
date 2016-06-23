@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.reference;
+package ru.progmatik.java.pregis.connectiondb.grad.reference;
 
 /**
  * Класс, описывает объект справочника полученного или готового для записи в БД ГРАДа.
@@ -8,7 +8,7 @@ public class ReferenceItemDataSet {
     private Integer id;
     private String name;
     private String code;
-    private String uiid;
+    private String guid;
     private String groupName;
     private Integer codeParent;
 
@@ -16,15 +16,21 @@ public class ReferenceItemDataSet {
 
     }
 
-    public ReferenceItemDataSet(String name, String code, String uiid) {
+    public ReferenceItemDataSet(String name, String code, String guid) {
         this.name = name;
         this.code = code;
-        this.uiid = uiid;
+        this.guid = guid;
     }
 
-    public ReferenceItemDataSet(Integer id, String name, String code, String uiid, String groupName, Integer codeParent) {
-        this(name, code, uiid);
+    public ReferenceItemDataSet(Integer id, String name, String code, String guid, String groupName, Integer codeParent) {
+        this(name, code, guid);
         this.id = id;
+        this.groupName = groupName;
+        this.codeParent = codeParent;
+    }
+
+    public ReferenceItemDataSet(String name, String code, String guid, String groupName, Integer codeParent) {
+        this(name, code, guid);
         this.groupName = groupName;
         this.codeParent = codeParent;
     }
@@ -53,12 +59,12 @@ public class ReferenceItemDataSet {
         this.code = code;
     }
 
-    public String getUiid() {
-        return uiid;
+    public String getGuid() {
+        return guid;
     }
 
-    public void setUiid(String uiid) {
-        this.uiid = uiid;
+    public void setGuid(String guid) {
+        this.guid = guid;
     }
 
     public String getGroupName() {

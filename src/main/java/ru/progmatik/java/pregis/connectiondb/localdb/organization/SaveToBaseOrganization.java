@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.organization;
+package ru.progmatik.java.pregis.connectiondb.localdb.organization;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;

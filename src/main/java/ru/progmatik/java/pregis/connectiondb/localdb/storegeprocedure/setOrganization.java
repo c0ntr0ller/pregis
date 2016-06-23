@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.storegeprocedure;
+package ru.progmatik.java.pregis.connectiondb.localdb.storegeprocedure;
 
 import java.sql.SQLException;
 

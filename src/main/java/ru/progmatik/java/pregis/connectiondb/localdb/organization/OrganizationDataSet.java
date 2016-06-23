@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.organization;
+package ru.progmatik.java.pregis.connectiondb.localdb.organization;
 
 /**
  * Класс, работает с БД.

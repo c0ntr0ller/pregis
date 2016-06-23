@@ -50,10 +50,11 @@ function getWebConnect() {
 
 function sendMessage(message) {
     var valueForm = "";
+    // sendMessage(message, "");
     if (ws.readyState != 1) location.reload(true);
-        if (document.getElementById(message) !== null) {
-            valueForm = document.getElementById(message).value;
-        }
+    //     if (document.getElementById(message) !== null) {
+    //         valueForm = document.getElementById(message).value;
+    //     }
     var msgJSON = {
         command: message,
         value: valueForm
@@ -61,6 +62,7 @@ function sendMessage(message) {
     // ws.send(message);
     ws.send(JSON.stringify(msgJSON));
 };
+
 function setFailedLabelText() {
     $('.label-text').attr("class", "label-text failed");
 //    $('.show-state .img').css("background-image", "url('images/fail66px.png')");

@@ -29,9 +29,9 @@ $(function () {
         });
     });
 
-    $('#exit').click(function () {
-        exitRequest();
-    });
+    // $('#exit').click(function () {
+    //     exitRequest();
+    // });
 
     $('.button-state').click(function () {
         hideState();
@@ -47,6 +47,17 @@ $(function () {
     });
     $('.other-error').click(function () {
         showErrorList();
+    });
+    $('.thumb').click(function () { // вызов отправки операции
+        var message = $(this).attr("id");
+        if (message === undefined) {
+        //    Доработать вывод сообщения "модуль в разработке"
+        } else if (message === "exit"){
+            exitRequest();
+        } else {
+            console.log(message);
+            sendMessage(message);
+        }
     });
 });
 function exitRequest() {
@@ -76,7 +87,7 @@ function alignCenter(elem) {
     elem.css({ // назначение координат left и top
         left: ($(window).width() - elem.width()) / 2 + 'px',
         top: ($(window).height() - elem.height()) / 2 + 'px'
-    })
+    });
 };
 function showButton() {
     $('.button-state').show();

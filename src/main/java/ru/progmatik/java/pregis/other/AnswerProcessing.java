@@ -49,10 +49,10 @@ public class AnswerProcessing {
      * @param exception ошибка.
      */
 //    public void sendErrorToClient(ClientService clientService, Logger logger, PreGISException exception) {
-    public void sendErrorToClient(String methodName, Logger logger, Exception exception) {
+    public void sendErrorToClient(String methodName, String nameOperation, Logger logger, Exception exception) {
         clientService.sendMessage("::setFailed()");
-        clientService.sendMessage("Возникла ошибка!\nОперация прервана!\n" +
-                "Текст ошибки: " + exception.getMessage());
+        clientService.sendMessage("Возникла ошибка!\nОперация " + nameOperation + "прервана!");
+        clientService.sendMessage("Текст ошибки: " + exception.getMessage());
 //        clientService.sendMessage("::setFailed()");
         logger.error(methodName, exception);
         exception.printStackTrace();
@@ -104,14 +104,14 @@ public class AnswerProcessing {
         saveToBase.setResult(headerResponse, nameMethod, errorMessage);
 
         if (errorMessage != null) {
-            clientService.sendMessage("::setFailed()");
+//            clientService.sendMessage("::setFailed()");
             clientService.sendMessage(TextForLog.ERROR_MESSAGE + nameMethod);
             clientService.sendMessage(TextForLog.ERROR_CODE + errorMessage.getErrorCode());
             clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + errorMessage.getDescription());
             logger.error(nameMethod +": " + errorMessage.getErrorCode() + "\n" +
                     errorMessage.getDescription()  + "\n" + errorMessage.getStackTrace());
         } else {
-            clientService.sendMessage("::setOkLabelText()");
+//            clientService.sendMessage("::setOkLabelText()");
             clientService.sendMessage(TextForLog.DONE_RESPONSE + nameMethod);
             logger.info("Successful.");
         }

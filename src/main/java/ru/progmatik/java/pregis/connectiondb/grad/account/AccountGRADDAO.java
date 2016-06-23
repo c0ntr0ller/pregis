@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb.grad.account;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.ID;
 import ru.gosuslugi.dom.schema.integration.services.house_management.AccountIndType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.AccountType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
@@ -10,9 +11,13 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +25,8 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
@@ -34,6 +41,20 @@ public class AccountGRADDAO {
 
     public AccountGRADDAO(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
+    }
+
+    private static XMLGregorianCalendar getCalendar(Date date) {
+
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
+        XMLGregorianCalendar dateXml = null;
+
+        try {
+            dateXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+        return dateXml;
     }
 
     public void getAccountList(int houseID, ExportHouseResult houseData) {
@@ -151,6 +172,7 @@ public class AccountGRADDAO {
 
         ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID);
         ArrayList<Rooms> roomsList = getRooms(houseID);
+        ReferenceNSI95 nsi95 = new ReferenceNSI95(answerProcessing);
 
         LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 
@@ -193,6 +215,11 @@ public class AccountGRADDAO {
 //                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
                         account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
 //                        account.getPayerInfo().getInd().setID(); // подгрузить справочник NSI 95
+                        account.getPayerInfo().getInd().setID(new ID());
+                        account.getPayerInfo().getInd().getID().setType(nsi95.getNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                        account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                        account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                        account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
 
                     } else {
 //                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
@@ -222,8 +249,6 @@ public class AccountGRADDAO {
             }
         }
     }
-
-
 
     /**
      * Метод, проверяет, если строка пустая или null, то вернет 0.

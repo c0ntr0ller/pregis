@@ -59,7 +59,7 @@ public class ExportOrgRegistry {
             return null;
 
         } catch (PreGISException e) {
-            answerProcessing.sendErrorToClient("callExportOrgRegistry(): ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callExportOrgRegistry(): ", "", LOGGER, e);
             return null;
         }
 

@@ -43,6 +43,11 @@ public class AccountGRADDAO {
         this.answerProcessing = answerProcessing;
     }
 
+    /**
+     * Метод, приводит дату в нужный формат.
+     * @param date дата для обработки.
+     * @return дата в пригодном формате.
+     */
     private static XMLGregorianCalendar getCalendar(Date date) {
 
         GregorianCalendar c = new GregorianCalendar();
@@ -190,7 +195,7 @@ public class AccountGRADDAO {
 //                - если счет к закрытию указать AccountGUID и isClosed.
                 if (basicInformation.getNumberLS().equals(roomsList.get(i).getNumberLS())) {
                     ImportAccountRequest.Account account = new ImportAccountRequest.Account();
-//                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно?
+//                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно? добавил при отправки нового счета
                     account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
                     account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()));
                     account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()));
@@ -214,8 +219,8 @@ public class AccountGRADDAO {
 //                        account.getPayerInfo().getInd().setSex(); // не указан
 //                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
                         account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
-//                        account.getPayerInfo().getInd().setID(); // подгрузить справочник NSI 95
-                        account.getPayerInfo().getInd().setID(new ID());
+
+                        account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
                         account.getPayerInfo().getInd().getID().setType(nsi95.getNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
                         account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
                         account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());

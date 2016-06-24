@@ -18,6 +18,12 @@ import java.util.regex.Pattern;
  */
 public class HouseGRADDAO {
 
+    private static final int HOUSE_FIAS = 1; // Код дома по ФИАС
+    private static final int HOUSE_ID_GRAD_MKD = 14; // ИД дома из БД ГРАД
+    private static final int HOUSE_ID_GRAD_JD = 10; // ИД дома из БД ГРАД
+    private static final int HOUSE_UNIQUE_NUMBER_MKD = 18; // Уникальный номер присвоенный ГИС ЖКХ для МКД
+    private static final int HOUSE_UNIQUE_NUMBER_JD = 14; // Уникальный номер присвоенный ГИС ЖКХ для ЖД
+
     /**
      * Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС и ИД дома в БД ГРАД, затем добавляет его в Map.
      *
@@ -31,8 +37,8 @@ public class HouseGRADDAO {
         LinkedHashMap<String, Integer> mapFIAS = new LinkedHashMap<String, Integer>();
 
         for (String itemListHouse : allListHouseData) {
-            if (getAllData(itemListHouse)[1] != null && !getAllData(itemListHouse)[1].isEmpty()) {
-                mapFIAS.put(getAllData(itemListHouse)[1], Integer.valueOf(getAllData(itemListHouse)[14]));
+            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
+                mapFIAS.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
             }
         }
         if (mapFIAS.size() == 0)
@@ -52,8 +58,8 @@ public class HouseGRADDAO {
         LinkedHashMap<String, Integer> mapJd = new LinkedHashMap<>();
         if (listAllData.size() > 1) { // Если в листе вообще есть данные тогда
             for (String itemData : listAllData) {
-                if (getAllData(itemData)[1] != null && !getAllData(itemData)[1].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
-                    mapJd.put(getAllData(itemData)[1], Integer.valueOf(getAllData(itemData)[10]));
+                if (getAllData(itemData)[HOUSE_FIAS] != null && !getAllData(itemData)[HOUSE_FIAS].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
+                    mapJd.put(getAllData(itemData)[HOUSE_FIAS], Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]));
                 }
             }
         } else return null; // если в листе нет данных вернем null
@@ -75,17 +81,17 @@ public class HouseGRADDAO {
 
 //        Получение данных из БД о МКД.
         for (String itemListHouse : allListMKD) {
-            if (getAllData(itemListHouse)[1] != null && !getAllData(itemListHouse)[1].isEmpty() &&
-                    getAllData(itemListHouse)[18] != null && !getAllData(itemListHouse)[18].isEmpty()) {
-                mapAllHouseWithIdGis.put(getAllData(itemListHouse)[1], Integer.valueOf(getAllData(itemListHouse)[14]));
+            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty() &&
+                    getAllData(itemListHouse)[HOUSE_UNIQUE_NUMBER_MKD] != null && !getAllData(itemListHouse)[HOUSE_UNIQUE_NUMBER_MKD].isEmpty()) {
+                mapAllHouseWithIdGis.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
             }
         }
 
 //        Получение данных из БД о ЖД.
         for (String itemData : listAllJD) {
             if (getAllData(itemData)[1] != null && !getAllData(itemData)[1].isEmpty() &&
-                    getAllData(itemData)[14] != null && !getAllData(itemData)[14].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
-                mapAllHouseWithIdGis.put(getAllData(itemData)[1], Integer.valueOf(getAllData(itemData)[10]));
+                    getAllData(itemData)[HOUSE_UNIQUE_NUMBER_JD] != null && !getAllData(itemData)[HOUSE_UNIQUE_NUMBER_JD].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
+                mapAllHouseWithIdGis.put(getAllData(itemData)[HOUSE_FIAS], Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]));
             }
         }
 
@@ -112,7 +118,7 @@ public class HouseGRADDAO {
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
             String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, ?, ?, ?, ?)}";
             try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
-                cstmt.setInt(1, houseId);
+                cstmt.setInt(2, houseId);
                 cstmt.setString(4, houseUniqueNumber);
                 System.out.println(houseId + " : " + houseUniqueNumber);
                 int codeReturn = cstmt.executeUpdate();
@@ -147,7 +153,7 @@ public class HouseGRADDAO {
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
             String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, ?, ?, ?, ?)}";
             try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
-                cstmt.setInt(2, abonentId);
+                cstmt.setInt(1, abonentId);
                 cstmt.setString(4, apartmentUniqueNumber);
                 int codeReturn = cstmt.executeUpdate();
                 System.err.println("Apartment code return: " + codeReturn);

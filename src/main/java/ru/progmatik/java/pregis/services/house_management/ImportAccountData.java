@@ -37,7 +37,7 @@ public class ImportAccountData {
 
     }
 
-    private void sendImportAccountData(ImportAccountRequest.Account account) {
+    private void sendImportAccountData(ImportAccountRequest request) {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
@@ -48,39 +48,72 @@ public class ImportAccountData {
         ImportResult result;
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.importAccountData(getImportAccountRequest(account), headerRequest, resultHolder);
+            result = port.importAccountData(request, headerRequest, resultHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
             return;
-        } catch (PreGISException e) {
-            answerProcessing.sendErrorToClient("sendImportAccountData(): ", "\"Синхронизация лицевых счетов\" ", LOGGER, e);
-            return;
+//        } catch (PreGISException e) {
+//            answerProcessing.sendErrorToClient("sendImportAccountData(): ", "\"Синхронизация лицевых счетов\" ", LOGGER, e);
+//            return;
         }
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHolder.value, result.getErrorMessage(), LOGGER);
     }
 
-    private ImportAccountRequest getNewImportAccountRequest() {
-        ImportAccountRequest request = null;
+    /**
+     * Метод, формирует запрос для обновления данных абонента.
+     * @param account данные абонента.
+     * @return сформированный запрос.
+     * @throws PreGISException
+     */
+    private ImportAccountRequest getUpdateImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
+
+        setIsAccount(account);
+
+        return getImportAccountRequest(account);
+    }
+
+    /**
+     * Метод, создаёт данные для нового лицевого счета.
+     *
+     * @param account данные абонента.
+     * @return сформированный запрос.
+     */
+    private ImportAccountRequest getNewImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
 
 //        Дописать getImportAccountRequest
 //        TODO
+        setIsAccount(account);
+
+//        account.setCreationDate(OtherFormat.getDateNow()); // попробую без даты
+        account.setAccountGUID(null);
+        account.setTransportGUID(OtherFormat.getRandomGUID()); // добавлять только если это новый элемент.
+
+        return getImportAccountRequest(account);
+    }
+
+    /**
+     * Метод, формирует запрос для отправки
+     *
+     * @param account информацию о лицевом счете абонента
+     * @return сформированный запрос.
+     */
+    private ImportAccountRequest getImportAccountRequest(ImportAccountRequest.Account account) {
+//        Если нужно закрыть счет, то закрываем где нибудь затем передаём в этот метод
+        ImportAccountRequest request = new ImportAccountRequest();
+        request.setId(OtherFormat.getId());
+
+        request.getAccount().add(account);
 
         return request;
     }
 
     /**
-     * Метод, формирует запрос для отправки
-     * @param account информацию о лицевом счете абонента
-     * @return сформированный запрос.
+     * Метод, задаёт статус компании.
+     * @param account абонент.
      * @throws PreGISException
      */
-    private ImportAccountRequest getImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
-
-        ImportAccountRequest request = new ImportAccountRequest();
-        request.setId(OtherFormat.getId());
-
-//        account.setTransportGUID(OtherFormat.getRandomGUID()); // добавлять только если это новый элемент.
+    private void setIsAccount(ImportAccountRequest.Account account) throws PreGISException {
 
         if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
             account.setIsRSOAccount(true);
@@ -89,9 +122,5 @@ public class ImportAccountData {
             account.setIsUOAccount(true);
             account.setIsRSOAccount(false);
         }
-//        account.setLivingPersonsNumber((byte) 2);
-        request.getAccount().add(account);
-
-        return request;
     }
 }

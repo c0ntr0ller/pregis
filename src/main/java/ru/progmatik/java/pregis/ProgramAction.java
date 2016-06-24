@@ -62,15 +62,15 @@ public class ProgramAction {
 
             ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
 
-            if (exportOrgRegistryResult != null) {
+            if (exportOrgRegistryResult != null || exportOrgRegistryResult.getErrorMessage() != null) {
 
                 ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
 
-                if (dataProviderResult != null) {
+                if (dataProviderResult != null || dataProviderResult.getErrorMessage() != null) {
                     if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
                         SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
                         saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-                        answerProcessing.sendMessageToClient("SenderID успешно получен!");
+                        answerProcessing.sendOkMessageToClient("SenderID успешно получен!");
                     }
                 } else {
                     answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");

@@ -17,18 +17,59 @@ import java.util.Map;
 public class ReferenceNSIDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ReferenceNSIDAO.class);
-    private final String tableName;
+    private static final String TABLE_NAME_NSI = "SPR_NSI";
+    private static final String TABLE_NAME_NSI_DOWNLOAD = "NSI_FOR_DOWNLOAD";
+    private static final String TABLE_NAME_SPR_NSI_TYPE = "SPR_NSI_TYPE";
+
+    private static final String SQL_CREATE_TABLE_NSI = "CREATE TABLE IF NOT EXISTS SPR_NSI (" +
+            "ID identity not null primary key, " +
+            "NAME varchar(255) not null, " +
+            "CODE varchar(20) not null, " +
+            "GUID varchar(40), " +
+            "GROUP_NAME varchar(255), " +
+            "CODE_PARENT varchar(20)); " +
+            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI IS 'Справочник НСИ ГИС ЖКХ." +
+            "COMMENT ON COLUMN SPR_NSI.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN SPR_NSI.NAME IS 'Наименование поля элемента справочника.'; " +
+            "COMMENT ON COLUMN SPR_NSI.CODE IS 'Код элемента справочника, уникальный в пределах справочника.'; " +
+            "COMMENT ON COLUMN SPR_NSI.GUID IS 'Глобально-уникальный идентификатор элемента справочника ГИС ЖКХ.'; " +
+            "COMMENT ON COLUMN SPR_NSI.GROUP_NAME IS 'Название группы, если такая имеется, которая объединяет элементы справочника.'; " +
+            "COMMENT ON COLUMN SPR_NSI.CODE_PARENT IS 'Код родительского справочника.';";
+
+    private static final String SQL_CREATE_TABLE_NSI_DOWNLOAD = "CREATE TABLE IF NOT EXISTS NSI_FOR_DOWNLOAD (" +
+            "ID identity not null primary key, " +
+            "CODE varchar(20) not null, " +
+            "WORD_FOR_EXTRACT varchar(255) not null, " +
+            "NSI_TYPE varchar(20) not null;" +
+            "COMMENT ON TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD IS '{Хранит коды справочников и название элементов для извлечения;" +
+            "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.CODE IS 'Код справочника, который необходимо загрузить.'; " +
+            "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.WORD_FOR_EXTRACT IS 'Для извлечения нужного элемента из справочника, используется ключевое слово.';" +
+            "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
+            "ALTER TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD ADD FOREIGN KEY (NSI_TYPE) REFERENCES \"PUBLIC\".NSI_TYPE(ID);";
+
+    private static final String SQL_CREATE_TABLE_SPR_NSI_TYPE = "CREATE TABLE IF NOT EXISTS SPR_NSI_TYPE (" +
+            "ID identity not null primary key, " +
+            "NSI_TYPE varchar(20) not null;" +
+            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI_TYPE IS '{Хранит типы справочников ГИС ЖКХ. НСИ или НСИРАО;" +
+            "COMMENT ON COLUMN SPR_NSI_TYPE.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN SPR_NSI_TYPE.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.';";
+
 
     /**
-     * Конструктор, проверяет, если таблицы с таким именем нет, то он её создаёт, согласно скрипта, который получил.
-     * @param tableName имя таблицы
-     * @param sqlCreateTable SQL запрос, в котором описано создание таблицы.
+     * Конструктор, проверяет, если таблицы с таким именем нет, то он её создаёт.
      * @throws SQLException
      */
-    public ReferenceNSIDAO(String tableName, String sqlCreateTable) throws SQLException {
-        this.tableName = tableName;
-        if (!ConnectionDB.instance().tableExist(tableName.toUpperCase())) {
-            createTableNSI(sqlCreateTable);
+    public ReferenceNSIDAO() throws SQLException {
+
+        if (!ConnectionDB.instance().tableExist(TABLE_NAME_SPR_NSI_TYPE.toUpperCase())) {
+            createTableNSI(SQL_CREATE_TABLE_SPR_NSI_TYPE);
+        }
+        if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI_DOWNLOAD.toUpperCase())) {
+            createTableNSI(SQL_CREATE_TABLE_NSI_DOWNLOAD);
+        }
+        if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI.toUpperCase())) {
+            createTableNSI(SQL_CREATE_TABLE_NSI);
         }
     }
 
@@ -56,7 +97,7 @@ public class ReferenceNSIDAO {
         if (dataSet.getId() == null) { // проверяем если у элемента нет id, т.е. его нет в базе, то добавляем
             Connection connection = ConnectionDB.instance().getConnectionDB();
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO " + tableName + "(NAME, CODE, GUID, GROUP_NAME, CODE_PARENT) VALUES(?, ? ,? ,?, ?)");
+                    "INSERT INTO SPR_NSI(NAME, CODE, GUID, GROUP_NAME, CODE_PARENT) VALUES(?, ? ,? ,?, ?)");
             ps.setString(1, dataSet.getName());
             ps.setString(2, dataSet.getCode());
             ps.setString(3, dataSet.getGuid());
@@ -81,7 +122,7 @@ public class ReferenceNSIDAO {
      */
     private void updateItem(ReferenceItemDataSet newDataSet) throws SQLException {
         Connection connection = ConnectionDB.instance().getConnectionDB();
-        PreparedStatement ps = connection.prepareStatement("UPDATE " + tableName + " SET NAME = ?, GUID = ?, " +
+        PreparedStatement ps = connection.prepareStatement("UPDATE SPR_NSI SET NAME = ?, GUID = ?, " +
                 "GROUP_NAME = ?, CODE_PARENT = ? WHERE ID = ? AND CODE = ?");
         ps.setString(1, newDataSet.getName());
         ps.setString(2, newDataSet.getGuid());
@@ -106,7 +147,7 @@ public class ReferenceNSIDAO {
         ArrayList<ReferenceItemDataSet> dataList = new ArrayList<>();
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName)) {
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM SPR_NSI")) {
 
             while (resultSet.next()) {
                 dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
@@ -127,7 +168,7 @@ public class ReferenceNSIDAO {
         Map<Integer, ReferenceItemDataSet> dataList = new HashMap<Integer, ReferenceItemDataSet>();
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName)) {
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM SPR_NSI")) {
 
             while (resultSet.next()) {
                 dataList.put(Integer.valueOf(resultSet.getString(3)), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
@@ -135,5 +176,20 @@ public class ReferenceNSIDAO {
             }
         }
         return dataList;
+    }
+
+    public Map<String, ReferenceItemDataSet> getMapItemsCodeParent(int codeParent) throws SQLException {
+
+        Map<String, ReferenceItemDataSet> dataList = new HashMap<String, ReferenceItemDataSet>();
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM SPR_NSI WHERE CODE_PARENT=" + codeParent)) {
+
+            while (resultSet.next()) {
+                dataList.put(resultSet.getString(3), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+            }
+            return dataList;
+        }
     }
 }

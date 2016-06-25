@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.clientmessagehandler;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.signet.RequestSiginet;
+import ru.progmatik.java.pregis.signet.bcsign.command.SignCommand;
 import ru.progmatik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.namespace.QName;
@@ -37,7 +38,8 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
         RequestSiginet requestSiginet = new RequestSiginet();
-        DeleteNamespace deleteNamespace = new DeleteNamespace();
+        SignCommand signCommand = new SignCommand();
+//        DeleteNamespace deleteNamespace = new DeleteNamespace();
         SOAPMessage msg = messageContext.getMessage();
 
         Boolean outboundProperty = (Boolean) messageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
@@ -53,19 +55,28 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
 //                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
 
-                if (isSignIDState(msg))
-                    msg = new SendFileToSign().sendMessageForSign(msg);
+
+                if (isSignIDState(msg)) {
+//                    Подпись с помощью BouncyCastle
+                    msg = signCommand.execute(msg.getSOAPPart().getEnvelope().getOwnerDocument());
+//                    Подпись с помощью веб-сервера TrustedJava
+//                    msg = new SendFileToSign().sendMessageForSign(msg);
+                }
+
 //                requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
 
 //                msg = requestSiginet.signRequest(msg.getSOAPPart().getEnvelope().getOwnerDocument());
                 msg.getSOAPPart().normalizeDocument();
                 msg.saveChanges();
                 messageContext.setMessage(msg);
+
 //                Debug
-                System.out.println("\nOutbound message:");
-                printHeaders(msg.getMimeHeaders());
-                msg.writeTo(System.out);
-                System.out.println();
+                if (LOGGER.isDebugEnabled()) {
+                    System.out.println("\nOutbound message:");
+                    printHeaders(msg.getMimeHeaders());
+                    msg.writeTo(System.out);
+                    System.out.println();
+                }
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
                     msg.writeTo(outputStream);
@@ -77,8 +88,6 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
             }
 
         } else {
-            System.out.println("\nInbound message:");
-
 
             try {
 
@@ -87,12 +96,15 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 }
 
 //            Вывод сообщение запроса
-                System.out.println("\nMessage: \n");
-                msg.writeTo(System.out);
-                System.out.println("\n");
+                if (LOGGER.isDebugEnabled()) {
+                    System.out.println("\nInbound message:");
+//                  Вывод заголовка сообщения
+                    printHeaders(msg.getMimeHeaders());
+                    System.out.println("\nMessage: \n");
+                    msg.writeTo(System.out);
+                    System.out.println("\n");
+                }
 
-//            Вывод заголовка сообщения
-//            printHeaders(msg.getMimeHeaders());
 
             } catch (Exception e) {
                 LOGGER.error("ClientMessageHandler: ", e);

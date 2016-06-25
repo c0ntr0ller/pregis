@@ -3,16 +3,17 @@ package ru.progmatik.java.pregis.signet;
 import org.apache.log4j.Logger;
 import ru.CryptoPro.JCP.JCP;
 import ru.CryptoPro.JCP.KeyStore.HDImage.HDImageStore;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
+import ru.progmatik.java.pregis.signet.bcsign.jce.KeyLoader;
+import ru.progmatik.java.pregis.signet.bcsign.jce.KeyStoreUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
+import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -26,6 +27,8 @@ public class Configure {
     private static String hdiPathConfig = HDImageStore.getDir();
     private static String keyStoryPath = ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.path");
     private static String trustStoryPath = ResourceBundle.getBundle("application").getString("config.cryptoPro.trustStore.path");
+
+    private static final Properties properties;
 
     /**
      * Метод инициализации криптопровайдера и указания каталога ключей.
@@ -41,6 +44,7 @@ public class Configure {
 //            ru.CryptoPro.JCPxml.XmlInit.init();
 
         setPathAuto();
+        properties = ResourcesUtil.instance().getProperties();
 
     }
 
@@ -112,6 +116,27 @@ public class Configure {
         keyStore.load(null, null);
 
         return keyStore;
+    }
+
+    /**
+     * Метод, загружает приватный ключ из хранилища PKCS#12 (p12, pfx).
+     * @return приваьный ключ.
+     * @throws GeneralSecurityException
+     */
+    public static KeyStore.PrivateKeyEntry getPrivateKeyFromPfx() throws GeneralSecurityException {
+
+        char[] storePassword = properties.get("config.pfx.keyStore.password").toString().toCharArray();
+        String keyAlias = properties.get("config.pfx.keyStore.alias").toString();
+        File pfxFile = new File(properties.get("config.pfx.keyStore.path").toString());
+
+        KeyStore keyStore = KeyStore.getInstance("pkcs12", "BC");
+        KeyStoreUtils.loadKeyStoreFromFile(keyStore, pfxFile, storePassword);
+
+        KeyStore.PrivateKeyEntry keyEntry = KeyLoader.loadPrivateKey(keyStore, keyAlias, null);
+        if (keyEntry == null) {
+            throw new KeyException("Key not found: " + keyAlias);
+        }
+        return keyEntry;
     }
 
     /**

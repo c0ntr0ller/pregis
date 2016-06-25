@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis;
 
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -13,10 +14,13 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.signet.Configure;
+import ru.progmatik.java.pregis.signet.bcsign.security.XmlDSignTools;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
 import ru.progmatik.java.web.servlets.web.LoginClient;
 import ru.progmatik.java.web.servlets.web.MainServlet;
 import ru.progmatik.java.web.servlets.web.IndexServlet;
+
+import java.security.Security;
 
 public class Main {
 
@@ -53,7 +57,8 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 
 
-//        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastleProvider());
+        XmlDSignTools.init("BC");
 //
 //        System.setProperty("javax.net.debug", "all");
 

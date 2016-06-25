@@ -19,20 +19,19 @@
         <cryptopro-jcp.version>2.0.38481</cryptopro-jcp.version>
         <org.eclipse.jetty.version>9.3.9.v20160517</org.eclipse.jetty.version>
         <!--<org.eclipse.jetty.version>9.3.0.M0</org.eclipse.jetty.version>-->
-        <cxf.version>3.1.4</cxf.version>
         <slf4j.version>1.7.14</slf4j.version>
     </properties>
 
     <dependencies>
 
-        <dependency>
-        <groupId>crypto-pro</groupId>
-        <artifactId>JCP</artifactId>
-        <version>${cryptopro-jcp.version}</version>
-        <scope>system</scope>
-        <systemPath>${project.basedir}/lib/JCP.jar</systemPath>
-        <type>jar</type>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>crypto-pro</groupId>-->
+        <!--<artifactId>JCP</artifactId>-->
+        <!--<version>${cryptopro-jcp.version}</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/JCP.jar</systemPath>-->
+        <!--<type>jar</type>-->
+        <!--</dependency>-->
 
         <!--<dependency>-->
         <!--<groupId>crypto-pro</groupId>-->
@@ -79,11 +78,11 @@
             <version>1.6.19</version>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>com.googlecode.xades4j</groupId>-->
-        <!--<artifactId>xades4j</artifactId>-->
-        <!--<version>1.3.2</version>-->
-        <!--</dependency>-->
+        <dependency>
+        <groupId>com.googlecode.xades4j</groupId>
+        <artifactId>xades4j</artifactId>
+        <version>1.3.2</version>
+        </dependency>
 
         <!--<dependency>-->
         <!--<groupId>org.apache.santuario</groupId>-->

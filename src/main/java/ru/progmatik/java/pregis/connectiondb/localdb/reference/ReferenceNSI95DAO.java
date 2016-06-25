@@ -32,7 +32,8 @@ public class ReferenceNSI95DAO {
     private final ReferenceNSIDAO nsiDao;
 
     public ReferenceNSI95DAO() throws SQLException {
-        nsiDao = new ReferenceNSIDAO(SQL_TABLE_NAME, SQL_CREATE_TABLE);
+        nsiDao = new ReferenceNSIDAO();
+//        nsiDao = new ReferenceNSIDAO(SQL_TABLE_NAME, SQL_CREATE_TABLE);
 //        if (!ConnectionDB.instance().tableExist(SQL_TABLE_NAME)) {
 //            createTableNSI95();
 //        }

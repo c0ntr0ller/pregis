@@ -3,7 +3,6 @@ package ru.progmatik.java.pregis.clientmessagehandler;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.signet.RequestSiginet;
 import ru.progmatik.java.pregis.signet.bcsign.command.SignCommand;
-import ru.progmatik.java.pregis.signet.del.DeleteNamespace;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeader;
@@ -71,12 +70,12 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 messageContext.setMessage(msg);
 
 //                Debug
-                if (LOGGER.isDebugEnabled()) {
+//                if (LOGGER.isDebugEnabled()) {
                     System.out.println("\nOutbound message:");
                     printHeaders(msg.getMimeHeaders());
                     msg.writeTo(System.out);
                     System.out.println();
-                }
+//                }
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
                     msg.writeTo(outputStream);
@@ -96,14 +95,14 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 }
 
 //            Вывод сообщение запроса
-                if (LOGGER.isDebugEnabled()) {
+//                if (LOGGER.isDebugEnabled()) {
                     System.out.println("\nInbound message:");
 //                  Вывод заголовка сообщения
                     printHeaders(msg.getMimeHeaders());
                     System.out.println("\nMessage: \n");
                     msg.writeTo(System.out);
                     System.out.println("\n");
-                }
+//                }
 
 
             } catch (Exception e) {

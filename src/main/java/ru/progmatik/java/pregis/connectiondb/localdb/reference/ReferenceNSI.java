@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb.localdb.reference;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.NsiElementFieldType;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementStringFieldType;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementType;
 import ru.gosuslugi.dom.schema.integration.base.NsiRef;
@@ -87,20 +88,26 @@ public class ReferenceNSI {
                 if (!mapItems.containsKey(itemNsi.getCode()) ||
                         !mapItems.get(itemNsi.getCode()).getGuid().equals(itemNsi.getGUID())) {
 
-                    NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemNsi.getNsiElementField().get(0);
-                    ReferenceItemDataSet dataSet = null;
-                    if (mapItems.containsKey(itemNsi.getCode())) {
-                        dataSet = mapItems.get(itemNsi.getCode());
-                    } else {
-                        dataSet = new ReferenceItemDataSet();
+                    for (NsiElementFieldType itemFieldType : itemNsi.getNsiElementField()) {
+
+                        if (itemFieldType instanceof NsiElementStringFieldType) {
+
+                            NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemFieldType;
+                            ReferenceItemDataSet dataSet = null;
+                            if (mapItems.containsKey(itemNsi.getCode())) {
+                                dataSet = mapItems.get(itemNsi.getCode());
+                            } else {
+                                dataSet = new ReferenceItemDataSet();
+                            }
+                            dataSet.setName(fieldType.getValue());
+                            dataSet.setCode(itemNsi.getCode());
+                            dataSet.setGuid(itemNsi.getGUID());
+                            dataSet.setGroupName(fieldType.getName());
+                            dataSet.setCodeParent(parenCode);
+                            nsiDao.addItem(dataSet);
+                            answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
+                        }
                     }
-                    dataSet.setName(fieldType.getValue());
-                    dataSet.setCode(itemNsi.getCode());
-                    dataSet.setGuid(itemNsi.getGUID());
-                    dataSet.setGroupName(fieldType.getName());
-                    dataSet.setCodeParent(parenCode);
-                    nsiDao.addItem(dataSet);
-                    answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
                 }
             }
         }

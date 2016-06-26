@@ -10,7 +10,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
-import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -75,7 +74,7 @@ public class ReferenceNSI {
         ArrayList<ReferenceDownloadNSIDataSet> nsiListForDownload = nsiDao.getNsiForDownload();
         boolean isError = true;
         for (ReferenceDownloadNSIDataSet nsiDataSet : nsiListForDownload) {
-            String nsiDataForLog = nsiDataSet.getNsiType().getNsi() + "-" + nsiDataSet.getCode() + "\"" + nsiDataSet.getWorldForExtract() + "\"";
+            String nsiDataForLog = nsiDataSet.getNsiType().getNsi() + "-" + nsiDataSet.getCode() + " \"" + nsiDataSet.getWorldForExtract() + "\"";
             answerProcessing.sendMessageToClient("Обновляю справочник " + nsiDataForLog + ".");
 
             if (updateNSI(nsiDataSet)) {

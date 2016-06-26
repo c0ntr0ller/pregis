@@ -9,7 +9,6 @@ import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -77,19 +76,6 @@ public class UpdateReference {
         }
 
         ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
-//        ArrayList<ReferenceDownloadNSIDataSet> nsiListForDownload = referenceNSI.getNsiListForDownload();
-//        for (ReferenceDownloadNSIDataSet nsiDataSet : nsiListForDownload) {
-//            answerProcessing.sendMessageToClient("Обновляю справочник " + nsiDataSet.getNsiType().getNsi() + "-" + nsiDataSet.getCode() + "\"" + nsiDataSet.getWorldForExtract() + "\".");
-//
-//            if (referenceNSI.updateNSI(nsiDataSet)) {
-//                answerProcessing.sendMessageToClient("Справочник НСИ-95 - \"Документ, удостоверяющий личность\": успешно обновлен!");
-//                countDone++;
-//            } else {
-//                answerProcessing.sendErrorToClientNotException("Возникли ошибки. Справочник НСИ-95 - \"Документ, удостоверяющий личность\" не обновлен!");
-//            }
-//        }
-
-
 
         if (countDone == 3 && referenceNSI.updateNSIFromTableList()) {
             answerProcessing.sendOkMessageToClient("\nСправочники успешно обновлены!");

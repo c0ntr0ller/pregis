@@ -458,3 +458,457 @@ Syntax error in SQL statement "DROP TABLE ""PUBLIC"".SPR_NSI95
 DROP[*] TABLE ""PUBLIC"".SPR_NSI_TYPE"; SQL statement:
 DROP TABLE "PUBLIC".SPR_NSI95
 DROP TABLE "PUBLIC".SPR_NSI_TYPE [42000-190]
+2016-06-26 23:34:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Данная функция не поддерживается: "getFunctions"
+Feature not supported: "getFunctions" [50100-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getPackages(GenericObjectContainer.java:263)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:34:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Данная функция не поддерживается: "getFunctions"
+Feature not supported: "getFunctions" [50100-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:216)
+	at org.h2.message.TraceObject.unsupported(TraceObject.java:375)
+	at org.h2.jdbc.JdbcDatabaseMetaData.getFunctions(JdbcDatabaseMetaData.java:3126)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCDatabaseMetaDataImpl.getFunctions(JDBCDatabaseMetaDataImpl.java:231)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.loadProcedures(GenericMetaModel.java:180)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.loadProcedures(GenericObjectContainer.java:354)
+	at org.jkiss.dbeaver.ext.generic.model.GenericObjectContainer.getProcedures(GenericObjectContainer.java:279)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.extractPropertyValue(DBNDatabaseNode.java:697)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadTreeItems(DBNDatabaseNode.java:427)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.loadChildren(DBNDatabaseNode.java:353)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:184)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:39:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.ID" не найден
+Column "SPR_NSI_TYPE.ID" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD where NSI_TYPE = SPR_NSI_TYPE.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:39:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.ID" не найден
+Column "SPR_NSI_TYPE.ID" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD where NSI_FOR_DOWNLOAD.ID = SPR_NSI_TYPE.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:40:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.NSI_TYPE" не найден
+Column "SPR_NSI_TYPE.NSI_TYPE" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD where NSI_TYPE = SPR_NSI_TYPE.NSI_TYPE
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:41:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.NSI_TYPE" не найден
+Column "SPR_NSI_TYPE.NSI_TYPE" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD where NSI_TYPE = SPR_NSI_TYPE.NSI_TYPE
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:42:37 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.NSI_TYPE" не найден
+Column "SPR_NSI_TYPE.NSI_TYPE" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD where NSI_TYPE = SPR_NSI_TYPE.NSI_TYPE
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:45:53 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SELECTSPR_NSI_TYPE.ID" не найден
+Column "SELECTSPR_NSI_TYPE.ID" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD where ID = selectSPR_NSI_TYPE.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:46:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.ID" не найден
+Column "SPR_NSI_TYPE.ID" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD  where ID = SPR_NSI_TYPE.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:48:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Неоднозначное имя столбца "ID"
+Ambiguous column name "ID"; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT ID, CODE, WORD_FOR_EXTRACT, NSI_TYPE FROM NSI_FOR_DOWNLOAD, SPR_NSI_TYPE  where SPR_NSI_TYPE.ID = NSI_FOR_DOWNLOAD.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [90059-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:124)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:94)
+	at org.h2.command.dml.Select.mapColumns(Select.java:1185)
+	at org.h2.command.dml.Select.init(Select.java:810)
+	at org.h2.command.Parser.parseSelect(Parser.java:1682)
+	at org.h2.command.Parser.parsePrepared(Parser.java:432)
+	at org.h2.command.Parser.parse(Parser.java:304)
+	at org.h2.command.Parser.parse(Parser.java:276)
+	at org.h2.command.Parser.prepareCommand(Parser.java:241)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:48:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Неоднозначное имя столбца "ID"
+Ambiguous column name "ID"; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT ID, CODE, WORD_FOR_EXTRACT, NSI_TYPE FROM NSI_FOR_DOWNLOAD, SPR_NSI_TYPE  where SPR_NSI_TYPE.ID = NSI_FOR_DOWNLOAD.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [90059-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:124)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:94)
+	at org.h2.command.dml.Select.mapColumns(Select.java:1185)
+	at org.h2.command.dml.Select.init(Select.java:810)
+	at org.h2.command.Parser.parseSelect(Parser.java:1682)
+	at org.h2.command.Parser.parsePrepared(Parser.java:432)
+	at org.h2.command.Parser.parse(Parser.java:304)
+	at org.h2.command.Parser.parse(Parser.java:276)
+	at org.h2.command.Parser.prepareCommand(Parser.java:241)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:48:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Неоднозначное имя столбца "NSI_TYPE"
+Ambiguous column name "NSI_TYPE"; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT NSI_FOR_DOWNLOAD.ID, CODE, WORD_FOR_EXTRACT, NSI_TYPE FROM NSI_FOR_DOWNLOAD, SPR_NSI_TYPE  where SPR_NSI_TYPE.ID = NSI_FOR_DOWNLOAD.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [90059-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:124)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:94)
+	at org.h2.command.dml.Select.mapColumns(Select.java:1185)
+	at org.h2.command.dml.Select.init(Select.java:810)
+	at org.h2.command.Parser.parseSelect(Parser.java:1682)
+	at org.h2.command.Parser.parsePrepared(Parser.java:432)
+	at org.h2.command.Parser.parse(Parser.java:304)
+	at org.h2.command.Parser.parse(Parser.java:276)
+	at org.h2.command.Parser.prepareCommand(Parser.java:241)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 23:54:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "SPR_NSI_TYPE.ID" не найден
+Column "SPR_NSI_TYPE.ID" not found; SQL statement:
+--DROP TABLE "PUBLIC".SPR_NSI95;
+--DROP TABLE "PUBLIC".SPR_NSI_TYPE;
+--DROP TABLE "PUBLIC".NSI_FOR_DOWNLOAD;
+--CALL GET_MESSAGE();
+SELECT * FROM NSI_FOR_DOWNLOAD  where NSI_FOR_DOWNLOAD.NSI_TYPE = SPR_NSI_TYPE.ID
+--select * from GET_MESSAGE()
+--select ID from OBMEN_OPERATION
+/*CREATE ALIAS NEXT_PRIME AS $$
+String nextPrime(String value) {
+    return new BigInteger(value).nextProbablePrime().toString();
+}
+$$;*/ [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

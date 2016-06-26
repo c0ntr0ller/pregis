@@ -46,7 +46,9 @@ public class ReferenceNSIDAO {
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.CODE IS 'Код справочника, который необходимо загрузить.'; " +
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.WORD_FOR_EXTRACT IS 'Для извлечения нужного элемента из справочника, используется ключевое слово.';" +
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
-            "ALTER TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD ADD FOREIGN KEY (NSI_TYPE) REFERENCES \"PUBLIC\".SPR_NSI_TYPE(ID);";
+            "ALTER TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD ADD FOREIGN KEY (NSI_TYPE) REFERENCES \"PUBLIC\".SPR_NSI_TYPE(ID); " +
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('95', 'Вид документа, удостоверяющего личность', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('22', 'Причина закрытия лицевого счета', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI');";
 
     private static final String SQL_CREATE_TABLE_SPR_NSI_TYPE = "CREATE TABLE IF NOT EXISTS SPR_NSI_TYPE (" +
             "ID identity not null primary key, " +

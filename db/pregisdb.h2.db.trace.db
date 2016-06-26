@@ -451,3 +451,10 @@ INSERT INTO SPR_NSI_TYPE(SPR_NSI_TYPE) VALUES('NSI') [42122-190]
 	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-26 21:53:53 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "DROP TABLE ""PUBLIC"".SPR_NSI95
+DROP[*] TABLE ""PUBLIC"".SPR_NSI_TYPE"
+Syntax error in SQL statement "DROP TABLE ""PUBLIC"".SPR_NSI95
+DROP[*] TABLE ""PUBLIC"".SPR_NSI_TYPE"; SQL statement:
+DROP TABLE "PUBLIC".SPR_NSI95
+DROP TABLE "PUBLIC".SPR_NSI_TYPE [42000-190]

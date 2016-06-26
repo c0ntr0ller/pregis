@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95DAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -128,10 +128,10 @@ public class ProgramAction {
      */
     public void callUpdateNSI95() {
 
-        ReferenceNSI95 nsi95 = new ReferenceNSI95(answerProcessing);
+        ReferenceNSI nsi95 = new ReferenceNSI(answerProcessing);
         try {
             answerProcessing.sendMessageToClient("Запуск обновления справочника НСИ-95...");
-            nsi95.updateNSI95(new ReferenceNSI95DAO());
+            nsi95.updateNSI(new ReferenceNSI95DAO());
             answerProcessing.sendOkMessageToClient("Справочник НСИ-95 обновлен.");
         } catch (PreGISException | SQLException e) {
             answerProcessing.sendErrorToClient("callUpdateNSI95():", "\"Обновления справочника НСИ-95\" ", LOGGER, e);

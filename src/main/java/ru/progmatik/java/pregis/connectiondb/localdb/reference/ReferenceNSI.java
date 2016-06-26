@@ -21,24 +21,36 @@ import java.util.Map;
  * Запрашивает у ГИС ЖКХ справочник, создаёт таблицу в БД, заносит в неё данные.
  * Если нет элементов в справочнике, запросит у ГИС ЖКХ, если есть выдаст из БД.
  */
-public class ReferenceNSI95 {
+public class ReferenceNSI {
 
-    private static final Logger LOGGER = Logger.getLogger(ReferenceNSI95.class);
+    private static final Logger LOGGER = Logger.getLogger(ReferenceNSI.class);
+    private final ReferenceNSIDAO nsiDao;
     private final AnswerProcessing answerProcessing;
 
-    public ReferenceNSI95(AnswerProcessing answerProcessing) {
+
+    public ReferenceNSI(AnswerProcessing answerProcessing) throws SQLException {
         this.answerProcessing = answerProcessing;
+        nsiDao = new ReferenceNSIDAO();
 
     }
 
-    public ru.gosuslugi.dom.schema.integration.base.NsiRef getNsiRef(String nameTypeDocument) throws PreGISException, SQLException {
+    /**
+     * Метод, получает из БД все типы документов из справочника НСИ 95, ноходит по имени нужный документ,
+     * формирует объект "ru.gosuslugi.dom.schema.integration.base.NsiRef", пригодный для создания абонента.
+     * @param nameTypeDocument имя типа документа.
+     * @return объект пригодный для создания абонента.
+     * @throws PreGISException
+     * @throws SQLException
+     */
+    public ru.gosuslugi.dom.schema.integration.base.NsiRef getTypeDocumentNsiRef(String nameTypeDocument) throws PreGISException, SQLException {
 
-        ReferenceNSI95DAO nsi95 = new ReferenceNSI95DAO();
-        ArrayList<ReferenceItemDataSet> allItems = nsi95.getAllItems();
+        String nsiCode = "95";
+
+        ArrayList<ReferenceItemDataSet> allItems = nsiDao.getAllItemsCodeParent(nsiCode);
 
         if (allItems.size() == 0) {
-            updateNSI95(nsi95);
-            allItems = nsi95.getAllItems();
+            updateNSI(NsiListGroupEnum.NSI, nsiCode);
+            allItems = nsiDao.getAllItems();
         }
 
         for (ReferenceItemDataSet item : allItems) {
@@ -53,23 +65,31 @@ public class ReferenceNSI95 {
         return null;
     }
 
-    public boolean updateNSI95(ReferenceNSI95DAO nsi95) throws PreGISException, SQLException {
+    /**
+     * Метод, обновляет справочник.
+     * @param nsiType тип справочника NIS или NSIRAO.
+     * @param nsiCode код справочника.
+     * @return true если обновление прошло успешно, false - если справочники не удалось обновить.
+     * @throws PreGISException
+     * @throws SQLException
+     */
+    public boolean updateNSI(NsiListGroupEnum nsiType, String nsiCode) throws PreGISException, SQLException {
 
-        Map<Integer, ReferenceItemDataSet> mapItems = nsi95.getMapItems();
+        Map<String, ReferenceItemDataSet> mapItems = nsiDao.getMapItemsCodeParent(nsiCode);
         ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
-        ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger("95"));
+        ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(nsiType, new BigInteger(nsiCode));
         if (exportNsiItemResult == null) {
             throw new PreGISException("Невозможно получить справочник НСИ-95 из ГИС ЖКХ.");
         }
-        Integer parenCode = Integer.valueOf(exportNsiItemResult.getNsiItem().getNsiItemRegistryNumber().toString());
+        String parenCode = exportNsiItemResult.getNsiItem().getNsiItemRegistryNumber().toString();
         for (NsiElementType itemNsi : exportNsiItemResult.getNsiItem().getNsiElement()) {
             if (itemNsi.isIsActual()) {
-                if (!mapItems.containsKey(Integer.parseInt(itemNsi.getCode())) ||
-                        !mapItems.get(Integer.parseInt(itemNsi.getCode())).getGuid().equals(itemNsi.getGUID())) {
+                if (!mapItems.containsKey(itemNsi.getCode()) ||
+                        !mapItems.get(itemNsi.getCode()).getGuid().equals(itemNsi.getGUID())) {
                     NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemNsi.getNsiElementField().get(0);
                     ReferenceItemDataSet dataSet = null;
-                    if (mapItems.containsKey(Integer.parseInt(itemNsi.getCode()))) {
-                        dataSet = mapItems.get(Integer.parseInt(itemNsi.getCode()));
+                    if (mapItems.containsKey(itemNsi.getCode())) {
+                        dataSet = mapItems.get(itemNsi.getCode());
                     } else {
                         dataSet = new ReferenceItemDataSet();
                     }
@@ -78,7 +98,7 @@ public class ReferenceNSI95 {
                     dataSet.setGuid(itemNsi.getGUID());
                     dataSet.setGroupName(fieldType.getName());
                     dataSet.setCodeParent(parenCode);
-                    nsi95.addItem(dataSet);
+                    nsiDao.addItem(dataSet);
                     answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
                 }
             }

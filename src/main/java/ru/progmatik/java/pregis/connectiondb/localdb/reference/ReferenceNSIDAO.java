@@ -7,6 +7,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,8 +18,8 @@ import java.util.Map;
 public class ReferenceNSIDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ReferenceNSIDAO.class);
-    private static final String TABLE_NAME_NSI = "SPR_NSI";
-    private static final String TABLE_NAME_NSI_DOWNLOAD = "NSI_FOR_DOWNLOAD";
+    private static final String TABLE_NAME_NSI = "SPR_NSI";  // основная таблица
+    private static final String TABLE_NAME_NSI_DOWNLOAD = "NSI_FOR_DOWNLOAD"; // таблица содержит перечень справочников для загрузки и слово, п окоторому будет извлечено значение из справочника
     private static final String TABLE_NAME_SPR_NSI_TYPE = "SPR_NSI_TYPE";
 
     private static final String SQL_CREATE_TABLE_NSI = "CREATE TABLE IF NOT EXISTS SPR_NSI (" +
@@ -58,6 +59,7 @@ public class ReferenceNSIDAO {
 
     /**
      * Конструктор, проверяет, если таблицы с таким именем нет, то он её создаёт.
+     *
      * @throws SQLException
      */
     public ReferenceNSIDAO() throws SQLException {
@@ -75,6 +77,7 @@ public class ReferenceNSIDAO {
 
     /**
      * Метод, создаёт таблицу из полученного SQL запроса.
+     *
      * @param sqlCreateTable SQL запрос, в котором описано создание таблицы.
      * @throws SQLException
      */
@@ -89,6 +92,7 @@ public class ReferenceNSIDAO {
     /**
      * Метод, добавляет элемент в таблицу, при этом делает проверку по ИД элемента,
      * если элемент есть в БД, то он его обновляет.
+     *
      * @param dataSet элемент, для сохранения в БД.
      * @throws SQLException
      */
@@ -102,7 +106,7 @@ public class ReferenceNSIDAO {
             ps.setString(2, dataSet.getCode());
             ps.setString(3, dataSet.getGuid());
             ps.setString(4, dataSet.getGroupName());
-            ps.setInt(5, dataSet.getCodeParent());
+            ps.setString(5, dataSet.getCodeParent());
             ps.executeUpdate();
             ps.close();
             connection.close();
@@ -117,28 +121,32 @@ public class ReferenceNSIDAO {
 
     /**
      * Метод, обновляет элемент в БД.
+     *
      * @param newDataSet элемент, для обновления в БД.
      * @throws SQLException
      */
     private void updateItem(ReferenceItemDataSet newDataSet) throws SQLException {
-        Connection connection = ConnectionDB.instance().getConnectionDB();
-        PreparedStatement ps = connection.prepareStatement("UPDATE SPR_NSI SET NAME = ?, GUID = ?, " +
-                "GROUP_NAME = ?, CODE_PARENT = ? WHERE ID = ? AND CODE = ?");
-        ps.setString(1, newDataSet.getName());
-        ps.setString(2, newDataSet.getGuid());
-        ps.setString(3, newDataSet.getGroupName());
-        ps.setInt(4, newDataSet.getCodeParent());
-        ps.setInt(5, newDataSet.getId());
-        ps.setString(6, newDataSet.getCode());
-        ps.executeUpdate();
-        ps.close();
-        connection.close();
-        LOGGER.info("Обновлен элемент справочника: ID = " + newDataSet.getId() +
-                " Code: " + newDataSet.getCode() + " GUID: " + newDataSet.getGuid());
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             PreparedStatement ps = connection.prepareStatement("UPDATE SPR_NSI SET NAME = ?, GUID = ?, " +
+                     "GROUP_NAME = ?, CODE_PARENT = ? WHERE ID = ? AND CODE = ?")) {
+
+            ps.setString(1, newDataSet.getName());
+            ps.setString(2, newDataSet.getGuid());
+            ps.setString(3, newDataSet.getGroupName());
+            ps.setString(4, newDataSet.getCodeParent());
+            ps.setInt(5, newDataSet.getId());
+            ps.setString(6, newDataSet.getCode());
+            ps.executeUpdate();
+            ps.close();
+            connection.close();
+            LOGGER.info("Обновлен элемент справочника: ID = " + newDataSet.getId() +
+                    " Code: " + newDataSet.getCode() + " GUID: " + newDataSet.getGuid());
+        }
     }
 
     /**
      * Метод, возвращает список всех элементов из таблицы.
+     *
      * @return список всех элементов из таблицы.
      * @throws SQLException
      */
@@ -151,7 +159,28 @@ public class ReferenceNSIDAO {
 
             while (resultSet.next()) {
                 dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+            }
+        }
+        return dataList;
+    }
+
+    /**
+     * Метод, возвращает список элементов из указанной родительской таблицы.
+     *
+     * @return список всех элементов из указанной таблицы.
+     * @throws SQLException
+     */
+    public ArrayList<ReferenceItemDataSet> getAllItemsCodeParent(String codeParent) throws SQLException {
+
+        ArrayList<ReferenceItemDataSet> dataList = new ArrayList<>();
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM SPR_NSI WHERE CODE_PARENT=" + codeParent)) {
+
+            while (resultSet.next()) {
+                dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
         }
         return dataList;
@@ -160,25 +189,33 @@ public class ReferenceNSIDAO {
     /**
      * Метод, формирует асоциативный массив из элемнтов в таблице,
      * где ключ - код элмента справочника, значение сам элемент справочника.
+     *
      * @return map, где ключ - код элмента справочника, значение сам элемент справочника.
      * @throws SQLException
      */
-    public Map<Integer, ReferenceItemDataSet> getMapItems() throws SQLException {
+    public Map<String, ReferenceItemDataSet> getMapItems() throws SQLException {
 
-        Map<Integer, ReferenceItemDataSet> dataList = new HashMap<Integer, ReferenceItemDataSet>();
+        Map<String, ReferenceItemDataSet> dataList = new HashMap<String, ReferenceItemDataSet>();
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT * FROM SPR_NSI")) {
 
             while (resultSet.next()) {
-                dataList.put(Integer.valueOf(resultSet.getString(3)), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+                dataList.put(resultSet.getString(3), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
         }
         return dataList;
     }
 
-    public Map<String, ReferenceItemDataSet> getMapItemsCodeParent(int codeParent) throws SQLException {
+    /**
+     * Метод, по указанному коду родительского справочника создаёт фильтр, формирует асоциативный массив из элемнтов в таблице,
+     * где ключ - код элмента справочника, значение сам элемент справочника.
+     * @param codeParent код родительского справочника.
+     * @return ключ - код элмента справочника, значение сам элемент справочника.
+     * @throws SQLException
+     */
+    public Map<String, ReferenceItemDataSet> getMapItemsCodeParent(String codeParent) throws SQLException {
 
         Map<String, ReferenceItemDataSet> dataList = new HashMap<String, ReferenceItemDataSet>();
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
@@ -187,9 +224,12 @@ public class ReferenceNSIDAO {
 
             while (resultSet.next()) {
                 dataList.put(resultSet.getString(3), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
             return dataList;
         }
     }
+
+//    public void add
+
 }

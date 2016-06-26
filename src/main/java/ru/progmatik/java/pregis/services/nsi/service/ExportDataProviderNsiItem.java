@@ -41,7 +41,7 @@ public class ExportDataProviderNsiItem {
      * Метод, отправляет запрос с кодом справочника (1, 51 или 59), получает в ответ указанный справочник.
      * @param code код справочника - 1, 51 или 59.
      */
-    public ExportNsiItemResult callExportDataProviderNsiItem(int code) {
+    public ExportNsiItemResult callExportDataProviderNsiItem(String code) {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
@@ -70,7 +70,7 @@ public class ExportDataProviderNsiItem {
      * Принимает значение 1, 51 или 59, код справочника.
      * @return ExportDataProviderNsiItemRequest объект с указанными значениями, для передачи сервису ГИС ЖКХ.
      */
-    private ExportDataProviderNsiItemRequest getExportDataProviderNsiItemRequest(int code) {
+    private ExportDataProviderNsiItemRequest getExportDataProviderNsiItemRequest(String code) {
 
         ExportDataProviderNsiItemRequest request = new ExportDataProviderNsiItemRequest();
 
@@ -79,7 +79,7 @@ public class ExportDataProviderNsiItem {
 //        request.setRegistryNumber(BigInteger.valueOf(1));  Дополнительные услуги
 //        request.setRegistryNumber(BigInteger.valueOf(51)); Коммунальные услуги
 //        request.setRegistryNumber(BigInteger.valueOf(59)); Работы и услуги организации
-        request.setRegistryNumber(BigInteger.valueOf(code));
+        request.setRegistryNumber(new BigInteger(code));
 
 //        Дата и время, измененные после которой элементы справочника должны быть возвращены в ответе.
 //        Если не указана, возвращаются все элементы справочника.

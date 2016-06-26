@@ -118,7 +118,7 @@ public class ReferenceNSI95DAO {
         return nsiDao.getAllItems();
     }
 
-    public Map<Integer, ReferenceItemDataSet> getMapItems() throws SQLException {
+    public Map<String, ReferenceItemDataSet> getMapItems() throws SQLException {
 
 //        Map<Integer, ReferenceItemDataSet> dataList = new HashMap<Integer, ReferenceItemDataSet>();
 //        try (Connection connection = ConnectionDB.instance().getConnectionDB();

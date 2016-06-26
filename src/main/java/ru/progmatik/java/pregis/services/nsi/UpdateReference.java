@@ -9,8 +9,9 @@ import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95DAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
@@ -53,7 +54,7 @@ public class UpdateReference {
         int countDone = 0;
 
         answerProcessing.sendMessageToClient("Обновляю справочник 51 - \"Коммунальные услуги\".");
-        if (updateDataProviderNsiItem(51)) {
+        if (updateDataProviderNsiItem("51")) {
             answerProcessing.sendMessageToClient("Справочник 51 - \"Коммунальные услуги\": успешно обновлен!");
             countDone++;
         } else {
@@ -61,7 +62,7 @@ public class UpdateReference {
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 59 - \"Работы и услуги организации\".");
-        if (updateDataProviderNsiItem(59)) {
+        if (updateDataProviderNsiItem("59")) {
             answerProcessing.sendMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
             countDone++;
         } else {
@@ -69,7 +70,7 @@ public class UpdateReference {
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 1 - \"Дополнительные услуги\".");
-        if (updateDataProviderNsiItem(1)) {
+        if (updateDataProviderNsiItem("1")) {
             answerProcessing.sendMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
             countDone++;
         } else {
@@ -77,8 +78,8 @@ public class UpdateReference {
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник НСИ-95 - \"Документ, удостоверяющий личность\".");
-        ReferenceNSI95 nsi95 = new ReferenceNSI95(answerProcessing);
-        if (nsi95.updateNSI95(new ReferenceNSI95DAO())) {
+        ReferenceNSI nsi95 = new ReferenceNSI(answerProcessing);
+        if (nsi95.updateNSI(NsiListGroupEnum.NSI, "95")) {
             answerProcessing.sendMessageToClient("Справочник НСИ-95 - \"Документ, удостоверяющий личность\": успешно обновлен!");
             countDone++;
         } else {
@@ -99,7 +100,7 @@ public class UpdateReference {
      * Мотод, загружает любой другой справочник по его коду в БД. Разработка.
      * @param codeNsi код справочника.
      */
-    public void updateNsiItem(Integer codeNsi) {
+    public void updateNsiItem(String codeNsi) {
 
         listForAdd.clear(); // Очищаем очередь для добавления если в ней что то осталось с предыдущего раза.
 
@@ -155,7 +156,7 @@ public class UpdateReference {
      *
      * @param codeNsi код справочника (1, 51, 59)
      */
-    public boolean updateDataProviderNsiItem(int codeNsi) {
+    public boolean updateDataProviderNsiItem(String codeNsi) {
 
         listForAdd.clear(); // Очищаем очередь для добавления если в ней что то осталось с предыдущего раза.
 
@@ -218,7 +219,7 @@ public class UpdateReference {
      * @param mapDataSet     элементы уже имеющееся в БД.
      * @param nsiItemResults список полученных справочников, на которые имеются ссылки.
      */
-    private void addItemsInDB(Map<String, ReferenceItemDataSet> mapDataSet, Integer codeParent,
+    private void addItemsInDB(Map<String, ReferenceItemDataSet> mapDataSet, String codeParent,
                               ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> nsiItemResults,
                               ReferenceItemGRADDAO gradDAO) {
 

@@ -20,6 +20,7 @@ import ru.progmatik.java.web.servlets.web.LoginClient;
 import ru.progmatik.java.web.servlets.web.MainServlet;
 import ru.progmatik.java.web.servlets.web.IndexServlet;
 
+import javax.net.ssl.*;
 import java.security.Security;
 
 public class Main {
@@ -40,13 +41,11 @@ public class Main {
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
-
-//        Инициализация сертификатов и Крипто-ПРО
-
         System.setProperty("javax.net.ssl.supportGVO", "false");
 
         System.setProperty("javax.net.debug", "all");
 
+//        Инициализация сертификатов и Крипто-ПРО
         System.setProperty("com.sun.security.enableCRLDP", "true");
         System.setProperty("com.ibm.security.enableCRLDP", "true");
         System.setProperty("javax.net.ssl.keyStoreType", JCP.HD_STORE_NAME);
@@ -57,21 +56,52 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 
 
-        Security.addProvider(new BouncyCastleProvider());
-        XmlDSignTools.init("BC");
+        Security.addProvider(new BouncyCastleProvider());  // Добавим Bouncy Castle
+        XmlDSignTools.init("BC"); // Инициализация алгоритма ГОСТ для подписи файлов
+
+//        Security.addProvider(new ViPNetProvider());  // Добавим криптопровайдер VipNet нужен для TLS соединения.
+//        Security.addProvider(new ViPNetSSLProvider());  // Добавим криптопровайдер VipNet нужен для TLS соединения.
+
+        // создание фабрики менеджеров ключей
+//        KeyManagerFactory kmf = KeyManagerFactory.getInstance("ViPNet");
+//        // передача фабрике хранилища ключей и пароля
+//        kmf.init(Configure.getKeyStorePfx(), null);
+//        // создание менеджеров ключей
+//        KeyManager[] kms = kmf.getKeyManagers();
+
 //
 //        System.setProperty("javax.net.debug", "all");
 
+        System.setProperty("javax.net.debug", "ssl,handshake");
 
 //        System.setProperty("javax.net.ssl.keyStoreType", "PKCS12");
 //        System.setProperty("javax.net.ssl.keyStore", "data/dubovik.p12.pfx");
 //        System.setProperty("javax.net.ssl.keyStoreProvider", "BC");
+////        System.setProperty("javax.net.ssl.keyStoreType", "ViPNetContainer");
 //        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
-////
+//
 //        System.setProperty("javax.net.ssl.trustStoreType", "JKS");
 //        System.setProperty("javax.net.ssl.trustStore", "data/trust_store.jks");
-////        System.setProperty("javax.net.ssl.trustStoreProvider", "BC");
 //        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+
+
+//        создание SSL-контекста, поддерживающего алгоритмы ГОСТ
+//        SSLContext sslContext = SSLContext.getInstance("TLS", "ViPNetSSL");
+//        инициализация контекста через системные свойства
+//        sslContext.init(kms, null, null);
+
+        SSLServerSocketFactory factory =
+                (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+
+        SSLServerSocket sslSocket =
+                (SSLServerSocket)factory.createServerSocket(5757);
+
+        String [] cipherSuites = sslSocket.getEnabledCipherSuites();
+
+        for (int i = 0; i < cipherSuites.length; i++) {
+            System.out.println("Cipher Suite " + i +
+                    " = " + cipherSuites[i]);
+        }
 
 //
 //        System.setProperty("https.protocols", "TLSv1");

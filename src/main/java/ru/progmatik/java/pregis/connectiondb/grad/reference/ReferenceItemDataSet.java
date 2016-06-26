@@ -10,7 +10,7 @@ public class ReferenceItemDataSet {
     private String code;
     private String guid;
     private String groupName;
-    private Integer codeParent;
+    private String codeParent;
 
     public ReferenceItemDataSet() {
 
@@ -22,14 +22,14 @@ public class ReferenceItemDataSet {
         this.guid = guid;
     }
 
-    public ReferenceItemDataSet(Integer id, String name, String code, String guid, String groupName, Integer codeParent) {
+    public ReferenceItemDataSet(Integer id, String name, String code, String guid, String groupName, String codeParent) {
         this(name, code, guid);
         this.id = id;
         this.groupName = groupName;
         this.codeParent = codeParent;
     }
 
-    public ReferenceItemDataSet(String name, String code, String guid, String groupName, Integer codeParent) {
+    public ReferenceItemDataSet(String name, String code, String guid, String groupName, String codeParent) {
         this(name, code, guid);
         this.groupName = groupName;
         this.codeParent = codeParent;
@@ -75,11 +75,11 @@ public class ReferenceItemDataSet {
         this.groupName = groupName;
     }
 
-    public Integer getCodeParent() {
+    public String getCodeParent() {
         return codeParent;
     }
 
-    public void setCodeParent(Integer codeParent) {
+    public void setCodeParent(String codeParent) {
         this.codeParent = codeParent;
     }
 }

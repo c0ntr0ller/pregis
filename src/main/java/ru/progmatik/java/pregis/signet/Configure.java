@@ -24,9 +24,13 @@ public class Configure {
 
     private static Logger logger = Logger.getLogger(Configure.class);
 
-    private static String hdiPathConfig = HDImageStore.getDir();
+    private static final String hdiPathConfig = HDImageStore.getDir();
     private static String keyStoryPath = ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.path");
     private static String trustStoryPath = ResourceBundle.getBundle("application").getString("config.cryptoPro.trustStore.path");
+
+    private static char[] storePassword;
+    private static String keyAlias;
+    private static File pfxFile;
 
     private static final Properties properties;
 
@@ -45,6 +49,9 @@ public class Configure {
 
         setPathAuto();
         properties = ResourcesUtil.instance().getProperties();
+        storePassword = properties.get("config.pfx.keyStore.password").toString().toCharArray();
+        keyAlias = properties.get("config.pfx.keyStore.alias").toString();
+        pfxFile = new File(properties.get("config.pfx.keyStore.path").toString());
 
     }
 
@@ -125,18 +132,24 @@ public class Configure {
      */
     public static KeyStore.PrivateKeyEntry getPrivateKeyFromPfx() throws GeneralSecurityException {
 
-        char[] storePassword = properties.get("config.pfx.keyStore.password").toString().toCharArray();
-        String keyAlias = properties.get("config.pfx.keyStore.alias").toString();
-        File pfxFile = new File(properties.get("config.pfx.keyStore.path").toString());
-
-        KeyStore keyStore = KeyStore.getInstance("pkcs12", "BC");
-        KeyStoreUtils.loadKeyStoreFromFile(keyStore, pfxFile, storePassword);
-
-        KeyStore.PrivateKeyEntry keyEntry = KeyLoader.loadPrivateKey(keyStore, keyAlias, null);
+        KeyStore.PrivateKeyEntry keyEntry = KeyLoader.loadPrivateKey(getKeyStorePfx(), keyAlias, null);
         if (keyEntry == null) {
             throw new KeyException("Key not found: " + keyAlias);
         }
         return keyEntry;
+    }
+
+    /**
+     * Метод, загружает хранилище PKCS#12 (p12, pfx) из файла.
+     * @return криптохранилище.
+     * @throws GeneralSecurityException
+     */
+    public static KeyStore getKeyStorePfx() throws GeneralSecurityException {
+
+        KeyStore keyStore = KeyStore.getInstance("pkcs12", "BC");
+        KeyStoreUtils.loadKeyStoreFromFile(keyStore, pfxFile, storePassword);
+
+        return keyStore;
     }
 
     /**

@@ -11,7 +11,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
@@ -177,7 +177,7 @@ public class AccountGRADDAO {
 
         ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID);
         ArrayList<Rooms> roomsList = getRooms(houseID);
-        ReferenceNSI95 nsi95 = new ReferenceNSI95(answerProcessing);
+        ReferenceNSI nsi95 = new ReferenceNSI(answerProcessing);
 
         LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 
@@ -221,7 +221,7 @@ public class AccountGRADDAO {
                         account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
 
                         account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
-                        account.getPayerInfo().getInd().getID().setType(nsi95.getNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                        account.getPayerInfo().getInd().getID().setType(nsi95.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
                         account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
                         account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
                         account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));

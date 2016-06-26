@@ -33,7 +33,7 @@ public class ReferenceItemGRADDAO {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH WHERE ID='" + id + "'");
             resultSet.next();
             dataSet = new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                    resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6));
+                    resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6));
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -58,7 +58,7 @@ public class ReferenceItemGRADDAO {
 
             while (resultSet.next()) {
                 dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
             resultSet.close();
             statement.close();
@@ -69,7 +69,7 @@ public class ReferenceItemGRADDAO {
         return dataList;
     }
 
-    public Map<String, ReferenceItemDataSet> getMapItemsCodeParent(int codeParent) {
+    public Map<String, ReferenceItemDataSet> getMapItemsCodeParent(String codeParent) {
 
         Map<String, ReferenceItemDataSet> dataList = new HashMap<String, ReferenceItemDataSet>();
         try {
@@ -78,7 +78,7 @@ public class ReferenceItemGRADDAO {
 
             while (resultSet.next()) {
                 dataList.put(resultSet.getString(3), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
             resultSet.close();
             statement.close();
@@ -103,7 +103,7 @@ public class ReferenceItemGRADDAO {
 
             while (resultSet.next()) {
                 dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6)));
+                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
             resultSet.close();
             statement.close();
@@ -128,7 +128,7 @@ public class ReferenceItemGRADDAO {
                 ps.setString(2, dataSet.getCode());
                 ps.setString(3, dataSet.getGuid());
                 ps.setString(4, dataSet.getGroupName());
-                ps.setInt(5, dataSet.getCodeParent());
+                ps.setInt(5, Integer.parseInt(dataSet.getCodeParent()));
                 ps.executeUpdate();
                 ps.close();
                 LOGGER.info("Добавлеен элемент в справочник: ID = " + dataSet.getId() + " Name: " + dataSet.getName() +
@@ -151,7 +151,7 @@ public class ReferenceItemGRADDAO {
             ps.setString(1, newDataset.getName());
             ps.setString(2, newDataset.getGuid());
             ps.setString(3, newDataset.getGroupName());
-            ps.setInt(4, newDataset.getCodeParent());
+            ps.setInt(4, Integer.parseInt(newDataset.getCodeParent()));
             ps.setInt(5, newDataset.getId());
             ps.setString(6, newDataset.getCode());
             ps.executeUpdate();

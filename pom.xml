@@ -60,16 +60,35 @@
         <!--<type>jar</type>-->
         <!--</dependency>-->
 
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.54</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.54</version>
+        </dependency>
+
+        <!--Библиотеки VipNet-->
         <!--<dependency>-->
-        <!--<groupId>org.bouncycastle</groupId>-->
-        <!--<artifactId>bcprov-jdk15on</artifactId>-->
-        <!--<version>1.54</version>-->
+            <!--<groupId>ru.infotecs</groupId>-->
+            <!--<artifactId>jcrypto-jca</artifactId>-->
+            <!--<version>2.5.2-R324899</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/jcrypto-jca-2.5.2-R324899.jar</systemPath>-->
+            <!--<type>jar</type>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-        <!--<groupId>org.bouncycastle</groupId>-->
-        <!--<artifactId>bcpkix-jdk15on</artifactId>-->
-        <!--<version>1.54</version>-->
+            <!--<groupId>ru.infotecs</groupId>-->
+            <!--<artifactId>jcrypto-ssl</artifactId>-->
+            <!--<version>2.5.2-R324899</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/jcrypto-ssl-2.5.2-R324899.jar</systemPath>-->
+            <!--<type>jar</type>-->
         <!--</dependency>-->
 
         <dependency>
@@ -79,9 +98,9 @@
         </dependency>
 
         <dependency>
-        <groupId>com.googlecode.xades4j</groupId>
-        <artifactId>xades4j</artifactId>
-        <version>1.3.2</version>
+            <groupId>com.googlecode.xades4j</groupId>
+            <artifactId>xades4j</artifactId>
+            <version>1.3.2</version>
         </dependency>
 
         <!--<dependency>-->
@@ -127,6 +146,7 @@
             <artifactId>httpmime</artifactId>
             <version>4.5.2</version>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

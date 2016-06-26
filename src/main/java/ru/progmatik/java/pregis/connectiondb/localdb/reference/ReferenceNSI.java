@@ -79,13 +79,14 @@ public class ReferenceNSI {
         ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
         ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(nsiType, new BigInteger(nsiCode));
         if (exportNsiItemResult == null) {
-            throw new PreGISException("Невозможно получить справочник НСИ-95 из ГИС ЖКХ.");
+            throw new PreGISException("Невозможно получить справочник " + nsiCode + " из ГИС ЖКХ.");
         }
         String parenCode = exportNsiItemResult.getNsiItem().getNsiItemRegistryNumber().toString();
         for (NsiElementType itemNsi : exportNsiItemResult.getNsiItem().getNsiElement()) {
             if (itemNsi.isIsActual()) {
                 if (!mapItems.containsKey(itemNsi.getCode()) ||
                         !mapItems.get(itemNsi.getCode()).getGuid().equals(itemNsi.getGUID())) {
+
                     NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemNsi.getNsiElementField().get(0);
                     ReferenceItemDataSet dataSet = null;
                     if (mapItems.containsKey(itemNsi.getCode())) {

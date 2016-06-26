@@ -7,7 +7,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +28,7 @@ public class ReferenceNSIDAO {
             "GUID varchar(40), " +
             "GROUP_NAME varchar(255), " +
             "CODE_PARENT varchar(20)); " +
-            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI IS 'Справочник НСИ ГИС ЖКХ." +
+            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI IS 'Справочник НСИ ГИС ЖКХ.'; " +
             "COMMENT ON COLUMN SPR_NSI.ID IS 'Идентификатор записей.'; " +
             "COMMENT ON COLUMN SPR_NSI.NAME IS 'Наименование поля элемента справочника.'; " +
             "COMMENT ON COLUMN SPR_NSI.CODE IS 'Код элемента справочника, уникальный в пределах справочника.'; " +
@@ -41,20 +40,22 @@ public class ReferenceNSIDAO {
             "ID identity not null primary key, " +
             "CODE varchar(20) not null, " +
             "WORD_FOR_EXTRACT varchar(255) not null, " +
-            "NSI_TYPE varchar(20) not null;" +
-            "COMMENT ON TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD IS '{Хранит коды справочников и название элементов для извлечения;" +
+            "NSI_TYPE varchar(20) not null); " +
+            "COMMENT ON TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD IS 'Хранит коды справочников и название элементов для извлечения.';" +
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.ID IS 'Идентификатор записей.'; " +
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.CODE IS 'Код справочника, который необходимо загрузить.'; " +
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.WORD_FOR_EXTRACT IS 'Для извлечения нужного элемента из справочника, используется ключевое слово.';" +
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
-            "ALTER TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD ADD FOREIGN KEY (NSI_TYPE) REFERENCES \"PUBLIC\".NSI_TYPE(ID);";
+            "ALTER TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD ADD FOREIGN KEY (NSI_TYPE) REFERENCES \"PUBLIC\".SPR_NSI_TYPE(ID);";
 
     private static final String SQL_CREATE_TABLE_SPR_NSI_TYPE = "CREATE TABLE IF NOT EXISTS SPR_NSI_TYPE (" +
             "ID identity not null primary key, " +
-            "NSI_TYPE varchar(20) not null;" +
-            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI_TYPE IS '{Хранит типы справочников ГИС ЖКХ. НСИ или НСИРАО;" +
+            "NSI_TYPE varchar(20) not null); " +
+            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI_TYPE IS 'Хранит типы справочников ГИС ЖКХ. НСИ или НСИРАО.'; " +
             "COMMENT ON COLUMN SPR_NSI_TYPE.ID IS 'Идентификатор записей.'; " +
-            "COMMENT ON COLUMN SPR_NSI_TYPE.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.';";
+            "COMMENT ON COLUMN SPR_NSI_TYPE.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
+            "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSI'); " +
+            "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSIRAO');";
 
 
     /**

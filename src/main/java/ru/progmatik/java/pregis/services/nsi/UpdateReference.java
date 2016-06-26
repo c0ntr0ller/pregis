@@ -9,9 +9,8 @@ import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI95DAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
@@ -77,78 +76,28 @@ public class UpdateReference {
             answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\" не обновлен!");
         }
 
-        answerProcessing.sendMessageToClient("Обновляю справочник НСИ-95 - \"Документ, удостоверяющий личность\".");
-        ReferenceNSI nsi95 = new ReferenceNSI(answerProcessing);
-        if (nsi95.updateNSI(NsiListGroupEnum.NSI, "95")) {
-            answerProcessing.sendMessageToClient("Справочник НСИ-95 - \"Документ, удостоверяющий личность\": успешно обновлен!");
-            countDone++;
-        } else {
-            answerProcessing.sendErrorToClientNotException("Возникли ошибки. Справочник НСИ-95 - \"Документ, удостоверяющий личность\" не обновлен!");
-        }
+        ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
+//        ArrayList<ReferenceDownloadNSIDataSet> nsiListForDownload = referenceNSI.getNsiListForDownload();
+//        for (ReferenceDownloadNSIDataSet nsiDataSet : nsiListForDownload) {
+//            answerProcessing.sendMessageToClient("Обновляю справочник " + nsiDataSet.getNsiType().getNsi() + "-" + nsiDataSet.getCode() + "\"" + nsiDataSet.getWorldForExtract() + "\".");
+//
+//            if (referenceNSI.updateNSI(nsiDataSet)) {
+//                answerProcessing.sendMessageToClient("Справочник НСИ-95 - \"Документ, удостоверяющий личность\": успешно обновлен!");
+//                countDone++;
+//            } else {
+//                answerProcessing.sendErrorToClientNotException("Возникли ошибки. Справочник НСИ-95 - \"Документ, удостоверяющий личность\" не обновлен!");
+//            }
+//        }
 
-        if (countDone == 4) {
+
+
+        if (countDone == 3 && referenceNSI.updateNSIFromTableList()) {
             answerProcessing.sendOkMessageToClient("\nСправочники успешно обновлены!");
         } else if (countDone < 4 && countDone > 0) {
             answerProcessing.sendInformationToClientAndLog("\nСправочники обновлены с ошибками!", LOGGER);
         } else if (countDone == 0) {
             answerProcessing.sendErrorToClientNotException("\nВозникли ошибки! Справочники не обновлены!");
         }
-    }
-
-    /**
-     * Доработать механизм загрузки произвольного справочника.
-     * Мотод, загружает любой другой справочник по его коду в БД. Разработка.
-     * @param codeNsi код справочника.
-     */
-    public void updateNsiItem(String codeNsi) {
-
-        listForAdd.clear(); // Очищаем очередь для добавления если в ней что то осталось с предыдущего раза.
-
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO(connection);
-
-            ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
-            ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult resultNsi = exportNsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsi.toString()));
-
-            answerProcessing.sendMessageToClient("Получаю справочники из БД с кодом: " + codeNsi);
-            Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi);
-
-            if (mapNsiWithCodeNsi == null || resultNsi == null) {
-                answerProcessing.sendErrorToClientNotException("Возникли ошибки, справочник с кодом: " + codeNsi + "не обновлен!");
-//                return false;
-
-            } else {
-
-//                checkElementInBase(resultNsi, mapNsiWithCodeNsi);
-//                Поиск справочника в БД по его GUID.
-                List<NsiElementType> nsiElements = resultNsi.getNsiItem().getNsiElement();
-                for (NsiElementType nsiElement : nsiElements) {
-                    if (nsiElement.isIsActual()) {
-                        if (!mapNsiWithCodeNsi.containsKey(nsiElement.getCode()) ||
-                                !mapNsiWithCodeNsi.get(nsiElement.getCode()).getGuid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
-
-//                            Мехонизм другой, без подгрузки сразу добавлять элементы справочника.
-//                            listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
-                        }
-                    }
-                }
-
-//                Посмотреть структуру файла возможно очень отличается.
-//                if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
-//
-//                    answerProcessing.sendMessageToClient("Загружаю дополнительные справочники...");
-//                    ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> nsiItemResults = loadOtherNsi();
-//
-//                    answerProcessing.sendMessageToClient("Обновляю справочники в БД...");
-//                    addItemsInDB(mapNsiWithCodeNsi, codeNsi, nsiItemResults, gradDAO);
-//                }
-            }
-
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("updateNsiItem(): ", "\"Синхронизации справочников\" ", LOGGER, e);
-//            return false;
-        }
-//        return true;
     }
 
     /**

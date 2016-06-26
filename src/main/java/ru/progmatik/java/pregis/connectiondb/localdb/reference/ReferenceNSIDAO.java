@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis.connectiondb.localdb.reference;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
+import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -68,13 +69,13 @@ public class ReferenceNSIDAO {
     public ReferenceNSIDAO() throws SQLException {
 
         if (!ConnectionDB.instance().tableExist(TABLE_NAME_SPR_NSI_TYPE.toUpperCase())) {
-            createTableNSI(SQL_CREATE_TABLE_SPR_NSI_TYPE);
+            sendSqlRequest(SQL_CREATE_TABLE_SPR_NSI_TYPE);
         }
         if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI_DOWNLOAD.toUpperCase())) {
-            createTableNSI(SQL_CREATE_TABLE_NSI_DOWNLOAD);
+            sendSqlRequest(SQL_CREATE_TABLE_NSI_DOWNLOAD);
         }
         if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI.toUpperCase())) {
-            createTableNSI(SQL_CREATE_TABLE_NSI);
+            sendSqlRequest(SQL_CREATE_TABLE_NSI);
         }
     }
 
@@ -84,7 +85,7 @@ public class ReferenceNSIDAO {
      * @param sqlCreateTable SQL запрос, в котором описано создание таблицы.
      * @throws SQLException
      */
-    private void createTableNSI(String sqlCreateTable) throws SQLException {
+    private void sendSqlRequest(String sqlCreateTable) throws SQLException {
 
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              Statement statement = connection.createStatement()) {
@@ -233,6 +234,44 @@ public class ReferenceNSIDAO {
         }
     }
 
-//    public void add
+    /**
+     * Метод, добавляет справочник в список обновлений.
+     */
+    public void addNsiForDownload(ReferenceDownloadNSIDataSet dataSet) throws SQLException {
+
+        ArrayList<ReferenceDownloadNSIDataSet> nsiForDownloads = getNsiForDownload();
+
+        for (ReferenceDownloadNSIDataSet nsiDataSet : nsiForDownloads) {
+            if (!dataSet.getCode().equals(nsiDataSet.getCode())) {
+                if (!dataSet.getWorldForExtract().equals(nsiDataSet.getWorldForExtract())) {
+                    String sqlRequest = "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES(" +
+                            "'" + dataSet.getCode() + "', " +
+                            "'" + dataSet.getWorldForExtract() +"', " +
+                            "select ID from SPR_NSI_TYPE WHERE NSI_TYPE = '" + dataSet.getNsiType().getNsi() + "');";
+                    sendSqlRequest(sqlRequest);
+                }
+            }
+        }
+    }
+
+    /**
+     * Метод, получает из БД список справочников для обновления.
+     */
+    public ArrayList<ReferenceDownloadNSIDataSet> getNsiForDownload() throws SQLException {
+
+        ArrayList<ReferenceDownloadNSIDataSet> listDataSets = new ArrayList<>();
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT NSI_FOR_DOWNLOAD.ID, CODE, WORD_FOR_EXTRACT, SPR_NSI_TYPE.NSI_TYPE " +
+                     "FROM NSI_FOR_DOWNLOAD, SPR_NSI_TYPE  " +
+                     "where NSI_FOR_DOWNLOAD.NSI_TYPE = SPR_NSI_TYPE.ID")) {
+
+            while (resultSet.next()) {
+                listDataSets.add(new ReferenceDownloadNSIDataSet(resultSet.getInt(1), resultSet.getString(2),
+                        resultSet.getString(3), NsiListGroupEnum.getNsiGroup(resultSet.getString(4))));
+            }
+        }
+        return listDataSets;
+    }
 
 }

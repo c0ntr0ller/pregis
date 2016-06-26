@@ -50,7 +50,7 @@ public class ReferenceNSI {
         ArrayList<ReferenceItemDataSet> allItems = nsiDao.getAllItemsCodeParent(nsiCode);
 
         if (allItems.size() == 0) {
-            updateNSI(NsiListGroupEnum.NSI, nsiCode);
+            updateNSIFromTableList();
             allItems = nsiDao.getAllItems();
         }
 
@@ -67,20 +67,40 @@ public class ReferenceNSI {
     }
 
     /**
+     * Метод, обновляет справочники, найденные в таблице NSI_FOR_DOWNLOAD.
+     * @throws SQLException
+     */
+    public boolean updateNSIFromTableList() throws SQLException, PreGISException {
+
+        ArrayList<ReferenceDownloadNSIDataSet> nsiListForDownload = nsiDao.getNsiForDownload();
+        boolean isError = true;
+        for (ReferenceDownloadNSIDataSet nsiDataSet : nsiListForDownload) {
+            String nsiDataForLog = nsiDataSet.getNsiType().getNsi() + "-" + nsiDataSet.getCode() + "\"" + nsiDataSet.getWorldForExtract() + "\"";
+            answerProcessing.sendMessageToClient("Обновляю справочник " + nsiDataForLog + ".");
+
+            if (updateNSI(nsiDataSet)) {
+                answerProcessing.sendMessageToClient("Справочник " + nsiDataForLog + ": успешно обновлен!");
+            } else {
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки. Справочник " + nsiDataForLog + " не обновлен!");
+                isError = false;
+            }
+        }
+        return isError;
+    }
+
+    /**
      * Метод, обновляет справочник.
-     * @param nsiType тип справочника NIS или NSIRAO.
-     * @param nsiCode код справочника.
      * @return true если обновление прошло успешно, false - если справочники не удалось обновить.
      * @throws PreGISException
      * @throws SQLException
      */
-    public boolean updateNSI(NsiListGroupEnum nsiType, String nsiCode) throws PreGISException, SQLException {
+    public boolean updateNSI(ReferenceDownloadNSIDataSet downloadNsiDataSet) throws PreGISException, SQLException {
 
-        Map<String, ReferenceItemDataSet> mapItems = nsiDao.getMapItemsCodeParent(nsiCode);
+        Map<String, ReferenceItemDataSet> mapItems = nsiDao.getMapItemsCodeParent(downloadNsiDataSet.getCode());
         ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
-        ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(nsiType, new BigInteger(nsiCode));
+        ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(downloadNsiDataSet.getNsiType(), new BigInteger(downloadNsiDataSet.getCode()));
         if (exportNsiItemResult == null) {
-            throw new PreGISException("Невозможно получить справочник " + nsiCode + " из ГИС ЖКХ.");
+            throw new PreGISException("Невозможно получить справочник " + downloadNsiDataSet.getCode() + " из ГИС ЖКХ.");
         }
         String parenCode = exportNsiItemResult.getNsiItem().getNsiItemRegistryNumber().toString();
         for (NsiElementType itemNsi : exportNsiItemResult.getNsiItem().getNsiElement()) {
@@ -91,21 +111,23 @@ public class ReferenceNSI {
                     for (NsiElementFieldType itemFieldType : itemNsi.getNsiElementField()) {
 
                         if (itemFieldType instanceof NsiElementStringFieldType) {
-
                             NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemFieldType;
-                            ReferenceItemDataSet dataSet = null;
-                            if (mapItems.containsKey(itemNsi.getCode())) {
-                                dataSet = mapItems.get(itemNsi.getCode());
-                            } else {
-                                dataSet = new ReferenceItemDataSet();
+                            if (downloadNsiDataSet.getWorldForExtract().equals(fieldType.getName())) {
+
+                                ReferenceItemDataSet dataSet = null;
+                                if (mapItems.containsKey(itemNsi.getCode())) {
+                                    dataSet = mapItems.get(itemNsi.getCode());
+                                } else {
+                                    dataSet = new ReferenceItemDataSet();
+                                }
+                                dataSet.setName(fieldType.getValue());
+                                dataSet.setCode(itemNsi.getCode());
+                                dataSet.setGuid(itemNsi.getGUID());
+                                dataSet.setGroupName(fieldType.getName());
+                                dataSet.setCodeParent(parenCode);
+                                nsiDao.addItem(dataSet);
+                                answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
                             }
-                            dataSet.setName(fieldType.getValue());
-                            dataSet.setCode(itemNsi.getCode());
-                            dataSet.setGuid(itemNsi.getGUID());
-                            dataSet.setGroupName(fieldType.getName());
-                            dataSet.setCodeParent(parenCode);
-                            nsiDao.addItem(dataSet);
-                            answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
                         }
                     }
                 }
@@ -114,4 +136,5 @@ public class ReferenceNSI {
         answerProcessing.sendMessageToClient("");
         return true;
     }
+
 }

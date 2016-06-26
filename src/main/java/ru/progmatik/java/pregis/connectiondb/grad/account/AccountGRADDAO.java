@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.account;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ID;
+import ru.gosuslugi.dom.schema.integration.base.RegOrgVersionType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.AccountIndType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.AccountType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;

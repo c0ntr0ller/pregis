@@ -66,7 +66,7 @@ public class ImportAccountData {
      * @return сформированный запрос.
      * @throws PreGISException
      */
-    private ImportAccountRequest getUpdateImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
+    public ImportAccountRequest getUpdateImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
 
         setIsAccount(account);
 
@@ -79,10 +79,9 @@ public class ImportAccountData {
      * @param account данные абонента.
      * @return сформированный запрос.
      */
-    private ImportAccountRequest getNewImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
+    public ImportAccountRequest getNewImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
 
-//        Дописать getImportAccountRequest
-//        TODO
+
         setIsAccount(account);
 
 //        account.setCreationDate(OtherFormat.getDateNow()); // попробую без даты

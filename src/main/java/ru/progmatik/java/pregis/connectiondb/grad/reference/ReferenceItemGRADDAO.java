@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.reference;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 
 import java.sql.*;
@@ -15,10 +16,11 @@ import java.util.Map;
 public class ReferenceItemGRADDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ReferenceItemGRADDAO.class);
+    private final ReferenceNSIDAO nsidao;
 
     public ReferenceItemGRADDAO() throws SQLException {
 //        Будем работать с встроеной базаой через её классы
-        ReferenceNSIDAO nsidao = new ReferenceNSIDAO();
+        nsidao = new ReferenceNSIDAO();
     }
 
     /**
@@ -156,4 +158,21 @@ public class ReferenceItemGRADDAO {
         }
     }
 
+    /**
+     * Метод, передаёт из базы информацию о ключевых словах для поиска элементов в справочники.
+     * @return ключ - код справочника, значение - ключевое слова для извлечения информации из справочника.
+     * @throws SQLException
+     */
+    public HashMap<String, ArrayList<String>> getNsiDataForExecute() throws SQLException {
+        return nsidao.getNsiDataProviderForExtractMap();
+    }
+
+    /**
+     * Метод, передает из базы информацию о справочниках, которые необходимо подгрузить в БД ГРАДа.
+     * @return список объектов содержащих код справочника и тип справочника.
+     * @throws SQLException
+     */
+    public ArrayList<ReferenceDownloadNSIDataSet> getNsiDataForDownload() throws SQLException {
+        return nsidao.getNsiDataProviderForDownload();
+    }
 }

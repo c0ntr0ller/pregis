@@ -272,26 +272,35 @@ public class ReferenceNSIDAO {
 
     /**
      * Метод, добавляет справочник в список обновлений.
+     * @param dataSet объект содержащий информацию пригодную для дальнейшего обновления справочников.
+     * @throws SQLException
      */
     public void addNsiForDownload(ReferenceDownloadNSIDataSet dataSet) throws SQLException {
+
+        boolean isContains = true;
 
         ArrayList<ReferenceDownloadNSIDataSet> nsiForDownloads = getNsiForDownload();
 
         for (ReferenceDownloadNSIDataSet nsiDataSet : nsiForDownloads) {
-            if (!dataSet.getCode().equals(nsiDataSet.getCode())) {
-                if (!dataSet.getWorldForExtract().equals(nsiDataSet.getWorldForExtract())) {
-                    String sqlRequest = "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES(" +
-                            "'" + dataSet.getCode() + "', " +
-                            "'" + dataSet.getWorldForExtract() + "', " +
-                            "select ID from SPR_NSI_TYPE WHERE NSI_TYPE = '" + dataSet.getNsiType().getNsi() + "');";
-                    sendSqlRequest(sqlRequest);
+            if (dataSet.getCode().equals(nsiDataSet.getCode())) {
+                if (dataSet.getWorldForExtract().equals(nsiDataSet.getWorldForExtract())) {
+                    isContains = false;
                 }
             }
+        }
+        if (isContains) {
+            String sqlRequest = "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES(" +
+                    "'" + dataSet.getCode() + "', " +
+                    "'" + dataSet.getWorldForExtract() + "', " +
+                    "select ID from SPR_NSI_TYPE WHERE NSI_TYPE = '" + dataSet.getNsiType().getNsi() + "');";
+            sendSqlRequest(sqlRequest);
         }
     }
 
     /**
      * Метод, получает из БД список справочников для обновления.
+     * @return список объектов содержащих информацию об обновлении справочников.
+     * @throws SQLException
      */
     public ArrayList<ReferenceDownloadNSIDataSet> getNsiForDownload() throws SQLException {
 
@@ -312,21 +321,24 @@ public class ReferenceNSIDAO {
 
     /**
      * Метод, добавляет справочник для таблице в БД ГРАД в список обновлений.
+     * NSI_DATA_PROVIDER_FOR_DOWNLOAD
+     * @param dataSet объект содержащий код справочника и тип справочника.
+     * @throws SQLException
      */
     public void addNsiDataProviderForDownload(ReferenceDownloadNSIDataSet dataSet) throws SQLException {
 
-        boolean isContains = false;
+        boolean isContains = true;
 
         ArrayList<ReferenceDownloadNSIDataSet> nsiForDownloads = getNsiDataProviderForDownload();
 
         for (ReferenceDownloadNSIDataSet nsiDataSet : nsiForDownloads) {
             if (dataSet.getCode().equals(nsiDataSet.getCode())) {
                 if (dataSet.getNsiType().equals(nsiDataSet.getNsiType())) {
-                    isContains = true;
+                    isContains = false;
                 }
             }
         }
-        if (!isContains) {
+        if (isContains) {
             String sqlRequest = "INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, NSI_TYPE) VALUES('" + dataSet.getCode() + "', '" + dataSet.getNsiType().getNsi() + "');";
             sendSqlRequest(sqlRequest);
         }
@@ -334,6 +346,9 @@ public class ReferenceNSIDAO {
 
     /**
      * Метод, получает из БД список справочников для обновления в БД ГРАД.
+     * NSI_DATA_PROVIDER_FOR_DOWNLOAD
+     * @return список объектов содержащих код справочника и тип справочника.
+     * @throws SQLException
      */
     public ArrayList<ReferenceDownloadNSIDataSet> getNsiDataProviderForDownload() throws SQLException {
 
@@ -374,6 +389,7 @@ public class ReferenceNSIDAO {
 
     /**
      * Метод, получает из БД список кодов справочников и ключевых слов для извлечения нужной информации из справочника в БД ГРАД.
+     * NSI_DATA_PROVIDER_FOR_EXTRACT
      *
      * @return ключ - код справочника, значение - ключевое слова для извлечения информации из справочника.
      * @throws SQLException

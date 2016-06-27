@@ -19,8 +19,11 @@ public class ReferenceNSIDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ReferenceNSIDAO.class);
     private static final String TABLE_NAME_NSI = "SPR_NSI";  // основная таблица
-    private static final String TABLE_NAME_NSI_DOWNLOAD = "NSI_FOR_DOWNLOAD"; // таблица содержит перечень справочников для загрузки и слово, п окоторому будет извлечено значение из справочника
+    private static final String TABLE_NAME_NSI_DOWNLOAD = "NSI_FOR_DOWNLOAD"; // таблица содержит перечень справочников для загрузки и слово, по окоторому будет извлечено значение из справочника
     private static final String TABLE_NAME_SPR_NSI_TYPE = "SPR_NSI_TYPE";
+
+    private static final String TABLE_NAME_NSI_DATA_PROVIDER_FOR_DOWNLOAD = "NSI_DATA_PROVIDER_FOR_DOWNLOAD";
+    private static final String TABLE_NAME_NSI_DATA_PROVIDER_FOR_EXTRACT = "NSI_DATA_PROVIDER_FOR_EXTRACT";
 
     private static final String SQL_CREATE_TABLE_NSI = "CREATE TABLE IF NOT EXISTS SPR_NSI (" +
             "ID identity not null primary key, " +
@@ -60,6 +63,32 @@ public class ReferenceNSIDAO {
             "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSI'); " +
             "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSIRAO');";
 
+    private static final String SQL_CREATE_TABLE_NSI_DATA_PROVIDER_FOR_DOWNLOAD = "CREATE TABLE IF NOT EXISTS NSI_DATA_PROVIDER_FOR_DOWNLOAD (" +
+            "ID identity not null primary key, " +
+            "CODE varchar(20) not null, " +
+            "NSI_TYPE varchar(20) not null); " +
+            "COMMENT ON TABLE \"PUBLIC\".NSI_DATA_PROVIDER_FOR_DOWNLOAD IS 'Справочники для загрузки в БД ГРАД.'; " +
+            "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.CODE IS 'Код справочника, который необходимо загрузить.'; " +
+            "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, NSI_TYPE) VALUES('50', 'NSI');";
+
+    private static final String SQL_CREATE_TABLE_NSI_DATA_PROVIDER_FOR_EXTRACT = "CREATE TABLE IF NOT EXISTS NSI_DATA_PROVIDER_FOR_EXTRACT (" +
+            "ID identity not null primary key, " +
+            "CODE varchar(20) not null, " +
+            "WORD_FOR_EXTRACT varchar(255) not null); " +
+            "COMMENT ON TABLE \"PUBLIC\".NSI_DATA_PROVIDER_FOR_EXTRACT IS 'Таблица содержит перечень данных для извлечения нужных данных из справочников ГИС ЖКХ в БД ГРАД.'; " +
+            "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_EXTRACT.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_EXTRACT.CODE IS 'Код справочника, который необходимо загрузить.'; " +
+            "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_EXTRACT.WORD_FOR_EXTRACT IS 'Для извлечения нужного элемента из справочника, используется ключевое слово.';" +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('1', 'Вид дополнительной услуги'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('51', 'Вид коммунальной услуги'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('51', 'Главная коммунальная услуга'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('3', 'Вид коммунальной услуги'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('59', 'Вид работ'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('59', 'Наименование работы в системе'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('56', 'Вид работ'); " +
+            "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('50', 'Вид жилищной  услуги');";
 
     /**
      * Конструктор, проверяет, если таблицы с таким именем нет, то он её создаёт.
@@ -76,6 +105,12 @@ public class ReferenceNSIDAO {
         }
         if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI.toUpperCase())) {
             sendSqlRequest(SQL_CREATE_TABLE_NSI);
+        }
+        if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI_DATA_PROVIDER_FOR_DOWNLOAD.toUpperCase())) {
+            sendSqlRequest(SQL_CREATE_TABLE_NSI_DATA_PROVIDER_FOR_DOWNLOAD);
+        }
+        if (!ConnectionDB.instance().tableExist(TABLE_NAME_NSI_DATA_PROVIDER_FOR_EXTRACT.toUpperCase())) {
+            sendSqlRequest(SQL_CREATE_TABLE_NSI_DATA_PROVIDER_FOR_EXTRACT);
         }
     }
 
@@ -215,6 +250,7 @@ public class ReferenceNSIDAO {
     /**
      * Метод, по указанному коду родительского справочника создаёт фильтр, формирует асоциативный массив из элемнтов в таблице,
      * где ключ - код элмента справочника, значение сам элемент справочника.
+     *
      * @param codeParent код родительского справочника.
      * @return ключ - код элмента справочника, значение сам элемент справочника.
      * @throws SQLException
@@ -246,7 +282,7 @@ public class ReferenceNSIDAO {
                 if (!dataSet.getWorldForExtract().equals(nsiDataSet.getWorldForExtract())) {
                     String sqlRequest = "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES(" +
                             "'" + dataSet.getCode() + "', " +
-                            "'" + dataSet.getWorldForExtract() +"', " +
+                            "'" + dataSet.getWorldForExtract() + "', " +
                             "select ID from SPR_NSI_TYPE WHERE NSI_TYPE = '" + dataSet.getNsiType().getNsi() + "');";
                     sendSqlRequest(sqlRequest);
                 }
@@ -272,6 +308,93 @@ public class ReferenceNSIDAO {
             }
         }
         return listDataSets;
+    }
+
+    /**
+     * Метод, добавляет справочник для таблице в БД ГРАД в список обновлений.
+     */
+    public void addNsiDataProviderForDownload(ReferenceDownloadNSIDataSet dataSet) throws SQLException {
+
+        boolean isContains = false;
+
+        ArrayList<ReferenceDownloadNSIDataSet> nsiForDownloads = getNsiDataProviderForDownload();
+
+        for (ReferenceDownloadNSIDataSet nsiDataSet : nsiForDownloads) {
+            if (dataSet.getCode().equals(nsiDataSet.getCode())) {
+                if (dataSet.getNsiType().equals(nsiDataSet.getNsiType())) {
+                    isContains = true;
+                }
+            }
+        }
+        if (!isContains) {
+            String sqlRequest = "INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, NSI_TYPE) VALUES('" + dataSet.getCode() + "', '" + dataSet.getNsiType().getNsi() + "');";
+            sendSqlRequest(sqlRequest);
+        }
+    }
+
+    /**
+     * Метод, получает из БД список справочников для обновления в БД ГРАД.
+     */
+    public ArrayList<ReferenceDownloadNSIDataSet> getNsiDataProviderForDownload() throws SQLException {
+
+        ArrayList<ReferenceDownloadNSIDataSet> listDataSets = new ArrayList<>();
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM NSI_DATA_PROVIDER_FOR_DOWNLOAD")) {
+
+            while (resultSet.next()) {
+                listDataSets.add(new ReferenceDownloadNSIDataSet(resultSet.getInt(1), resultSet.getString(2),
+                        NsiListGroupEnum.getNsiGroup(resultSet.getString(3))));
+            }
+        }
+        return listDataSets;
+    }
+
+    /**
+     * Метод, добавляет в таблицу ключевых слов новую запись, в БД ГРАД.
+     * NSI_DATA_PROVIDER_FOR_EXTRACT
+     *
+     * @param dataSet объект содержащий код справочника и ключевое слово.
+     * @throws SQLException
+     */
+    public void addNsiDataProviderForExtract(ReferenceDownloadNSIDataSet dataSet) throws SQLException {
+
+        HashMap<String, ArrayList<String>> extractMap = getNsiDataProviderForExtractMap();
+
+        if (extractMap.containsKey(dataSet.getCode())) {
+            if (!extractMap.get(dataSet.getCode()).contains(dataSet.getWorldForExtract())) {
+                String sqlRequest = "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('" + dataSet.getCode() + "', '" + dataSet.getWorldForExtract() + "');";
+                sendSqlRequest(sqlRequest);
+            }
+        } else {
+            String sqlRequest = "INSERT INTO NSI_DATA_PROVIDER_FOR_EXTRACT(CODE, WORD_FOR_EXTRACT) VALUES('" + dataSet.getCode() + "', '" + dataSet.getWorldForExtract() + "');";
+            sendSqlRequest(sqlRequest);
+        }
+    }
+
+    /**
+     * Метод, получает из БД список кодов справочников и ключевых слов для извлечения нужной информации из справочника в БД ГРАД.
+     *
+     * @return ключ - код справочника, значение - ключевое слова для извлечения информации из справочника.
+     * @throws SQLException
+     */
+    public HashMap<String, ArrayList<String>> getNsiDataProviderForExtractMap() throws SQLException {
+
+        HashMap<String, ArrayList<String>> mapNsiDataForExtract = new HashMap<>();
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM NSI_DATA_PROVIDER_FOR_EXTRACT")) {
+
+            while (resultSet.next()) {
+                if (mapNsiDataForExtract.containsKey(resultSet.getString(2))) {
+                    mapNsiDataForExtract.get(resultSet.getString(2)).add(resultSet.getString(3));
+                } else {
+                    mapNsiDataForExtract.put(resultSet.getString(2), new ArrayList<String>());
+                    mapNsiDataForExtract.get(resultSet.getString(2)).add(resultSet.getString(3));
+                }
+            }
+        }
+        return mapNsiDataForExtract;
     }
 
 }

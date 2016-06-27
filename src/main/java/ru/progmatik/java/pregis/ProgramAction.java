@@ -166,7 +166,7 @@ public class ProgramAction {
         try {
 //            Если будет нужно, переделать как у всех что бы сыпал лог клиенту.
             ExportNsiList nsiList = new ExportNsiList();
-            nsiList.callExportNsiList();
+            nsiList.callExportNsiList(NsiListGroupEnum.NSI);
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getNsiList: ", "\"Экспорта списков справочников\" ", LOGGER, e);
             answerProcessing.sendMessageToClient("::setFailed()");

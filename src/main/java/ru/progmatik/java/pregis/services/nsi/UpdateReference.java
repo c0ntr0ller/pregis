@@ -1,12 +1,24 @@
 package ru.progmatik.java.pregis.services.nsi;
-
+/*
+    Принцип такой: справочники 1, 51 и 59 находятся в другом модули ГИС ЖКХ чем остальные, они имеют структуру разную,
+    чем однотипные справочники NSI и NSIDAO. Нет возможности обрабатывать их в одном месте.
+    Так же, есть справочники которые, необходимо использовать в коде, а есть которые выводяться пользователю в ГРАДе.
+    "SERVICES_GIS_JKH" таблица содержится в БД ГРАД и отображается пользователю для формирования ПД.
+    "SPR_NSI" - основная таблица в которой содержаться справочники.
+    "NSI_FOR_DOWNLOAD" - таблица содержит перечень справочников для загрузки и слово, по окоторому будет извлечено значение из справочника
+    "SPR_NSI_TYPE" - содержит тип справочника НСИ или НСИРАО (NSI, NSIRAO).
+    Соответственно нет возможности обрабатывать и хранить всю информацию в одной таблице, лучше их разделить.
+    NSI_DATA_PROVIDER_FOR_DOWNLOAD - хранит перечень стороних справочников (не 1, 51 и 59), для загрузки.
+    NSI_DATA_PROVIDER_FOR_EXTRACT - хранит код справочника и ключевлое слово для извлечения нужного поля.
+    Т.е. если нужно загрузить дополнительный справочник типа 50, то необходимо указать его в таблице NSI_DATA_PROVIDER_FOR_DOWNLOAD 50 NSI.
+    Далее в таблице NSI_DATA_PROVIDER_FOR_EXTRACT укажим код справочника 50 и ключевое слово для получения нужных полей "Вид жилищной  услуги".
+ */
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementFieldType;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementNsiRefFieldType;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementStringFieldType;
 import ru.gosuslugi.dom.schema.integration.base.NsiElementType;
 import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
@@ -17,7 +29,6 @@ import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
 
 import java.math.BigInteger;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +102,12 @@ public class UpdateReference {
      *
      * @param codeNsi код справочника (1, 51, 59)
      */
-    public boolean updateDataProviderNsiItem(String codeNsi) {
+    public boolean updateDataProviderNsiItem(String codeNsi) throws SQLException {
 
         listForAdd.clear(); // Очищаем очередь для добавления если в ней что то осталось с предыдущего раза.
 
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO(connection);
+//        try {
+            ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO();
 
             ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(answerProcessing);
             ExportNsiItemResult resultNsi = dataProviderNsiItem.callExportDataProviderNsiItem(codeNsi);
@@ -122,11 +133,49 @@ public class UpdateReference {
                 }
             }
 
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("updateDataProviderNsiItem(): ", "\"Синхронизации справочников\" ", LOGGER, e);
-            return false;
-        }
+//        } catch (SQLException e) {
+//            answerProcessing.sendErrorToClient("updateDataProviderNsiItem(): ", "\"Синхронизации справочников\" ", LOGGER, e);
+//            return false;
+//        }
         return true;
+    }
+
+    /**
+     * Метод, будет загружать справочник в таблицу БД ГРАД, которая отображается у пользователя.
+     */
+    public void updateOtherNsiForProviderNsi(String codeNsi) throws SQLException {
+
+        ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO();
+//        Написать запрос в БД получить все справочники и обновить
+        ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
+        ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult resultNsi = exportNsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsi));
+
+        answerProcessing.sendMessageToClient("Получаю справочники из БД с кодом: " + codeNsi);
+        Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi);
+
+        if (mapNsiWithCodeNsi == null || resultNsi == null) {
+                answerProcessing.sendMessageToClient("Возникли ошибки, справочники не обновлены!");
+//            return false;
+
+        } else {
+
+//            поиск совпадений в таблице
+            List<NsiElementType> nsiElements = resultNsi.getNsiItem().getNsiElement();
+            for (NsiElementType nsiElement : nsiElements) {
+                if (nsiElement.isIsActual()) {
+                    if (!mapNsiWithCodeNsi.containsKey(nsiElement.getCode()) ||
+                            !mapNsiWithCodeNsi.get(nsiElement.getCode()).getGuid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
+                        listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
+                    }
+                }
+            }
+
+            if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
+
+                answerProcessing.sendMessageToClient("Обновляю справочники в БД...");
+                addItemsInDB(mapNsiWithCodeNsi, codeNsi, null, gradDAO);
+            }
+        }
     }
 
     /**
@@ -177,6 +226,7 @@ public class UpdateReference {
                 dataSet.setCodeParent(codeParent);
 
                 for (NsiElementFieldType field : nsiElement.getNsiElementField()) {
+
                     switch (field.getName()) {
                         case "Наименование работы в системе":
                             stringType = (NsiElementStringFieldType) field;
@@ -237,11 +287,13 @@ public class UpdateReference {
     private ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> loadOtherNsi() {
 
         getCodeNsiItem(listForAdd);
-        ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
         ArrayList<ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult> nsiItemResults = new ArrayList<>();
 
-        for (BigInteger codeNsi : codeNsiItemsSet) {
-            nsiItemResults.add(exportNsiItem.callExportNsiItem(NsiListGroupEnum.NSI, codeNsi));
+        if (codeNsiItemsSet.size() > 0) {
+            ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
+            for (BigInteger codeNsi : codeNsiItemsSet) {
+                nsiItemResults.add(exportNsiItem.callExportNsiItem(NsiListGroupEnum.NSI, codeNsi));
+            }
         }
         return nsiItemResults;
     }

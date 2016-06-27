@@ -912,3 +912,224 @@ $$;*/ [42122-190]
 	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-27 10:53:34 database: flush
+org.h2.message.DbException: Внутренняя ошибка: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]"
+General error: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]" [50000-190]
+	at org.h2.message.DbException.get(DbException.java:168)
+	at org.h2.message.DbException.convert(DbException.java:295)
+	at org.h2.mvstore.db.MVTableEngine$1.uncaughtException(MVTableEngine.java:94)
+	at org.h2.mvstore.MVStore.panic(MVStore.java:373)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:356)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:2888)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:154)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:99)
+	at org.h2.engine.Database.getPageStore(Database.java:2450)
+	at org.h2.engine.Database.open(Database.java:672)
+	at org.h2.engine.Database.openDatabase(Database.java:269)
+	at org.h2.engine.Database.<init>(Database.java:263)
+	at org.h2.engine.Engine.openSession(Engine.java:65)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at org.h2.jdbcx.JdbcDataSource.getJdbcConnection(JdbcDataSource.java:190)
+	at org.h2.jdbcx.JdbcDataSource.getXAConnection(JdbcDataSource.java:353)
+	at org.h2.jdbcx.JdbcDataSource.getPooledConnection(JdbcDataSource.java:385)
+	at org.h2.jdbcx.JdbcConnectionPool.getConnectionNow(JdbcConnectionPool.java:227)
+	at org.h2.jdbcx.JdbcConnectionPool.getConnection(JdbcConnectionPool.java:199)
+	at ru.progmatik.java.pregis.connectiondb.ConnectionDB.getConnectionDB(ConnectionDB.java:58)
+	at ru.progmatik.java.pregis.connectiondb.localdb.organization.BaseOrganization.<init>(BaseOrganization.java:27)
+	at ru.progmatik.java.pregis.connectiondb.localdb.organization.BaseOrganization.getSenderID(BaseOrganization.java:53)
+	at ru.progmatik.java.pregis.Main.main(Main.java:116)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:144)
+Caused by: org.h2.jdbc.JdbcSQLException: Внутренняя ошибка: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]"
+General error: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]" [50000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 35 more
+Caused by: java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:773)
+	at org.h2.mvstore.FileStore.open(FileStore.java:172)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:342)
+	... 30 more
+2016-06-27 11:42:10 database: flush
+org.h2.message.DbException: Внутренняя ошибка: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]"
+General error: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]" [50000-190]
+	at org.h2.message.DbException.get(DbException.java:168)
+	at org.h2.message.DbException.convert(DbException.java:295)
+	at org.h2.mvstore.db.MVTableEngine$1.uncaughtException(MVTableEngine.java:94)
+	at org.h2.mvstore.MVStore.panic(MVStore.java:373)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:356)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:2888)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:154)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:99)
+	at org.h2.engine.Database.getPageStore(Database.java:2450)
+	at org.h2.engine.Database.open(Database.java:672)
+	at org.h2.engine.Database.openDatabase(Database.java:269)
+	at org.h2.engine.Database.<init>(Database.java:263)
+	at org.h2.engine.Engine.openSession(Engine.java:65)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCDataSource.openConnection(JDBCDataSource.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCExecutionContext.connect(JDBCExecutionContext.java:73)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCDataSource.<init>(JDBCDataSource.java:94)
+	at org.jkiss.dbeaver.ext.generic.model.GenericDataSource.<init>(GenericDataSource.java:79)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.createDataSource(GenericMetaModel.java:86)
+	at org.jkiss.dbeaver.ext.generic.GenericDataSourceProvider.openDataSource(GenericDataSourceProvider.java:149)
+	at org.jkiss.dbeaver.registry.DataSourceDescriptor.connect(DataSourceDescriptor.java:593)
+	at org.jkiss.dbeaver.runtime.jobs.ConnectJob.run(ConnectJob.java:71)
+	at org.jkiss.dbeaver.runtime.jobs.ConnectJob.runSync(ConnectJob.java:101)
+	at org.jkiss.dbeaver.ui.actions.datasource.DataSourceHandler.connectToDataSource(DataSourceHandler.java:129)
+	at org.jkiss.dbeaver.registry.DataSourceDescriptor.initConnection(DataSourceDescriptor.java:551)
+	at org.jkiss.dbeaver.model.navigator.DBNDataSource.initializeNode(DBNDataSource.java:123)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:182)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: org.h2.jdbc.JdbcSQLException: Внутренняя ошибка: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]"
+General error: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]" [50000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 40 more
+Caused by: java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:773)
+	at org.h2.mvstore.FileStore.open(FileStore.java:172)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:342)
+	... 35 more
+2016-06-27 11:42:51 database: flush
+org.h2.message.DbException: Внутренняя ошибка: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]"
+General error: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]" [50000-190]
+	at org.h2.message.DbException.get(DbException.java:168)
+	at org.h2.message.DbException.convert(DbException.java:295)
+	at org.h2.mvstore.db.MVTableEngine$1.uncaughtException(MVTableEngine.java:94)
+	at org.h2.mvstore.MVStore.panic(MVStore.java:373)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:356)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:2888)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:154)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:99)
+	at org.h2.engine.Database.getPageStore(Database.java:2450)
+	at org.h2.engine.Database.open(Database.java:672)
+	at org.h2.engine.Database.openDatabase(Database.java:269)
+	at org.h2.engine.Database.<init>(Database.java:263)
+	at org.h2.engine.Engine.openSession(Engine.java:65)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCDataSource.openConnection(JDBCDataSource.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCExecutionContext.connect(JDBCExecutionContext.java:73)
+	at org.jkiss.dbeaver.model.impl.jdbc.JDBCDataSource.<init>(JDBCDataSource.java:94)
+	at org.jkiss.dbeaver.ext.generic.model.GenericDataSource.<init>(GenericDataSource.java:79)
+	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.createDataSource(GenericMetaModel.java:86)
+	at org.jkiss.dbeaver.ext.generic.GenericDataSourceProvider.openDataSource(GenericDataSourceProvider.java:149)
+	at org.jkiss.dbeaver.registry.DataSourceDescriptor.connect(DataSourceDescriptor.java:593)
+	at org.jkiss.dbeaver.runtime.jobs.ConnectJob.run(ConnectJob.java:71)
+	at org.jkiss.dbeaver.runtime.jobs.ConnectJob.runSync(ConnectJob.java:101)
+	at org.jkiss.dbeaver.ui.actions.datasource.DataSourceHandler.connectToDataSource(DataSourceHandler.java:129)
+	at org.jkiss.dbeaver.registry.DataSourceDescriptor.initConnection(DataSourceDescriptor.java:551)
+	at org.jkiss.dbeaver.model.navigator.DBNDataSource.initializeNode(DBNDataSource.java:123)
+	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:182)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:57)
+	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:82)
+	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:69)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: org.h2.jdbc.JdbcSQLException: Внутренняя ошибка: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]"
+General error: "java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]" [50000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 40 more
+Caused by: java.lang.IllegalStateException: The file is locked: nio:C:/andryha/project/workspace_for_git/PreGIS/db/pregisdb.h2.db.mv.db [1.4.190/7]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:773)
+	at org.h2.mvstore.FileStore.open(FileStore.java:172)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:342)
+	... 35 more
+2016-06-27 14:38:46 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "COMMENT ON TABLE[*] \""PUBLIC\"".NSI_DATA_PROVIDER_FOR_DOWNLOAD IS 'Справочники для загрузки в БД ГРАД.';
+COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.ID IS 'Идентификатор записей.'"
+Syntax error in SQL statement "COMMENT ON TABLE[*] \""PUBLIC\"".NSI_DATA_PROVIDER_FOR_DOWNLOAD IS 'Справочники для загрузки в БД ГРАД.';
+COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.ID IS 'Идентификатор записей.'"; SQL statement:
+COMMENT ON TABLE \"PUBLIC\".NSI_DATA_PROVIDER_FOR_DOWNLOAD IS 'Справочники для загрузки в БД ГРАД.';
+COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.ID IS 'Идентификатор записей.' [42000-190]
+2016-06-27 14:45:03 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "COMMENT ON TABLE[*] \""PUBLIC\"".NSI_DATA_PROVIDER_FOR_EXTRACT IS 'Таблица содержит перечень данных для извлечения нужных данных из справочников ГИС ЖКХ в БД ГРАД.';
+COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_EXTRACT.ID IS 'Идентификатор записей.'"
+Syntax error in SQL statement "COMMENT ON TABLE[*] \""PUBLIC\"".NSI_DATA_PROVIDER_FOR_EXTRACT IS 'Таблица содержит перечень данных для извлечения нужных данных из справочников ГИС ЖКХ в БД ГРАД.';
+COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_EXTRACT.ID IS 'Идентификатор записей.'"; SQL statement:
+COMMENT ON TABLE \"PUBLIC\".NSI_DATA_PROVIDER_FOR_EXTRACT IS 'Таблица содержит перечень данных для извлечения нужных данных из справочников ГИС ЖКХ в БД ГРАД.';
+COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_EXTRACT.ID IS 'Идентификатор записей.' [42000-190]
+2016-06-27 15:03:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "NSI_DATA_PROVIDER_FOR_DOWNLOAD[*]"
+Syntax error in SQL statement "NSI_DATA_PROVIDER_FOR_DOWNLOAD[*]"; SQL statement:
+NSI_DATA_PROVIDER_FOR_DOWNLOAD [42000-190]
+2016-06-27 15:03:22 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "WORD_FOR_EXTRACT" не найден
+Column "WORD_FOR_EXTRACT" not found; SQL statement:
+INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT) VALUES('1', 'Вид дополнительной услуги') [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.table.Table.getColumn(Table.java:660)
+	at org.h2.command.Parser.parseColumn(Parser.java:855)
+	at org.h2.command.Parser.parseColumnList(Parser.java:839)
+	at org.h2.command.Parser.parseInsert(Parser.java:1039)
+	at org.h2.command.Parser.parsePrepared(Parser.java:400)
+	at org.h2.command.Parser.parse(Parser.java:304)
+	at org.h2.command.Parser.parse(Parser.java:276)
+	at org.h2.command.Parser.prepareCommand(Parser.java:241)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.run(SQLQueryJob.java:177)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-27 15:05:03 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "WORD_FOR_EXTRACT" не найден
+Column "WORD_FOR_EXTRACT" not found; SQL statement:
+INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT) VALUES('1', 'Вид дополнительной услуги') [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.table.Table.getColumn(Table.java:660)
+	at org.h2.command.Parser.parseColumn(Parser.java:855)
+	at org.h2.command.Parser.parseColumnList(Parser.java:839)
+	at org.h2.command.Parser.parseInsert(Parser.java:1039)
+	at org.h2.command.Parser.parsePrepared(Parser.java:400)
+	at org.h2.command.Parser.parse(Parser.java:304)
+	at org.h2.command.Parser.parse(Parser.java:276)
+	at org.h2.command.Parser.prepareCommand(Parser.java:241)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.run(SQLQueryJob.java:177)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

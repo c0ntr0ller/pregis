@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,7 +32,14 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException {
 
-        getXML();
+//        getXML();
+
+        ReferenceDownloadNSIDataSet dataSet = new ReferenceDownloadNSIDataSet("50", "Мама мыла раму");
+        ReferenceDownloadNSIDataSet dataSet2 = new ReferenceDownloadNSIDataSet("50", "Мама мыла раму");
+
+        System.out.println(dataSet.hashCode() + " : " + dataSet2.hashCode());
+
+
 //        ReferenceNSI95DAO dao = new ReferenceNSI95DAO();
 //        ArrayList<ReferenceItemDataSet> allItems = dao.getAllItems();
 //        for (ReferenceItemDataSet item : allItems) {

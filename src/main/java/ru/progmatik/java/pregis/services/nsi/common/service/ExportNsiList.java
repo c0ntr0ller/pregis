@@ -17,7 +17,7 @@ public class ExportNsiList {
 
     private static final String NAME_METHOD = "exportNsiList";
 
-    public void callExportNsiList() {
+    public void callExportNsiList(NsiListGroupEnum nsiType) {
 
         HeaderType requestHeader = OtherFormat.getISRequestHeader();
 
@@ -30,7 +30,7 @@ public class ExportNsiList {
         NsiPortsTypeImpl portsType = new NsiPortsTypeImpl();
 
         try {
-            result = portsType.exportNsiList(getExportNsiListRequest(), requestHeader, headerHolder);
+            result = portsType.exportNsiList(getExportNsiListRequest(nsiType), requestHeader, headerHolder);
 
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
@@ -46,12 +46,12 @@ public class ExportNsiList {
 
     }
 
-    private ExportNsiListRequest getExportNsiListRequest() {
+    private ExportNsiListRequest getExportNsiListRequest(NsiListGroupEnum nsiType) {
 
         ExportNsiListRequest exportNsiListRequest = new ExportNsiListRequest();
         exportNsiListRequest.setId("signed-data-container");
 //        exportNsiListRequest.setListGroup("NSIRAO");
-//        exportNsiListRequest.setListGroup("NSI");
+        exportNsiListRequest.setListGroup(nsiType.getNsi());
 
 //        exportNsiListRequest.setSignature(new SignatureType());
 

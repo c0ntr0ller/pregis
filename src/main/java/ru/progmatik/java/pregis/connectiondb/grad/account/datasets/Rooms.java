@@ -59,9 +59,9 @@ public class Rooms {
     private int sharePay;
 
     /**
-     * Идентификатор ЛС в ГИС ЖКХ, используется только при обновлении данных ЛС.
+     * Идентификатор абонента в БД ГРАД.
      */
-    private String AccountGUID;
+    private int abonId;
 
     /**
      * Определяет является абонент физическим лицом или юридическим.
@@ -203,19 +203,19 @@ public class Rooms {
     }
 
     /**
-     * Получить, идентификатор ЛС в ГИС ЖКХ, используется только при обновлении данных ЛС.
-     * @return идентификатор ЛС в ГИС ЖКХ.
+     * Получить, Идентификатор абонента в БД ГРАД.
+     * @return идентификатор абонента в БД ГРАД.
      */
-    public String getAccountGUID() {
-        return AccountGUID;
+    public int getAbonId() {
+        return abonId;
     }
 
     /**
-     * Задать, идентификатор ЛС в ГИС ЖКХ, используется только при обновлении данных ЛС.
-     * @param accountGUID новый идентификатор ЛС в ГИС ЖКХ.
+     * Задать, Идентификатор абонента в БД ГРАД.
+     * @param abonId новый идентификатор абонента в БД ГРАД.
      */
-    public void setAccountGUID(String accountGUID) {
-        AccountGUID = accountGUID;
+    public void setAbonId(int abonId) {
+        this.abonId = abonId;
     }
 
     /**

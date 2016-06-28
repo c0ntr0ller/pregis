@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
@@ -22,6 +23,8 @@ import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
+import java.text.ParseException;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -82,20 +85,6 @@ public class ProgramAction {
         setStateRunOff(); // взводим флаг в состояние откл.
     }
 
-//    public void callExportOrgRegistry() throws Exception {
-//
-//        ExportOrgRegistry reg = new ExportOrgRegistry(clientService, answerProcessing);
-//        reg.callExportOrgRegistry();
-//    }
-//
-//    public void callExportDataProvider() throws InvocationTargetException, NoSuchMethodException, MalformedURLException, IllegalAccessException {
-//
-//        ExportDataProvider dataProvider = new ExportDataProvider();
-//        dataProvider.callExportDataProvide();
-//    }
-
-
-
     /**
      * Метод, экспортирует справочники №1, 51, 59 поставщика информации.
      */
@@ -118,23 +107,6 @@ public class ProgramAction {
 
     }
 
-//    Упразднен, обновление проходит со всеми остальными справочниками.
-//    /**
-//     * Метод, оновляет данные справочника НСИ-95 "Документ, удостоверяющий личность".
-//     *
-//     */
-//    public void callUpdateNSI95() {
-//
-//
-//        try {
-//            ReferenceNSI nsi95 = new ReferenceNSI(answerProcessing);
-//            answerProcessing.sendMessageToClient("Запуск обновления справочника НСИ-95...");
-//            nsi95.updateNSI(NsiListGroupEnum.NSI, "95");
-//            answerProcessing.sendOkMessageToClient("Справочник НСИ-95 обновлен.");
-//        } catch (PreGISException | SQLException e) {
-//            answerProcessing.sendErrorToClient("callUpdateNSI95():", "\"Обновления справочника НСИ-95\" ", LOGGER, e);
-//        }
-//    }
 
     /**
      * Метод, получаем данные о МКД из ГИС ЖКХ.
@@ -151,9 +123,21 @@ public class ProgramAction {
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
+    }
 
+    /**
+     * Метод, синхронизирует данные о лицевых счетах ГИС ЖКХ и БД ГРАД.
+     */
+    public void updateAccountData() {
 
-
+        try {
+            UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
+            updateAllAccountData.updateAllAccountData();
+        } catch (SQLException | PreGISException | ParseException e) {
+            answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);
+        }
+//        Надо что бы возвращало -1 возникли ошибка опер. прервана, 0 - возникли ошибки  операция завершена смотрите лог,
+//        1 - выполнено успешно.
     }
 
     /**
@@ -211,15 +195,6 @@ public class ProgramAction {
 
     }
 
-    /**
-     * Метод, синхронизирует данные о лицевых счетах ГИС ЖКХ и БД ГРАД.
-     */
-    public void updateAccountData() {
-        UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
-
-//        Надо что бы возвращало -1 возникли ошибка опер. прервана, 0 - возникли ошибки  операция завершена смотрите лог,
-//        1 - выполнено успешно.
-    }
 
     /**
      * Метод, экспорт сведений о лицевых счетах.

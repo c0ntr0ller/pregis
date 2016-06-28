@@ -22,6 +22,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -148,6 +149,7 @@ public class AccountGRADDAO {
                     rooms.setNumberApartment(arrayData[4]);
                     rooms.setIdSpaceGISJKH(arrayData[5]);
                     rooms.setSharePay(Integer.valueOf(checkZero(arrayData[6])));
+                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[7])));
 //                    rooms.setAccountGUID(arrayData[8]); // Саша должен добавить
 //                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
 
@@ -245,7 +247,7 @@ public class AccountGRADDAO {
                     account.getPayerInfo().setIsRenter(basicInformation.getEmployer() == AnswerYesOrNo.YES);
 
                     account.setAccountNumber(basicInformation.getNumberLS());
-                    account.setAccountGUID(roomsList.get(i).getAccountGUID());  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                    account.setAccountGUID(getAccountGUIDFromBase(roomsList.get(i).getAbonId()));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
 
                     mapAccount.put(basicInformation.getNumberLS(), account);
 
@@ -265,6 +267,64 @@ public class AccountGRADDAO {
             }
         }
         return mapAccount;
+    }
+
+    private String getAccountGUIDFromBase(Integer abonId) throws SQLException {
+
+        String sqlResult;
+        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+
+        try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest);
+             ResultSet resultSet = cstmt.executeQuery()) { // После использования должны все соединения закрыться
+            cstmt.setInt(1, abonId);
+            cstmt.setString(2, "ACCOUNTGUID");
+            resultSet.next();
+            sqlResult = resultSet.getString(1);
+            if (sqlResult == null || sqlResult.isEmpty()) {
+                return null;
+            }
+        } finally {
+            ConnectionBaseGRAD.instance().close();
+        }
+        return sqlResult;
+    }
+
+    public void setAccountUniqueNumber(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber) throws SQLException, PreGISException, ParseException {
+
+        Integer abonentId = getAbonentIdFromGrad(houseId, accountNumber);
+
+        if (abonentId != null) {
+            // ИД дома(:building_id),
+            // ИД абонента(:abon_id),
+            // ИД прибора учета(:meter_id),
+            // уникальный идентификатор ГИС ЖКХ(:gis_id),
+            // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
+            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL)}";
+            try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
+                cstmt.setInt(1, abonentId);
+                cstmt.setString(2, premisesGUID);
+                cstmt.setString(3, premisesUniqNum);
+                cstmt.setString(4, livingRoomGUID);
+                cstmt.setString(5, roomUniqNumber);
+                cstmt.executeUpdate();
+//                int codeReturn = cstmt.executeUpdate();
+//                System.err.println("Apartment code return: " + codeReturn);
+            } finally {
+                ConnectionBaseGRAD.instance().close();
+            }
+        } else {
+            throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
+        }
+    }
+
+    private Integer getAbonentIdFromGrad(Integer houseId, String accountNumber) throws ParseException, SQLException {
+        ArrayList<Rooms> rooms = getRooms(houseId);
+        for (Rooms room : rooms) {
+            if (accountNumber.equals(room.getNumberLS())) {
+                return room.getAbonId();
+            }
+        }
+        return null;
     }
 
     /**

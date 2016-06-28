@@ -53,6 +53,7 @@ public class AnswerProcessing {
         clientService.sendMessage("::setFailed()");
         clientService.sendMessage("Возникла ошибка!\nОперация " + nameOperation + "прервана!");
         clientService.sendMessage("Текст ошибки: " + exception.getMessage());
+        clientService.sendMessage("Возникли ошибки! Подробнее смотрите в логе событий.");
 //        clientService.sendMessage("::setFailed()");
         logger.error(methodName, exception);
         exception.printStackTrace();

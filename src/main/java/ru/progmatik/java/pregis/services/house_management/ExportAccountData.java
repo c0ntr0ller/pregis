@@ -55,6 +55,7 @@ public class ExportAccountData {
             return null;
         }
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
+        if (result.getErrorMessage() != null) return null; // Если возникли ошибки.
 
         return result;
     }

@@ -33,11 +33,11 @@ public class ImportAccountData {
         this.answerProcessing = answerProcessing;
     }
 
-    public void callImportAccountData() {
-
+    public ImportResult callImportAccountData(ImportAccountRequest request) {
+        return sendImportAccountData(request);
     }
 
-    private void sendImportAccountData(ImportAccountRequest request) {
+    private ImportResult sendImportAccountData(ImportAccountRequest request) {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
@@ -52,12 +52,14 @@ public class ImportAccountData {
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
-            return;
+            return null;
 //        } catch (PreGISException e) {
 //            answerProcessing.sendErrorToClient("sendImportAccountData(): ", "\"Синхронизация лицевых счетов\" ", LOGGER, e);
 //            return;
         }
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHolder.value, result.getErrorMessage(), LOGGER);
+        if (result.getErrorMessage() != null) return null;
+        return result;
     }
 
     /**

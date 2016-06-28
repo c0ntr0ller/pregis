@@ -1571,3 +1571,136 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:C:/andryha/p
 	at org.h2.mvstore.FileStore.open(FileStore.java:172)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:342)
 	... 30 more
+2016-06-29 00:06:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '123'
+DROP[*] TABLE ""PUBLIC"".ACCOUNT_FOR_REMOVE"
+Syntax error in SQL statement "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '123'
+DROP[*] TABLE ""PUBLIC"".ACCOUNT_FOR_REMOVE"; SQL statement:
+SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '123'
+DROP TABLE "PUBLIC".ACCOUNT_FOR_REMOVE [42000-192]
+2016-06-29 00:07:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID IDENTITY NOT NULL PRIMARY KEY,
+         					ABONID BIGINT NOT NULL,
+         					ABONLS VARCHAR(255) NOT NULL,
+            				FIO VARCHAR(255) NOT NULL,
+            				ENDDATE DATE,
+            				NSICODE VARCHAR(20)
+            				CLOSED[*] BOOLEAN(FALSE)) "; ожидалось "FOR, UNSIGNED, NOT, NULL, AS, DEFAULT, GENERATED, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, CHECK, REFERENCES, ,, )"
+Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID IDENTITY NOT NULL PRIMARY KEY,
+         					ABONID BIGINT NOT NULL,
+         					ABONLS VARCHAR(255) NOT NULL,
+            				FIO VARCHAR(255) NOT NULL,
+            				ENDDATE DATE,
+            				NSICODE VARCHAR(20)
+            				CLOSED[*] BOOLEAN(FALSE)) "; expected "FOR, UNSIGNED, NOT, NULL, AS, DEFAULT, GENERATED, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, CHECK, REFERENCES, ,, )"; SQL statement:
+CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID identity not null primary key,
+         					ABONID bigint not null,
+         					ABONLS varchar(255) not null,
+            				FIO varchar(255) not null,
+            				ENDDATE date,
+            				NSICODE varchar(20)
+            				CLOSED boolean(false)) [42001-192]
+2016-06-29 00:07:33 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID IDENTITY NOT NULL PRIMARY KEY,
+         					ABONID BIGINT NOT NULL,
+         					ABONLS VARCHAR(255) NOT NULL,
+            				FIO VARCHAR(255) NOT NULL,
+            				ENDDATE DATE,
+            				NSICODE VARCHAR(20)
+            				CLOSED[*] BOOLEAN(FALSE) NOT NULL) "; ожидалось "FOR, UNSIGNED, NOT, NULL, AS, DEFAULT, GENERATED, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, CHECK, REFERENCES, ,, )"
+Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID IDENTITY NOT NULL PRIMARY KEY,
+         					ABONID BIGINT NOT NULL,
+         					ABONLS VARCHAR(255) NOT NULL,
+            				FIO VARCHAR(255) NOT NULL,
+            				ENDDATE DATE,
+            				NSICODE VARCHAR(20)
+            				CLOSED[*] BOOLEAN(FALSE) NOT NULL) "; expected "FOR, UNSIGNED, NOT, NULL, AS, DEFAULT, GENERATED, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, CHECK, REFERENCES, ,, )"; SQL statement:
+CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID identity not null primary key,
+         					ABONID bigint not null,
+         					ABONLS varchar(255) not null,
+            				FIO varchar(255) not null,
+            				ENDDATE date,
+            				NSICODE varchar(20)
+            				CLOSED boolean(false) not null) [42001-192]
+2016-06-29 00:07:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID IDENTITY NOT NULL PRIMARY KEY,
+         					ABONID BIGINT NOT NULL,
+         					ABONLS VARCHAR(255) NOT NULL,
+            				FIO VARCHAR(255) NOT NULL,
+            				ENDDATE DATE,
+            				NSICODE VARCHAR(20),
+            				CLOSED BOOLEAN(FALSE[*]) NOT NULL) "; ожидалось "integer"
+Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID IDENTITY NOT NULL PRIMARY KEY,
+         					ABONID BIGINT NOT NULL,
+         					ABONLS VARCHAR(255) NOT NULL,
+            				FIO VARCHAR(255) NOT NULL,
+            				ENDDATE DATE,
+            				NSICODE VARCHAR(20),
+            				CLOSED BOOLEAN(FALSE[*]) NOT NULL) "; expected "integer"; SQL statement:
+CREATE TABLE IF NOT EXISTS ACCOUNT_FOR_REMOVE (
+         					ID identity not null primary key,
+         					ABONID bigint not null,
+         					ABONLS varchar(255) not null,
+            				FIO varchar(255) not null,
+            				ENDDATE date,
+            				NSICODE varchar(20),
+            				CLOSED boolean(false) not null) [42001-192]
+2016-06-29 00:10:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Неверное количество столбцов
+Column count does not match; SQL statement:
+INSERT INTO ACCOUNT_FOR_REMOVE VALUES(DEFAULT, '123', '156', 'FIO') [21002-192]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.command.dml.Insert.prepare(Insert.java:265)
+	at org.h2.command.Parser.prepareCommand(Parser.java:259)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1202)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:342)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:719)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1494)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:139)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:103)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-29 00:13:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "CLOSET" не найден
+Column "CLOSET" not found; SQL statement:
+SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE CLOSET = false [42122-192]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:178)
+	at org.h2.command.dml.Select.prepare(Select.java:855)
+	at org.h2.command.Parser.prepareCommand(Parser.java:259)
+	at org.h2.engine.Session.prepareLocal(Session.java:560)
+	at org.h2.engine.Session.prepareCommand(Session.java:501)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1202)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:342)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:719)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1494)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:139)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:103)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+2016-06-29 00:14:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, CLOSED) VALUES(123, '156', 'FIO' FALSE[*])"; ожидалось "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"
+Syntax error in SQL statement "INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, CLOSED) VALUES(123, '156', 'FIO' FALSE[*])"; expected "[, ::, *, /, %, +, -, ||, ~, !~, NOT, LIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, CLOSED) VALUES(123, '156', 'FIO' FALSE) [42001-192]

@@ -96,7 +96,7 @@ public class ProgramAction {
             answerProcessing.sendMessageToClient("Запуск получения Справочников...");
             UpdateReference updateReference = new UpdateReference(answerProcessing);
             updateReference.updateAllDataProviderNsiItem();
-            setStateRunOff();
+//            setStateRunOff();
 //        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
 //        dataProviderNsiItem.callExportDataProviderNsiItem(51);
         } catch (Exception e) {
@@ -129,12 +129,24 @@ public class ProgramAction {
      * Метод, синхронизирует данные о лицевых счетах ГИС ЖКХ и БД ГРАД.
      */
     public void updateAccountData() {
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
 
         try {
+            answerProcessing.sendMessageToClient("Запуск...");
+            answerProcessing.sendMessageToClient("Синхронизация лицевых счетов...");
             UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
-            updateAllAccountData.updateAllAccountData();
+            int state = updateAllAccountData.updateAllAccountData();
+            if (state == -1) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация лицевых счетов\" прервана!");
+            } else if (state == 0) {
+                answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация лицевых счетов\" завершилась с ошибками!");
+            } else if (state == 1) {
+                answerProcessing.sendMessageToClient("Операция: \"Синхронизация лицевых счетов\" завершилась с ошибками!");
+            }
         } catch (SQLException | PreGISException | ParseException e) {
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
 //        Надо что бы возвращало -1 возникли ошибка опер. прервана, 0 - возникли ошибки  операция завершена смотрите лог,
 //        1 - выполнено успешно.

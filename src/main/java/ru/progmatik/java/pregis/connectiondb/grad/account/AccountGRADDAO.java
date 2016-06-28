@@ -5,8 +5,9 @@ import ru.gosuslugi.dom.schema.integration.base.ID;
 import ru.gosuslugi.dom.schema.integration.base.RegOrgVersionType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.AccountIndType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.AccountType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
+import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
@@ -15,6 +16,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -46,6 +48,7 @@ public class AccountGRADDAO {
 
     /**
      * Метод, приводит дату в нужный формат.
+     *
      * @param date дата для обработки.
      * @return дата в пригодном формате.
      */
@@ -61,12 +64,6 @@ public class AccountGRADDAO {
             e.printStackTrace();
         }
         return dateXml;
-    }
-
-    public void getAccountList(int houseID, ExportHouseResult houseData) {
-
-
-
     }
 
     /**
@@ -170,15 +167,17 @@ public class AccountGRADDAO {
     /**
      * Метод, формирует Map ЛС из БД ГРАД.
      * Ключ - ЛС, значение - класс Account пригодный для импорта ЛС в ГИС ЖКХ.
+     *
      * @param houseID ИД дома в БД ГРАД.
      * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
-     * @throws SQLException возможны ошибки БД.
+     * @throws SQLException   возможны ошибки БД.
      */
-    private void convertAccount(int houseID, ExportHouseResult houseData) throws ParseException, SQLException, PreGISException {
+    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountListFromGrad(int houseID) throws ParseException, SQLException, PreGISException {
 
         ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID);
         ArrayList<Rooms> roomsList = getRooms(houseID);
         ReferenceNSI nsi95 = new ReferenceNSI(answerProcessing);
+        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
         LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 
@@ -212,26 +211,37 @@ public class AccountGRADDAO {
 
 //                    Сведения о платильщике
                     account.setPayerInfo(new AccountType.PayerInfo());
-                    if (basicInformation.getOgrnOrOgrnip() == 0) {
-                        account.getPayerInfo().setInd(new AccountIndType());
-                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
-                        account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
-                        account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
+//                    if (basicInformation.getOgrnOrOgrnip() == 0) {
+                    account.getPayerInfo().setInd(new AccountIndType());
+                    account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+                    account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+                    account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
 //                        account.getPayerInfo().getInd().setSex(); // не указан
 //                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
-                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
+                    account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
 
-                        account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
-                        account.getPayerInfo().getInd().getID().setType(nsi95.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
-                        account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
-                        account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                        account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
+                    account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
+                    account.getPayerInfo().getInd().getID().setType(nsi95.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                    account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                    account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                    account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
 
-                    } else {
+//                    } else {
 //                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
-//                        account.getPayerInfo().setOrg(new RegOrgVersionType());
-//                        account.getPayerInfo().getOrg().setOrgVersionGUID();
+                    if (basicInformation.getOgrnOrOgrnip() > 0) {
+                        ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
+
+                        if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
+                            criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                        } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
+                            criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                        }
+                        ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
+                        account.getPayerInfo().setOrg(new RegOrgVersionType());
+                        account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
                     }
+
+//                    }
                     account.getPayerInfo().setIsRenter(basicInformation.getEmployer() == AnswerYesOrNo.YES);
 
                     account.setAccountNumber(basicInformation.getNumberLS());
@@ -254,6 +264,7 @@ public class AccountGRADDAO {
                         + basicInformation.getNumberLS() + ", найдено более одного соответствия в базе данных.", LOGGER);
             }
         }
+        return mapAccount;
     }
 
     /**

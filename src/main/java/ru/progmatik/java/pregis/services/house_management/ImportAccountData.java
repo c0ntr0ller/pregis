@@ -61,6 +61,16 @@ public class ImportAccountData {
     }
 
     /**
+     * Метод, формирует запрос для закрытия ЛС.
+     * @param account принимает абонента с указанной причиной закрытия ЛС и статуса isClosed.
+     * @return сформированный запрос.
+     */
+    public ImportAccountRequest getClosedImportAccountRequest(ImportAccountRequest.Account account) {
+
+        return getImportAccountRequest(account);
+    }
+
+    /**
      * Метод, формирует запрос для обновления данных абонента.
      * @param account данные абонента.
      * @return сформированный запрос.

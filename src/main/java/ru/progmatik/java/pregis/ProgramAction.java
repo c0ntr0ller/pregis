@@ -56,7 +56,7 @@ public class ProgramAction {
             ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
             ExportDataProvider dataProvider = new ExportDataProvider(answerProcessing);
 
-            ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry();
+            ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
 
             if (exportOrgRegistryResult != null || exportOrgRegistryResult.getErrorMessage() != null) {
 
@@ -148,10 +148,12 @@ public class ProgramAction {
             houseData.updateAllHouseData();
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
 
 
-        setStateRunOff(); // взводим флаг в состояние откл.
+
     }
 
     /**

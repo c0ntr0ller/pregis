@@ -128,13 +128,14 @@ public class ExportHouseData {
                                         answerProcessing.sendMessageToClient("    Идентификатор комнаты: " + livingRoom.getLivingRoomGUID());
 
                                         // Добавляем в БД уникальный номер комнаты абонента
-                                        gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(),
-                                                livingRoom.getRoomNumber(), livingRoom.getLivingRoomUniqueNumber());
+                                        gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), livingRoom.getRoomNumber(),
+                                                residentialPremise.getPremisesGUID(), residentialPremise.getPremisesUniqueNumber(),
+                                                livingRoom.getLivingRoomGUID(), livingRoom.getLivingRoomUniqueNumber());
                                     }
                                 } else { // Если нет комнат передаем квартиру
 //                                    Добавляем в БД уникальный номер помещения.
-                                    gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(),
-                                            null, residentialPremise.getPremisesUniqueNumber());
+                                    gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), null,
+                                            residentialPremise.getPremisesGUID(), residentialPremise.getPremisesUniqueNumber(), null, null);
                                 }
                             }
                         }
@@ -150,8 +151,8 @@ public class ExportHouseData {
                             answerProcessing.sendMessageToClient("Идентификатор помещения: " + nonResidentialPremise.getPremisesGUID());
 
 //                            Добавляем в БД уникальный номер помещения.
-                            gradDao.setApartmentUniqueNumber(houseId, nonResidentialPremise.getPremisesNum(),
-                                    null, nonResidentialPremise.getPremisesUniqueNumber());
+                            gradDao.setApartmentUniqueNumber(houseId, nonResidentialPremise.getPremisesNum(), null,
+                                    nonResidentialPremise.getPremisesGUID(), nonResidentialPremise.getPremisesUniqueNumber(), null, null);
 
                         }
                     }

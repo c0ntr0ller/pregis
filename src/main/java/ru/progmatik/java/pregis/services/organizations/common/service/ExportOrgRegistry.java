@@ -37,7 +37,7 @@ public class ExportOrgRegistry {
      * Метод во временной реализации, создаёт запрос на указанных данных.
      * В дальнейшем необходимо реализовать его так, что бы ему передавали объект класса ExportOrgRegistryRequest с параметроми.
      */
-    public ExportOrgRegistryResult callExportOrgRegistry() {
+    public ExportOrgRegistryResult callExportOrgRegistry(ExportOrgRegistryRequest request) {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
@@ -51,16 +51,13 @@ public class ExportOrgRegistry {
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result =  port.exportOrgRegistry(getExportOrgRegistryRequest(), header, resultHolder);
+            result =  port.exportOrgRegistry(request, header, resultHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
 
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, header, LOGGER, fault);
             return null;
 
-        } catch (PreGISException e) {
-            answerProcessing.sendErrorToClient("callExportOrgRegistry(): ", "", LOGGER, e);
-            return null;
         }
 
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, header, resultHolder.value, result.getErrorMessage(), LOGGER);
@@ -69,30 +66,42 @@ public class ExportOrgRegistry {
     }
 
     /**
+     * Метод, получает данные текущей организации.
+     * @return сформированный запрос.
+     * @throws PreGISException
+     */
+    public ExportOrgRegistryRequest getExportOrgRegistryRequest() throws PreGISException {
+
+        ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
+        list.setOGRN(ResourcesUtil.instance().getOGRNCompany());
+
+        return getExportOrgRegistryRequest(list);
+    }
+
+    /**
      * Метод формирует необходимые данные для запроса.
      *
      * @return ExportOrgRegistryRequest готовый объект для запроса.
      * @throws PreGISException
      */
-    private ExportOrgRegistryRequest getExportOrgRegistryRequest() throws PreGISException {
+    public ExportOrgRegistryRequest getExportOrgRegistryRequest(ExportOrgRegistryRequest.SearchCriteria criteria) throws PreGISException {
 
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
-        ExportOrgRegistryRequest.SearchCriteria list = new ExportOrgRegistryRequest.SearchCriteria();
 //        list.setOGRN("1116027009702"); // Test ООО "ЖЭУ-1" какой-то г. Иваново.
 //        list.setKPP("540201001"); // Test
 //        list.setOGRN("1125476111903");
-        list.setOGRN(ResourcesUtil.instance().getOGRNCompany());
 
 
-        if (list.getOGRN() == null && list.getOGRNIP() == null &&
-                list.getOrgRootEntityGUID() == null && list.getOrgVersionGUID() == null)
+
+        if (criteria.getOGRN() == null && criteria.getOGRNIP() == null &&
+                criteria.getOrgRootEntityGUID() == null && criteria.getOrgVersionGUID() == null)
             throw new PreGISException("Не указан обязательный параметр!\n" +
                     "Укажите, пожалуйста, один из обязательных параметров:\n" +
                     "\"ОГРН\", \"ОГРНИП\", \"Идентификатор версии записи в реестре организаций\"\n" +
                     "или \"Идентификатор корневой сущности организации в реестре организаций\"");
 
-        exportOrgRegistryRequest.getSearchCriteria().add(list);
+        exportOrgRegistryRequest.getSearchCriteria().add(criteria);
 
         return exportOrgRegistryRequest;
     }

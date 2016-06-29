@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -53,12 +54,19 @@ public class MeteringDeviceGRADDAO {
      * Метод, формирует один прибор учёта для  создания в ГИС ЖКХ.
      *
      * @return сформированные прибор учёта.
-     * @param exGisPu1Element
+     * @param exGisPu1Element массив данных полученный из БД.
      */
-    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(String[] exGisPu1Element) {
+    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(String[] exGisPu1Element) throws SQLException, PreGISException {
 
+        ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
         ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate();
-//        device.
+        if (exGisPu1Element[8].equalsIgnoreCase("Электрическая энергия")) {
+            device.setElectricMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.ElectricMeteringDevice());
+            device.getElectricMeteringDevice().setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8]));
+        } else {
+            device.setOneRateMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.OneRateMeteringDevice());
+        }
+
         return device;
     }
 

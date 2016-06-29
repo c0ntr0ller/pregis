@@ -59,15 +59,15 @@ public class ReferenceNSI {
     /**
      * Метод, получает справочник для ГИС ЖКХ из таблице, ноходит по коду и имени нужный элемент,
      * формирует объект "ru.gosuslugi.dom.schema.integration.base.NsiRef", пригодный для создания абонента.
-     * @param nsiCode код справочника.
+     * @param nsiParentCode код справочника.
      * @param nameElement имя нужного элемента.
      * @return объект пригодный для указания справочника ГИС ЖКХ.
      * @throws PreGISException
      * @throws SQLException
      */
-    public ru.gosuslugi.dom.schema.integration.base.NsiRef getNsiRef(String nsiCode, String nameElement) throws PreGISException, SQLException {
+    public ru.gosuslugi.dom.schema.integration.base.NsiRef getNsiRef(String nsiParentCode, String nameElement) throws PreGISException, SQLException {
 
-        ArrayList<ReferenceItemDataSet> allItems = nsiDao.getAllItemsCodeParent(nsiCode);
+        ArrayList<ReferenceItemDataSet> allItems = nsiDao.getAllItemsCodeParent(nsiParentCode);
 
         if (allItems.size() == 0) {
             updateNSIFromTableList();

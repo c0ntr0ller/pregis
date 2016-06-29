@@ -42,8 +42,6 @@ public class ImportMeteringDeviceData {
 
         request.setFIASHouseGuid(fias);
         request.getMeteringDevice().addAll(meteringDeviceList);
-//        request.getMeteringDevice().add(new ImportMeteringDeviceDataRequest.MeteringDevice());
-//        request.getMeteringDevice().get(0).setDeviceDataToCreate(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate());
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);

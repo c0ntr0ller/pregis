@@ -52,7 +52,10 @@ public class ReferenceNSIDAO {
             "COMMENT ON COLUMN NSI_FOR_DOWNLOAD.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
             "ALTER TABLE \"PUBLIC\".NSI_FOR_DOWNLOAD ADD FOREIGN KEY (NSI_TYPE) REFERENCES \"PUBLIC\".SPR_NSI_TYPE(ID); " +
             "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('95', 'Вид документа, удостоверяющего личность', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
-            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('22', 'Причина закрытия лицевого счета', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI');";
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('22', 'Причина закрытия лицевого счета', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('21', 'Причина архивации прибора учета', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('224', 'Причина выхода ПУ из строя', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('2', 'Вид коммунального ресурса', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI');";
 
     private static final String SQL_CREATE_TABLE_SPR_NSI_TYPE = "CREATE TABLE IF NOT EXISTS SPR_NSI_TYPE (" +
             "ID identity not null primary key, " +

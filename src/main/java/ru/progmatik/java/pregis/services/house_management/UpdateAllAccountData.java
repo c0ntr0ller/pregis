@@ -63,7 +63,6 @@ public class UpdateAllAccountData {
                 if (exportAccountResult == null) {
                     errorState = 0;
                 }
-
                 sendAccountDataToGis(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connection);
             }
         }

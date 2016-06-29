@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,11 +40,19 @@ public class TestMain {
 
         Connection connection = ConnectionBaseGRAD.instance().getConnection();
         MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
-        ResultSet resultSet = graddao.executor("EXECUTE PROCEDURE EX_GIS_PU1(7124)", connection);
-        while (resultSet.next()) {
-            System.out.println(resultSet.getString(1));
-        }
+//        graddao.executor("EXECUTE PROCEDURE EX_GIS_PU1(7124)", connection);
+//        getList(connection).forEach(System.out::println);
         connection.close();
+
+
+//        return executor.execQuery("select * from users where user_name='" + name + "'", result -> {
+//            result.next();
+//            return result.getLong(1);
+//        });
+//        while (resultSet.next()) {
+//            System.out.println(resultSet.getString(1));
+//        }
+
 //        connection.close();
 //
 //        ConnectionBaseGRAD.instance().close();
@@ -115,6 +122,17 @@ public class TestMain {
 //        System.out.println(mesout);
 
     }
+
+//    public static ArrayList<String> getList(Connection connection) throws SQLException {
+//
+//        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
+//        ArrayList<String> list = new ArrayList<>();
+//        return graddao.executorProcedure("EXECUTE PROCEDURE EX_GIS_PU1(7124)",
+//                connection, resultSet1 -> {
+//                    while (resultSet1.next())
+//                        list.add(resultSet1.getString(1));
+//                    return list;});
+//    }
 
     public static void getXML() throws JAXBException {
 

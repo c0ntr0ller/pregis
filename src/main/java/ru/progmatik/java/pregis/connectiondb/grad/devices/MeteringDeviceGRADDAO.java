@@ -2,12 +2,15 @@ package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -22,34 +25,109 @@ public class MeteringDeviceGRADDAO {
         this.answerProcessing = answerProcessing;
     }
 
-    public ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreate() {
-        ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate();
+    /**
+     * Метод, формирует все ПУ для создания в ГИС ЖКХ.
+     *
+     * @param houseId        ид дома в БД ГРАД.
+     * @param connectionGRAD подключение к БД ГРАД.
+     * @return новые ПУ для ГИС ЖКХ.
+     */
+    public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesForCreate(Integer houseId, Connection connectionGRAD) throws SQLException, PreGISException {
 
+        ArrayList<String[]> exGisPu1 = getExGisPu1(houseId, connectionGRAD);
+        java.util.ArrayList<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList = new ArrayList<>();
+
+        for (String[] exGisPu1Element : exGisPu1) {
+
+            ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
+            meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
+            meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(exGisPu1Element));
+
+            meteringDeviceList.add(meteringDevices);
+        }
+
+        return meteringDeviceList;
+    }
+
+    /**
+     * Метод, формирует один прибор учёта для  создания в ГИС ЖКХ.
+     *
+     * @return сформированные прибор учёта.
+     * @param exGisPu1Element
+     */
+    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(String[] exGisPu1Element) {
+
+        ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate();
+//        device.
         return device;
     }
 
-    public ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate getMeteringDeviceForUpdate() {
+    /**
+     * Метод, формирует один ПУ для обновления в ГИС ЖКХ.
+     *
+     * @return сформированный для обновления прибор учёта.
+     */
+    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate getMeteringDeviceForUpdate() {
         ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate();
 
         return device;
     }
 
-    private void getExGisPu1(Connection connection) {
+    /**
+     * Метод, выполняет SQL процедуру полученый результат сохраняет в List.
+     *
+     * @param houseId    ид дома в БД ГРАД.
+     * @param connection подключение к БД.
+     * @return список полученый из процедуры EX_GIS_PU1.
+     * @throws SQLException
+     */
+    public ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {
 
-
+        ArrayList<String[]> list = new ArrayList<>();
+        return executorProcedure("EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")",
+                connection, resultSet1 -> {
+                    while (resultSet1.next())
+                        list.add(getAllData(resultSet1.getString(1)));
+                    return list;
+                });
     }
 
     /**
-     * Метод, выполняет SQL запрос и возвращает результат.
+     * Метод,  выполняет SQL процедуру полученый результат сохраняет в List.
+     *
+     * @param houseId    ид дома в БД ГРАД.
+     * @param connection подключение к БД.
+     * @return список полученый из процедуры EX_GIS_PU2.
+     * @throws SQLException
+     */
+    public ArrayList<String> getExGisPu2(Integer houseId, Connection connection) throws SQLException {
+
+        ArrayList<String> list = new ArrayList<>();
+        return executorProcedure("EXECUTE PROCEDURE EX_GIS_PU2(" + houseId + ")",
+                connection, resultSet1 -> {
+                    while (resultSet1.next())
+                        list.add(resultSet1.getString(1));
+                    return list;
+                });
+    }
+
+    /**
+     * Метод, выполняет процедуру SQL и возвращает результат.
+     *
      * @param sqlRequest SQL запрос.
      * @param connection подключение к БД.
      * @return полученные данные из БД.
      * @throws SQLException
      */
-    public ResultSet executor(String sqlRequest, Connection connection) throws SQLException {
+    private <T> T executorProcedure(String sqlRequest, Connection connection, ResultHandler<T> handler) throws SQLException {
 
-        try (Statement statement = connection.createStatement()) {
-            return statement.executeQuery(sqlRequest);
+        try (CallableStatement call = connection.prepareCall(sqlRequest)) {
+            call.executeQuery();
+            ResultSet result = call.getResultSet();
+            T value = handler.handle(result);
+            result.close();
+
+            return value;
         }
     }
 

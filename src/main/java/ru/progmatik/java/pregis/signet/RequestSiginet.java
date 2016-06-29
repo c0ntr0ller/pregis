@@ -313,6 +313,9 @@ public class RequestSiginet {
 
         message = serializer.writeToString(doc);
         message = message.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
+        message = message.replaceAll("^<\\w?\\w?\\w?\\W?SNILS/>$", "");
+        message = message.replaceAll("<SNILS/>", "");
+        message = message.replaceAll("<ns2:SNILS/>", "");
 
         return toMessage(message);
 //        return doc;

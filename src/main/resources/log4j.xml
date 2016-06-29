@@ -19,13 +19,14 @@
     </appender>
 
     <logger name="ru.progmatik">
-        <level  value="INFO"/>
+        <level value="info"/>
         <appender-ref ref="file"/>
     </logger>
-
+    <logger name="ru.progmatik">
+        <level value="debug"/>
+    </logger>
     <root>
-        <priority value="debug"/>
+        <priority value="info"/>
         <appender-ref ref="consoleAppender"/>
     </root>
-
 </log4j:configuration>

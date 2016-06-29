@@ -41,7 +41,7 @@ function getWebConnect() {
         }
         console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
-        // getWebConnect();
+        getWebConnect();
     };
     ws.onerror = function (evt) {
         console.log("The following error occurred: " + evt.data);

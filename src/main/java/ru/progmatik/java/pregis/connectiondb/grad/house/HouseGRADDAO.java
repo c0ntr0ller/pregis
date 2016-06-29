@@ -97,7 +97,7 @@ public class HouseGRADDAO {
 //        Получение данных из БД о ЖД.
         for (String itemData : listAllJD) {
             if (getAllData(itemData)[1] != null && !getAllData(itemData)[1].isEmpty() &&
-                    isAddedHouseInGisJkh(Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]))) { // проверяем содержится ФИАС, если есть то добавляем
+                   isAddedHouseInGisJkh(Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]))) { // проверяем содержится ФИАС, если есть то добавляем
                 mapAllHouseWithIdGis.put(getAllData(itemData)[HOUSE_FIAS], Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]));
             }
         }
@@ -318,12 +318,12 @@ public class HouseGRADDAO {
      */
     private boolean isAddedHouseInGisJkh(Integer houseId) throws SQLException {
 
-        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ? , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
 
-        try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest);
-             ResultSet resultSet = cstmt.executeQuery()) { // После использования должны все соединения закрыться
+        try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, houseId);
             cstmt.setString(2, "HOUSEUNIQNUM");
+            ResultSet resultSet = cstmt.executeQuery();
             resultSet.next();
             String sqlResult = resultSet.getString(1);
             if (sqlResult == null || sqlResult.isEmpty()) {

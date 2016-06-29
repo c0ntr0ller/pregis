@@ -96,7 +96,7 @@ public class ImportAccountData {
 
         setIsAccount(account);
 
-//        account.setCreationDate(OtherFormat.getDateNow()); // попробую без даты
+        account.setCreationDate(OtherFormat.getDateNow()); // попробую без даты
         account.setAccountGUID(null);
         account.setTransportGUID(OtherFormat.getRandomGUID()); // добавлять только если это новый элемент.
 
@@ -128,10 +128,10 @@ public class ImportAccountData {
 
         if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
             account.setIsRSOAccount(true);
-            account.setIsUOAccount(false);
+//            account.setIsUOAccount(false);
         } else {
             account.setIsUOAccount(true);
-            account.setIsRSOAccount(false);
+//            account.setIsRSOAccount(false);
         }
     }
 }

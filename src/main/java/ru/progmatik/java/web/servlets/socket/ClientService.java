@@ -75,6 +75,9 @@ public class ClientService {
                 case "getExportAccountData":
                     action.callExportAccountData();
                     break;
+                case "updateAccountData":
+                    action.updateAccountData();
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

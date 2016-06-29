@@ -58,7 +58,7 @@ public class ConnectionBaseGRAD implements AutoCloseable {
             properties.put("roleName", role);
             properties.put("encoding", "WIN1251");
 
-            LOGGER.info("ConnectionBaseGRAD: database: " + url + ", username: " + userName + ", role: " + role + ".");
+            LOGGER.debug("ConnectionBaseGRAD: database: " + url + ", username: " + userName + ", role: " + role + ".");
             connection = DriverManager.getConnection(url, properties);
             connection.setAutoCommit(true);
         }
@@ -97,7 +97,7 @@ public class ConnectionBaseGRAD implements AutoCloseable {
                 if (!connection.isClosed())
                     connection.close();
 
-                LOGGER.info("ConnectionBaseGRAD: Connection closed!");
+                LOGGER.debug("ConnectionBaseGRAD: Connection closed!");
             }
         } catch (SQLException e) {
             e.printStackTrace();

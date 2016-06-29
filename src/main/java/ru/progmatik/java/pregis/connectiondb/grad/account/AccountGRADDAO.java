@@ -8,7 +8,6 @@ import ru.gosuslugi.dom.schema.integration.services.house_management.AccountType
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
@@ -94,12 +93,12 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private ArrayList<BasicInformation> getBasicInformation(int houseID) throws SQLException {
+    private ArrayList<BasicInformation> getBasicInformation(int houseID, Connection connection) throws SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS1(" + houseID + ")";
         ArrayList<BasicInformation> listBasic = new ArrayList<>();
 
-        try (Statement statement = ConnectionBaseGRAD.instance().getConnection().createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
+        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
 
                 BasicInformation bi = new BasicInformation();
@@ -137,8 +136,6 @@ public class AccountGRADDAO {
                 }
                 listBasic.add(bi);
             }
-        } finally {
-            ConnectionBaseGRAD.instance().close();
         }
         if (listBasic.size() == 0) return null; // если нет ЛС возвращаем null.
         return listBasic;
@@ -150,12 +147,12 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private ArrayList<Rooms> getRooms(int houseID) throws ParseException, SQLException {
+    private ArrayList<Rooms> getRooms(int houseID, Connection connection) throws ParseException, SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
         ArrayList<Rooms> listRooms = new ArrayList();
 
-        try (Statement statement = ConnectionBaseGRAD.instance().getConnection().createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
+        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
 
                 Rooms rooms = new Rooms();
@@ -179,8 +176,6 @@ public class AccountGRADDAO {
                 }
                 listRooms.add(rooms);
             }
-        } finally {
-            ConnectionBaseGRAD.instance().close();
         }
         if (listRooms.size() == 0) return null; // если нет ЛС возвращаем null.
 
@@ -195,10 +190,11 @@ public class AccountGRADDAO {
      * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
      * @throws SQLException   возможны ошибки БД.
      */
-    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountListFromGrad(int houseID) throws ParseException, SQLException, PreGISException {
+    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountListFromGrad(int houseID, Connection connection) throws ParseException, SQLException, PreGISException {
 
-        ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID);
-        ArrayList<Rooms> roomsList = getRooms(houseID);
+        answerProcessing.sendMessageToClient("Формирую данные...");
+        ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
+        ArrayList<Rooms> roomsList = getRooms(houseID, connection);
         ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
         ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
@@ -220,15 +216,15 @@ public class AccountGRADDAO {
                     ImportAccountRequest.Account account = new ImportAccountRequest.Account();
 //                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно? добавил при отправки нового счета
                     account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
-                    account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()));
-                    account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()));
-                    account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()));
+                    account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                    account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()).setScale(2, BigDecimal.ROUND_DOWN));
+                    account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()).setScale(2, BigDecimal.ROUND_DOWN));
 //                    account.setClosed(); // проверить, если в ГИС ЖКХ есть, а в БД ГРАД нет, то установить в ExportAccountData.
                     AccountType.Accommodation accommodation = new AccountType.Accommodation();
-                    accommodation.setPremisesGUID(roomsList.get(i).getIdSpaceGISJKH()); // временно
-                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias());
-//                    accommodation.setLivingRoomGUID(); // Идентификатор комнаты
-                    accommodation.setSharePercent(new BigDecimal(roomsList.get(i).getSharePay()));
+                    accommodation.setPremisesGUID(getBuildingIdentifiersFromBase(roomsList.get(i).getAbonId(), "PREMISESGUID", connection));
+//                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias()); // Выдаё ошибку, по описанию можно выбирать.
+                    accommodation.setLivingRoomGUID(getBuildingIdentifiersFromBase(roomsList.get(i).getAbonId(), "LIVINGROOMGUID", connection)); // Идентификатор комнаты
+                    accommodation.setSharePercent(new BigDecimal(roomsList.get(i).getSharePay()).setScale(0, BigDecimal.ROUND_DOWN));
                     account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
@@ -241,34 +237,41 @@ public class AccountGRADDAO {
                     account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
 //                        account.getPayerInfo().getInd().setSex(); // не указан
 //                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
-                    account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
-
-                    account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
-                    account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
-                    account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
-                    account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                    account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
-
-//                    } else {
-//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
-                    if (basicInformation.getOgrnOrOgrnip() > 0) {
-                        ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
-
-                        if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
-                            criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-                        } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
-                            criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-                        }
-                        ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
-                        account.getPayerInfo().setOrg(new RegOrgVersionType());
-                        account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
+                    if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
+                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
                     }
 
-//                    }
-                    account.getPayerInfo().setIsRenter(basicInformation.getEmployer() == AnswerYesOrNo.YES);
+                    if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
+                        if (basicInformation.getTypeDocument() != null) {
+                            account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
+                            account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                            account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                            account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                            account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
+                        }
+
+                    } else {
+//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
+                        if (basicInformation.getOgrnOrOgrnip() > 0) {
+                            ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
+
+                            if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
+                                criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                            } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
+                                criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                            }
+                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
+                            account.getPayerInfo().setOrg(new RegOrgVersionType());
+                            account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
+                        }
+                    }
+
+                    if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
+                        account.getPayerInfo().setIsRenter(true); // выдаёт ошибку если указать false
+                    }
 
                     account.setAccountNumber(basicInformation.getNumberLS());
-                    account.setAccountGUID(getAccountGUIDFromBase(roomsList.get(i).getAbonId()));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                    account.setAccountGUID(getAccountGUIDFromBase(roomsList.get(i).getAbonId(), connection));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
 
                     mapAccount.put(basicInformation.getNumberLS(), account);
 
@@ -297,23 +300,50 @@ public class AccountGRADDAO {
      * @return AccountGUID идентификатор ЛС в ГИС ЖКХ.
      * @throws SQLException
      */
-    private String getAccountGUIDFromBase(Integer abonId) throws SQLException {
+    private String getAccountGUIDFromBase(Integer abonId, Connection connection) throws SQLException {
 
         String sqlResult;
         String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
 
-        try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest);
-             ResultSet resultSet = cstmt.executeQuery()) { // После использования должны все соединения закрыться
+        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, abonId);
             cstmt.setString(2, "ACCOUNTGUID");
+            ResultSet resultSet = cstmt.executeQuery();
             resultSet.next();
             sqlResult = resultSet.getString(1);
+            resultSet.close();
             if (sqlResult == null || sqlResult.isEmpty()) {
                 return null;
             }
-        } finally {
-            ConnectionBaseGRAD.instance().close();
         }
+        return sqlResult;
+    }
+
+    /**
+     * Метод, извлекает идентификаторы помещений.
+     *
+     * @param abonId ид абонента в БД ГРАД.
+     * @param identifier название идентификатора могут быть PREMISESGUID, PREMISESUNIQNUM, LIVINGROOMGUID, ROOMUNIQNUMBER.
+     * @return
+     * @throws SQLException
+     */
+    public String getBuildingIdentifiersFromBase(Integer abonId, String identifier, Connection connection) throws SQLException {
+
+        String sqlResult;
+        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+
+        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
+            cstmt.setInt(1, abonId);
+            cstmt.setString(2, identifier);
+            ResultSet resultSet = cstmt.executeQuery();
+            resultSet.next();
+            sqlResult = resultSet.getString(1);
+            resultSet.close();
+            if (sqlResult == null || sqlResult.isEmpty()) {
+                return null;
+            }
+        }
+//        System.err.println("Получен идентификатр: " + sqlResult); // debug
         return sqlResult;
     }
 
@@ -328,9 +358,10 @@ public class AccountGRADDAO {
      * @throws PreGISException
      * @throws ParseException
      */
-    public void setAccountUniqueNumber(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber) throws SQLException, PreGISException, ParseException {
+    public void setAccountUniqueNumber(Integer houseId, String accountNumber,
+                                       String accountGUID, String accountUniqueNumber, Connection connection) throws SQLException, PreGISException, ParseException {
 
-        Integer abonentId = getAbonentIdFromGrad(houseId, accountNumber);
+        Integer abonentId = getAbonentIdFromGrad(houseId, accountNumber, connection);
 
         if (abonentId != null) {
             // ИД дома(:building_id),
@@ -339,15 +370,13 @@ public class AccountGRADDAO {
             // уникальный идентификатор ГИС ЖКХ(:gis_id),
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
             String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
-            try (CallableStatement cstmt = ConnectionBaseGRAD.instance().getConnection().prepareCall(sqlRequest)) {
+            try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) {
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, accountGUID);
                 cstmt.setString(3, accountUniqueNumber);
                 cstmt.executeUpdate();
 //                int codeReturn = cstmt.executeUpdate();
 //                System.err.println("Apartment code return: " + codeReturn);
-            } finally {
-                ConnectionBaseGRAD.instance().close();
             }
         } else {
             throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
@@ -363,8 +392,8 @@ public class AccountGRADDAO {
      * @throws ParseException
      * @throws SQLException
      */
-    private Integer getAbonentIdFromGrad(Integer houseId, String accountNumber) throws ParseException, SQLException {
-        ArrayList<Rooms> rooms = getRooms(houseId);
+    private Integer getAbonentIdFromGrad(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
+        ArrayList<Rooms> rooms = getRooms(houseId, connection);
         if (rooms != null)
             for (Rooms room : rooms) {
                 if (accountNumber.equals(room.getNumberLS())) {
@@ -376,23 +405,24 @@ public class AccountGRADDAO {
 
     /**
      * Метод, формирует данные и заносит в таблицу "ACCOUNT_FOR_REMOVE".
-     * @param houseId ид дома в БД ГРАД.
+     *
+     * @param houseId       ид дома в БД ГРАД.
      * @param accountNumber номер ЛС.
      * @return true - если всё прошло успешно, false - если не удалось найти все данные.
      * @throws ParseException
      * @throws SQLException
      */
-    public boolean addAccountForRemove(Integer houseId, String accountNumber) throws ParseException, SQLException {
+    public boolean addAccountForRemove(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
 
         String fio = "";
 
 
-        ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId);
+        ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId, connection);
         if (basicInformation != null)
             for (BasicInformation information : basicInformation) {
                 if (accountNumber.equals(information.getNumberLS())) {
                     fio = information.getSurname() + " " + information.getName() + " " + information.getMiddleName();
-                    setAccountForRemove(getAbonentIdFromGrad(houseId, accountNumber), accountNumber, fio);
+                    setAccountForRemove(getAbonentIdFromGrad(houseId, accountNumber, connection), accountNumber, fio, connection);
                 }
             }
         return !fio.isEmpty(); // если не составили фио значит что то пошло не так.
@@ -400,35 +430,54 @@ public class AccountGRADDAO {
 
     /**
      * Метод, заносит в базу абонента для последующего удаления.
-     * @param abonId ид дома в БД ГРАД.
+     *
+     * @param abonId        ид дома в БД ГРАД.
      * @param accountNumber номер ЛС.
-     * @param fio ФИО абонента.
+     * @param fio           ФИО абонента.
      * @throws SQLException
      */
-    private void setAccountForRemove(Integer abonId, String accountNumber, String fio) throws SQLException {
-        if (!isAccountForRemove(accountNumber))
-        try (Connection connection = ConnectionDB.instance().getConnectionDB();
-             PreparedStatement ps = connection.prepareStatement("INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, CLOSED) VALUES(?, ?, ?, ?)")) {
+    private void setAccountForRemove(Integer abonId, String accountNumber, String fio, Connection connection) throws SQLException {
+        if (!isAccountForRemove(accountNumber, connection)) {
+            java.sql.Date dateEnd = getAccountEndDate(abonId, connection);
+            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, ENDDATE, CLOSED) VALUES(?, ?, ?, ?, ?)")) {
 
-            ps.setInt(1, abonId);
-            ps.setString(2, accountNumber);
-            ps.setString(3, fio);
-            ps.setBoolean(4, false);
-            ps.executeUpdate();
-            answerProcessing.sendMessageToClient("Лицевой счет №" + accountNumber + " помечен на удаление.");
+                ps.setInt(1, abonId);
+                ps.setString(2, accountNumber);
+                ps.setString(3, fio);
+                ps.setDate(4, dateEnd);
+                ps.setBoolean(5, false);
+                ps.executeUpdate();
+                answerProcessing.sendMessageToClient("Лицевой счет №" + accountNumber + " помечен на удаление.");
+            }
         }
+    }
+
+    private java.sql.Date getAccountEndDate(Integer abonId, Connection connection) throws SQLException {
+
+        String sqlRequest = "select edate from abonents where id = ? and is_active = 0";
+        java.sql.Date date = null;
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlRequest)) {
+            statement.setInt(1, abonId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                date = resultSet.getDate(1);
+            }
+            resultSet.close();
+        }
+        return date;
     }
 
     /**
      * Метод, обновляет данные абонента помеченного на удаление.
+     *
      * @param accountNumber номер ЛС.
-     * @param date дата закрытия счета из БД ГРАД.
-     * @param nsiCode указанная причина из справочника.
+     * @param date          дата закрытия счета из БД ГРАД.
+     * @param nsiCode       указанная причина из справочника.
      * @throws SQLException
      */
-    public void updateAccountForRemove(String accountNumber, java.sql.Date date, String nsiCode) throws SQLException {
-        try (Connection connection = ConnectionDB.instance().getConnectionDB();
-             PreparedStatement ps = connection.prepareStatement("UPDATE ACCOUNT_FOR_REMOVE SET " +
+    public void updateAccountForRemove(String accountNumber, java.sql.Date date, String nsiCode, Connection connection) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement("UPDATE ACCOUNT_FOR_REMOVE SET " +
                      "ENDDATE = ?, NSICODE = ?  WHERE ABONLS = ?")) {
 
             ps.setDate(1, date);
@@ -440,14 +489,15 @@ public class AccountGRADDAO {
 
     /**
      * Метод, проверяет, помечен абонент на удаление или нет.
+     *
      * @param accountNumber номер ЛС.
      * @return true - если абонент помечен, false - абонент не помечен на удаление.
      * @throws SQLException
      */
-    private boolean isAccountForRemove(String accountNumber) throws SQLException {
+    private boolean isAccountForRemove(String accountNumber, Connection connection) throws SQLException {
 
-        String sqlRequest = "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '" + accountNumber + "', CLOSED = FALSE";
-        try (Statement statement = ConnectionBaseGRAD.instance().getConnection().createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
+        String sqlRequest = "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '" + accountNumber + "' AND CLOSED = FALSE";
+        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             resultSet.next();
             String result = resultSet.getString(1);
             return !(result == null || result.isEmpty());

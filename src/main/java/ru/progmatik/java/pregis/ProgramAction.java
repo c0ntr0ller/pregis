@@ -141,7 +141,7 @@ public class ProgramAction {
             } else if (state == 0) {
                 answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация лицевых счетов\" завершилась с ошибками!");
             } else if (state == 1) {
-                answerProcessing.sendMessageToClient("Операция: \"Синхронизация лицевых счетов\" завершилась с ошибками!");
+                answerProcessing.sendOkMessageToClient("\"Синхронизация лицевых счетов\" успешно выполнена.");
             }
         } catch (SQLException | PreGISException | ParseException e) {
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);

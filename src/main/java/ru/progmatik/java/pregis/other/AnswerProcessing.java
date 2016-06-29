@@ -109,6 +109,7 @@ public class AnswerProcessing {
             clientService.sendMessage(TextForLog.ERROR_MESSAGE + nameMethod);
             clientService.sendMessage(TextForLog.ERROR_CODE + errorMessage.getErrorCode());
             clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + errorMessage.getDescription());
+            clientService.sendMessage("Возникли ошибки! Подробнее смотрите в логе событий.");
             logger.error(nameMethod +": " + errorMessage.getErrorCode() + "\n" +
                     errorMessage.getDescription()  + "\n" + errorMessage.getStackTrace());
         } else {

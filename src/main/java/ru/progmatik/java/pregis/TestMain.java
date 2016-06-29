@@ -4,7 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +35,23 @@ public class TestMain {
 
 //        getXML();
 
-        ReferenceDownloadNSIDataSet dataSet = new ReferenceDownloadNSIDataSet("50", "Мама мыла раму");
-        ReferenceDownloadNSIDataSet dataSet2 = new ReferenceDownloadNSIDataSet("50", "Мама мыла раму");
+        Connection connection = ConnectionBaseGRAD.instance().getConnection();
+        connection.close();
 
-        System.out.println(dataSet.hashCode() + " : " + dataSet2.hashCode());
+        ConnectionBaseGRAD.instance().close();
+
+        connection = ConnectionBaseGRAD.instance().getConnection();
+        connection.close();
+
+//        String snils = "<ns2:SNILS/>";
+//        snils = snils.replaceAll("^<\\w?\\w?\\w?\\W?SNILS/>$", "Yes");
+//
+//        System.out.println(snils);
+
+//        ReferenceDownloadNSIDataSet dataSet = new ReferenceDownloadNSIDataSet("50", "Мама мыла раму");
+//        ReferenceDownloadNSIDataSet dataSet2 = new ReferenceDownloadNSIDataSet("50", "Мама мыла раму");
+//
+//        System.out.println(dataSet.hashCode() + " : " + dataSet2.hashCode());
 
 
 //        ReferenceNSI95DAO dao = new ReferenceNSI95DAO();

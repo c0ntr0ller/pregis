@@ -134,7 +134,7 @@ public class SaveToBaseMessages {
             cs.setString(6, stateMessage);
 
             int isResultSet = cs.executeUpdate();
-            LOGGER.info("setMessageToBase: CallableStatement.executeUpdate() - " + isResultSet);
+            LOGGER.debug("setMessageToBase: - " + nameMethod + ", state set: - " +isResultSet);
 
             if (!cs.isClosed()) cs.close();
             if (connection != null || !connection.isClosed()) {

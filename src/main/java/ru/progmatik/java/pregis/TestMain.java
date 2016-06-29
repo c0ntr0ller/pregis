@@ -5,6 +5,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,12 +40,18 @@ public class TestMain {
 //        getXML();
 
         Connection connection = ConnectionBaseGRAD.instance().getConnection();
+        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
+        ResultSet resultSet = graddao.executor("EXECUTE PROCEDURE EX_GIS_PU1(7124)", connection);
+        while (resultSet.next()) {
+            System.out.println(resultSet.getString(1));
+        }
         connection.close();
-
-        ConnectionBaseGRAD.instance().close();
-
-        connection = ConnectionBaseGRAD.instance().getConnection();
-        connection.close();
+//        connection.close();
+//
+//        ConnectionBaseGRAD.instance().close();
+//
+//        connection = ConnectionBaseGRAD.instance().getConnection();
+//        connection.close();
 
 //        String snils = "<ns2:SNILS/>";
 //        snils = snils.replaceAll("^<\\w?\\w?\\w?\\W?SNILS/>$", "Yes");

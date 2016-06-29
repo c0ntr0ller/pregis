@@ -71,7 +71,8 @@ public class UpdateAllAccountData {
         answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
         answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
         answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
-
+        LOGGER.debug("Ошибок не произошло. обработано записей - " + countAll);
+        LOGGER.debug("Лицевых счетов помечено на удаление: " + countRemove + ", Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
         return errorState;
     }
 

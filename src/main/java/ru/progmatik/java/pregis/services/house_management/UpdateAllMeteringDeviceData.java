@@ -9,7 +9,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
@@ -27,9 +26,9 @@ public class UpdateAllMeteringDeviceData {
         this.answerProcessing = answerProcessing;
     }
 
-    public void updateMeteringDeviceData() {
+    public void updateMeteringDeviceData() throws ParseException, SQLException, PreGISException {
 
-
+        createMeteringDevice();
 
     }
 
@@ -41,7 +40,8 @@ public class UpdateAllMeteringDeviceData {
     public void createMeteringDevice() throws SQLException, PreGISException, ParseException {
 
 
-        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+//        Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection();
+//        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
             LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh();
             ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
@@ -49,7 +49,8 @@ public class UpdateAllMeteringDeviceData {
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
                 MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
-                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
+                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue());
+//                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
                 ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices);
                 for (ImportResult.CommonResult result : importResult.getCommonResult()) {
@@ -60,6 +61,7 @@ public class UpdateAllMeteringDeviceData {
                     answerProcessing.sendMessageToClient("");
                 }
             }
-        }
+//        connectionGRAD.close();
+//        }
     }
 }

@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.devices;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.MeteringDeviceBasicCharacteristicsType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -36,36 +37,43 @@ public class MeteringDeviceGRADDAO {
     private final SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
     private final AnswerProcessing answerProcessing;
     private final AccountGRADDAO accountGRADDAO;
+    private final ReferenceNSI nsi;
     private ArrayList<String> exGisPu2List;
     private ArrayList<Integer> allResidentialPremiseFromGrad;
 
     public MeteringDeviceGRADDAO(AnswerProcessing answerProcessing) throws SQLException {
         this.answerProcessing = answerProcessing;
         accountGRADDAO = new AccountGRADDAO(answerProcessing);
+        nsi = new ReferenceNSI(answerProcessing);
     }
 
     /**
      * Метод, формирует все ПУ для создания в ГИС ЖКХ.
      *
      * @param houseId        ид дома в БД ГРАД.
-     * @param connectionGRAD подключение к БД ГРАД.
      * @return новые ПУ для ГИС ЖКХ.
      */
-    public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesForCreate(Integer houseId, Connection connectionGRAD) throws SQLException, PreGISException, ParseException {
+    public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesForCreate(Integer houseId) throws SQLException, PreGISException, ParseException {
 
-        ArrayList<String[]> exGisPu1 = getExGisPu1(houseId, connectionGRAD);
         java.util.ArrayList<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList = new ArrayList<>();
 
-        for (String[] exGisPu1Element : exGisPu1) {
-//            Если нет в базе данных о приборе учета, тогда только добавим
-            if (accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "METERROOTGUID", connectionGRAD) == null) {
-                ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
-                meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
-                meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            ArrayList<String[]> exGisPu1 = getExGisPu1(houseId, connectionGRAD);
 
-                meteringDeviceList.add(meteringDevices);
+            for (String[] exGisPu1Element : exGisPu1) {
+//            Если нет в базе данных о приборе учета, тогда только добавим
+//            if (exGisPu1Element[ABON_ID_PU1] != null && !exGisPu1Element[ABON_ID_PU1].isEmpty())
+                if (accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "METERROOTGUID", connectionGRAD) == null) {
+                    ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
+                    meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
+
+                    meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
+
+                    meteringDeviceList.add(meteringDevices);
+                }
             }
         }
+
 
         return meteringDeviceList;
     }
@@ -78,7 +86,7 @@ public class MeteringDeviceGRADDAO {
      */
     private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(Integer houseId, String[] exGisPu1Element, Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
-        ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
+
         LinkedHashMap<Integer, String[]> exGisIpuIndMap = getExGisIpuIndMap(houseId, connectionGrad);
         ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate();
 
@@ -115,7 +123,7 @@ public class MeteringDeviceGRADDAO {
         return device;
     }
 
-    private MeteringDeviceBasicCharacteristicsType getBasicCharacteristics(Integer houseId, String[] exGisPu1Element, Connection connectionGrad) throws ParseException, SQLException {
+    private MeteringDeviceBasicCharacteristicsType getBasicCharacteristics(Integer houseId, String[] exGisPu1Element, Connection connectionGrad) throws ParseException, SQLException, PreGISException {
 
 
         MeteringDeviceBasicCharacteristicsType basicCharacteristics = new MeteringDeviceBasicCharacteristicsType();
@@ -132,9 +140,14 @@ public class MeteringDeviceGRADDAO {
         basicCharacteristics.setManualModeMetering("Да".equalsIgnoreCase(exGisPu1Element[7]));
 //            Дата первичной поверки
         basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
-        basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[15])));
+
+        if (exGisPu1Element[15] != null) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
+            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[15])));
+        } else {
+            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[14])));
+        }
 //            Межповерочный интервал (НСИ 16)
-        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(exGisPu1Element[16]);
+        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]).getGUID());
 
         if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[3] != null) { // если Характеристики ИПУ жилого дома (значение справочника "Тип прибора учета" = индивидуальный, тип дома = жилой дом)
             basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
@@ -232,13 +245,15 @@ public class MeteringDeviceGRADDAO {
      * @return список полученый из процедуры EX_GIS_PU1.
      * @throws SQLException
      */
-    private ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {
+    public ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {  // Connection error
 
         ArrayList<String[]> list = new ArrayList<>();
-        return executorProcedure("EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")",
+        return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")}",
                 connection, resultSet1 -> {
-                    while (resultSet1.next())
+                    while (resultSet1.next()) {
+                        if (getAllData(resultSet1.getString(1))[ABON_ID_PU1] != null && !getAllData(resultSet1.getString(1))[ABON_ID_PU1].isEmpty())
                         list.add(getAllData(resultSet1.getString(1)));
+                    }
                     return list;
                 });
     }
@@ -344,6 +359,7 @@ public class MeteringDeviceGRADDAO {
     private <T> T executorProcedure(String sqlRequest, Connection connection, ResultHandler<T> handler) throws SQLException {
 
         try (CallableStatement call = connection.prepareCall(sqlRequest)) {
+            LOGGER.debug(call);
             call.executeQuery();
             ResultSet result = call.getResultSet();
             T value = handler.handle(result);
@@ -367,7 +383,7 @@ public class MeteringDeviceGRADDAO {
         String[] newArray = new String[array.length];
         for (int i = 0; i < array.length; i++) {
 
-            if (array[i] != null || !array[i].trim().isEmpty()) {
+            if (array[i] != null && !array[i].trim().isEmpty()) {
                 newArray[i] = array[i];
             }
         }

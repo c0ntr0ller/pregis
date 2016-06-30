@@ -8,10 +8,7 @@
 package ru.progmatik.java.pregis.connectiondb.localdb.reference;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.NsiElementFieldType;
-import ru.gosuslugi.dom.schema.integration.base.NsiElementStringFieldType;
-import ru.gosuslugi.dom.schema.integration.base.NsiElementType;
-import ru.gosuslugi.dom.schema.integration.base.NsiRef;
+import ru.gosuslugi.dom.schema.integration.base.*;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -44,6 +41,7 @@ public class ReferenceNSI {
     /**
      * Метод, получает из БД все типы документов из справочника НСИ 95, ноходит по имени нужный документ,
      * формирует объект "ru.gosuslugi.dom.schema.integration.base.NsiRef", пригодный для создания абонента.
+     *
      * @param nameTypeDocument имя типа документа.
      * @return объект пригодный для создания абонента.
      * @throws PreGISException
@@ -59,8 +57,9 @@ public class ReferenceNSI {
     /**
      * Метод, получает справочник для ГИС ЖКХ из таблице, ноходит по коду и имени нужный элемент,
      * формирует объект "ru.gosuslugi.dom.schema.integration.base.NsiRef", пригодный для создания абонента.
+     *
      * @param nsiParentCode код справочника.
-     * @param nameElement имя нужного элемента.
+     * @param nameElement   имя нужного элемента.
      * @return объект пригодный для указания справочника ГИС ЖКХ.
      * @throws PreGISException
      * @throws SQLException
@@ -88,6 +87,7 @@ public class ReferenceNSI {
 
     /**
      * Метод, обновляет справочники, найденные в таблице NSI_FOR_DOWNLOAD.
+     *
      * @throws SQLException
      */
     public boolean updateNSIFromTableList() throws SQLException, PreGISException {
@@ -110,6 +110,7 @@ public class ReferenceNSI {
 
     /**
      * Метод, обновляет справочник.
+     *
      * @return true если обновление прошло успешно, false - если справочники не удалось обновить.
      * @throws PreGISException
      * @throws SQLException
@@ -130,23 +131,44 @@ public class ReferenceNSI {
 
                     for (NsiElementFieldType itemFieldType : itemNsi.getNsiElementField()) {
 
-                        if (itemFieldType instanceof NsiElementStringFieldType) {
-                            NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemFieldType;
-                            if (downloadNsiDataSet.getWorldForExtract().equals(fieldType.getName())) {
+                        if (downloadNsiDataSet.getWorldForExtract().equals(itemFieldType.getName())) {
 
-                                ReferenceItemDataSet dataSet = null;
-                                if (mapItems.containsKey(itemNsi.getCode())) {
-                                    dataSet = mapItems.get(itemNsi.getCode());
-                                } else {
-                                    dataSet = new ReferenceItemDataSet();
+                            if (itemFieldType instanceof NsiElementStringFieldType) {
+                                NsiElementStringFieldType fieldType = (NsiElementStringFieldType) itemFieldType;
+                                if (downloadNsiDataSet.getWorldForExtract().equals(fieldType.getName())) {
+
+                                    ReferenceItemDataSet dataSet = null;
+                                    if (mapItems.containsKey(itemNsi.getCode())) {
+                                        dataSet = mapItems.get(itemNsi.getCode());
+                                    } else {
+                                        dataSet = new ReferenceItemDataSet();
+                                    }
+                                    dataSet.setName(fieldType.getValue());
+                                    dataSet.setCode(itemNsi.getCode());
+                                    dataSet.setGuid(itemNsi.getGUID());
+                                    dataSet.setGroupName(fieldType.getName());
+                                    dataSet.setCodeParent(parenCode);
+                                    nsiDao.addItem(dataSet);
+                                    answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
                                 }
-                                dataSet.setName(fieldType.getValue());
-                                dataSet.setCode(itemNsi.getCode());
-                                dataSet.setGuid(itemNsi.getGUID());
-                                dataSet.setGroupName(fieldType.getName());
-                                dataSet.setCodeParent(parenCode);
-                                nsiDao.addItem(dataSet);
-                                answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
+                            } else if (itemFieldType instanceof NsiElementIntegerFieldType) {
+                                NsiElementIntegerFieldType fieldType = (NsiElementIntegerFieldType) itemFieldType;
+                                if (downloadNsiDataSet.getWorldForExtract().equals(fieldType.getName())) {
+
+                                    ReferenceItemDataSet dataSet = null;
+                                    if (mapItems.containsKey(itemNsi.getCode())) {
+                                        dataSet = mapItems.get(itemNsi.getCode());
+                                    } else {
+                                        dataSet = new ReferenceItemDataSet();
+                                    }
+                                    dataSet.setName(fieldType.getValue().toString());
+                                    dataSet.setCode(itemNsi.getCode());
+                                    dataSet.setGuid(itemNsi.getGUID());
+                                    dataSet.setGroupName(fieldType.getName());
+                                    dataSet.setCodeParent(parenCode);
+                                    nsiDao.addItem(dataSet);
+                                    answerProcessing.sendMessageToClient("\nДобавлен новый элемент в справочник:\n" + dataSet.getCode() + " - " + dataSet.getName());
+                                }
                             }
                         }
                     }

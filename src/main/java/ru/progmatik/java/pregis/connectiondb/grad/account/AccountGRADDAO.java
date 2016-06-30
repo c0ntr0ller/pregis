@@ -16,10 +16,9 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -27,7 +26,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
@@ -75,16 +73,7 @@ public class AccountGRADDAO {
      */
     private static XMLGregorianCalendar getCalendar(Date date) {
 
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(date);
-        XMLGregorianCalendar dateXml = null;
-
-        try {
-            dateXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (DatatypeConfigurationException e) {
-            e.printStackTrace();
-        }
-        return dateXml;
+        return OtherFormat.getDateForXML(date);
     }
 
     /**
@@ -293,31 +282,7 @@ public class AccountGRADDAO {
         return mapAccount;
     }
 
-    /**
-     * Метод, получает
-     *
-     * @param abonId ид абонента в БД ГРАД.
-     * @return AccountGUID идентификатор ЛС в ГИС ЖКХ.
-     * @throws SQLException
-     */
-    private String getAccountGUIDFromBase(Integer abonId, Connection connection) throws SQLException {
 
-        String sqlResult;
-        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
-
-        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
-            cstmt.setInt(1, abonId);
-            cstmt.setString(2, "ACCOUNTGUID");
-            ResultSet resultSet = cstmt.executeQuery();
-            resultSet.next();
-            sqlResult = resultSet.getString(1);
-            resultSet.close();
-            if (sqlResult == null || sqlResult.isEmpty()) {
-                return null;
-            }
-        }
-        return sqlResult;
-    }
 
     /**
      * Метод, извлекает идентификаторы помещений.
@@ -358,8 +323,8 @@ public class AccountGRADDAO {
      * @throws PreGISException
      * @throws ParseException
      */
-    public void setAccountUniqueNumber(Integer houseId, String accountNumber,
-                                       String accountGUID, String accountUniqueNumber, Connection connection) throws SQLException, PreGISException, ParseException {
+    public void setAccountGuidAndUniqueNumber(Integer houseId, String accountNumber,
+                                              String accountGUID, String accountUniqueNumber, Connection connection) throws SQLException, PreGISException, ParseException {
 
         Integer abonentId = getAbonentIdFromGrad(houseId, accountNumber, connection);
 
@@ -381,6 +346,32 @@ public class AccountGRADDAO {
         } else {
             throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
         }
+    }
+
+    /**
+     * Метод, получает
+     *
+     * @param abonId ид абонента в БД ГРАД.
+     * @return AccountGUID идентификатор ЛС в ГИС ЖКХ.
+     * @throws SQLException
+     */
+    public String getAccountGUIDFromBase(Integer abonId, Connection connection) throws SQLException {
+
+        String sqlResult;
+        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+
+        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
+            cstmt.setInt(1, abonId);
+            cstmt.setString(2, "ACCOUNTGUID");
+            ResultSet resultSet = cstmt.executeQuery();
+            resultSet.next();
+            sqlResult = resultSet.getString(1);
+            resultSet.close();
+            if (sqlResult == null || sqlResult.isEmpty()) {
+                return null;
+            }
+        }
+        return sqlResult;
     }
 
     /**

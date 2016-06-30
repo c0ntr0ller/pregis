@@ -133,7 +133,7 @@ body {
 }
 .show-state .img {
     background: url("../images/500.gif") no-repeat 50% 50%;
-    margin: 22px auto;
+    margin: 17px auto;
     height: 64px;
     width: 64px;
     border-radius: 50px;
@@ -143,14 +143,25 @@ body {
 .label-text {
     background-color: #333;
     margin: 0 auto;
-    text-align: center;
     color: #fff;
     font-size: 15px;
     overflow: auto;
+    height: 45px;
     max-height: 45px;
+    text-overflow: ellipsis; /* Добавляем многоточие */
+    table-layout: fixed;
+}
+.label-text > span {
+    display: table-cell;
+    table-layout: fixed;
+    text-align: center;
+    vertical-align: middle;
+    height: 45px;
+    max-height: 45px;
+    width: 345px;
 }
 .other-error {
-    margin-top: 5px;
+    margin-top: 7px;
     margin-left: 5px;
     display: block;
 }
@@ -196,6 +207,13 @@ body {
     font-size: 16px;
     font-weight: bold;
     color: #333;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
 }
 #messages {
     color: #333;

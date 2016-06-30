@@ -21,7 +21,7 @@ function getWebConnect() {
         } else if (inMessage.indexOf('::setOkLabelText') != -1) {
             setOkLabelText();
         } else {
-            $('.label-text').html(inMessage);
+            $('.label-text > span').html(inMessage);
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";
             $textarea.scrollTop = $textarea.scrollHeight;

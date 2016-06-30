@@ -10,6 +10,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class UpdateAllMeteringDeviceData {
      * @throws SQLException
      * @throws PreGISException
      */
-    public void createMeteringDevice() throws SQLException, PreGISException {
+    public void createMeteringDevice() throws SQLException, PreGISException, ParseException {
 
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {

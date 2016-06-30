@@ -137,6 +137,6 @@ public class UpdateAllAccountData {
         answerProcessing.sendMessageToClient("Дабавлен лицевой счет №" + accountNumber + " идентификатор:" + accountUniqueNumber);
         answerProcessing.sendMessageToClient("");
         countAdded++;
-        accountGRADDAO.setAccountUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, connection);
+        accountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, connection);
     }
 }

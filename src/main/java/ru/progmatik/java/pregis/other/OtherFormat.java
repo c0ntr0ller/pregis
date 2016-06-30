@@ -31,8 +31,18 @@ public class OtherFormat {
      */
     public static XMLGregorianCalendar getDateNow() {
 
+        return getDateForXML(new Date());
+    }
+
+    /**
+     * Метод, формирует дату пригодную для ГИС ЖКХ.
+     * @param newDate новая дата.
+     * @return сформированная дата.
+     */
+    public static XMLGregorianCalendar getDateForXML(java.util.Date newDate) {
+
         GregorianCalendar c = new GregorianCalendar();
-        c.setTime(new Date());
+        c.setTime(newDate);
         XMLGregorianCalendar date = null;
 
         try {

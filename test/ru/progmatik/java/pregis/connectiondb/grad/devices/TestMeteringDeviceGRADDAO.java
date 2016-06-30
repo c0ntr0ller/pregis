@@ -1,36 +1,31 @@
 package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.junit.Test;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class TestMeteringDeviceGRADDAO {
 
     @Test
     public void getDataFromBase() throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
-
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            ArrayList<String[]> gisPu1 = graddao.getExGisPu1(7124, connection);
-            for (String[] valuePu1 : gisPu1) {
-                for (String aValuePu1 : valuePu1) {
-                    System.out.print(aValuePu1);
-                    System.out.print(" : ");
-                }
-                System.out.println();
-            }
-
-            System.out.println("PU2");
-            ArrayList<String> gisPu2 = graddao.getExGisPu2(7124, connection);
-            gisPu2.forEach(System.out::println);
-
-
-        }
+//        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
+//
+//        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+//            ArrayList<String[]> gisPu1 = graddao.getExGisPu1(7124, connection);
+//            for (String[] valuePu1 : gisPu1) {
+//                for (String aValuePu1 : valuePu1) {
+//                    System.out.print(aValuePu1);
+//                    System.out.print(" : ");
+//                }
+//                System.out.println();
+//            }
+//
+//            System.out.println("PU2");
+//            ArrayList<String> gisPu2 = graddao.getExGisPu2(7124, connection);
+//            gisPu2.forEach(System.out::println);
+//
+//
+//        }
     }
 }

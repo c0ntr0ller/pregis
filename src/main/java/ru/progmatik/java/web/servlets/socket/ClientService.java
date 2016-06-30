@@ -78,6 +78,9 @@ public class ClientService {
                 case "updateAccountData":
                     action.updateAccountData();
                     break;
+                case "updateMeteringDevices":
+                    action.updateMeteringDevices();
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

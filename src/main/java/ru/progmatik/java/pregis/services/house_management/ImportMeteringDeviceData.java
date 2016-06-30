@@ -45,7 +45,7 @@ public class ImportMeteringDeviceData {
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.importMeteringDeviceData(getImmportMeteringDeviceDataRequest(request), requestHeader, resultHolder);
+            result = port.importMeteringDeviceData(getImportMeteringDeviceDataRequest(request), requestHeader, resultHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
@@ -56,7 +56,7 @@ public class ImportMeteringDeviceData {
         return result;
     }
 
-    private ImportMeteringDeviceDataRequest getImmportMeteringDeviceDataRequest(ImportMeteringDeviceDataRequest request) {
+    private ImportMeteringDeviceDataRequest getImportMeteringDeviceDataRequest(ImportMeteringDeviceDataRequest request) {
 
         request.setId(OtherFormat.getId());
 

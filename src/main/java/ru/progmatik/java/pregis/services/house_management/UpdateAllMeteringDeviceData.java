@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
@@ -47,10 +48,17 @@ public class UpdateAllMeteringDeviceData {
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
-                MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing);
+                MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
                 java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
-                importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices);
+                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices);
+                for (ImportResult.CommonResult result : importResult.getCommonResult()) {
+                    answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
+                    answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
+                    answerProcessing.sendMessageToClient("MeteringDeviceVersionGUID: " + result.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+                    answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
+                    answerProcessing.sendMessageToClient("");
+                }
             }
         }
     }

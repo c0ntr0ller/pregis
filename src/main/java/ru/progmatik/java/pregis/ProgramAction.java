@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -12,6 +13,7 @@ import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house_management.ExportHouseData;
+import ru.progmatik.java.pregis.services.house_management.ExportMeteringDeviceData;
 import ru.progmatik.java.pregis.services.house_management.UpdateAllAccountData;
 import ru.progmatik.java.pregis.services.nsi.UpdateReference;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
@@ -25,6 +27,7 @@ import ru.progmatik.java.web.servlets.socket.ClientService;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.LinkedHashMap;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -150,6 +153,25 @@ public class ProgramAction {
         }
 //        Надо что бы возвращало -1 возникли ошибка опер. прервана, 0 - возникли ошибки  операция завершена смотрите лог,
 //        1 - выполнено успешно.
+    }
+
+    /**
+     * Метод, синхронизирует ПУ.
+     */
+    public void updateMeteringDevices() {
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+        try {
+            ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+            if (exportMeteringDeviceData.callExportMeteringDeviceData("b58c5da4-8d62-438f-b11e-d28103220952") == null) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
+            } else {
+                answerProcessing.sendOkMessageToClient("\"Синхронизация ПУ\" успешно выполнена.");
+            }
+//        } catch (SQLException | PreGISException e) {
+//            answerProcessing.sendErrorToClient("Синхронизация ПУ: ", "\"Синхронизация ЛС\" ", LOGGER, e);
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
+        }
     }
 
     /**

@@ -34,7 +34,7 @@ public class ExportMeteringDeviceData {
     /**
      * Метод, получает данные о ПУ из ГИС ЖКХ.
      */
-    public ExportMeteringDeviceDataResult callExportMeteringDeviceData() {
+    public ExportMeteringDeviceDataResult callExportMeteringDeviceData(String fias) {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
@@ -44,7 +44,7 @@ public class ExportMeteringDeviceData {
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.exportMeteringDeviceData(getExportMeteringDeviceDataRequest(), requestHeader, headerHolder);
+            result = port.exportMeteringDeviceData(getExportMeteringDeviceDataRequest(fias), requestHeader, headerHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
@@ -59,9 +59,10 @@ public class ExportMeteringDeviceData {
      * Метод формирует заголовок для запроса.
      * @return запрос.
      */
-    private ExportMeteringDeviceDataRequest getExportMeteringDeviceDataRequest() {
+    private ExportMeteringDeviceDataRequest getExportMeteringDeviceDataRequest(String fias) {
 
         ExportMeteringDeviceDataRequest request = new ExportMeteringDeviceDataRequest();
+        request.setFIASHouseGuid(fias);
         request.setId(OtherFormat.getId());
 
         return request;

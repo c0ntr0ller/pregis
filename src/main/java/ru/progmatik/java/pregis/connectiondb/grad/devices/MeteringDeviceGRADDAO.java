@@ -94,11 +94,11 @@ public class MeteringDeviceGRADDAO {
      *
      * @return новые ПУ для ГИС ЖКХ.
      */
-    public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesForCreate() throws SQLException, PreGISException, ParseException {
+    public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesForCreate(Connection connectionGRAD) throws SQLException, PreGISException, ParseException {
 
         java.util.ArrayList<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList = new ArrayList<>();
 
-        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+//        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             ArrayList<String[]> exGisPu1 = getExGisPu1(houseId, connectionGRAD);
 
             for (String[] exGisPu1Element : exGisPu1) {
@@ -117,7 +117,7 @@ public class MeteringDeviceGRADDAO {
                     meteringDeviceList.add(meteringDevices);
                 }
             }
-        }
+//        }
         return meteringDeviceList;
     }
 
@@ -127,7 +127,8 @@ public class MeteringDeviceGRADDAO {
      * @param exGisPu1Element массив данных полученный из БД.
      * @return сформированные прибор учёта.
      */
-    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(Integer houseId, String[] exGisPu1Element, Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(
+            Integer houseId, String[] exGisPu1Element, Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
         LinkedHashMap<Integer, String[]> exGisIpuIndMap = getExGisIpuIndMap(houseId, connectionGrad);
         ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate();
@@ -530,15 +531,17 @@ public class MeteringDeviceGRADDAO {
      */
     private <T> T executorProcedure(String sqlRequest, Connection connection, ResultHandler<T> handler) throws SQLException {
 
-        try (CallableStatement call = connection.prepareCall(sqlRequest)) {
-            LOGGER.debug(call.toString());
-            call.executeQuery();
-            ResultSet result = call.getResultSet();
-            T value = handler.handle(result);
-            result.close();
+//        try (CallableStatement call = connection.prepareCall(sqlRequest)) {
+        CallableStatement call = connection.prepareCall(sqlRequest);
+        LOGGER.debug(call.toString());
+        call.executeQuery();
+        ResultSet result = call.getResultSet();
+        T value = handler.handle(result);
+        result.close();
+        call.close();
 
-            return value;
-        }
+        return value;
+//        }
     }
 
     public int getCountAll() {

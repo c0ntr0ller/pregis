@@ -9,6 +9,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
@@ -44,7 +45,7 @@ public class UpdateAllMeteringDeviceData {
 
         errorState = 1;
 //        Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection();
-//        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
             LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh();
             ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
@@ -52,16 +53,17 @@ public class UpdateAllMeteringDeviceData {
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
                 MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
-                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate();
+                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD);
                 countAll += meteringDeviceGRADDAO.getCountAll();
 //                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
                 ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(17, 19));
                 if (importResult != null && importResult.getCommonResult() != null) {
                     System.err.println("setMeteringDevices");
-                    meteringDeviceGRADDAO.setMeteringDevices(importResult, ConnectionBaseGRAD.instance().getConnection());
+                    meteringDeviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
+//                    meteringDeviceGRADDAO.setMeteringDevices(importResult, ConnectionBaseGRAD.instance().getConnection());
                     countAdded += meteringDeviceGRADDAO.getCountAdded();
-                    ConnectionBaseGRAD.instance().close();
+//                    ConnectionBaseGRAD.instance().close();
                     for (ImportResult.CommonResult result : importResult.getCommonResult()) {
                         answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
                         answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
@@ -77,7 +79,7 @@ public class UpdateAllMeteringDeviceData {
         answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
         answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
 //        connectionGRAD.close();
-//        }
+        }
         return errorState;
     }
 }

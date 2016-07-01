@@ -21,14 +21,17 @@ public class UpdateAllMeteringDeviceData {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllMeteringDeviceData.class);
     private final AnswerProcessing answerProcessing;
+    private int countAll = 0;
+    private int countAdded = 0;
+    private int errorState;
 
     public UpdateAllMeteringDeviceData(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
-    public void updateMeteringDeviceData() throws ParseException, SQLException, PreGISException {
+    public int updateMeteringDeviceData() throws ParseException, SQLException, PreGISException {
 
-        createMeteringDevice();
+        return createMeteringDevice();
 
     }
 
@@ -37,9 +40,9 @@ public class UpdateAllMeteringDeviceData {
      * @throws SQLException
      * @throws PreGISException
      */
-    public void createMeteringDevice() throws SQLException, PreGISException, ParseException {
+    private int createMeteringDevice() throws SQLException, PreGISException, ParseException {
 
-
+        errorState = 1;
 //        Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection();
 //        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
@@ -48,20 +51,33 @@ public class UpdateAllMeteringDeviceData {
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
-                MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
-                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue());
+                MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
+                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate();
+                countAll += meteringDeviceGRADDAO.getCountAll();
 //                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
-                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices);
-                for (ImportResult.CommonResult result : importResult.getCommonResult()) {
-                    answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
-                    answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
-                    answerProcessing.sendMessageToClient("MeteringDeviceVersionGUID: " + result.getImportMeteringDevice().getMeteringDeviceVersionGUID());
-                    answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
-                    answerProcessing.sendMessageToClient("");
+                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(17, 19));
+                if (importResult != null && importResult.getCommonResult() != null) {
+                    System.err.println("setMeteringDevices");
+                    meteringDeviceGRADDAO.setMeteringDevices(importResult, ConnectionBaseGRAD.instance().getConnection());
+                    countAdded += meteringDeviceGRADDAO.getCountAdded();
+                    ConnectionBaseGRAD.instance().close();
+                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
+                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
+                        answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
+                        answerProcessing.sendMessageToClient("MeteringDeviceVersionGUID: " + result.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+                        answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
+                        answerProcessing.sendMessageToClient("");
+                    }
+                } else {
+                    errorState = -1;
                 }
             }
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
+        answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
 //        connectionGRAD.close();
 //        }
+        return errorState;
     }
 }

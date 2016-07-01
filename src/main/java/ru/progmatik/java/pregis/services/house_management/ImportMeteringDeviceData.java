@@ -37,6 +37,7 @@ public class ImportMeteringDeviceData {
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         ImportResult result;
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         ImportMeteringDeviceDataRequest request = new ImportMeteringDeviceDataRequest();
 

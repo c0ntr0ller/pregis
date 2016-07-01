@@ -29,9 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by andryha on 08.03.2016.
- */
 public class TestMain {
 
     private static String mes = "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
@@ -40,7 +37,7 @@ public class TestMain {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException {
 
         try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
+            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
             ReferenceNSI nsi = new ReferenceNSI(new AnswerProcessing(new ClientService()));
             ArrayList<String[]> exGisPu1 = graddao.getExGisPu1(7124, connection);
             for (String[] strings : exGisPu1) {

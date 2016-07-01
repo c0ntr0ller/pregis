@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
-import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
@@ -21,8 +20,6 @@ import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.math.BigInteger;
-import java.sql.SQLException;
-import java.text.ParseException;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -135,13 +132,14 @@ public class ProgramAction {
             UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
             int state = updateAllAccountData.updateAllAccountData();
             if (state == -1) {
-                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация лицевых счетов\" прервана!");
+                answerProcessing.sendErrorToClientNotException("");
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка! Операция: \"Синхронизация лицевых счетов\" прервана!");
             } else if (state == 0) {
                 answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация лицевых счетов\" завершилась с ошибками!");
             } else if (state == 1) {
                 answerProcessing.sendOkMessageToClient("\"Синхронизация лицевых счетов\" успешно выполнена.");
             }
-        } catch (SQLException | PreGISException | ParseException e) {
+        } catch (Exception e) {
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
@@ -157,18 +155,29 @@ public class ProgramAction {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
-            updateAllMeteringDeviceData.updateMeteringDeviceData();
-//            ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-//            if (exportMeteringDeviceData.callExportMeteringDeviceData("b58c5da4-8d62-438f-b11e-d28103220952") == null) {
-//                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
-//            } else {
-//                answerProcessing.sendOkMessageToClient("\"Синхронизация ПУ\" успешно выполнена.");
-//            }
-        } catch (SQLException | PreGISException | ParseException e) {
-            answerProcessing.sendErrorToClient("Синхронизация ПУ: ", "\"Синхронизация ЛС\" ", LOGGER, e);
+            int state = updateAllMeteringDeviceData.updateMeteringDeviceData();
+            if (state == -1) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
+            } else if (state == 0) {
+                answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация ПУ\" завершилась с ошибками!");
+            } else if (state == 1) {
+                answerProcessing.sendOkMessageToClient("\"Синхронизация ПУ\" успешно выполнена.");
+            }
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("Синхронизация ПУ: ", "\"Синхронизация ПУ\" ", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
+    }
+
+    public void callExportMeteringDevice() {
+
+            ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+            if (exportMeteringDeviceData.callExportMeteringDeviceData("b58c5da4-8d62-438f-b11e-d28103220952") == null) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
+            } else {
+                answerProcessing.sendOkMessageToClient("\"Получение ПУ\" успешно выполнена.");
+            }
     }
 
     /**

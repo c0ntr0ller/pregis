@@ -3,13 +3,10 @@ package ru.progmatik.java.pregis;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
+import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
+import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -21,13 +18,13 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class TestMain {
 
@@ -36,19 +33,20 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException {
 
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
-            ReferenceNSI nsi = new ReferenceNSI(new AnswerProcessing(new ClientService()));
-            ArrayList<String[]> exGisPu1 = graddao.getExGisPu1(7124, connection);
-            for (String[] strings : exGisPu1) {
-//                for (String string : strings) {
-//                    System.out.print(string);
-//                    System.out.print(" : ");
-//                }
-                System.out.println(nsi.getNsiRef("16", strings[16].split(" ")[1]).getGUID());
-                System.out.println(strings[18]);
-            }
-        }
+        getImportResult();
+//        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+//            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+//            ReferenceNSI nsi = new ReferenceNSI(new AnswerProcessing(new ClientService()));
+//            ArrayList<String[]> exGisPu1 = graddao.getExGisPu1(7124, connection);
+//            for (String[] strings : exGisPu1) {
+////                for (String string : strings) {
+////                    System.out.print(string);
+////                    System.out.print(" : ");
+////                }
+//                System.out.println(nsi.getNsiRef("16", strings[16].split(" ")[1]).getGUID());
+//                System.out.println(strings[18]);
+//            }
+//        }
 //        SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
 //        String temp = null;
 //
@@ -185,6 +183,46 @@ public class TestMain {
 //            LOGGER.error(e.getMessage());
 //            e.printStackTrace();
 //        }
+    }
+    public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException {
+
+//        Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection();
+        JAXBContext jc = JAXBContext.newInstance(ImportResult.class);
+
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        File file = new File("temp" + File.separator + "ImportResult 0-20.xml");
+        System.out.println(file);
+        ImportResult result = (ImportResult) unmarshaller.unmarshal(file);
+        System.out.println(result.getId());
+        System.out.println(result.getSignature().getKeyInfo());
+        System.out.println(result.getCommonResult().get(0).getTransportGUID());
+
+        for (CommonResultType type : result.getCommonResult()) {
+            System.out.println("GUID: " + type.getGUID());
+            System.out.println("UniqueNumber: " + type.getUniqueNumber());
+//            System.out.println("MeteringDeviceVersionGUID: " + type.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+            System.out.println("TransportGUID: " + type.getTransportGUID());
+            System.out.println("");
+        }
+
+
+//        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+//        List<ImportMeteringDeviceDataRequest.MeteringDevice> devicesForCreate = graddao.getMeteringDevicesForCreate(connectionGrad);
+//        System.out.println(graddao.getCountAll());
+//
+//        graddao.setMeteringDevices(result, connectionGrad);
+
+
+//        for (ImportResult.CommonResult resultItem : result.getCommonResult()) {
+//            System.out.println("GUID: " + resultItem.getGUID());
+//            System.out.println("UniqueNumber: " + resultItem.getUniqueNumber());
+//            System.out.println("MeteringDeviceVersionGUID: " + resultItem.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+//            System.out.println("TransportGUID: " + resultItem.getTransportGUID());
+//            System.out.println("");
+//        }
+//        connectionGrad.close();
+
+
     }
 
     public static void remove(NamedNodeMap attributes) throws XMLStreamException {

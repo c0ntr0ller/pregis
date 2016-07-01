@@ -47,7 +47,7 @@ public class UpdateAllMeteringDeviceData {
 //        Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection();
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
-            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh();
+            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
             ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
@@ -57,7 +57,7 @@ public class UpdateAllMeteringDeviceData {
                 countAll += meteringDeviceGRADDAO.getCountAll();
 //                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
-                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(17, 19));
+                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(19, 20));
                 if (importResult != null && importResult.getCommonResult() != null) {
                     System.err.println("setMeteringDevices");
                     meteringDeviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);

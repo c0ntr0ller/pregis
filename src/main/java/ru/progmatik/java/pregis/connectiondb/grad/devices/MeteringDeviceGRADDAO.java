@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.MeteringDeviceBasicCharacteristicsType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
@@ -69,6 +68,8 @@ public class MeteringDeviceGRADDAO {
     private final ReferenceNSI nsi;
     private final Integer houseId;
     private final LinkedHashMap<String, LinkedHashMap<Integer, ImportMeteringDeviceDataRequest.MeteringDevice>> mapTransportMeteringDevice;
+    private ArrayList<String[]> exGisIpuIndList;
+    private LinkedHashMap<Integer, String[]> exGisIpuIndMap;
     private ArrayList<String> exGisPu2List;
     private ArrayList<Integer> allResidentialPremiseFromGrad;
     private int countAll = 0;
@@ -99,24 +100,23 @@ public class MeteringDeviceGRADDAO {
         java.util.ArrayList<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList = new ArrayList<>();
 
 //        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            ArrayList<String[]> exGisPu1 = getExGisPu1(houseId, connectionGRAD);
+        ArrayList<String[]> exGisPu1 = getExGisPu1(houseId, connectionGRAD);
 
-            for (String[] exGisPu1Element : exGisPu1) {
-                countAll++;
+        for (String[] exGisPu1Element : exGisPu1) {
+            countAll++;
 //            Если нет в базе данных о приборе учета, тогда только добавим
 //            if (exGisPu1Element[ABON_ID_PU1] != null && !exGisPu1Element[ABON_ID_PU1].isEmpty())
-                if (accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "METERROOTGUID", connectionGRAD) == null) {
-                    ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
-                    meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
+            if (accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "METERROOTGUID", connectionGRAD) == null) {
+                ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
+                meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
 
-                    meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
+                meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
 
-                    mapTransportMeteringDevice.put(meteringDevices.getTransportGUID(), new LinkedHashMap<>());
-                    mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
-                    System.out.println("map added.");
-                    meteringDeviceList.add(meteringDevices);
-                }
+                mapTransportMeteringDevice.put(meteringDevices.getTransportGUID(), new LinkedHashMap<>());
+                mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
+                meteringDeviceList.add(meteringDevices);
             }
+        }
 //        }
         return meteringDeviceList;
     }
@@ -191,14 +191,19 @@ public class MeteringDeviceGRADDAO {
 //            Межповерочный интервал (НСИ 16)
         basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]).getGUID());
 
-        if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[3] != null) { // если Характеристики ИПУ жилого дома (значение справочника "Тип прибора учета" = индивидуальный, тип дома = жилой дом)
-            basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
-            basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
-            for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                if (exGisPu1Element[METER_ID_PU1].equals(getAllData(arrayData)[METER_ID_PU2])) {
-                    basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
-                }
+//            Характеристики ИПУ жилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
+//            Характеристики ИПУ нежилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
+        if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[4] != null) {
+            if (isResidentialPremiseGrad(houseId, Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad)) { // если помещение не является жилым, значит оно нежилое.
+                basicCharacteristics.setResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice());
+                basicCharacteristics.getResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
+                basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
+            } else {
+                basicCharacteristics.setNonResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice());
+                basicCharacteristics.getNonResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
+                basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             }
+
         } else if (exGisPu1Element[1].equalsIgnoreCase("Коллективный (общедомовой)") && exGisPu1Element[3] != null) {
             answerProcessing.sendMessageToClient("Найден ПУ \"Коллективный (общедомовой)\" не удаётся обработать!");
 //            basicCharacteristics.setCollectiveDevice(true); // Признак общедомового ПУ (значение справочника "Тип прибора учета" = коллективный (общедомомвой))
@@ -212,17 +217,14 @@ public class MeteringDeviceGRADDAO {
                     basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
                 }
             }
-//            Характеристики ИПУ жилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
-//            Характеристики ИПУ нежилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[4] != null) {
-            if (isResidentialPremiseGrad(houseId, Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad)) { // если помещение не является жилым, значит оно нежилое.
-                basicCharacteristics.setResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice());
-                basicCharacteristics.getResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
-                basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
-            } else {
-                basicCharacteristics.setNonResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice());
-                basicCharacteristics.getNonResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
-                basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
+
+        } else if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[3] != null) { // если Характеристики ИПУ жилого дома (значение справочника "Тип прибора учета" = индивидуальный, тип дома = жилой дом)
+            basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
+            basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
+            for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
+                if (exGisPu1Element[METER_ID_PU1].equals(getAllData(arrayData)[METER_ID_PU2])) {
+                    basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
+                }
             }
 
         } else if (exGisPu1Element[1].equalsIgnoreCase("Комнатный") && exGisPu1Element[5] != null) { // Характеристики комнатного ИПУ (значение справочника "Тип прибора учета" = индивидуальный)
@@ -264,23 +266,6 @@ public class MeteringDeviceGRADDAO {
     }
 
     /**
-     * Метод, получает из БД текущие показания ПУ, формирует их в Map, для быстрого извлечения даных по ИД прибора учёта
-     *
-     * @param houseId        ид дома в БД ГРАД.
-     * @param connectionGrad подключение к БД ГРАД.
-     * @return map, где ключ - ид ПУ в БД ГРАД, значение - массив всех полученных данных из БД.
-     * @throws SQLException
-     */
-    public LinkedHashMap<Integer, String[]> getExGisIpuIndMap(Integer houseId, Connection connectionGrad) throws SQLException {
-        LinkedHashMap<Integer, String[]> map = new LinkedHashMap<>();
-        ArrayList<String[]> exGisIpuInd = getExGisIpuInd(houseId, connectionGrad);
-        for (String[] exGisIpuIndItem : exGisIpuInd) {
-            map.put(Integer.valueOf(exGisIpuIndItem[5]), exGisIpuIndItem);
-        }
-        return map;
-    }
-
-    /**
      * Метод, выполняет SQL процедуру полученый результат сохраняет в List.
      *
      * @param houseId    ид дома в БД ГРАД.
@@ -288,7 +273,7 @@ public class MeteringDeviceGRADDAO {
      * @return список полученый из процедуры EX_GIS_PU1.
      * @throws SQLException
      */
-    public ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {  // Connection error
+    private ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {  // Connection error
 
         ArrayList<String[]> list = new ArrayList<>();
         return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")}",
@@ -309,10 +294,10 @@ public class MeteringDeviceGRADDAO {
      * @return список полученый из процедуры EX_GIS_PU2.
      * @throws SQLException
      */
-    public ArrayList<String> getExGisPu2(Integer houseId, Connection connection) throws SQLException {
+    private ArrayList<String> getExGisPu2(Integer houseId, Connection connection) throws SQLException {
 
         ArrayList<String> list = new ArrayList<>();
-        return executorProcedure("EXECUTE PROCEDURE EX_GIS_PU2(" + houseId + ")",
+        return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU2(" + houseId + ")}",
                 connection, resultSet1 -> {
                     while (resultSet1.next())
                         list.add(resultSet1.getString(1));
@@ -330,14 +315,38 @@ public class MeteringDeviceGRADDAO {
      */
     private ArrayList<String[]> getExGisIpuInd(Integer houseId, Connection connectionGrad) throws SQLException {
 
-        ArrayList<String[]> list = new ArrayList<>();
-//        Процедура принимает meterId - ид счетчика в БД ГРАД и дату. Дату указываю текущую по умолчанию.
-        return executorProcedure("EXECUTE PROCEDURE EX_GIS_IPU_IND(" + houseId + ", current_date)",
-                connectionGrad, resultSet1 -> {
-                    while (resultSet1.next())
-                        list.add(getAllData(resultSet1.getString(1)));
-                    return list;
-                });
+        if (exGisIpuIndList == null) {
+            exGisIpuIndList = new ArrayList<>();
+//        Процедура принимает houseId - ид счетчика в БД ГРАД и дату. Дату указываю текущую по умолчанию.
+            return executorProcedure("{EXECUTE PROCEDURE EX_GIS_IPU_IND(" + houseId + ", current_date)}",
+                    connectionGrad, resultSet1 -> {
+                        while (resultSet1.next())
+                            exGisIpuIndList.add(getAllData(resultSet1.getString(1)));
+                        return exGisIpuIndList;
+                    });
+        } else {
+            return exGisIpuIndList;
+        }
+    }
+
+    /**
+     * Метод, получает из БД текущие показания ПУ, формирует их в Map, для быстрого извлечения даных по ИД прибора учёта
+     *
+     * @param houseId        ид дома в БД ГРАД.
+     * @param connectionGrad подключение к БД ГРАД.
+     * @return map, где ключ - ид ПУ в БД ГРАД, значение - массив всех полученных данных из БД.
+     * @throws SQLException
+     */
+    private LinkedHashMap<Integer, String[]> getExGisIpuIndMap(Integer houseId, Connection connectionGrad) throws SQLException {
+
+        if (exGisIpuIndMap == null) {
+            exGisIpuIndMap = new LinkedHashMap<>();
+            ArrayList<String[]> exGisIpuInd = getExGisIpuInd(houseId, connectionGrad);
+            for (String[] exGisIpuIndItem : exGisIpuInd) {
+                exGisIpuIndMap.put(Integer.valueOf(exGisIpuIndItem[5]), exGisIpuIndItem);
+            }
+        }
+        return exGisIpuIndMap;
     }
 
     /**
@@ -349,23 +358,25 @@ public class MeteringDeviceGRADDAO {
      */
     public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException {
 
+//        LOGGER.debug("importResult first item: " + importResult.getCommonResult().get(0).getTransportGUID()); IndexOutOfBoundsException
+
         for (Map.Entry<String, LinkedHashMap<Integer, ImportMeteringDeviceDataRequest.MeteringDevice>> mapEntry : mapTransportMeteringDevice.entrySet()) {
-            System.out.print("MAP: " + mapEntry.getKey());
             for (Map.Entry<Integer, ImportMeteringDeviceDataRequest.MeteringDevice> deviceEntry : mapEntry.getValue().entrySet()) {
-                System.out.println(" Abon AD:" + deviceEntry.getKey());
+                LOGGER.debug("MAP: " + mapEntry.getKey() + " Abon AD:" + deviceEntry.getKey());
             }
         }
-        System.out.println("GradConnection: " + connectionGrad.isClosed());
+        System.out.println("GradConnection: " + !connectionGrad.isClosed());
         for (ImportResult.CommonResult itemResult : importResult.getCommonResult()) {
-            System.err.println("itemResult.getTransportGUID:" + itemResult.getTransportGUID());
+            LOGGER.debug("itemResult.getTransportGUID:" + itemResult.getTransportGUID());
         }
-
 
         for (ImportResult.CommonResult result : importResult.getCommonResult()) {
             System.out.println("result.getTransportGUID:" + result.getTransportGUID());
 
+            LOGGER.debug("map contains0:" + mapTransportMeteringDevice.containsKey(result.getTransportGUID()));
+            LOGGER.debug("result.getTransportGUID:" + result.getTransportGUID());
             if (mapTransportMeteringDevice.containsKey(result.getTransportGUID())) {
-                System.out.println("map contains:" + mapTransportMeteringDevice.containsKey(result.getTransportGUID()));
+                LOGGER.debug("map contains:" + mapTransportMeteringDevice.containsKey(result.getTransportGUID()));
                 for (Map.Entry<Integer, ImportMeteringDeviceDataRequest.MeteringDevice> entry : mapTransportMeteringDevice.get(result.getTransportGUID()).entrySet()) {
 
                     setMeteringDeviceUniqueNumbers(entry.getKey(), result.getGUID(), result.getImportMeteringDevice().getMeteringDeviceVersionGUID(), connectionGrad); // в БД ГРАД.
@@ -533,7 +544,7 @@ public class MeteringDeviceGRADDAO {
 
 //        try (CallableStatement call = connection.prepareCall(sqlRequest)) {
         CallableStatement call = connection.prepareCall(sqlRequest);
-        LOGGER.debug(call.toString());
+        LOGGER.debug(sqlRequest);
         call.executeQuery();
         ResultSet result = call.getResultSet();
         T value = handler.handle(result);
@@ -558,7 +569,7 @@ public class MeteringDeviceGRADDAO {
      * @param data - строка с данными.
      * @return String - массив данных.
      */
-    public synchronized String[] getAllData(String data) {
+    private synchronized String[] getAllData(String data) {
 
         data = data + "|-1-"; // Если последний параметр пустой, то он в массив не попадет,
         // возникнут ошибки на ссылки на индексы массива.

@@ -45,25 +45,26 @@ public class UpdateAllAccountData {
         countAdded = 0;
         errorState = 1;
 
-        HouseGRADDAO graddao = new HouseGRADDAO();
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
-        LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh();
-        if (houseAddedGisJkh == null) {
-            throw new PreGISException("Не найден ни один дом готовый для выгрузки ГИС ЖКХ.");
-        }
+            HouseGRADDAO graddao = new HouseGRADDAO();
 
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh(connectionGRAD);
+            if (houseAddedGisJkh == null) {
+                throw new PreGISException("Не найден ни один дом готовый для выгрузки ГИС ЖКХ.");
+            }
+
             ExportAccountData accountData = new ExportAccountData(answerProcessing);
 
             for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
 
                 ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
-                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = accountGRADDAO.getAccountListFromGrad(itemHouse.getValue(), connection);
+                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = accountGRADDAO.getAccountListFromGrad(itemHouse.getValue(), connectionGRAD);
 
                 if (exportAccountResult == null) {
                     errorState = 0;
                 }
-                sendAccountDataToGis(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connection);
+                sendAccountDataToGis(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
             }
         }
         answerProcessing.sendMessageToClient("");

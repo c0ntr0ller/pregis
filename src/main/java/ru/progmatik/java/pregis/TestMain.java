@@ -6,24 +6,24 @@ import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.web.servlets.socket.ClientService;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import javax.xml.transform.stream.StreamSource;
+import java.io.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,13 +36,13 @@ public class TestMain {
     private static String mes = "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
             "<S:Header><ISRequestHeader xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\"><Date>2016-03-08T23:21:56.517+06:00</Date><MessageGUID>7b824087-412b-4aa5-9b99-8afbd52bdb15</MessageGUID></ISRequestHeader></S:Header><S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>";
 
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
 
-        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+//        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //        System.out.println(graddao.getMeteringDeviceFromLocalBase(36, 7124, "asdasdas4646", "fdsfds"));
 
-//        getImportResult();
+        getImportResult();
 //        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
 //            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //            ReferenceNSI nsi = new ReferenceNSI(new AnswerProcessing(new ClientService()));
@@ -193,46 +193,35 @@ public class TestMain {
 //            e.printStackTrace();
 //        }
     }
-    public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException {
+    public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException {
 
-//        Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection();
+
+        MessageInBase message = new MessageInBase();
         JAXBContext jc = JAXBContext.newInstance(ImportResult.class);
-//
         Unmarshaller unmarshaller = jc.createUnmarshaller();
+
         File file = new File("temp" + File.separator + "ImportResult 0-20.xml");
         System.out.println(file);
-        ImportResult result = (ImportResult) unmarshaller.unmarshal(file);
-        System.out.println(result.getId());
-        System.out.println(result.getSignature().getKeyInfo());
-        System.out.println(result.getCommonResult().get(0).getTransportGUID());
+
+        ImportResult result = (ImportResult) unmarshaller.unmarshal(message.getSOAPMessageFromDataBaseById(9954).getSOAPBody().extractContentAsDocument());
+
 
         for (CommonResultType type : result.getCommonResult()) {
-            System.out.println("GUID: " + type.getGUID());
-            System.out.println("UniqueNumber: " + type.getUniqueNumber());
+            if (type.getError() == null || type.getError().size() == 0) {
+                System.out.println("GUID: " + type.getGUID());
+                System.out.println("UniqueNumber: " + type.getUniqueNumber());
 //            System.out.println("MeteringDeviceVersionGUID: " + type.getImportMeteringDevice().getMeteringDeviceVersionGUID());
-            System.out.println("TransportGUID: " + type.getTransportGUID());
-            System.out.println("");
+                System.out.println("TransportGUID: " + type.getTransportGUID());
+                System.out.println("");
+            } else {
+                System.out.println("ErrorCode: " + type.getError().get(0).getErrorCode());
+                System.out.println("Description: " + type.getError().get(0).getDescription());
+                System.out.println("");
+            }
         }
 
-
-        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
-//        List<ImportMeteringDeviceDataRequest.MeteringDevice> devicesForCreate = graddao.getMeteringDevicesForCreate(connectionGrad);
-        System.out.println(graddao.getCountAll());
-
-//        graddao.setMeteringDevices(result, connectionGrad);
-//
-//
-//        for (ImportResult.CommonResult resultItem : result.getCommonResult()) {
-//            System.out.println("GUID: " + resultItem.getGUID());
-//            System.out.println("UniqueNumber: " + resultItem.getUniqueNumber());
-//            System.out.println("MeteringDeviceVersionGUID: " + resultItem.getImportMeteringDevice().getMeteringDeviceVersionGUID());
-//            System.out.println("TransportGUID: " + resultItem.getTransportGUID());
-//            System.out.println("");
-//        }
-//        connectionGrad.close();
-
-
     }
+
 
     public static void remove(NamedNodeMap attributes) throws XMLStreamException {
 

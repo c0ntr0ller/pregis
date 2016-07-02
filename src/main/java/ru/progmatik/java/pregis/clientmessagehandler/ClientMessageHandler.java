@@ -71,10 +71,10 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
 //                Debug
 //                if (LOGGER.isDebugEnabled()) {
-                    System.out.println("\nOutbound message:");
-                    printHeaders(msg.getMimeHeaders());
-                    msg.writeTo(System.out);
-                    System.out.println();
+                LOGGER.debug("\nOutbound message:");
+                printHeaders(msg.getMimeHeaders());
+                msg.writeTo(System.out);
+                System.out.println();
 //                }
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
@@ -96,12 +96,12 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
 //            Вывод сообщение запроса
 //                if (LOGGER.isDebugEnabled()) {
-                    System.out.println("\nInbound message:");
+                LOGGER.debug("\nInbound message:");
 //                  Вывод заголовка сообщения
-                    printHeaders(msg.getMimeHeaders());
-                    System.out.println("\nMessage: \n");
-                    msg.writeTo(System.out);
-                    System.out.println("\n");
+                printHeaders(msg.getMimeHeaders());
+                LOGGER.debug("\nMessage: \n");
+                msg.writeTo(System.out);
+                System.out.println("\n");
 //                }
 
 

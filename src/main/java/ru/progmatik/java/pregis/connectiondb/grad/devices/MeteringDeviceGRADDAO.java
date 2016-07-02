@@ -7,11 +7,17 @@ import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeter
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.soap.SOAPException;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.text.ParseException;
@@ -357,7 +363,7 @@ public class MeteringDeviceGRADDAO {
      * @param connectionGrad подключение к БД ГРАД.
      * @throws SQLException
      */
-    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException {
+    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
 
         for (ImportResult.CommonResult itemResult : importResult.getCommonResult()) {
             LOGGER.debug("itemResult.getTransportGUID:" + itemResult.getTransportGUID());
@@ -366,25 +372,36 @@ public class MeteringDeviceGRADDAO {
         if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 
-                LOGGER.debug("result.getTransportGUID:" + result.getTransportGUID());
-                LOGGER.debug("map contains0:" + mapTransportMeteringDevice.containsKey(result.getTransportGUID()));
-                LOGGER.debug("result.getTransportGUID:" + result.getTransportGUID());
+                if (result.getError() == null || result.getError().size() == 0) {
+                    LOGGER.debug("result.getTransportGUID:" + result.getTransportGUID());
+                    LOGGER.debug("map contains0:" + mapTransportMeteringDevice.containsKey(result.getTransportGUID()));
+                    LOGGER.debug("result.getTransportGUID:" + result.getTransportGUID());
 
-                setMeteringDevices(result.getUniqueNumber(), result.getGUID(),
-                        result.getImportMeteringDevice().getMeteringDeviceVersionGUID(), result.getTransportGUID(), connectionGrad);
+                    setMeteringDevices(result.getUniqueNumber(), result.getGUID(),
+                            result.getImportMeteringDevice().getMeteringDeviceVersionGUID(), result.getTransportGUID(), connectionGrad);
+                } else {
+                    answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
+                    answerProcessing.sendMessageToClient("Код ошибки: " + result.getError().get(0).getErrorCode());
+                    answerProcessing.sendMessageToClient("Описание ошибки: " + result.getError().get(0).getDescription());
+                }
             }
         } else {  // Возвращает не тот объект ответа.
-            ru.gosuslugi.dom.schema.integration.base.BaseType baseResult = importResult;
 
-            ru.gosuslugi.dom.schema.integration.base.ImportResult castResult = (ru.gosuslugi.dom.schema.integration.base.ImportResult) baseResult;
+            ru.gosuslugi.dom.schema.integration.base.ImportResult castResult = getImportResultLastFromDataBase();
             for (CommonResultType resultType : castResult.getCommonResult()) {
 
-                LOGGER.debug("result.getTransportGUID:" + resultType.getTransportGUID());
-                LOGGER.debug("map contains0:" + mapTransportMeteringDevice.containsKey(resultType.getTransportGUID()));
-                LOGGER.debug("result.getTransportGUID:" + resultType.getTransportGUID());
+                if (resultType.getError() == null || resultType.getError().size() == 0) {
+                    LOGGER.debug("result.getTransportGUID:" + resultType.getTransportGUID());
+                    LOGGER.debug("map contains0:" + mapTransportMeteringDevice.containsKey(resultType.getTransportGUID()));
+                    LOGGER.debug("result.getTransportGUID:" + resultType.getTransportGUID());
 //                Этот объект вместо getGUID содержит meteringVersionGUID.
-                setMeteringDevices(resultType.getUniqueNumber(), null, resultType.getGUID(),
-                        resultType.getTransportGUID(), connectionGrad);
+                    setMeteringDevices(resultType.getUniqueNumber(), null, resultType.getGUID(),
+                            resultType.getTransportGUID(), connectionGrad);
+                } else {
+                    answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
+                    answerProcessing.sendMessageToClient("Код ошибки: " + resultType.getError().get(0).getErrorCode());
+                    answerProcessing.sendMessageToClient("Описание ошибки: " + resultType.getError().get(0).getDescription());
+                }
             }
         }
     }
@@ -587,7 +604,7 @@ public class MeteringDeviceGRADDAO {
     private ArrayList<Integer> getAllResidentialPremiseFromGrad(Integer houseId, Connection connectionGrad) throws SQLException {
 
         ArrayList<Integer> list = new ArrayList<>();
-        return executorProcedure("EXECUTE PROCEDURE EX_GIS04(" + houseId + ")",
+        return executorProcedure("{EXECUTE PROCEDURE EX_GIS04(" + houseId + ")}",
                 connectionGrad, resultSet1 -> {
                     while (resultSet1.next())
                         list.add(Integer.valueOf(getAllData(resultSet1.getString(1))[7]));
@@ -665,6 +682,24 @@ public class MeteringDeviceGRADDAO {
 
     public int getCountAdded() {
         return countAdded;
+    }
+
+    /**
+     * Метод, получает последнее сообщение из БД преобразует его в ImportResult.
+     * @return полученное из БД сообщение.
+     * @throws JAXBException
+     * @throws FileNotFoundException
+     * @throws SOAPException
+     * @throws SQLException
+     */
+    private ru.gosuslugi.dom.schema.integration.base.ImportResult getImportResultLastFromDataBase() throws JAXBException, FileNotFoundException, SOAPException, SQLException {
+        MessageInBase messageInBase = new MessageInBase();
+        JAXBContext jc = JAXBContext.newInstance(ru.gosuslugi.dom.schema.integration.base.ImportResult.class);
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        ru.gosuslugi.dom.schema.integration.base.ImportResult result =
+                (ru.gosuslugi.dom.schema.integration.base.ImportResult) unmarshaller.unmarshal(
+                        messageInBase.getLastSOAPFromBase().getSOAPBody().extractContentAsDocument());
+        return result;
     }
 
     /**

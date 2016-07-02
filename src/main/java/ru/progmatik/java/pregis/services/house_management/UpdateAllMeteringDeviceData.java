@@ -60,7 +60,7 @@ public class UpdateAllMeteringDeviceData {
                 countAll += meteringDeviceGRADDAO.getCountAll();
 //                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
-                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(27, 27));
+                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(28, 29));
                 if (importResult != null && importResult.getCommonResult() != null) {
                     meteringDeviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
                     countAdded += meteringDeviceGRADDAO.getCountAdded();

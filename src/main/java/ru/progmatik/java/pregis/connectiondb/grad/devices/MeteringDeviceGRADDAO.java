@@ -116,14 +116,15 @@ public class MeteringDeviceGRADDAO {
 //            Если нет в базе данных о приборе учета, тогда только добавим
 //            if (exGisPu1Element[ABON_ID_PU1] != null && !exGisPu1Element[ABON_ID_PU1].isEmpty())
 
-                ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
-                meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
+            ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
+            meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
 
-                meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
+            meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
 
-                mapTransportMeteringDevice.put(meteringDevices.getTransportGUID(), new LinkedHashMap<>());
-                mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
-                mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), null);
+            mapTransportMeteringDevice.put(meteringDevices.getTransportGUID(), new LinkedHashMap<>());
+            mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
+            mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), null);
+            LOGGER.debug("meterId: " + exGisPu1Element[METER_ID_PU1]);
             if (getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERVERSIONGUID", connectionGRAD) == null) {
                 meteringDeviceList.add(meteringDevices);
             }
@@ -404,32 +405,35 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, по транспортному идентификатору определяет отправленный счетчик и назначает ему полученные идентификаторы.
+     *
      * @param meteringUniqueNumber уникальный реестровый номер.
-     * @param meteringRootGUID идентификатор ПУ в ГИС ЖКХ.
-     * @param meteringVersionGUID идентификатор версии ПУ.
-     * @param transportGUID транспортный идентификатор.
-     * @param connectionGrad подключение к БД ГРАД.
+     * @param meteringRootGUID     идентификатор ПУ в ГИС ЖКХ.
+     * @param meteringVersionGUID  идентификатор версии ПУ.
+     * @param transportGUID        транспортный идентификатор.
+     * @param connectionGrad       подключение к БД ГРАД.
      * @throws SQLException
      */
     private void setMeteringDevices(String meteringUniqueNumber, String meteringRootGUID, String meteringVersionGUID, String transportGUID, Connection connectionGrad) throws SQLException {
 
         if (mapTransportMeteringDevice.containsKey(transportGUID)) {
 
-            Integer abinId = null;
+            Integer abonId = null;
             ImportMeteringDeviceDataRequest.MeteringDevice device = null;
             Integer meterId = null;
             for (Map.Entry<Integer, ImportMeteringDeviceDataRequest.MeteringDevice> entry : mapTransportMeteringDevice.get(transportGUID).entrySet()) {
 
                 if (entry.getValue() != null) {
-                    abinId = entry.getKey();
+                    abonId = entry.getKey();
                     device = entry.getValue();
                 } else {
                     meterId = entry.getKey();
                 }
             }
-
+            LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+            LOGGER.debug("setMeteringDeviceUniqueNumbers");
             setMeteringDeviceUniqueNumbers(meterId, meteringVersionGUID, meteringRootGUID, connectionGrad); // в БД ГРАД.
-            setMeteringDeviceToLocalBase(abinId, meterId, houseId, meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, device); // в локальную БД
+            LOGGER.debug("setMeteringDeviceToLocalBase");
+            setMeteringDeviceToLocalBase(abonId, meterId, houseId, meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, device); // в локальную БД
             countAdded++;
 //            answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Дабавлен прибор учёта, Уникальный номер: " + meteringUniqueNumber + " идентификатор: " + meteringVersionGUID);
@@ -443,13 +447,14 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, добавляет в локальную БД информацию о счетчиках.
-     * @param abonId ид абонента в БД ГРАД.
-     * @param houseId ид дома в БД ГРАД.
+     *
+     * @param abonId               ид абонента в БД ГРАД.
+     * @param houseId              ид дома в БД ГРАД.
      * @param meteringUniqueNumber уникальный реестровый номер.
-     * @param meteringRootGUID идентификатор ПУ в ГИС ЖКХ.
-     * @param meteringVersionGUID идентификатор версии ПУ.
-     * @param transportGUID транспортный идентификатор.
-     * @param device информация о счетчике.
+     * @param meteringRootGUID     идентификатор ПУ в ГИС ЖКХ.
+     * @param meteringVersionGUID  идентификатор версии ПУ.
+     * @param transportGUID        транспортный идентификатор.
+     * @param device               информация о счетчике.
      * @throws SQLException
      */
     private void setMeteringDeviceToLocalBase(Integer abonId, Integer meterId, Integer houseId, String meteringUniqueNumber,
@@ -535,6 +540,8 @@ public class MeteringDeviceGRADDAO {
                                               String livingRoomGUID, String meteringDeviceNumber, String meteringUniqueNumber,
                                               String meteringRootGUID, String meteringVersionGUID, String transportGUID, boolean isNonResitential) throws SQLException {
 
+        LOGGER.debug("abinId: " + abonId + " meterId: " + meterId + " houseId: " + houseId);
+        LOGGER.debug(!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID));
         if (!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID)) {
             try (Connection connection = ConnectionDB.instance().getConnectionDB();
                  PreparedStatement pstm = connection.prepareStatement(
@@ -559,9 +566,9 @@ public class MeteringDeviceGRADDAO {
     /**
      * Метод, проверяет существует запись в БД или нет.
      *
-     * @param abonId               ид абонента в БД ГРАД.
-     * @param houseId              ид дома в БД ГРАД.
-     * @param accountGUID          идентификатор ЛС.
+     * @param abonId              ид абонента в БД ГРАД.
+     * @param houseId             ид дома в БД ГРАД.
+     * @param accountGUID         идентификатор ЛС.
      * @param meteringVersionGUID уникальный реестровый номер.
      * @return true - запись существует, false - запись не найдена.
      * @throws SQLException
@@ -625,6 +632,7 @@ public class MeteringDeviceGRADDAO {
     Входящий параметр :PARAM - это наименование идентификатора, может принимать значения HOUSEUNIQNUM, ACCOUNTGUID,
     ACCOUNTUNIQNUM, PREMISESGUID, PREMISESUNIQNUM, LIVINGROOMGUID, ROOMUNIQNUMBER, METERVERSIONGUID, METERROOTGUID                                                                                                                                                                                                                                .
      */
+
     /**
      * Метод, добавляет идентификаторы ПУ в БД ГРАД.
      *
@@ -651,19 +659,20 @@ public class MeteringDeviceGRADDAO {
 //        }
 
 //        if (tempMeteringDeviceRootGUID != null || tempMeteringDeviceVersionGUID != null) {
-            try (CallableStatement call = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, ?, NULL)}")) {
-                call.setInt(1, meterId);
-                call.setString(2, meteringDeviceVersionGUID);
-                call.setString(3, meteringDeviceRootGUID);
-                call.executeQuery();
-            }
+        try (CallableStatement call = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, ?, NULL)}")) {
+            call.setInt(1, meterId);
+            call.setString(2, meteringDeviceVersionGUID);
+            call.setString(3, meteringDeviceRootGUID);
+            call.executeQuery();
+        }
 //        }
     }
 
     /**
      * Метод, принимает ид ПУ в БД ГРАД и название идентификатора в БД ГРАД ( METERVERSIONGUID или METERROOTGUID ) и возвращает их значение.
-     * @param meterId ид ПУ в БД ГРАД.
-     * @param identifier требуемый идентификатор METERVERSIONGUID или METERROOTGUID.
+     *
+     * @param meterId        ид ПУ в БД ГРАД.
+     * @param identifier     требуемый идентификатор METERVERSIONGUID или METERROOTGUID.
      * @param connectionGRAD подключение к БД ГРАД.
      * @return найденный идентификатор в БД ГРАД или null.
      * @throws SQLException
@@ -714,6 +723,7 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, получает последнее сообщение из БД преобразует его в ImportResult.
+     *
      * @return полученное из БД сообщение.
      * @throws JAXBException
      * @throws FileNotFoundException

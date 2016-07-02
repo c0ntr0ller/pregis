@@ -115,6 +115,8 @@ public class AnswerProcessing {
         } else {
 //            clientService.sendMessage("::setOkLabelText()");
             clientService.sendMessage(TextForLog.DONE_RESPONSE + nameMethod);
+            clientService.sendMessage("");
+
             logger.info("Successful.");
         }
     }

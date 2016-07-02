@@ -9,6 +9,9 @@ import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.soap.SOAPException;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -30,7 +33,7 @@ public class UpdateAllMeteringDeviceData {
         this.answerProcessing = answerProcessing;
     }
 
-    public int updateMeteringDeviceData() throws ParseException, SQLException, PreGISException {
+    public int updateMeteringDeviceData() throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
         return createMeteringDevice();
 
@@ -41,7 +44,7 @@ public class UpdateAllMeteringDeviceData {
      * @throws SQLException
      * @throws PreGISException
      */
-    private int createMeteringDevice() throws SQLException, PreGISException, ParseException {
+    private int createMeteringDevice() throws SQLException, PreGISException, ParseException, FileNotFoundException, SOAPException, JAXBException {
 
         errorState = 1;
 //        Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection();
@@ -57,13 +60,10 @@ public class UpdateAllMeteringDeviceData {
                 countAll += meteringDeviceGRADDAO.getCountAll();
 //                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(entryHouse.getValue(), connectionGRAD);
 
-                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(21, 22));
+                ImportResult importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(27, 27));
                 if (importResult != null && importResult.getCommonResult() != null) {
-                    System.err.println("setMeteringDevices");
                     meteringDeviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
-//                    meteringDeviceGRADDAO.setMeteringDevices(importResult, ConnectionBaseGRAD.instance().getConnection());
                     countAdded += meteringDeviceGRADDAO.getCountAdded();
-//                    ConnectionBaseGRAD.instance().close();
                     for (ImportResult.CommonResult result : importResult.getCommonResult()) {
                         answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
                         answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());

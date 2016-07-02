@@ -288,8 +288,7 @@ public class AccountGRADDAO {
      * Метод, извлекает идентификаторы помещений.
      *
      * @param abonId ид абонента в БД ГРАД.
-     * @param identifier название идентификатора могут быть PREMISESGUID, PREMISESUNIQNUM, LIVINGROOMGUID,
-     *                   ROOMUNIQNUMBER, METERVERSIONGUID                  , METERROOTGUID               .
+     * @param identifier название идентификатора могут быть PREMISESGUID, PREMISESUNIQNUM, LIVINGROOMGUID, ROOMUNIQNUMBER.
      * @return идентификатор.
      * @throws SQLException
      */

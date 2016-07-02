@@ -6,7 +6,12 @@ import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
+import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,7 +38,11 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException {
 
-        getImportResult();
+
+        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+//        System.out.println(graddao.getMeteringDeviceFromLocalBase(36, 7124, "asdasdas4646", "fdsfds"));
+
+//        getImportResult();
 //        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
 //            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //            ReferenceNSI nsi = new ReferenceNSI(new AnswerProcessing(new ClientService()));
@@ -188,7 +197,7 @@ public class TestMain {
 
 //        Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection();
         JAXBContext jc = JAXBContext.newInstance(ImportResult.class);
-
+//
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         File file = new File("temp" + File.separator + "ImportResult 0-20.xml");
         System.out.println(file);
@@ -206,13 +215,13 @@ public class TestMain {
         }
 
 
-//        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //        List<ImportMeteringDeviceDataRequest.MeteringDevice> devicesForCreate = graddao.getMeteringDevicesForCreate(connectionGrad);
-//        System.out.println(graddao.getCountAll());
-//
+        System.out.println(graddao.getCountAll());
+
 //        graddao.setMeteringDevices(result, connectionGrad);
-
-
+//
+//
 //        for (ImportResult.CommonResult resultItem : result.getCommonResult()) {
 //            System.out.println("GUID: " + resultItem.getGUID());
 //            System.out.println("UniqueNumber: " + resultItem.getUniqueNumber());

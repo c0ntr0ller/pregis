@@ -293,12 +293,12 @@ public class AccountGRADDAO {
      * @return идентификатор.
      * @throws SQLException
      */
-    public String getBuildingIdentifiersFromBase(Integer abonId, String identifier, Connection connection) throws SQLException {
+    public String getBuildingIdentifiersFromBase(Integer abonId, String identifier, Connection connectionGRAD) throws SQLException {
 
         String sqlResult;
         String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
 
-        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
+        try (CallableStatement cstmt = connectionGRAD.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, abonId);
             cstmt.setString(2, identifier);
             ResultSet resultSet = cstmt.executeQuery();

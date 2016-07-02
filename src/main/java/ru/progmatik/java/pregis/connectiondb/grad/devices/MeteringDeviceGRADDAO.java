@@ -363,7 +363,7 @@ public class MeteringDeviceGRADDAO {
             LOGGER.debug("itemResult.getTransportGUID:" + itemResult.getTransportGUID());
         }
 
-        if (importResult.getCommonResult() != null || importResult.getCommonResult().size() > 0) {
+        if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 
                 LOGGER.debug("result.getTransportGUID:" + result.getTransportGUID());
@@ -375,6 +375,7 @@ public class MeteringDeviceGRADDAO {
             }
         } else {  // Возвращает не тот объект ответа.
             ru.gosuslugi.dom.schema.integration.base.BaseType baseResult = importResult;
+
             ru.gosuslugi.dom.schema.integration.base.ImportResult castResult = (ru.gosuslugi.dom.schema.integration.base.ImportResult) baseResult;
             for (CommonResultType resultType : castResult.getCommonResult()) {
 

@@ -42,7 +42,27 @@ public class TestMain {
 //        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //        System.out.println(graddao.getMeteringDeviceFromLocalBase(36, 7124, "asdasdas4646", "fdsfds"));
 
-        getImportResult();
+
+        ArrayList<String> list = new ArrayList<String>();
+
+        for (int i = 0; i <= 78; i++) {
+            list.add(String.valueOf(i));
+        }
+
+        int count = 0;
+
+        while (count < list.size()) {
+
+            if (count + 20 > list.size()) {
+                showList(list.subList(count, list.size()));
+                count += 20;
+            } else {
+                showList(list.subList(count, count += 20));
+            }
+
+        }
+
+//        getImportResult();
 //        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
 //            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //            ReferenceNSI nsi = new ReferenceNSI(new AnswerProcessing(new ClientService()));
@@ -153,6 +173,13 @@ public class TestMain {
 //        String mesout = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
 //        System.out.println(mesout);
 
+    }
+
+    private static void showList(List<String> list) {
+        for (String s : list) {
+            System.out.printf("%2s : ", s);
+        }
+        System.out.println();
     }
 
 //    public static ArrayList<String> getList(Connection connection) throws SQLException {

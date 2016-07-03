@@ -73,7 +73,7 @@ public class UpdateAllMeteringDeviceData {
                         }
                         if (importResult != null && importResult.getCommonResult() != null) {
                             meteringDeviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
-                            countAdded += meteringDeviceGRADDAO.getCountAdded();
+
                             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
                                 answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
                                 answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
@@ -90,6 +90,7 @@ public class UpdateAllMeteringDeviceData {
                 ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
                 meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
                 countUpdate += meteringDeviceGRADDAO.getCountUpdate();
+                countAdded += meteringDeviceGRADDAO.getCountAdded();
             }
 
         answerProcessing.sendMessageToClient("");

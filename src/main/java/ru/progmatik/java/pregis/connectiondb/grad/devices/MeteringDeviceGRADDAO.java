@@ -52,7 +52,9 @@ public class MeteringDeviceGRADDAO {
                     "METERING_ROOT_GUID varchar(40), " +
                     "METERING_VERSION_GUID varchar(40), " +
                     "TRANSPORT_GUID varchar(40), " +
-                    "NON_RESIDENTIAL_PREMISE_DEVICE boolean not null); " +
+                    "NON_RESIDENTIAL_PREMISE_DEVICE boolean DEFAULT false, " +
+                    "ARCHIVING_REASON_CODE INT, " +
+                    "REPLACE_DEVICE_ID INT); " +
                     "COMMENT ON TABLE \"PUBLIC\".METERING_DEVICE_IDENTIFIERS IS 'Таблица содержит идентификаторы приборов учёта, полученых из ГИС ЖКХ.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.ID IS 'Идентификатор записей.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.ABON_ID IS 'ИД абонента в БД ГРАД.'; " +
@@ -66,7 +68,9 @@ public class MeteringDeviceGRADDAO {
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.METERING_ROOT_GUID IS 'Идентификатор ПУ в ГИС ЖКХ.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.METERING_VERSION_GUID IS 'Идентификатор версии ПУ.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.TRANSPORT_GUID IS 'Транспортный идентификатор.'; " +
-                    "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.NON_RESIDENTIAL_PREMISE_DEVICE IS 'Указать true если помещение нежилое.';";
+                    "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.NON_RESIDENTIAL_PREMISE_DEVICE IS 'Указать true если помещение нежилое.'; " +
+                    "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.ARCHIVING_REASON_CODE IS 'Если ПУ архивировать, указать код причины архивации ПУ из справочника 21.'; " +
+                    "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.REPLACE_DEVICE_ID IS 'Если произошла замена ПУ, указать id ПУ на которое произошла замена.';";
 
     private static final int METER_ID_PU1 = 17;
     private static final int METER_ID_PU2 = 4;
@@ -108,6 +112,7 @@ public class MeteringDeviceGRADDAO {
      * @return новые ПУ для ГИС ЖКХ.
      */
     public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesForCreate(Connection connectionGRAD) throws SQLException, PreGISException, ParseException {
+        countAll = 0;
 
         java.util.ArrayList<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList = new ArrayList<>();
 
@@ -127,6 +132,8 @@ public class MeteringDeviceGRADDAO {
             LOGGER.debug("meterId: " + exGisPu1Element[METER_ID_PU1]);
             if (getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERVERSIONGUID", connectionGRAD) == null) {
                 meteringDeviceList.add(meteringDevices);
+                LOGGER.debug("ПУ добавлен для выгрузки meterId: " + exGisPu1Element[METER_ID_PU1] +
+                        " AbonId: " + exGisPu1Element[ABON_ID_PU1]);
             }
         }
         return meteringDeviceList;
@@ -193,11 +200,11 @@ public class MeteringDeviceGRADDAO {
 //            Дата первичной поверки
         basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
 
-        if (exGisPu1Element[15] != null) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
-            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[15])));
-        } else {
+        if (exGisPu1Element[15] == null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[15]).getTime()) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
             answerProcessing.sendMessageToClient("Не указана \"Дата первичной поверки\" для ПУ с кодом: " + exGisPu1Element[METER_ID_PU1] + ", установлена: " + exGisPu1Element[14]);
             basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[14])));
+        } else {
+            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[15])));
         }
 //            Межповерочный интервал (НСИ 16)
         basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]).getGUID());
@@ -210,9 +217,13 @@ public class MeteringDeviceGRADDAO {
                 basicCharacteristics.getResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
                 basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             } else {
+                String accountGUIDFromGrad = accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad);
+                String premiseGUIDFromGrad = accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad);
                 basicCharacteristics.setNonResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice());
-                basicCharacteristics.getNonResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
-                basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
+                basicCharacteristics.getNonResidentialPremiseDevice().setPremiseGUID(premiseGUIDFromGrad);
+                basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().add(accountGUIDFromGrad);
+                LOGGER.debug("ПУ помечен для нежилого помещения. MeterID: " + exGisPu1Element[METER_ID_PU1] +
+                        " AccountGUID: " + accountGUIDFromGrad + " PremimiseGUID: " + premiseGUIDFromGrad);
             }
 
         } else if (exGisPu1Element[1].equalsIgnoreCase("Коллективный (общедомовой)") && exGisPu1Element[3] != null) {
@@ -247,6 +258,10 @@ public class MeteringDeviceGRADDAO {
                     basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
                 }
             }
+        } else {
+            LOGGER.debug("ПУ MeterID: " + exGisPu1Element[METER_ID_PU1] +
+                    " AbonID: " + exGisPu1Element[ABON_ID_PU1] +
+                    " с именем: " + exGisPu1Element[0] + " не определен ни к одному из типов помещений!");
         }
 
         return basicCharacteristics;
@@ -300,7 +315,9 @@ public class MeteringDeviceGRADDAO {
             meteringRootGUIDGrad = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERROOTGUID", connectionGRAD);
             meteringVersionGUIDGrad = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERVERSIONGUID", connectionGRAD);
 
-            if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) {
+            if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad == null) {
+                updateMeteringVersionGUID(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID, connectionGRAD);
+            } else if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) {
                 setMeteringRootGUID(meterId, meteringDeviceRootGUID, connectionGRAD);
             } else if (meteringRootGUIDGrad.equalsIgnoreCase(meteringDeviceRootGUID) &&
                     !meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) {
@@ -352,17 +369,16 @@ public class MeteringDeviceGRADDAO {
                     if (basicCharacteristics.getLivingRoomDevice().getAccountGUID().contains(device.getLivingRoomDevice().getAccountGUID().get(0)) &&
                             basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().contains(device.getLivingRoomDevice().getLivingRoomGUID().get(0))) {
 
-                        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD); // в БД ГРАД.
-                        LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                        countAdded++;
-                        answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                        answerProcessing.sendMessageToClient("");
-
-                        for (String itemRoom : basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID()) {  // в локальную ДБ.
-                            setMeteringDeviceToLocalBase(abonId, meterId, houseId,
+                        for (String itemRoom : basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID()) {
+                            if (setMeteringDeviceToLocalBase(abonId, meterId, houseId,
                                     basicCharacteristics.getLivingRoomDevice().getAccountGUID().get(0),
                                     null, itemRoom, basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false);
+                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+                                countAdded++;
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("");
+                            }
                         }
                     }
                 } else if (basicCharacteristics.getResidentialPremiseDevice() != null) { // жилые помещения, одно помещение и может быть несколько л.счетов.
@@ -370,17 +386,16 @@ public class MeteringDeviceGRADDAO {
                     if (basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().contains(device.getResidentialPremiseDevice().getAccountGUID().get(0)) &&
                             basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getResidentialPremiseDevice().getPremiseGUID())) {
 
-                        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD); // в БД ГРАД.
-                        LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                        countAdded++;
-                        answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                        answerProcessing.sendMessageToClient("");
-
-                        for (String accountGUID : basicCharacteristics.getResidentialPremiseDevice().getAccountGUID()) {  // в локальную ДБ.
-                            setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID,
+                        for (String accountGUID : basicCharacteristics.getResidentialPremiseDevice().getAccountGUID()) {
+                            if (setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID,
                                     basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID(), null,
                                     basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false);
+                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+                                countAdded++;
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("");
+                            }
                         }
                     }
                 } else if (basicCharacteristics.getNonResidentialPremiseDevice() != null) { // не жилые помещения
@@ -388,34 +403,32 @@ public class MeteringDeviceGRADDAO {
                     if (basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().contains(device.getNonResidentialPremiseDevice().getAccountGUID().get(0)) &&
                             basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getNonResidentialPremiseDevice().getPremiseGUID())) {
 
-                        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD); // в БД ГРАД.
-                        LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                        countAdded++;
-                        answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                        answerProcessing.sendMessageToClient("");
-
-                        setMeteringDeviceToLocalBase(abonId, meterId, houseId,
+                        if (setMeteringDeviceToLocalBase(abonId, meterId, houseId,
                                 basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().get(0),
                                 basicCharacteristics.getNonResidentialPremiseDevice().getPremiseGUID(), null,
                                 basicCharacteristics.getMeteringDeviceNumber(),
-                                null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false);
+                                null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, true, connectionGRAD)) {
+                            LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+                            countAdded++;
+                            answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                            answerProcessing.sendMessageToClient("");
+                        }
                     }
                 } else if (basicCharacteristics.getCollectiveApartmentDevice() != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
 
                     if (basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().contains(device.getCollectiveApartmentDevice().getAccountGUID().get(0)) &&
                             basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID().equalsIgnoreCase(device.getCollectiveApartmentDevice().getPremiseGUID())) {
 
-                        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD); // в БД ГРАД.
-                        LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                        countAdded++;
-                        answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                        answerProcessing.sendMessageToClient("");
-
                         for (String accountGUID : basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID()) {
-                            setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID,
+                            if (setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID,
                                     basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID(), null,
                                     basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false);
+                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+                                countAdded++;
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("");
+                            }
                         }
                     }
 
@@ -423,18 +436,15 @@ public class MeteringDeviceGRADDAO {
 
                     if (basicCharacteristics.getApartmentHouseDevice().getAccountGUID().contains(device.getApartmentHouseDevice().getAccountGUID().get(0))) {
 
-                        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD); // в БД ГРАД.
-
-                        LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-
-                        countAdded++;
-                        answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                        answerProcessing.sendMessageToClient("");
-
                         for (String accountGUID : basicCharacteristics.getApartmentHouseDevice().getAccountGUID()) {
-                            setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, null, null,
+                            if (setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, null, null,
                                     basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false);
+                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+                                countAdded++;
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("");
+                            }
                         }
                     }
                 }
@@ -451,7 +461,7 @@ public class MeteringDeviceGRADDAO {
      * @param connectionGRAD            подключение к БД ГРАД.
      */
     private void updateMeteringVersionGUID(Integer meterId, String meteringDeviceRootGUID, String meteringDeviceVersionGUID, Connection connectionGRAD) throws SQLException {
-        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, null, connectionGRAD);
+        setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD);
         if (getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDeviceVersionGUID) == null) {
             setMeteringVersionGUIDToLocalDb(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID);
         }
@@ -521,8 +531,39 @@ public class MeteringDeviceGRADDAO {
      */
     private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate getMeteringDeviceForUpdate() {
         ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate();
-
+//        device.set
         return device;
+    }
+
+    /**
+     * Метод, получает список ид ПУ в БД ГРАД, для дальнейшего архивирования ПУ.
+     * @param meterIdList список ид ПУ в БД ГРАД.
+     * @param connectionGRAD подключение к БД ГРАД.
+     * @return готовый объект для отправки в ГИС ЖКХ.
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    public java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDeviceForArchive(ArrayList<Integer> meterIdList, Connection connectionGRAD) throws SQLException, PreGISException {
+
+        java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> deviceList = new ArrayList<>();
+
+        for (Integer meterId : meterIdList) {
+
+            String meterVersionGUID = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERVERSIONGUID", connectionGRAD);
+
+            ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate();
+            device.setMeteringDeviceVersionGUID(meterVersionGUID);
+            device.setArchiveDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate.ArchiveDevice());
+            device.getArchiveDevice().setArchivingReason(nsi.getNsiRef("21", "Ошибка"));
+            setArchivingReasonToLocalBase(Integer.valueOf(nsi.getNsiRef("21", "Ошибка").getCode()), meterVersionGUID);  // в БД отметка
+
+            ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
+            meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
+            meteringDevices.setDeviceDataToUpdate(device);
+
+            deviceList.add(meteringDevices);
+        }
+        return deviceList;
     }
 
     /**
@@ -546,14 +587,18 @@ public class MeteringDeviceGRADDAO {
      * @return список полученый из процедуры EX_GIS_PU1.
      * @throws SQLException
      */
-    private ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {  // Connection error
+    public ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {  // Connection error
 
         ArrayList<String[]> list = new ArrayList<>();
         return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")}",
                 connection, resultSet1 -> {
                     while (resultSet1.next()) {
-                        if (getAllData(resultSet1.getString(1))[ABON_ID_PU1] != null && !getAllData(resultSet1.getString(1))[ABON_ID_PU1].isEmpty())
+                        if (getAllData(resultSet1.getString(1))[ABON_ID_PU1] != null && !getAllData(resultSet1.getString(1))[ABON_ID_PU1].isEmpty()) {
                             list.add(getAllData(resultSet1.getString(1)));
+                        } else {
+                            LOGGER.debug("ПУ: " + resultSet1.getString(1) +
+                                    " не имеет отличительных данных, не сможет быть загруженным в ГИС ЖКХ.");
+                        }
                     }
                     return list;
                 });
@@ -690,15 +735,19 @@ public class MeteringDeviceGRADDAO {
                     meterId = entry.getKey();
                 }
             }
-            LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-            LOGGER.debug("setMeteringDeviceUniqueNumbers");
-            setMeteringDeviceUniqueNumbers(meterId, meteringVersionGUID, meteringRootGUID, connectionGrad); // в БД ГРАД.
-            LOGGER.debug("setMeteringDeviceToLocalBase");
-            setMeteringDeviceToLocalBase(abonId, meterId, this.houseId, meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, device); // в локальную БД
-            countAdded++;
+//            LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+//            LOGGER.debug("setMeteringDeviceUniqueNumbers");
+//            Перенес в один метод, где проводится проверка
+//            setMeteringDeviceUniqueNumbers(meterId, meteringVersionGUID, meteringRootGUID, connectionGrad); // в БД ГРАД.
+//            LOGGER.debug("setMeteringDeviceToLocalBase");
+            if (setMeteringDeviceToLocalBase(abonId, meterId, this.houseId, meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, device, connectionGrad)) { // в локальную БД
+                LOGGER.debug("Добавлен ПУ, abinId: " + abonId + " meterId: " + meterId);
+                countAdded++;
 //            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendMessageToClient("Дабавлен прибор учёта, Уникальный номер: " + meteringUniqueNumber + " идентификатор: " + meteringVersionGUID);
-            answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, Уникальный номер: " + meteringUniqueNumber + " идентификатор: " + meteringVersionGUID);
+                answerProcessing.sendMessageToClient("");
+            }
+
         } else {
 //            answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Прибор учёта, с транспортным номером: " + transportGUID + " не найден!");
@@ -718,9 +767,11 @@ public class MeteringDeviceGRADDAO {
      * @param device               информация о счетчике.
      * @throws SQLException
      */
-    private void setMeteringDeviceToLocalBase(Integer abonId, Integer meterId, Integer houseId, String meteringUniqueNumber,
-                                              String meteringRootGUID, String meteringVersionGUID, String transportGUID,
-                                              ImportMeteringDeviceDataRequest.MeteringDevice device) throws SQLException {
+    private boolean setMeteringDeviceToLocalBase(Integer abonId, Integer meterId, Integer houseId, String meteringUniqueNumber,
+                                                 String meteringRootGUID, String meteringVersionGUID, String transportGUID,
+                                                 ImportMeteringDeviceDataRequest.MeteringDevice device, Connection connectionGRAD) throws SQLException {
+
+        boolean state = false;
 
         String accountGUID;
         String premiseGUID;
@@ -751,38 +802,39 @@ public class MeteringDeviceGRADDAO {
             if (basic.getLivingRoomDevice() != null) { // Комунальные комнаты - один счетчик много комнат
                 accountGUID = basic.getLivingRoomDevice().getAccountGUID().get(0);
                 for (String itemRoom : basic.getLivingRoomDevice().getLivingRoomGUID()) {
-                    setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, null, itemRoom, meteringDeviceNumber,
-                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false);
+                    state = setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, null, itemRoom, meteringDeviceNumber,
+                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false, connectionGRAD);
                 }
             } else if (basic.getResidentialPremiseDevice() != null) { // жилые помещения, одно помещение и может быть несколько л.счетов.
                 premiseGUID = basic.getResidentialPremiseDevice().getPremiseGUID();
                 for (String itemAccountGUID : basic.getResidentialPremiseDevice().getAccountGUID()) {
-                    setMeteringDeviceToLocalBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
-                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false);
+                    state = setMeteringDeviceToLocalBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
+                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false, connectionGRAD);
                 }
             } else if (basic.getNonResidentialPremiseDevice() != null) { // не жилые помещения
                 premiseGUID = basic.getNonResidentialPremiseDevice().getPremiseGUID();
                 for (String itemAccountGUID : basic.getResidentialPremiseDevice().getAccountGUID()) {
-                    setMeteringDeviceToLocalBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
-                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, true);
+                    state = setMeteringDeviceToLocalBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
+                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, true, connectionGRAD);
                 }
             } else if (basic.getCollectiveApartmentDevice() != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
                 premiseGUID = basic.getCollectiveApartmentDevice().getPremiseGUID();
                 for (String itemAccountGUID : basic.getCollectiveApartmentDevice().getAccountGUID()) {
-                    setMeteringDeviceToLocalBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
-                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false);
+                    state = setMeteringDeviceToLocalBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
+                            meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false, connectionGRAD);
                 }
             } else if (basic.getApartmentHouseDevice() != null) {  // Тип ПУ Коллективный (общедомовой) или Индивидуальный ПУ в ЖД
                 accountGUID = basic.getApartmentHouseDevice().getAccountGUID().get(0);
-                setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, null, null, meteringDeviceNumber,
-                        meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false);
+                state = setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, null, null, meteringDeviceNumber,
+                        meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, false, connectionGRAD);
             }
         }
 //        }
+        return state;
     }
 
     /**
-     * Метод, добавляет в локальную БД данные о ПУ.
+     * Метод, проверяет, что нет записи в таблице и добавляет идентификаторы во все БД данные о ПУ.
      *
      * @param abonId               ид абонента в БД ГРАД.
      * @param houseId              ид дома в БД ГРАД.
@@ -797,16 +849,20 @@ public class MeteringDeviceGRADDAO {
      * @param isNonResitential     статус помещения true - нежилое помещение, false - жилое помищение.
      * @throws SQLException
      */
-    private void setMeteringDeviceToLocalBase(Integer abonId, Integer meterId, Integer houseId, String accountGUID, String premiseGUID,
-                                              String livingRoomGUID, String meteringDeviceNumber, String meteringUniqueNumber,
-                                              String meteringRootGUID, String meteringVersionGUID, String transportGUID, boolean isNonResitential) throws SQLException {
+    private boolean setMeteringDeviceToLocalBase(Integer abonId, Integer meterId, Integer houseId, String accountGUID, String premiseGUID,
+                                                 String livingRoomGUID, String meteringDeviceNumber, String meteringUniqueNumber,
+                                                 String meteringRootGUID, String meteringVersionGUID, String transportGUID, boolean isNonResitential, Connection connectionGrad) throws SQLException {
 
         LOGGER.debug("abinId: " + abonId + " meterId: " + meterId + " houseId: " + houseId);
         LOGGER.debug(!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID));
         if (!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID)) {
+            setMeteringDeviceUniqueNumbers(meterId, meteringVersionGUID, meteringRootGUID, connectionGrad); // в БД ГРАД.
             try (Connection connection = ConnectionDB.instance().getConnectionDB();
                  PreparedStatement pstm = connection.prepareStatement(
-                         "INSERT INTO METERING_DEVICE_IDENTIFIERS VALUES(DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                         "INSERT INTO METERING_DEVICE_IDENTIFIERS(ABON_ID, METER_ID, HOUSE_ID, ACCOUNT_GUID, " +
+                                 "PREMISE_GUID, LIVING_ROOM_GUID, METERING_DEVICE_NUMBER, METERING_UNIQUE_NUMBER, " +
+                                 "METERING_ROOT_GUID, METERING_VERSION_GUID, TRANSPORT_GUID, NON_RESIDENTIAL_PREMISE_DEVICE) " +
+                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 pstm.setInt(1, abonId);
                 pstm.setInt(2, meterId);
                 pstm.setInt(3, houseId);
@@ -821,7 +877,9 @@ public class MeteringDeviceGRADDAO {
                 pstm.setBoolean(12, isNonResitential);
                 pstm.executeUpdate();
             }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -881,6 +939,7 @@ public class MeteringDeviceGRADDAO {
      */
     private Integer getMeterIdFromLocalBaseUseMeteringVersionGUID(String meteringVersionGUID) throws SQLException {
 
+        Integer meterId = null;
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement pstm = connection.prepareStatement(
                      "SELECT METER_ID FROM METERING_DEVICE_IDENTIFIERS WHERE METERING_VERSION_GUID = ?")) {
@@ -888,10 +947,55 @@ public class MeteringDeviceGRADDAO {
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
-                return Integer.valueOf(rs.getString(1));
+                meterId = Integer.valueOf(rs.getString(1));
+            }
+            rs.close();
+            return meterId;
+        }
+    }
+
+    /**
+     * Метод, по указанному "MeteringDeviceVersionGUID", помечает ПУ как архивный и указаывает ему причину архивирования.
+     *
+     * @param nsiCodeElement      код причины архивирования ПУ.
+     * @param meteringVersionGUID уникальный реестровый номер ПУ в ГИС ЖХК.
+     * @throws SQLException
+     */
+    public void setArchivingReasonToLocalBase(Integer nsiCodeElement, String meteringVersionGUID) throws SQLException {
+
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             PreparedStatement ps = connection.prepareStatement("UPDATE METERING_DEVICE_IDENTIFIERS " +
+                     "SET ARCHIVING_REASON_CODE = ? WHERE METERING_VERSION_GUID = ?")) {
+            if (!isArhivingDevice(meteringVersionGUID, connection)) {
+                ps.setInt(1, nsiCodeElement);
+                ps.setString(2, meteringVersionGUID);
+                ps.executeUpdate();
             }
         }
-        return null;
+    }
+
+    /**
+     * Метод, проверяет по указанному "MeteringVersionGUID", является ПУ архивным или нет.
+     * @param meteringVersionGUID уникальный реестровый номер ПУ в ГИС ЖХК.
+     * @param connectionLocalBase подключение к локальной БД.
+     * @return true - если ПУ архивное, false - если ПУ не является архивным.
+     * @throws SQLException
+     */
+    private boolean isArhivingDevice(String meteringVersionGUID, Connection connectionLocalBase) throws SQLException {
+
+        boolean isArchive;
+
+        try (Connection connection = connectionLocalBase;
+             PreparedStatement pstm = connection.prepareStatement(
+                     "SELECT ARCHIVING_REASON_CODE FROM METERING_DEVICE_IDENTIFIERS " +
+                             "WHERE METERING_VERSION_GUID = ? AND ARCHIVING_REASON_CODE IS NOT NULL")) {
+            pstm.setString(1, meteringVersionGUID);
+            ResultSet rs = pstm.executeQuery();
+
+            isArchive = rs.next();
+            rs.close();
+        }
+        return isArchive;
     }
 
     /**

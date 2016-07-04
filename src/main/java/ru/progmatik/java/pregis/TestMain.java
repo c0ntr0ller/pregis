@@ -6,24 +6,27 @@ import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
-import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.stream.StreamSource;
-import java.io.*;
-import java.sql.ResultSet;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,24 +46,26 @@ public class TestMain {
 //        System.out.println(graddao.getMeteringDeviceFromLocalBase(36, 7124, "asdasdas4646", "fdsfds"));
 
 
-        ArrayList<String> list = new ArrayList<String>();
+        getDoubleAbonId();
 
-        for (int i = 0; i <= 78; i++) {
-            list.add(String.valueOf(i));
-        }
-
-        int count = 0;
-
-        while (count < list.size()) {
-
-            if (count + 20 > list.size()) {
-                showList(list.subList(count, list.size()));
-                count += 20;
-            } else {
-                showList(list.subList(count, count += 20));
-            }
-
-        }
+//        ArrayList<String> list = new ArrayList<String>();
+//
+//        for (int i = 0; i <= 78; i++) {
+//            list.add(String.valueOf(i));
+//        }
+//
+//        int count = 0;
+//
+//        while (count < list.size()) {
+//
+//            if (count + 20 > list.size()) {
+//                showList(list.subList(count, list.size()));
+//                count += 20;
+//            } else {
+//                showList(list.subList(count, count += 20));
+//            }
+//
+//        }
 
 //        getImportResult();
 //        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
@@ -173,6 +178,21 @@ public class TestMain {
 //        String mesout = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
 //        System.out.println(mesout);
 
+    }
+
+
+    public static void getDoubleAbonId() throws SQLException, ParseException, PreGISException {
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+            ArrayList<String[]> exGisPu1 = graddao.getExGisPu1(7124, connectionGRAD);
+            for (int i = 0; i < exGisPu1.size(); i++) {
+                for (int j = i + 1; j < exGisPu1.size(); j++) {
+                    if (exGisPu1.get(i)[18].equals(exGisPu1.get(j)[18])) {
+                        System.out.println("Repiat: " + exGisPu1.get(i)[18] + " meterId: " +  exGisPu1.get(i)[17] + " i: " + i + " j" + j);
+                    }
+                }
+            }
+        }
     }
 
     private static void showList(List<String> list) {

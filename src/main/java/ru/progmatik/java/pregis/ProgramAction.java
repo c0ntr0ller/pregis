@@ -3,7 +3,9 @@ package ru.progmatik.java.pregis;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
@@ -20,6 +22,8 @@ import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
+import java.text.ParseException;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -168,6 +172,23 @@ public class ProgramAction {
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
+    }
+
+    /**
+     * Метод, получает массив, разделенный запятой с ид ПУ В БД ГРАД, добавляет ПУ в архив с указанной причиной "Ошибка".
+     * @param lineMeterId ид ПУ в БД ГРАД, разделенные запятой.
+     */
+    public void setMeteringDevicesToArchive(String lineMeterId) {
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+
+        try {
+            answerProcessing.sendMessageToClient("Архивирование ПУ...");
+            ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(answerProcessing, );
+        } catch (SQLException | ParseException | PreGISException e) {
+            answerProcessing.sendErrorToClient("Архивирование ПУ: ", "\"Архивирование ПУ\"", LOGGER, e);
+        }
+
     }
 
     public void callExportMeteringDevice() {

@@ -59,6 +59,15 @@ public class UpdateAllMeteringDeviceData {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
                 MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
                 java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD);
+
+//                Импортируем ранее загруженные ПУ
+                ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+                ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                if (exportMeteringDeviceDataResult != null) {
+                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
+                    devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD); // если добавились новые идентификаторы, нужно исключить их
+                }
+
                 countAll += meteringDeviceGRADDAO.getCountAll();
 
                 if (devices.size() > 0) {
@@ -86,9 +95,12 @@ public class UpdateAllMeteringDeviceData {
                         }
                     }
                 }
-                ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-                ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+
+//                Повторно загружаем для занесения MeteringDeviceRootGUID.
+                exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                if (exportMeteringDeviceDataResult != null)
                 meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
+
                 countUpdate += meteringDeviceGRADDAO.getCountUpdate();
                 countAdded += meteringDeviceGRADDAO.getCountAdded();
             }

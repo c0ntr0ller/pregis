@@ -96,29 +96,30 @@ public class AccountGRADDAO {
 
                 try {
                     bi.setNumberLS(arrayData[0]);
-                    bi.setEmployer(AnswerYesOrNo.getAnswer(arrayData[1]));
-                    bi.setSurname(arrayData[2]);
-                    bi.setName(arrayData[3]);
-                    bi.setMiddleName(arrayData[4]);
-                    bi.setSnils(arrayData[5]);
-                    bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[6]));
-                    bi.setNumberDocumentIdentity(arrayData[7]);
-                    bi.setSeriesDocumentIdentity(arrayData[8]);
-                    if (arrayData[9] != null)
-                        if (!arrayData[9].isEmpty()) {
+                    bi.setTypeLS(arrayData[1]);
+                    bi.setEmployer(AnswerYesOrNo.getAnswer(arrayData[2]));
+                    bi.setSurname(arrayData[3]);
+                    bi.setName(arrayData[4]);
+                    bi.setMiddleName(arrayData[5]);
+                    bi.setSnils(arrayData[6]);
+                    bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[7]));
+                    bi.setNumberDocumentIdentity(arrayData[8]);
+                    bi.setSeriesDocumentIdentity(arrayData[9]);
+                    if (arrayData[10] != null)
+                        if (!arrayData[10].isEmpty()) {
                             try {
-                                bi.setDateDocumentIdentity(dateFromSQL.parse(arrayData[9]));
+                                bi.setDateDocumentIdentity(dateFromSQL.parse(arrayData[10]));
                             } catch (ParseException e) {
                                 LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                                 e.printStackTrace();
                             }
                         }
-                    bi.setOgrnOrOgrnip(Long.valueOf(checkZero(arrayData[10])));
-                    bi.setKpp(Integer.valueOf(checkZero(arrayData[11])));
-                    bi.setTotalArea(Double.valueOf(checkZero(arrayData[12])));
-                    bi.setLivingSpace(Double.valueOf(checkZero(arrayData[13])));
-                    bi.setHeadtedArea(Double.valueOf(checkZero(arrayData[14])));
-                    bi.setAmountLiving(Integer.valueOf(checkZero(arrayData[15])));
+                    bi.setOgrnOrOgrnip(Long.valueOf(checkZero(arrayData[11])));
+                    bi.setKpp(Integer.valueOf(checkZero(arrayData[12])));
+                    bi.setTotalArea(Double.valueOf(checkZero(arrayData[13])));
+                    bi.setLivingSpace(Double.valueOf(checkZero(arrayData[14])));
+                    bi.setHeadtedArea(Double.valueOf(checkZero(arrayData[15])));
+                    bi.setAmountLiving(Integer.valueOf(checkZero(arrayData[16])));
 
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);

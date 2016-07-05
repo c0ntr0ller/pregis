@@ -6,7 +6,15 @@ package ru.progmatik.java.web.servlets.socket;
 public class ObjectForJSON {
 
     private final String command; // команда полученная от клиента
+    private final String id; // ид разных объектов, возможно дома, абонентаи т.д.
     private final String value; // значение, которое передал клиент
+
+    public ObjectForJSON(String command, String id, String value) {
+
+        this.command = command;
+        this.id = id;
+        this.value = value;
+    }
 
     public String getCommand() {
         return command;
@@ -16,9 +24,7 @@ public class ObjectForJSON {
         return value;
     }
 
-    public ObjectForJSON(String command, String value) {
-
-        this.command = command;
-        this.value = value;
+    public String getId() {
+        return id;
     }
 }

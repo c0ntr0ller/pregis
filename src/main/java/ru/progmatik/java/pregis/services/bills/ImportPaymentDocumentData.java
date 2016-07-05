@@ -79,14 +79,14 @@ public class ImportPaymentDocumentData {
 //        paymentDocument.setPaymentDocumentNumber(); //Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
 
 //        Банковские реквизиты
-        paymentDocument.setPaymentInformation(new PaymentInformationType());
-        paymentDocument.getPaymentInformation().setRecipientINN("5404465096"); //ИНН получателя платежа
-        paymentDocument.getPaymentInformation().setRecipientKPP("540201001"); //КПП получателя платежа
-        paymentDocument.getPaymentInformation().setBankName("Филиал ОАО \"УралСиб\" в г.Новосибирск"); //Наименование банка получателя платежа
-        paymentDocument.getPaymentInformation().setPaymentRecipient("ООО \"ЦУЖФ\""); //Наименование получателя
-        paymentDocument.getPaymentInformation().setBankBIK("045004725");  //БИК банка получателя
-        paymentDocument.getPaymentInformation().setOperatingAccountNumber("40702810232000000061");  //Номер расчетного счета
-        paymentDocument.getPaymentInformation().setCorrespondentBankAccount("30101810400000000725");  //Корр. счет банка получателя
+//        paymentDocument.setPaymentInformation(new PaymentInformationType());
+//        paymentDocument.getPaymentInformation().setRecipientINN("5404465096"); //ИНН получателя платежа
+//        paymentDocument.getPaymentInformation().setRecipientKPP("540201001"); //КПП получателя платежа
+//        paymentDocument.getPaymentInformation().setBankName("Филиал ОАО \"УралСиб\" в г.Новосибирск"); //Наименование банка получателя платежа
+//        paymentDocument.getPaymentInformation().setPaymentRecipient("ООО \"ЦУЖФ\""); //Наименование получателя
+//        paymentDocument.getPaymentInformation().setBankBIK("045004725");  //БИК банка получателя
+//        paymentDocument.getPaymentInformation().setOperatingAccountNumber("40702810232000000061");  //Номер расчетного счета
+//        paymentDocument.getPaymentInformation().setCorrespondentBankAccount("30101810400000000725");  //Корр. счет банка получателя
 
 //        Адресные сведения
         paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
@@ -130,7 +130,6 @@ public class ImportPaymentDocumentData {
         request.setYear((short) 2016);
         request.setId(OtherFormat.getId());
         request.getPaymentDocument().add(paymentDocument);
-
 
         return request;
     }

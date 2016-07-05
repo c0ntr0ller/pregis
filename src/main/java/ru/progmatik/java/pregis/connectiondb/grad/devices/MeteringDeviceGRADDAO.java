@@ -2,11 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
-import ru.gosuslugi.dom.schema.integration.base.MeteringDeviceBasicCharacteristicsType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportMeteringDeviceDataResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportMeteringDeviceDataResultType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
+import ru.gosuslugi.dom.schema.integration.services.house_management.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
@@ -145,38 +141,49 @@ public class MeteringDeviceGRADDAO {
      * @param exGisPu1Element массив данных полученный из БД.
      * @return сформированные прибор учёта.
      */
-    private ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate getMeteringDeviceForCreateElement(
+    private MeteringDeviceFullInformationType getMeteringDeviceForCreateElement(
             Integer houseId, String[] exGisPu1Element, Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
         LinkedHashMap<Integer, String[]> exGisIpuIndMap = getExGisIpuIndMap(houseId, connectionGrad);
-        ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate();
+        MeteringDeviceFullInformationType device = new MeteringDeviceFullInformationType();
+
+        device.setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 
         if (exGisPu1Element[8].equalsIgnoreCase("Электрическая энергия")) { // Если счетчик электричества
-            device.setElectricMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.ElectricMeteringDevice());
 
-            device.getElectricMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
+            device.setMunicipalResourceEnergy(new MunicipalResourceElectricType());
+//            device.setElectricMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.ElectricMeteringDevice());
+
+//            device.getElectricMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 //            Базовое показание T1
-            device.getElectricMeteringDevice().setBaseValueT1(new BigDecimal(exGisPu1Element[10]).setScale(4, BigDecimal.ROUND_DOWN));
+            device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[10]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Базовое показание T2, не обязательно к заполнению
             if (exGisPu1Element[11] != null)
-                device.getElectricMeteringDevice().setBaseValueT2(new BigDecimal(exGisPu1Element[11]).setScale(4, BigDecimal.ROUND_DOWN));
+                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[11]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Базовое показание T3. В зависимости от количества заданных при создании базовых значений ПУ определяется его тип по количеству тарифов. Не обязательно к заполнению
             if (exGisPu1Element[12] != null)
-                device.getElectricMeteringDevice().setBaseValueT3(new BigDecimal(exGisPu1Element[12]).setScale(4, BigDecimal.ROUND_DOWN));
+                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[12]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Время и дата снятия показания
-            device.getElectricMeteringDevice().setReadoutDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisIpuIndMap.get(Integer.valueOf(exGisPu1Element[METER_ID_PU1]))[4])));  // Время и дата снятия показания, можно попросить процедуру с которой брать показания и дату, вот её и можно занести
-//            device.getElectricMeteringDevice().setReadingsSource(); // Кем внесено не обязательно к заполнению
-            device.getElectricMeteringDevice().setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8])); // Коммунальный ресурс, берет из справочника 2
+//            device.getMunicipalResourceEnergy().setReadingsSource(); // Кем внесено не обязательно к заполнению
+//            device.getMunicipalResourceEnergy().setTransformationRatio(); // Кэффициент трансформации
+//            c версии 9.0.1.3 убрали
+//            device.getMunicipalResourceEnergy().setReadoutDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisIpuIndMap.get(Integer.valueOf(exGisPu1Element[METER_ID_PU1]))[4])));  // Время и дата снятия показания, можно попросить процедуру с которой брать показания и дату, вот её и можно занести
+//            device.getMunicipalResourceEnergy().setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8])); // Коммунальный ресурс, берет из справочника 2
 
         } else { // Характеристики однотарифных ПУ
-            device.setOneRateMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.OneRateMeteringDevice());
-            device.getOneRateMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
+//            device.setOneRateMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.OneRateMeteringDevice());
+//            device.getOneRateMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 //            Базовое показание
-            device.getOneRateMeteringDevice().setBaseValue(new BigDecimal(exGisPu1Element[10]).setScale(4, BigDecimal.ROUND_DOWN));
+            MunicipalResourceNotElectricType nonElectric = new MunicipalResourceNotElectricType();
 
-            device.getOneRateMeteringDevice().setReadoutDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisIpuIndMap.get(Integer.valueOf(exGisPu1Element[METER_ID_PU1]))[4])));  // Время и дата снятия показания, можно попросить процедуру с которой брать показания и дату, вот её и можно занести
-//            device.getElectricMeteringDevice().setReadingsSource(); // Кем внесено
-            device.getOneRateMeteringDevice().setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8])); // Коммунальный ресурс, берет из справочника 2
+            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[10]).setScale(4, BigDecimal.ROUND_DOWN));
+            nonElectric.setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8]));
+//            nonElectric.setReadingsSource(); // Кем внесено не обязательно к заполнению
+//            c версии 9.0.1.3 убрали
+//            device.getOneRateMeteringDevice().setReadoutDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisIpuIndMap.get(Integer.valueOf(exGisPu1Element[METER_ID_PU1]))[4])));  // Время и дата снятия показания, можно попросить процедуру с которой брать показания и дату, вот её и можно занести
+//            device.getOneRateMeteringDevice().setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8])); // Коммунальный ресурс, берет из справочника 2
+
+            device.getMunicipalResourceNotEnergy().add(nonElectric);
 
         }
 
@@ -190,16 +197,23 @@ public class MeteringDeviceGRADDAO {
         basicCharacteristics.setMeteringDeviceNumber(exGisPu1Element[0]);
 //            Марка ПУ
         basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[2]);
+
+//            Модель ПУ
+//        basicCharacteristics.setMeteringDeviceModel();
+
+
 //            Дата установки
         if (exGisPu1Element[13] != null)
             basicCharacteristics.setInstallationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[13])));
+
 //            Дата ввода в эксплуатацию
         basicCharacteristics.setCommissioningDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[14])));
+
 //            Внесение показаний осуществляется в ручном режиме
         basicCharacteristics.setManualModeMetering("Да".equalsIgnoreCase(exGisPu1Element[7]));
-//            Дата первичной поверки
-        basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
 
+//          Характеристики поверки  Дата первичной поверки
+        basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
         if (exGisPu1Element[15] == null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[15]).getTime()) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
             answerProcessing.sendMessageToClient("Не указана \"Дата первичной поверки\" для ПУ с кодом: " + exGisPu1Element[METER_ID_PU1] + ", установлена: " + exGisPu1Element[14]);
             basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[14])));
@@ -207,7 +221,13 @@ public class MeteringDeviceGRADDAO {
             basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[15])));
         }
 //            Межповерочный интервал (НСИ 16)
-        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]).getGUID());
+        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]));
+
+//        Дата опломбирования ПУ заводом-изготовителем (обязательно для заполнения при импорте)
+//        basicCharacteristics.setFactorySealDate();
+
+//        Наличие датчиков давления
+//        basicCharacteristics.setPressureSensor();
 
 //            Характеристики ИПУ жилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
 //            Характеристики ИПУ нежилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
@@ -226,11 +246,34 @@ public class MeteringDeviceGRADDAO {
                         " AccountGUID: " + accountGUIDFromGrad + " PremimiseGUID: " + premiseGUIDFromGrad);
             }
 
+            // Признак общедомового ПУ (значение справочника "Тип прибора учета" = коллективный (общедомомвой))
         } else if (exGisPu1Element[1].equalsIgnoreCase("Коллективный (общедомовой)") && exGisPu1Element[3] != null) {
             answerProcessing.sendMessageToClient("Найден ПУ \"Коллективный (общедомовой)\" не удаётся обработать!");
-//            basicCharacteristics.setCollectiveDevice(true); // Признак общедомового ПУ (значение справочника "Тип прибора учета" = коллективный (общедомомвой))
+//            basicCharacteristics.setCollectiveDevice(true);
 
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Общий (квартирный)") && exGisPu1Element[4] != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
+            // Информация о наличии возможности дистанционного снятия показаний ПУ
+            // указанием наименования установленной системы (обязательно для заполнения,
+            // если tns:ManualModeMetering = true, в противном случае поле не обрабатывается при импорте)
+//            basicCharacteristics.getCollectiveDevice().setManualModeInformation();
+
+//             Информация о наличии датчиков температуры с указанием их местоположения на узле учета
+//             (обязательно для заполнения, если tns:TemperatureSensor = true,
+//             в противном случае поле не обрабатывается при импорте)
+//            basicCharacteristics.getCollectiveDevice().setTemperatureSensorInformation();
+
+//              Информация о наличии датчиков давления с указанием их местоположения на узле учета
+//              (обязательно для заполнения, если tns:PressureSensor = true,
+//              в противном случае поле не обрабатывается при импорте)
+//            basicCharacteristics.getCollectiveDevice().setPressureSensorInformation();
+
+//            Электронный образ проекта узла учета
+//            basicCharacteristics.getCollectiveDevice().getProjectRegistrationNode().add();
+
+//            Электронный образ акта ввода узла учета в эксплуатацию
+//            basicCharacteristics.getCollectiveDevice().getCertificate().add();
+
+            // Характеристики общеквартирного ПУ (для квартир коммунального заселения) (значение справочника "Вид прибора учета" = Общий (квартирный))
+        } else if (exGisPu1Element[1].equalsIgnoreCase("Общий (квартирный)") && exGisPu1Element[4] != null) {
             basicCharacteristics.setCollectiveApartmentDevice(new MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice());
             basicCharacteristics.getCollectiveApartmentDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
             basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
@@ -240,7 +283,8 @@ public class MeteringDeviceGRADDAO {
                 }
             }
 
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[3] != null) { // если Характеристики ИПУ жилого дома (значение справочника "Тип прибора учета" = индивидуальный, тип дома = жилой дом)
+            // если Характеристики ИПУ жилого дома (значение справочника "Тип прибора учета" = индивидуальный, тип дома = жилой дом)
+        } else if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[3] != null) {
             basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
             basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
@@ -279,10 +323,7 @@ public class MeteringDeviceGRADDAO {
         for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResult.getMeteringDevice()) {
             if (resultType.getStatusRootDoc().equals("Active")) {
                 checkMeteringDevice(resultType.getMeteringDeviceRootGUID(), resultType.getMeteringDeviceVersionGUID(),
-                        resultType.getMunicipalResource(),
-                        resultType.getElectricMeteringDevice() != null ?
-                                resultType.getElectricMeteringDevice().getBasicChatacteristicts() :
-                                resultType.getOneRateMeteringDevice().getBasicChatacteristicts(), connectionGRAD);
+                        resultType.getBasicChatacteristicts(), connectionGRAD);
             }
         }
 
@@ -294,13 +335,11 @@ public class MeteringDeviceGRADDAO {
      *
      * @param meteringDeviceRootGUID                 идентификатор ПУ в ГИС ЖКХ.
      * @param meteringDeviceVersionGUID              идентификатор версии ПУ в ГИС ЖКХ.
-     * @param municipalResource                      коммунальный ресурс (Холодная вода, горячая вода и т.д.).
      * @param meteringDeviceBasicCharacteristicsType базовые характеристики ПУ.
      * @param connectionGRAD                         подключение к БД ГРАД.
      * @throws SQLException
      */
     private void checkMeteringDevice(String meteringDeviceRootGUID, String meteringDeviceVersionGUID,
-                                     String municipalResource,
                                      MeteringDeviceBasicCharacteristicsType meteringDeviceBasicCharacteristicsType,
                                      Connection connectionGRAD) throws SQLException {
 
@@ -315,16 +354,16 @@ public class MeteringDeviceGRADDAO {
             meteringRootGUIDGrad = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERROOTGUID", connectionGRAD);
             meteringVersionGUIDGrad = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERVERSIONGUID", connectionGRAD);
 
-            if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad == null) {
+            if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad == null) { // если оба идентификатора не найдены в БД ГРАД.
                 updateMeteringVersionGUID(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID, connectionGRAD);
-            } else if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) {
+            } else if (meteringRootGUIDGrad == null && meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) { // есле не найден meteringRootGUIDGrad
                 setMeteringRootGUID(meterId, meteringDeviceRootGUID, connectionGRAD);
             } else if (meteringRootGUIDGrad.equalsIgnoreCase(meteringDeviceRootGUID) &&
-                    !meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) {
+                    !meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) { // Если meteringRootGUIDGrad верный, а meteringDeviceVersionGUID изменился на устройстве.
                 updateMeteringVersionGUID(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID, connectionGRAD);
             }
         } else { // если нет, то надо найти по AccountGUID и PremiseGUID.
-            checkBasicCharacteristics(meteringDeviceRootGUID, meteringDeviceVersionGUID, municipalResource,
+            checkBasicCharacteristics(meteringDeviceRootGUID, meteringDeviceVersionGUID,
                     meteringDeviceBasicCharacteristicsType, connectionGRAD);
         }
 
@@ -335,12 +374,11 @@ public class MeteringDeviceGRADDAO {
      *
      * @param meteringDeviceRootGUID    идентификатор ПУ в ГИС ЖКХ.
      * @param meteringDeviceVersionGUID идентификатор версии ПУ в ГИС ЖКХ.
-     * @param municipalResource         коммунальный ресурс (Холодная вода, горячая вода и т.д.).
      * @param basicCharacteristics      базовые характеристики ПУ.
      * @param connectionGRAD            подключение к БД ГРАД.
      */
     private void checkBasicCharacteristics(String meteringDeviceRootGUID, String meteringDeviceVersionGUID,
-                                           String municipalResource, MeteringDeviceBasicCharacteristicsType
+                                           MeteringDeviceBasicCharacteristicsType
                                                    basicCharacteristics, Connection connectionGRAD) throws SQLException {
 
         for (Map.Entry<String, LinkedHashMap<Integer, ImportMeteringDeviceDataRequest.MeteringDevice>>
@@ -354,9 +392,7 @@ public class MeteringDeviceGRADDAO {
             for (Map.Entry<Integer, ImportMeteringDeviceDataRequest.MeteringDevice> deviceEntry : mapEntry.getValue().entrySet()) {
                 if (deviceEntry.getValue() != null) {
                     abonId = deviceEntry.getKey();
-                    device = deviceEntry.getValue().getDeviceDataToCreate().getElectricMeteringDevice() != null ?
-                            deviceEntry.getValue().getDeviceDataToCreate().getElectricMeteringDevice().getBasicChatacteristicts() :
-                            deviceEntry.getValue().getDeviceDataToCreate().getOneRateMeteringDevice().getBasicChatacteristicts();
+                    device = deviceEntry.getValue().getDeviceDataToCreate().getBasicChatacteristicts();
                 } else {
                     meterId = deviceEntry.getKey();
                 }
@@ -537,7 +573,8 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, получает список ид ПУ в БД ГРАД, для дальнейшего архивирования ПУ.
-     * @param meterIdList список ид ПУ в БД ГРАД.
+     *
+     * @param meterIdList    список ид ПУ в БД ГРАД.
      * @param connectionGRAD подключение к БД ГРАД.
      * @return готовый объект для отправки в ГИС ЖКХ.
      * @throws SQLException
@@ -552,6 +589,9 @@ public class MeteringDeviceGRADDAO {
             String meterVersionGUID = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERVERSIONGUID", connectionGRAD);
 
             ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate device = new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate();
+//            device.setUpdateAfterDevicesValues(new MeteringDeviceToUpdateAfterDevicesValuesType());
+//            device.getUpdateAfterDevicesValues().;
+
             device.setMeteringDeviceVersionGUID(meterVersionGUID);
             device.setArchiveDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate.ArchiveDevice());
             device.getArchiveDevice().setArchivingReason(nsi.getNsiRef("21", "Ошибка"));
@@ -792,11 +832,8 @@ public class MeteringDeviceGRADDAO {
 //            transportGUID = result.getTransportGUID();
 
         if (device.getDeviceDataToCreate() != null) {
-            if (device.getDeviceDataToCreate().getElectricMeteringDevice() != null) {
-                basic = device.getDeviceDataToCreate().getElectricMeteringDevice().getBasicChatacteristicts();
-            } else {
-                basic = device.getDeviceDataToCreate().getOneRateMeteringDevice().getBasicChatacteristicts();
-            }
+
+            basic = device.getDeviceDataToCreate().getBasicChatacteristicts();
             meteringDeviceNumber = basic.getMeteringDeviceNumber();
 
             if (basic.getLivingRoomDevice() != null) { // Комунальные комнаты - один счетчик много комнат
@@ -976,6 +1013,7 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, проверяет по указанному "MeteringVersionGUID", является ПУ архивным или нет.
+     *
      * @param meteringVersionGUID уникальный реестровый номер ПУ в ГИС ЖХК.
      * @param connectionLocalBase подключение к локальной БД.
      * @return true - если ПУ архивное, false - если ПУ не является архивным.

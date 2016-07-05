@@ -15,6 +15,14 @@ public class BasicInformation {
     private String numberLS;
 
     /**
+     * Появилось в версии файлов 9.0.1.2.
+     * Тип лицевого счета.
+     * Возможные значения: ЛС УО, ЛС РСО, ЛС КР.
+     * Обязательный.
+     */
+    private String typeLS;
+
+    /**
      * Является нанимателем?
      * Обязательный.
      * Значение из выпадающего списка, возможные значения: «да», «нет».
@@ -148,6 +156,28 @@ public class BasicInformation {
      */
     public void setNumberLS(String numberLS) {
         this.numberLS = numberLS;
+    }
+
+    /**
+     * Получить тип лицевого счета.
+     * Возможные значения: ЛС УО, ЛС РСО, ЛС КР.
+     * Обязательный.
+     * Появилось в версии файлов 9.0.1.2.
+     * @return тип счета (ЛС УО, ЛС РСО или ЛС КР).
+     */
+    public String getTypeLS() {
+        return typeLS;
+    }
+
+    /**
+     * Задать тип лицевого счета.
+     * Возможные значения: ЛС УО, ЛС РСО, ЛС КР.
+     * Обязательный.
+     * Появилось в версии файлов 9.0.1.2.
+     * @param typeLS тип счета (ЛС УО, ЛС РСО или ЛС КР).
+     */
+    public void setTypeLS(String typeLS) {
+        this.typeLS = typeLS;
     }
 
     /**

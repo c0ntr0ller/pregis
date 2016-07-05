@@ -234,7 +234,7 @@
         <dependency>
             <groupId>ru.progmatik.java</groupId>
             <artifactId>giswsdl</artifactId>
-            <version>8.7.2.2</version>
+            <version>9.0.1.3</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/giswsdl.jar</systemPath>
             <type>jar</type>

@@ -60,11 +60,11 @@ public class ProgramAction {
 
             ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
 
-            if (exportOrgRegistryResult != null || exportOrgRegistryResult.getErrorMessage() != null) {
+            if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() != null) {
 
                 ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
 
-                if (dataProviderResult != null || dataProviderResult.getErrorMessage() != null) {
+                if (dataProviderResult != null && dataProviderResult.getErrorMessage() != null) {
                     if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
                         SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
                         saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
@@ -178,13 +178,13 @@ public class ProgramAction {
      * Метод, получает массив, разделенный запятой с ид ПУ В БД ГРАД, добавляет ПУ в архив с указанной причиной "Ошибка".
      * @param lineMeterId ид ПУ в БД ГРАД, разделенные запятой.
      */
-    public void setMeteringDevicesToArchive(String lineMeterId) {
+    public void setMeteringDevicesToArchive(Integer houseId, String lineMeterId) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
         try {
             answerProcessing.sendMessageToClient("Архивирование ПУ...");
             ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
-            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(answerProcessing, );
+            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(answerProcessing, houseId);
         } catch (SQLException | ParseException | PreGISException e) {
             answerProcessing.sendErrorToClient("Архивирование ПУ: ", "\"Архивирование ПУ\"", LOGGER, e);
         }

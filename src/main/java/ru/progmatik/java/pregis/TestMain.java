@@ -45,8 +45,8 @@ public class TestMain {
 //        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //        System.out.println(graddao.getMeteringDeviceFromLocalBase(36, 7124, "asdasdas4646", "fdsfds"));
 
-
-        getDoubleAbonId();
+        getArrayCount();
+//        getDoubleAbonId();
 
 //        ArrayList<String> list = new ArrayList<String>();
 //
@@ -186,11 +186,31 @@ public class TestMain {
             MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
             ArrayList<String[]> exGisPu1 = graddao.getExGisPu1(7124, connectionGRAD);
             for (int i = 0; i < exGisPu1.size(); i++) {
+                int countArray = 0;
                 for (int j = i + 1; j < exGisPu1.size(); j++) {
+                    countArray++;
                     if (exGisPu1.get(i)[18].equals(exGisPu1.get(j)[18])) {
                         System.out.println("Repiat: " + exGisPu1.get(i)[18] + " meterId: " +  exGisPu1.get(i)[17] + " i: " + i + " j" + j);
                     }
                 }
+                System.out.println("Count Array: " + countArray);
+            }
+        }
+    }
+
+    public static void getArrayCount() throws SQLException, ParseException, PreGISException {
+
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+            ArrayList<String[]> exGisPu1 = graddao.getExGisPu1(7124, connectionGRAD);
+            for (int i = 0; i < exGisPu1.size(); i++) {
+                int countArray = 0;
+                for (int j = 0; j < exGisPu1.get(i).length; j++) {
+                    countArray++;
+                }
+                System.out.println("AbonId: " + exGisPu1.get(i)[27] + " meterId: " +  exGisPu1.get(i)[26] +
+                        " MUNICIPAL_RESOURCE: " + exGisPu1.get(i)[11] + " METERING_VALUE: " + exGisPu1.get(i)[13]);
+                System.out.println("Count Array: " + countArray);
             }
         }
     }

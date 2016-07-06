@@ -68,10 +68,13 @@ public class MeteringDeviceGRADDAO {
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.REPLACE_DEVICE_ID IS 'Если произошла замена ПУ, указать id ПУ на которое произошла замена.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.VALUE_REQUEST IS 'Хранит время последней передачи показаний ПУ, нужно для обновления данных по ПУ, для понимания были уже переданы хоть раз показания или нет.';";
 
-    private static final int METER_ID_PU1 = 17;
+    private static final int METER_ID_PU1 = 26;
     private static final int METER_ID_PU2 = 4;
-    private static final int ABON_ID_PU1 = 18;
+    private static final int ABON_ID_PU1 = 27;
     private static final int ABON_ID_PU2 = 5;
+    private static final int DEVICE_NUMBER = 1;
+    private static final int MUNICIPAL_RESOURCE = 11;
+    private static final int METERING_VALUE = 13;
     private final SimpleDateFormat sDate = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
     private final AnswerProcessing answerProcessing;
@@ -150,20 +153,20 @@ public class MeteringDeviceGRADDAO {
 
         device.setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 
-        if (exGisPu1Element[8].equalsIgnoreCase("Электрическая энергия")) { // Если счетчик электричества
+        if (exGisPu1Element[MUNICIPAL_RESOURCE].equalsIgnoreCase("Электрическая энергия")) { // Если счетчик электричества
 
             device.setMunicipalResourceEnergy(new MunicipalResourceElectricType());
 //            device.setElectricMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.ElectricMeteringDevice());
 
 //            device.getElectricMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 //            Базовое показание T1
-            device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[10]).setScale(4, BigDecimal.ROUND_DOWN));
+            device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Базовое показание T2, не обязательно к заполнению
-            if (exGisPu1Element[11] != null)
-                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[11]).setScale(4, BigDecimal.ROUND_DOWN));
+            if (exGisPu1Element[METERING_VALUE + 1] != null)
+                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[METERING_VALUE + 1]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Базовое показание T3. В зависимости от количества заданных при создании базовых значений ПУ определяется его тип по количеству тарифов. Не обязательно к заполнению
-            if (exGisPu1Element[12] != null)
-                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[12]).setScale(4, BigDecimal.ROUND_DOWN));
+            if (exGisPu1Element[METERING_VALUE + 2] != null)
+                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[METERING_VALUE + 2]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Время и дата снятия показания
 //            device.getMunicipalResourceEnergy().setReadingsSource(); // Кем внесено не обязательно к заполнению
 //            device.getMunicipalResourceEnergy().setTransformationRatio(); // Кэффициент трансформации
@@ -177,8 +180,8 @@ public class MeteringDeviceGRADDAO {
 //            Базовое показание
             MunicipalResourceNotElectricType nonElectric = new MunicipalResourceNotElectricType();
 
-            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[10]).setScale(4, BigDecimal.ROUND_DOWN));
-            nonElectric.setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8]));
+            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(4, BigDecimal.ROUND_DOWN));
+            nonElectric.setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[MUNICIPAL_RESOURCE]));
 //            nonElectric.setReadingsSource(); // Кем внесено не обязательно к заполнению
 //            c версии 9.0.1.3 убрали
 //            device.getOneRateMeteringDevice().setReadoutDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisIpuIndMap.get(Integer.valueOf(exGisPu1Element[METER_ID_PU1]))[4])));  // Время и дата снятия показания, можно попросить процедуру с которой брать показания и дату, вот её и можно занести
@@ -195,7 +198,7 @@ public class MeteringDeviceGRADDAO {
 
         MeteringDeviceBasicCharacteristicsType basicCharacteristics = new MeteringDeviceBasicCharacteristicsType();
 //            Номер ПУ
-        basicCharacteristics.setMeteringDeviceNumber(exGisPu1Element[0]);
+        basicCharacteristics.setMeteringDeviceNumber(exGisPu1Element[DEVICE_NUMBER]);
 //            Марка ПУ
         basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[2]);
 
@@ -305,7 +308,7 @@ public class MeteringDeviceGRADDAO {
         } else {
             LOGGER.debug("ПУ MeterID: " + exGisPu1Element[METER_ID_PU1] +
                     " AbonID: " + exGisPu1Element[ABON_ID_PU1] +
-                    " с именем: " + exGisPu1Element[0] + " не определен ни к одному из типов помещений!");
+                    " с именем: " + exGisPu1Element[DEVICE_NUMBER] + " не определен ни к одному из типов помещений!");
         }
 
         return basicCharacteristics;

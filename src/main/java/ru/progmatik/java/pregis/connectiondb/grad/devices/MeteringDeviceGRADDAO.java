@@ -73,6 +73,10 @@ public class MeteringDeviceGRADDAO {
     private static final int ABON_ID_PU1 = 27;
     private static final int ABON_ID_PU2 = 5;
     private static final int DEVICE_NUMBER = 1;
+    private static final int TYPE_PU = 2;
+    private static final int INSTALLATION_DATE = 17;
+    private static final int COMMISSIONING_DATE = 18;
+    private static final int VERIFICATION_DATE = 19;
     private static final int MUNICIPAL_RESOURCE = 11;
     private static final int METERING_VALUE = 13;
     private final SimpleDateFormat sDate = new SimpleDateFormat("dd.MM.yyyy");
@@ -200,28 +204,28 @@ public class MeteringDeviceGRADDAO {
 //            Номер ПУ
         basicCharacteristics.setMeteringDeviceNumber(exGisPu1Element[DEVICE_NUMBER]);
 //            Марка ПУ
-        basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[2]);
+        basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[3]);
 
 //            Модель ПУ
-//        basicCharacteristics.setMeteringDeviceModel();
+        basicCharacteristics.setMeteringDeviceModel(exGisPu1Element[4]);
 
 //            Дата установки
-        if (exGisPu1Element[13] != null)
-            basicCharacteristics.setInstallationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[13])));
+        if (exGisPu1Element[INSTALLATION_DATE] != null)
+            basicCharacteristics.setInstallationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[INSTALLATION_DATE])));
 
 //            Дата ввода в эксплуатацию
-        basicCharacteristics.setCommissioningDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[14])));
+        basicCharacteristics.setCommissioningDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
 
 //            Внесение показаний осуществляется в ручном режиме
         basicCharacteristics.setManualModeMetering("Да".equalsIgnoreCase(exGisPu1Element[7]));
 
 //          Характеристики поверки  Дата первичной поверки
         basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
-        if (exGisPu1Element[15] == null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[15]).getTime()) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
-            answerProcessing.sendMessageToClient("Не указана \"Дата первичной поверки\" для ПУ с кодом: " + exGisPu1Element[METER_ID_PU1] + ", установлена: " + exGisPu1Element[14]);
-            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[14])));
+        if (exGisPu1Element[VERIFICATION_DATE] == null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
+            answerProcessing.sendMessageToClient("Не указана \"Дата первичной поверки\" для ПУ с кодом: " + exGisPu1Element[METER_ID_PU1] + ", установлена: " + exGisPu1Element[COMMISSIONING_DATE]);
+            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
         } else {
-            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[15])));
+            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
         }
 //            Межповерочный интервал (НСИ 16)
         basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]));
@@ -234,7 +238,7 @@ public class MeteringDeviceGRADDAO {
 
 //            Характеристики ИПУ жилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
 //            Характеристики ИПУ нежилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
-        if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[4] != null) {
+        if (exGisPu1Element[TYPE_PU].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[6] != null) {
             if (isResidentialPremiseGrad(houseId, Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad)) { // если помещение не является жилым, значит оно нежилое.
                 basicCharacteristics.setResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice());
                 basicCharacteristics.getResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
@@ -250,7 +254,7 @@ public class MeteringDeviceGRADDAO {
             }
 
             // Признак общедомового ПУ (значение справочника "Тип прибора учета" = коллективный (общедомомвой))
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Коллективный (общедомовой)") && exGisPu1Element[3] != null) {
+        } else if (exGisPu1Element[TYPE_PU].equalsIgnoreCase("Коллективный (общедомовой)") && exGisPu1Element[5] != null) {
             answerProcessing.sendMessageToClient("Найден ПУ \"Коллективный (общедомовой)\" не удаётся обработать!");
 //            basicCharacteristics.setCollectiveDevice(true);
 
@@ -276,7 +280,7 @@ public class MeteringDeviceGRADDAO {
 //            basicCharacteristics.getCollectiveDevice().getCertificate().add();
 
             // Характеристики общеквартирного ПУ (для квартир коммунального заселения) (значение справочника "Вид прибора учета" = Общий (квартирный))
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Общий (квартирный)") && exGisPu1Element[4] != null) {
+        } else if (exGisPu1Element[TYPE_PU].equalsIgnoreCase("Общий (квартирный)") && exGisPu1Element[6] != null) {
             basicCharacteristics.setCollectiveApartmentDevice(new MeteringDeviceBasicCharacteristicsType.CollectiveApartmentDevice());
             basicCharacteristics.getCollectiveApartmentDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
             basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
@@ -287,7 +291,7 @@ public class MeteringDeviceGRADDAO {
             }
 
             // если Характеристики ИПУ жилого дома (значение справочника "Тип прибора учета" = индивидуальный, тип дома = жилой дом)
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[3] != null) {
+        } else if (exGisPu1Element[TYPE_PU].equalsIgnoreCase("Индивидуальный") && exGisPu1Element[5] != null) {
             basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
             basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
@@ -296,7 +300,7 @@ public class MeteringDeviceGRADDAO {
                 }
             }
 
-        } else if (exGisPu1Element[1].equalsIgnoreCase("Комнатный") && exGisPu1Element[5] != null) { // Характеристики комнатного ИПУ (значение справочника "Тип прибора учета" = индивидуальный)
+        } else if (exGisPu1Element[TYPE_PU].equalsIgnoreCase("Комнатный") && exGisPu1Element[7] != null) { // Характеристики комнатного ИПУ (значение справочника "Тип прибора учета" = индивидуальный)
             basicCharacteristics.setLivingRoomDevice(new MeteringDeviceBasicCharacteristicsType.LivingRoomDevice());
             basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().add(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "LIVINGROOMGUID", connectionGrad));

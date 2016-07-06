@@ -209,7 +209,8 @@ public class TestMain {
                     countArray++;
                 }
                 System.out.println("AbonId: " + exGisPu1.get(i)[27] + " meterId: " +  exGisPu1.get(i)[26] +
-                        " MUNICIPAL_RESOURCE: " + exGisPu1.get(i)[11] + " METERING_VALUE: " + exGisPu1.get(i)[13]);
+                        " MUNICIPAL_RESOURCE: " + exGisPu1.get(i)[11] + " METERING_VALUE: " + exGisPu1.get(i)[13] +
+                        " INSTALLATION_DATE: " + exGisPu1.get(i)[17]);
                 System.out.println("Count Array: " + countArray);
             }
         }

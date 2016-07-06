@@ -78,6 +78,7 @@ public class UpdateReference {
             countDone++;
         } else {
             answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 51 - \"Коммунальные услуги\": не обновлен!");
+            answerProcessing.sendMessageToClient("::clearLabelText");
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 59 - \"Работы и услуги организации\".");
@@ -86,6 +87,7 @@ public class UpdateReference {
             countDone++;
         } else {
             answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 59 - \"Работы и услуги организации\": не обновлен!");
+            answerProcessing.sendMessageToClient("::clearLabelText");
         }
 
         answerProcessing.sendMessageToClient("Обновляю справочник 1 - \"Дополнительные услуги\".");
@@ -94,6 +96,7 @@ public class UpdateReference {
             countDone++;
         } else {
             answerProcessing.sendErrorToClientNotException("Возникли ошибки.\nСправочник 1 - \"Дополнительные услуги\" не обновлен!");
+            answerProcessing.sendMessageToClient("::clearLabelText");
         }
 
         ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);

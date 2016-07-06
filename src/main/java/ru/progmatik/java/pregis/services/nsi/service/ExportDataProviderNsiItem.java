@@ -58,6 +58,7 @@ public class ExportDataProviderNsiItem {
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+//            throw fault;
             return null;
         }
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);

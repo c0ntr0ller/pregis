@@ -20,6 +20,8 @@ function getWebConnect() {
             setFailedLabelText();
         } else if (inMessage.indexOf('::setOkLabelText') != -1) {
             setOkLabelText();
+        } else if (inMessage.indexOf('::clearLabelText') != -1) {
+            clearLabelText();
         } else {
             $('.label-text > span').html(inMessage);
             var $textarea = document.getElementById("messages");

@@ -210,7 +210,7 @@ public class TestMain {
                 }
                 System.out.println("AbonId: " + exGisPu1.get(i)[27] + " meterId: " +  exGisPu1.get(i)[26] +
                         " MUNICIPAL_RESOURCE: " + exGisPu1.get(i)[11] + " METERING_VALUE: " + exGisPu1.get(i)[13] +
-                        " INSTALLATION_DATE: " + exGisPu1.get(i)[17]);
+                        " INSTALLATION_DATE: " + exGisPu1.get(i)[17] + " Дата ввода в эксплуатацию: " + exGisPu1.get(i)[18] + " Дата опломбирования заводом: " + exGisPu1.get(i)[20]);
                 System.out.println("Count Array: " + countArray);
             }
         }

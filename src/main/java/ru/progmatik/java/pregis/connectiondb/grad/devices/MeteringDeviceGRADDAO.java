@@ -74,11 +74,14 @@ public class MeteringDeviceGRADDAO {
     private static final int ABON_ID_PU2 = 5;
     private static final int DEVICE_NUMBER = 1;
     private static final int TYPE_PU = 2;
+    private static final int IS_MANUAL_MODE_METERING = 9;
+    private static final int MUNICIPAL_RESOURCE = 11;
+    private static final int METERING_VALUE = 13;
     private static final int INSTALLATION_DATE = 17;
     private static final int COMMISSIONING_DATE = 18;
     private static final int VERIFICATION_DATE = 19;
-    private static final int MUNICIPAL_RESOURCE = 11;
-    private static final int METERING_VALUE = 13;
+    private static final int VERIFICATION_INTERVAL = 21;
+
     private final SimpleDateFormat sDate = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
     private final AnswerProcessing answerProcessing;
@@ -140,6 +143,11 @@ public class MeteringDeviceGRADDAO {
                         " AbonId: " + exGisPu1Element[ABON_ID_PU1]);
             }
         }
+        for (ImportMeteringDeviceDataRequest.MeteringDevice deviceForUpdate : devicesForUpdateList) {
+            meteringDeviceList.add(deviceForUpdate);
+            LOGGER.debug("ПУ добавлен для обновления в ГИС ЖКХ: " + deviceForUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
+        }
+
         return meteringDeviceList;
     }
 
@@ -206,8 +214,10 @@ public class MeteringDeviceGRADDAO {
 //            Марка ПУ
         basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[3]);
 
-//            Модель ПУ
-        basicCharacteristics.setMeteringDeviceModel(exGisPu1Element[4]);
+//            Модель ПУ, обязательный, из БД приходит пустое значение
+        if (exGisPu1Element[4] != null) {
+            basicCharacteristics.setMeteringDeviceModel(exGisPu1Element[4]);
+        }
 
 //            Дата установки
         if (exGisPu1Element[INSTALLATION_DATE] != null)
@@ -217,24 +227,24 @@ public class MeteringDeviceGRADDAO {
         basicCharacteristics.setCommissioningDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
 
 //            Внесение показаний осуществляется в ручном режиме
-        basicCharacteristics.setManualModeMetering("Да".equalsIgnoreCase(exGisPu1Element[7]));
+//        в 9.0 формах стало "Наличие возможности дистанционного снятия показаний"
+        if ("Да".equalsIgnoreCase(exGisPu1Element[IS_MANUAL_MODE_METERING])) {
+            basicCharacteristics.setManualModeMetering(true);
+        }
 
 //          Характеристики поверки  Дата первичной поверки
+//        в 9.0 поменяли на "Дата последней поверки", поле стало не обязательным
         basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
-        if (exGisPu1Element[VERIFICATION_DATE] == null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) { // если нет "Дата первичной поверки" берем дату из "Дата ввода в эксплуатацию"
-            answerProcessing.sendMessageToClient("Не указана \"Дата первичной поверки\" для ПУ с кодом: " + exGisPu1Element[METER_ID_PU1] + ", установлена: " + exGisPu1Element[COMMISSIONING_DATE]);
-            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
-        } else {
+        if (exGisPu1Element[VERIFICATION_DATE] != null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
             basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
         }
-//            Межповерочный интервал (НСИ 16)
-        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[16].split(" ")[0]));
+//            Межповерочный интервал (НСИ 16) стал необязательным
+        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
 
-//        Дата опломбирования ПУ заводом-изготовителем (обязательно для заполнения при импорте)
-//        basicCharacteristics.setFactorySealDate();
-
-//        Наличие датчиков давления
-//        basicCharacteristics.setPressureSensor();
+//        Дата опломбирования ПУ заводом-изготовителем (обязательно для заполнения при импорте), обязательное, ГРАД возвращает путое значение
+        if (exGisPu1Element[20] != null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[20]).getTime()) {
+            basicCharacteristics.setFactorySealDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[20])));
+        }
 
 //            Характеристики ИПУ жилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
 //            Характеристики ИПУ нежилого помещения (значение справочника "Тип прибора учета" = индивидуальный)
@@ -258,6 +268,11 @@ public class MeteringDeviceGRADDAO {
             answerProcessing.sendMessageToClient("Найден ПУ \"Коллективный (общедомовой)\" не удаётся обработать!");
 //            basicCharacteristics.setCollectiveDevice(true);
 
+//            basicCharacteristics.setCollectiveDevice(new MeteringDeviceBasicCharacteristicsType.CollectiveDevice());
+
+//              Наличие датчиков давления
+//              basicCharacteristics.setPressureSensor();
+
             // Информация о наличии возможности дистанционного снятия показаний ПУ
             // указанием наименования установленной системы (обязательно для заполнения,
             // если tns:ManualModeMetering = true, в противном случае поле не обрабатывается при импорте)
@@ -266,11 +281,13 @@ public class MeteringDeviceGRADDAO {
 //             Информация о наличии датчиков температуры с указанием их местоположения на узле учета
 //             (обязательно для заполнения, если tns:TemperatureSensor = true,
 //             в противном случае поле не обрабатывается при импорте)
+//            basicCharacteristics.setTemperatureSensor();
 //            basicCharacteristics.getCollectiveDevice().setTemperatureSensorInformation();
 
 //              Информация о наличии датчиков давления с указанием их местоположения на узле учета
 //              (обязательно для заполнения, если tns:PressureSensor = true,
 //              в противном случае поле не обрабатывается при импорте)
+//            basicCharacteristics.setPressureSensor();
 //            basicCharacteristics.getCollectiveDevice().setPressureSensorInformation();
 
 //            Электронный образ проекта узла учета
@@ -331,7 +348,7 @@ public class MeteringDeviceGRADDAO {
             if (resultType.getStatusRootDoc().equals("Active")) {
                 checkMeteringDevice(resultType.getMeteringDeviceRootGUID(), resultType.getMeteringDeviceVersionGUID(),
                         resultType.getBasicChatacteristicts(), connectionGRAD);
-                checkBasicCharacteristicsForUpdate(resultType);
+//  Пока откл              checkBasicCharacteristicsForUpdate(resultType);
             }
         }
 
@@ -379,7 +396,6 @@ public class MeteringDeviceGRADDAO {
     /**
      * Метод, проверяет каждый ПУ на соответствие данных, если данные ГИС ЖКХ отличаются от данных ГРАДа,
      * тогда надо определить были уже переданные показания по ПУ и сформировать соответствующий объект для обновления.
-     *
      */
     private void checkBasicCharacteristicsForUpdate(ExportMeteringDeviceDataResultType importDevice) throws SQLException {
 
@@ -417,7 +433,10 @@ public class MeteringDeviceGRADDAO {
                             !importDevice.getBasicChatacteristicts().getInstallationDate().equals(device.getBasicChatacteristicts().getInstallationDate()) &&
                             !importDevice.getBasicChatacteristicts().getCommissioningDate().equals(device.getBasicChatacteristicts().getCommissioningDate()) &&
                             !importDevice.getBasicChatacteristicts().getFactorySealDate().equals(device.getBasicChatacteristicts().getFactorySealDate())) {
-                        setUpdateDevice(importDevice, device);
+//                        Надо учитывать тот факт, что getUpdateAfterDevicesValues не имеет BasicChatacteristicts, т.е. не сможет изменить элемент.
+                        if (getDeviceValueRequest(importDevice.getMeteringDeviceVersionGUID()) == null) { // если ещё не было выгрузки формирум иначе нет.
+                            setUpdateDevice(importDevice, device);
+                        }
                     }
                 }
             }
@@ -426,8 +445,9 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, добавляет в лист объект для обновления.
+     *
      * @param importDevice устройство полученное из ГИС ЖКХ
-     * @param device обновленное устройство.
+     * @param device       обновленное устройство.
      * @throws SQLException
      */
     private void setUpdateDevice(ExportMeteringDeviceDataResultType importDevice, MeteringDeviceFullInformationType device) throws SQLException {
@@ -1119,6 +1139,7 @@ public class MeteringDeviceGRADDAO {
 
     /**
      * Метод, получает дату последней передачи показаний ПУ.
+     *
      * @param meteringVersionGUID уникальный реестровый номер ПУ в ГИС ЖХК.
      * @return дата последней передачи показаний ПУ.
      * @throws SQLException
@@ -1135,7 +1156,7 @@ public class MeteringDeviceGRADDAO {
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) date = rs.getDate(1);
-                rs.close();
+            rs.close();
         }
         return date;
     }

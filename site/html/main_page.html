@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>ПреГИС</title>
-    <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
-    <script type="text/javascript" src="/js/main_page.js"></script>
 </head>
 <body>
 <h1>Сервис обмена информации с ГИС ЖКХ</h1>
@@ -40,16 +38,22 @@
         <button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
         <br><br>
     </form>
-    <form name="paymentDocumentData" accept-charset="utf-8">
-        <br>
-        <h2>Работа с платежным документом:</h2>
-        <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
-        <br><br>
-    </form>
     <form name="updateMeteringDeviceData" accept-charset="utf-8">
         <br>
         <h2>Работа с ПУ:</h2>
         <button id="sendExportMeteringDevice" type="button" onclick="sendMessage('callExportMeteringDevice');" ${buttonState}>Получение ПУ</button>
+        <br>
+        <div id="meteringDevicesToArchive" class="forAjax" style="border: 1px solid; margin: 20px; padding: 20px; background: #c0c0c0">
+            <label>Идентификатор дома ГРАДа: <input class="textId" type="number"></label>
+            <label>Идентификаторы ПУ ГРАД, через запятую: <input class="textValue" type="text"></label>
+            <!--<br><br>-->
+            <button type="button" ${buttonState}>Архивировать ПУ</button>
+        </div>
+    </form>
+    <form name="paymentDocumentData" accept-charset="utf-8">
+        <br>
+        <h2>Работа с платежным документом:</h2>
+        <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
         <br><br>
     </form>
 </div>
@@ -58,6 +62,7 @@
     <h3>лог выполнения:</h3>
     <textarea id="messages" rows="20" cols="50" readonly="readonly"></textarea>
 </div>
-
+<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="/js/main_page.js"></script>
 </body>
 </html>

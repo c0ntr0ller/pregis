@@ -3,6 +3,7 @@ var ws;
 
 $(document).ready(function() {
 getWebConnect();
+getAjaxMessage();
 });
 
 function getWebConnect() {
@@ -63,4 +64,37 @@ function setButtonState(state) {
 function getSessionID(tesxt) {
     var sessionID = document.cookie;
     sendMessage(sessionID + " : " + tesxt);
+};
+function getAjaxMessage() {
+    $('.forAjax > button').click(function () {
+
+        var divCommand = $(this).parent().attr('id');
+        var elementDiv = "#" + divCommand;
+
+        var textId;
+        var textValue;
+        if ($(elementDiv).find('.textId') !== null) {
+            textId = $(elementDiv).find('.textId').val();
+        }
+        if ($(elementDiv).find('.textValue') !== null) {
+            textValue = $(elementDiv).find('.textValue').val();
+        }
+        console.log(divCommand + " id: " + textId + " value: " + textValue);
+        var msgJSON = {
+            command: divCommand,
+            id: textId,
+            value: textValue
+        };
+        $.post('/ajax', JSON.stringify(msgJSON), function (dataResponse) {
+            var textarea = document.getElementById("messages");
+            textarea.value = textarea.value + dataResponse + "\n";
+        }, 'json').success(function () {
+            console.log("Ajax done!")
+        }).error(function () {
+            console.log("Ajax fail!")
+        }).complete(function () {
+            console.log("Ajax complete!")
+        });
+        return false;
+    });
 };

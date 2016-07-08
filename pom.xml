@@ -4,7 +4,7 @@
     <groupId>ru.prog_matik.java</groupId>
     <artifactId>pregis</artifactId>
     <packaging>war</packaging>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.0</version>
     <name>pregis Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
@@ -18,6 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cryptopro-jcp.version>2.0.38481</cryptopro-jcp.version>
         <org.eclipse.jetty.version>9.3.9.v20160517</org.eclipse.jetty.version>
+        <giswsdl.version>9.0.1.4</giswsdl.version>
         <!--<org.eclipse.jetty.version>9.3.0.M0</org.eclipse.jetty.version>-->
         <slf4j.version>1.7.14</slf4j.version>
     </properties>
@@ -74,21 +75,21 @@
 
         <!--Библиотеки VipNet-->
         <!--<dependency>-->
-            <!--<groupId>ru.infotecs</groupId>-->
-            <!--<artifactId>jcrypto-jca</artifactId>-->
-            <!--<version>2.5.2-R324899</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/jcrypto-jca-2.5.2-R324899.jar</systemPath>-->
-            <!--<type>jar</type>-->
+        <!--<groupId>ru.infotecs</groupId>-->
+        <!--<artifactId>jcrypto-jca</artifactId>-->
+        <!--<version>2.5.2-R324899</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/jcrypto-jca-2.5.2-R324899.jar</systemPath>-->
+        <!--<type>jar</type>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>ru.infotecs</groupId>-->
-            <!--<artifactId>jcrypto-ssl</artifactId>-->
-            <!--<version>2.5.2-R324899</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/jcrypto-ssl-2.5.2-R324899.jar</systemPath>-->
-            <!--<type>jar</type>-->
+        <!--<groupId>ru.infotecs</groupId>-->
+        <!--<artifactId>jcrypto-ssl</artifactId>-->
+        <!--<version>2.5.2-R324899</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/jcrypto-ssl-2.5.2-R324899.jar</systemPath>-->
+        <!--<type>jar</type>-->
         <!--</dependency>-->
 
         <dependency>
@@ -234,11 +235,21 @@
         <dependency>
             <groupId>ru.progmatik.java</groupId>
             <artifactId>giswsdl</artifactId>
-            <version>9.0.1.3</version>
+            <version>${giswsdl.version}</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/giswsdl.jar</systemPath>
             <type>jar</type>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>ru.progmatik.java</groupId>-->
+            <!--<artifactId>giswsdl</artifactId>-->
+            <!--<version>${giswsdl.version}</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/giswsdl-sources.jar</systemPath>-->
+            <!--<type>jar</type>-->
+            <!--<classifier>sources</classifier>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.google.code.gson</groupId>

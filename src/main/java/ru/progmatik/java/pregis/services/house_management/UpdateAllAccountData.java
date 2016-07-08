@@ -94,7 +94,9 @@ public class UpdateAllAccountData {
                     if (!accountListFromGrad.get(resultTypeAccount.getAccountNumber()).getAccountGUID().equals(resultTypeAccount.getAccountGUID())) {
 //                        System.err.println("GRAD: " + accountListFromGrad.get(resultTypeAccount.getAccountNumber()).getAccountGUID());
 //                        System.err.println("GIS" + resultTypeAccount.getAccountGUID());
-                        setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getAccountUniqueNumber(), connection);
+//                        setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getAccountUniqueNumber(), connection);
+//                        после 9.0.1.4 переименовали
+                        setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getUnifiedAccountNumber(), connection);
                     }
                     accountListFromGrad.remove(resultTypeAccount.getAccountNumber()); // удалим найденные счета из списка
                 } else { // если нет записи в БД, значит счет закрыт надо закрыть в ГИС ЖКХ, для этого добавим в таблицу для удаления потом закроем все не найденные счита в БД.

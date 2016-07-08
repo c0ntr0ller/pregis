@@ -1,10 +1,12 @@
 package ru.progmatik.java.web.servlets.web;
 
+import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.web.accounts.AccountService;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
+import ru.progmatik.java.web.servlets.socket.ObjectForJSON;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,9 +39,24 @@ public class AjaxServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (checkLogin(request, response)) {
+//            request.get
 
+            Gson gson = new Gson();
+            ObjectForJSON json = gson.fromJson(request.getReader(), ObjectForJSON.class);
+            LOGGER.debug("Команда: " + json.getCommand() + " id: " + json.getId() + " value: " + json.getValue());
+
+            ObjectForJSON answerJson = new ObjectForJSON("Получена", "100", "OK");
+            String stringJson = gson.toJson(answerJson, ObjectForJSON.class);
+            response.setContentType("text/html;charset=utf-8");
+//            response.getWriter().write("Команда: " + command + " id: " + id + " value: " + value);
+            response.getWriter().write(stringJson);
+
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setContentType("text/html;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-        response.setContentType("text/html;charset=utf-8");
+
     }
 
     /**

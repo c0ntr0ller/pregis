@@ -16,6 +16,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.signet.Configure;
 import ru.progmatik.java.pregis.signet.bcsign.security.XmlDSignTools;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
+import ru.progmatik.java.web.servlets.web.AjaxServlet;
 import ru.progmatik.java.web.servlets.web.LoginClient;
 import ru.progmatik.java.web.servlets.web.MainServlet;
 import ru.progmatik.java.web.servlets.web.IndexServlet;
@@ -121,6 +122,7 @@ public class Main {
         context.addServlet(new ServletHolder(new MainServlet(action)), "/test");
         context.addServlet(new ServletHolder(new IndexServlet(action)), "/main");
         context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
+        context.addServlet(new ServletHolder(new AjaxServlet()), "/ajax");
         context.getSessionHandler().getSessionManager().setMaxInactiveInterval(600); // Время сессии
 
         ResourceHandler resource_handler = new ResourceHandler();

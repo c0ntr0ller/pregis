@@ -93,7 +93,6 @@ public class ExportOrgRegistry {
 //        list.setOGRN("1125476111903");
 
 
-
         if (criteria.getOGRN() == null && criteria.getOGRNIP() == null &&
                 criteria.getOrgRootEntityGUID() == null && criteria.getOrgVersionGUID() == null)
             throw new PreGISException("Не указан обязательный параметр!\n" +

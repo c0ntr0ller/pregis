@@ -2,10 +2,7 @@ package ru.progmatik.java.pregis.connectiondb;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * Класс для подключения к базе данных.
@@ -71,6 +68,18 @@ public class ConnectionDB {
         DatabaseMetaData metaData = getConnectionDB().getMetaData();
         try (ResultSet rs = metaData.getTables(null, null, tableName, new String[] {"TABLE"})) {
             return rs.next();
+        }
+    }
+
+    /**
+     * Метод, создаёт таблицу из полученного SQL запроса.
+     *
+     * @param sqlCreateTable SQL запрос, в котором описано создание таблицы.
+     * @throws SQLException
+     */
+    private void sendSqlRequest(String sqlCreateTable) throws SQLException {
+        try (Statement statement = getConnectionDB().createStatement()) {
+            statement.executeUpdate(sqlCreateTable);
         }
     }
 }

@@ -14,6 +14,26 @@ import java.util.List;
 public class UsersDAO {
 
     private static final Logger LOGGER = Logger.getLogger(UsersDAO.class);
+    private static final String TABLE_NAME_USERSLOGIN = "USERSLOGIN";  // имя таблицы
+
+    private static final String SQL_CREATE_TABLE_USERSLOGIN = "CREATE TABLE IF NOT EXISTS USERS_LOGIN (" +
+            "ID identity not null primary key, " +
+            "LOGIN varchar(255) not null, " +
+            "PASSWORD varchar(255) not null, " +
+            "NAME varchar(255), " +
+            "SURNAME varchar(255), " +
+            "PATRONYMIC varchar(255), " +
+            "DESCRIPTION varchar(255), " +
+            "IS_ADMIN boolean DEFAULT false); " +
+            "COMMENT ON TABLE PUBLIC.USERS_LOGIN IS 'Таблица учетных записей пользователей для доступа в ПреГИС.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.LOGIN IS 'Имя пользователя для доступа.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.PASSWORD IS 'Пароль пользователя.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.NAME IS 'Имя пользователя.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.SURNAME IS 'Фамилия пользователя.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.PATRONYMIC IS 'Отчество пользователя.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.DESCRIPTION IS 'Примечание.'; " +
+            "COMMENT ON COLUMN USERS_LOGIN.IS_ADMIN IS 'Является пользователь администратором?.';";
 
     /**
      * Конструктор, создаёт таблице если её не было.
@@ -21,15 +41,9 @@ public class UsersDAO {
      */
     public UsersDAO() throws SQLException {
 
-        Connection connection = ConnectionDB.instance().getConnectionDB();
-        Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS USERSLOGIN " +
-                            "(ID identity not null primary key, " +
-                            "LOGIN varchar(255) not null, " +
-                            "PASSWORD varchar(255) not null, " +
-                            "DESCRIPTION varchar(255))");
-        statement.close();
-        connection.close();
+        if (!ConnectionDB.instance().tableExist(TABLE_NAME_USERSLOGIN.toUpperCase())) {
+            ConnectionDB.instance().tableExist(SQL_CREATE_TABLE_USERSLOGIN);
+        }
     }
 
     public List<UserProfile> getUsers() throws SQLException {

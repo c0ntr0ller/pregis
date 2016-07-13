@@ -6,9 +6,8 @@ $(function () {
     alignCenter($('.error-list'));
     $(window).resize(function () {
         alignCenter($('.show-state'));
-    });
-    $(window).resize(function () {
         alignCenter($('.error-list'));
+        footerTop();
     });
     $('.wrapper').hover(function () {
         $(this).children().stop().animate({marginTop: '80%', opacity: 0}, 600);
@@ -28,24 +27,19 @@ $(function () {
             "-webkit-box-shadow": "0 5px 20px 8px rgba(255,255,255,1)"
         });
     });
-
-    // $('#exit').click(function () {
-    //     exitRequest();
-    // });
-
     $('.button-state').click(function () {
         hideState();
         $(this).hide();
         setTimeout(function () {
             clearLabelText();
         }, 500);
-        $('#messages').val("");
+        // $('#messages').val("");
     }).hide();
 
     $('.close-dialog').click(function () {
         hideErrorList();
     });
-    $('.other-error').click(function () {
+    $('.show-report').click(function () {
         showErrorList();
     });
     $('.thumb').click(function () { // вызов отправки операции
@@ -59,6 +53,7 @@ $(function () {
             sendMessage(message);
         }
     });
+    footerTop();
 });
 function exitRequest() {
     $.ajax({
@@ -88,6 +83,15 @@ function alignCenter(elem) {
         left: ($(window).width() - elem.width()) / 2 + 'px',
         top: ($(window).height() - elem.height()) / 2 + 'px'
     });
+};
+function footerTop() {
+    var temp = 30;
+    if ($(window).height() > 800) {
+        temp = $(window).height() - 750 - parseInt($('.footer').height()) + 30;
+    } else {
+        temp = 30;
+    }
+    $('.footer').css({marginTop: temp + 'px'});
 };
 function showButton() {
     $('.button-state').show();

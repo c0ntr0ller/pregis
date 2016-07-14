@@ -46,11 +46,12 @@ public class UsersServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Boolean isAdmin = request.getParameter("admin") != null ? request.getParameter("admin").equalsIgnoreCase("on") : false;
         UserProfile profile = new UserProfile(request.getParameter("login"),
                 request.getParameter("password"), request.getParameter("name"),
                 request.getParameter("surname"), request.getParameter("patronymic"),
-                request.getParameter("description"), Boolean.valueOf(request.getParameter("admin")));
-        System.out.println(request.getParameter("admin"));
+                request.getParameter("description"), isAdmin);
+        System.out.println(isAdmin);
         System.out.println(profile);
     }
 

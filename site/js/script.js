@@ -45,8 +45,8 @@ $(function () {
     $('.thumb').click(function () { // вызов отправки операции
         var message = $(this).attr("id");
         if (message === undefined) {
-        //    Доработать вывод сообщения "модуль в разработке"
-        } else if (message === "exit"){
+            //    Доработать вывод сообщения "модуль в разработке"
+        } else if (message === "exit") {
             exitRequest();
         } else {
             console.log(message);
@@ -75,10 +75,16 @@ function hideState() {
     $('.hide-layout, .show-state').fadeOut(300);
 };
 function showErrorList() {
-    $('.error-list').fadeIn(300);
+    $('.hide-layout, .error-list').fadeIn(300);
 };
 function hideErrorList() {
     $('.error-list').fadeOut(300);
+    hideLayoutHide();
+};
+function hideLayoutHide() {
+    if ($('.button-state').css('display') === 'none') {
+        $('.hide-layout').fadeOut(300);
+    }
 };
 // функция принимает элемент, который необходимо центрировать
 function alignCenter(elem) {

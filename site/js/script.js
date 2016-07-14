@@ -58,12 +58,15 @@ $(function () {
 function exitRequest() {
     $.ajax({
         url: '/login',
-        type: 'DELETE',
-        success: function () {
-            ws.close();
-            document.location.href = '/login';
-        }
+        type: 'DELETE'
+        // ,
+        // success: function () {
+        //     ws.close();
+        //     document.location.href = '/login';
+        // }
     });
+    ws.close();
+    document.location.href = '/login';
 };
 function showState() {
     $('.hide-layout, .show-state').fadeIn(300);

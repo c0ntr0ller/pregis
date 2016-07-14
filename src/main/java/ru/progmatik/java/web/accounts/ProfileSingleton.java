@@ -2,7 +2,6 @@ package ru.progmatik.java.web.accounts;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.UsersDAO;
-import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ProfileSingleton {
             usersDAO = new UsersDAO();
             List<UserProfile> listProfils = usersDAO.getUsers();
             if (listProfils.isEmpty()) {
-                accountService.addNewUser(new UserProfile("admin", OtherFormat.getMD5("admin"), "Администратор сервиса"));
+                accountService.addNewUser(new UserProfile("admin", "admin", "Администратор сервиса"));
                 accountService.addNewUser(new UserProfile("test"));
             } else {
                 for (UserProfile userProfile : listProfils) {
@@ -55,5 +54,9 @@ public class ProfileSingleton {
 
     public void setAccountService(AccountService newAccountService) {
         accountService = newAccountService;
+    }
+
+    public void resetProfileSingleton() {
+        profileSingleton = null;
     }
 }

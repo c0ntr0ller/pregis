@@ -3252,3 +3252,18 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:C:/andryha/p
 	at org.h2.mvstore.FileStore.open(FileStore.java:172)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:342)
 	... 30 more
+2016-07-13 17:31:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Синтаксическая ошибка в выражении SQL "COMMENT ON TABLE[*] \""PUBLIC\"".USERS_LOGIN IS 'Таблица учетных записей пользователей для доступа в ПреГИС.';
+            COMMENT ON COLUMN USERS_LOGIN.ID IS 'Идентификатор записей.'"
+Syntax error in SQL statement "COMMENT ON TABLE[*] \""PUBLIC\"".USERS_LOGIN IS 'Таблица учетных записей пользователей для доступа в ПреГИС.';
+            COMMENT ON COLUMN USERS_LOGIN.ID IS 'Идентификатор записей.'"; SQL statement:
+COMMENT ON TABLE \"PUBLIC\".USERS_LOGIN IS 'Таблица учетных записей пользователей для доступа в ПреГИС.';
+            COMMENT ON COLUMN USERS_LOGIN.ID IS 'Идентификатор записей.' [42000-190]
+2016-07-13 17:31:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Таблица "USERSLOGIN" не найдена
+Table "USERSLOGIN" not found; SQL statement:
+DROP TABLE USERSLOGIN [42102-190]
+2016-07-13 17:32:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Таблица "USERSLOGIN" не найдена
+Table "USERSLOGIN" not found; SQL statement:
+DROP TABLE USERSLOGIN [42102-190]

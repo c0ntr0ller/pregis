@@ -79,7 +79,7 @@ public class LoginClient extends HttpServlet {
                        HttpServletResponse response) throws ServletException, IOException {
 
         String login = request.getParameter("login");
-        String password = request.getParameter("password");
+        String password = OtherFormat.getMD5(request.getParameter("password"));
 //        System.out.println(login);
 //        System.out.println(password);
 
@@ -104,8 +104,17 @@ public class LoginClient extends HttpServlet {
         }
 
 //        Если профиль не найден или пароль указан неверно.
-        if (profile == null || !OtherFormat.getMD5(password).equals(profile.getPassword())) {
+        if (profile == null || !password.equals(profile.getPassword())) {
             showPage(request, response, "Проверьте правильность ввода данных!", HttpServletResponse.SC_UNAUTHORIZED);
+            LOGGER.debug("Login: " + login + " password: " + password);
+
+            if (profile == null) {
+                LOGGER.debug("ProfileLogin: " + login + " - не найден!");
+            } else {
+                LOGGER.debug("ProfileLogin: " + profile.getLogin() + " ProfilePassword: " + profile.getPassword());
+            }
+
+            LOGGER.debug("request.getParameter: " + request.getParameter("password"));
 //            new ErrorPage("Проверьте правильность ввода данных!", HttpServletResponse.SC_UNAUTHORIZED).doGet(request, response);
 //            response.setContentType("text/xml;charset=utf-8");
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

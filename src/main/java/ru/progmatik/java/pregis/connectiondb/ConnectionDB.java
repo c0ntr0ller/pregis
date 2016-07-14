@@ -1,5 +1,6 @@
 package ru.progmatik.java.pregis.connectiondb;
 
+import org.apache.log4j.Logger;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 import java.sql.*;
@@ -9,6 +10,8 @@ import java.sql.*;
  * Берет настройки указанные в файле параметров "application.properties".
  */
 public class ConnectionDB {
+
+    private static final Logger LOGGER = Logger.getLogger(ConnectionDB.class);
 
 //    private static final String databaseURI = ResourceBundle.getBundle("application").getString("config.database.uri");
 //    private static final String userName = ResourceBundle.getBundle("application").getString("config.database.user");
@@ -77,9 +80,10 @@ public class ConnectionDB {
      * @param sqlCreateTable SQL запрос, в котором описано создание таблицы.
      * @throws SQLException
      */
-    private void sendSqlRequest(String sqlCreateTable) throws SQLException {
+    public void sendSqlRequest(String sqlCreateTable) throws SQLException {
         try (Statement statement = getConnectionDB().createStatement()) {
             statement.executeUpdate(sqlCreateTable);
+            LOGGER.debug(sqlCreateTable);
         }
     }
 }

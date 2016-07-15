@@ -180,7 +180,7 @@ public class ExportHouseData {
 
     }
 
-    public ExportHouseResult callExportHouseData(String fias) {
+    public ExportHouseResult callExportHouseData(String fias) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         Holder<ResultHeader> resultHolder = new Holder<>();

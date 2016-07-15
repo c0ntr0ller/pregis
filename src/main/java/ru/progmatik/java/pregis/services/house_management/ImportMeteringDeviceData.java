@@ -13,6 +13,7 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Класс, передаёт данные о ПУ в ГИС ЖКХ.
@@ -31,7 +32,7 @@ public class ImportMeteringDeviceData {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ImportResult callImportMeteringDeviceData(String fias, java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) {
+    public ImportResult callImportMeteringDeviceData(String fias, java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) throws SQLException {
 
         Holder<ResultHeader> resultHolder = new Holder<>();
         RequestHeader requestHeader = OtherFormat.getRequestHeader();

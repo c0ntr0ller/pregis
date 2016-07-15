@@ -1,8 +1,9 @@
-package ru.progmatik.java.pregis.connectiondb;
+package ru.progmatik.java.pregis.connectiondb.localdb.message;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;

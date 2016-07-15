@@ -6,23 +6,22 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusCAChRequest;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusCAChResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Created by andryha on 25.02.2016.
  */
 public class ExportStatusCAChData {
 
-    private Logger logger = Logger.getLogger(ExportStatusCAChData.class);
-
     private static final String NAME_METHOD = "exportStatusCAChData";
-
+    private Logger logger = Logger.getLogger(ExportStatusCAChData.class);
     private Holder<ResultHeader> headerHolder;
 
-    public void callExportStatusCAChData() {
+    public void callExportStatusCAChData() throws SQLException {
 
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
 

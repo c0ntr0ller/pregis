@@ -1,7 +1,7 @@
 package ru.progmatik.java.web.accounts;
 
 import org.apache.log4j.Logger;
-import ru.progmatik.java.pregis.connectiondb.UsersDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.users.UsersDAO;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.sql.SQLException;

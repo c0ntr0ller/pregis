@@ -14,6 +14,7 @@ import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.math.BigInteger;
+import java.sql.SQLException;
 
 /**
  * Класс, сервис частной НСИ (hcs-nsi), экспортирует справочники №1, 51, 59 поставщика информации.
@@ -41,7 +42,7 @@ public class ExportDataProviderNsiItem {
      * Метод, отправляет запрос с кодом справочника (1, 51 или 59), получает в ответ указанный справочник.
      * @param code код справочника - 1, 51 или 59.
      */
-    public ExportNsiItemResult callExportDataProviderNsiItem(String code) {
+    public ExportNsiItemResult callExportDataProviderNsiItem(String code) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 

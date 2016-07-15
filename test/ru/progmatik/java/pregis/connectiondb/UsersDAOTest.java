@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb;
 
 import org.junit.Test;
+import ru.progmatik.java.pregis.connectiondb.localdb.users.UsersDAO;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.web.accounts.UserProfile;
 

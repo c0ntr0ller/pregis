@@ -13,6 +13,7 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Класс, получить перечень ПУ.
@@ -34,7 +35,7 @@ public class ExportMeteringDeviceData {
     /**
      * Метод, получает данные о ПУ из ГИС ЖКХ.
      */
-    public ExportMeteringDeviceDataResult callExportMeteringDeviceData(String fias) {
+    public ExportMeteringDeviceDataResult callExportMeteringDeviceData(String fias) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();

@@ -3,7 +3,7 @@ package ru.progmatik.java.pregis.other;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 /**

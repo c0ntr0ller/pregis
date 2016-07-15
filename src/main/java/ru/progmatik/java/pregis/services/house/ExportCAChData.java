@@ -6,10 +6,11 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChRequest;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 public class ExportCAChData {
 
@@ -19,7 +20,7 @@ public class ExportCAChData {
 
     private Holder<ResultHeader> headerHolder = new Holder<>(new ResultHeader());
 
-    public void callExportCAChData() {
+    public void callExportCAChData() throws SQLException {
 
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
 

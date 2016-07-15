@@ -6,7 +6,7 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListRequest;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiListResult;
 import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.Fault;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;

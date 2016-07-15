@@ -11,7 +11,7 @@ import ru.gosuslugi.dom.schema.integration.services.payment.Individual;
 import ru.gosuslugi.dom.schema.integration.services.payment_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.services.payment_service_async.PaymentPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.services.payment_service_async.PaymentsServiceAsync;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;

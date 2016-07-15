@@ -9,7 +9,6 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.CryptoPro.JCP.JCP;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.BaseOrganization;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -18,7 +17,8 @@ import ru.progmatik.java.pregis.signet.bcsign.security.XmlDSignTools;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
 import ru.progmatik.java.web.servlets.web.*;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 import java.security.Security;
 
 public class Main {
@@ -111,8 +111,8 @@ public class Main {
         WebSocketClientServlet webSocketClientServlet = new WebSocketClientServlet();
         ProgramAction action = new ProgramAction(webSocketClientServlet.getClientService());
 
-        if (BaseOrganization.getSenderID() == null)
-            action.getSenderID();  // Получение SenderID
+        if (OtherFormat.getOrgPPAGUID() == null)
+            action.getOrgPPAGUID();  // Получение orgPPAGUID
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient(action)), "/*");

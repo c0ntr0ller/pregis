@@ -8,10 +8,11 @@ import ru.gosuslugi.dom.schema.integration.services.bills.ExportPaymentDocumentR
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Класс, экспорт сведений о платежных документах.
@@ -35,7 +36,7 @@ public class ExportPaymentDocumentData {
     /**
      * Метод, экспорт сведений о платежных документах (exportPaymentDocumentData) из ГИС ЖКХ.
      */
-    public void callExportPaymentDocumentData() {
+    public void callExportPaymentDocumentData() throws SQLException {
 
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();

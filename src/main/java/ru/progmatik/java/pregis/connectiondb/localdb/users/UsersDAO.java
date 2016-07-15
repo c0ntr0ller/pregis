@@ -1,6 +1,7 @@
-package ru.progmatik.java.pregis.connectiondb;
+package ru.progmatik.java.pregis.connectiondb.localdb.users;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
 

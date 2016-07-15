@@ -15,6 +15,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Метод, отправляет информацию о лицевых счетах в ГИС ЖКХ.
@@ -33,11 +34,11 @@ public class ImportAccountData {
         this.answerProcessing = answerProcessing;
     }
 
-    public ImportResult callImportAccountData(ImportAccountRequest request) {
+    public ImportResult callImportAccountData(ImportAccountRequest request) throws SQLException {
         return sendImportAccountData(request);
     }
 
-    private ImportResult sendImportAccountData(ImportAccountRequest request) {
+    private ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 

@@ -13,6 +13,7 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Класс, экспорт сведений о лицевых счетах.
@@ -36,7 +37,7 @@ public class ExportAccountData {
         this.answerProcessing = answerProcessing;
     }
 
-    public ExportAccountResult callExportAccountData(String homeFias) {
+    public ExportAccountResult callExportAccountData(String homeFias) throws SQLException {
 
 //        Создание загаловков сообщений (запроса и ответа)
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);

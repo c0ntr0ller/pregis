@@ -54,8 +54,8 @@ public class ClientService {
             sendMessage("Уже выполнятся другая операция!");
         } else {
             switch (command) {
-                case "getSenderID":
-                    action.getSenderID();
+                case "getOrgPPAGUID":
+                    action.getOrgPPAGUID();
                     break;
                 case "getHouseUO":
                     action.callExportHouseData();

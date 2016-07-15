@@ -4,9 +4,12 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.house.ExportCAChData;
@@ -79,6 +82,50 @@ public class ProgramAction {
             }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getSenderID: ", "\"Получения SenderID\" ", LOGGER, e);
+//            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
+        }
+        setStateRunOff(); // взводим флаг в состояние откл.
+    }
+
+    /**
+     * Метод, получение orgPPAGUID - идентификатор зарегистрированной организации.
+     */
+    public void getOrgPPAGUID() {
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+
+        answerProcessing.sendMessageToClient("Получение идентификатора зарегистрированной организации...");
+
+        try {
+            ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
+
+            ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
+
+            if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() != null) {
+
+
+                OrganizationDataSet dataSet = new OrganizationDataSet(
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getFullName(),
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getShortName(),
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getOGRN(),
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getINN(),
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getKPP(),
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgRootEntityGUID(),
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgPPAGUID(),
+                        ResourcesUtil.instance().getCompanyRole(), // Роль УО
+                        ResourcesUtil.instance().getCompanyGradId(), // Идентификатор в БД ГРАД
+                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getOrgVersionGUID()); // Примечание
+
+                OrganizationDAO organizationDAO = new OrganizationDAO();
+                organizationDAO.addOrganization(dataSet);
+
+                answerProcessing.sendOkMessageToClient("orgPPAGUID успешно получен!");
+
+            } else {
+                answerProcessing.sendMessageToClient("::setFailed()");
+                answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
+            }
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение orgPPAGUID\" ", LOGGER, e);
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
         }
         setStateRunOff(); // взводим флаг в состояние откл.
@@ -194,11 +241,15 @@ public class ProgramAction {
     public void callExportMeteringDevice() {
 
             ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+        try {
             if (exportMeteringDeviceData.callExportMeteringDeviceData("b58c5da4-8d62-438f-b11e-d28103220952") == null) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
             } else {
                 answerProcessing.sendOkMessageToClient("\"Получение ПУ\" успешно выполнена.");
             }
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportMeteringDevice(): ", "", LOGGER, e);
+        }
     }
 
     /**
@@ -279,7 +330,11 @@ public class ProgramAction {
      */
     public void callImportPaymentDocumentData() {
         ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData();
-        importPaymentDocumentData.callImportPaymentDocumentData();
+        try {
+            importPaymentDocumentData.callImportPaymentDocumentData();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
+        }
     }
 
     /**
@@ -322,12 +377,20 @@ public class ProgramAction {
 
     public void callExportStatusCAChData() {
         ExportStatusCAChData statusCAChData = new ExportStatusCAChData();
-        statusCAChData.callExportStatusCAChData();
+        try {
+            statusCAChData.callExportStatusCAChData();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportStatusCAChData(): ", "", LOGGER, e);
+        }
     }
 
     public void callExportCAChData() {
         ExportCAChData caChData = new ExportCAChData();
-        caChData.callExportCAChData();
+        try {
+            caChData.callExportCAChData();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportCAChData(): ", "", LOGGER, e);
+        }
     }
 
     /**

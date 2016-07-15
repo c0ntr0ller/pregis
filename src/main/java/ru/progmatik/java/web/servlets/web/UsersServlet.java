@@ -2,7 +2,7 @@ package ru.progmatik.java.web.servlets.web;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.ProgramAction;
-import ru.progmatik.java.pregis.connectiondb.UsersDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.users.UsersDAO;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;

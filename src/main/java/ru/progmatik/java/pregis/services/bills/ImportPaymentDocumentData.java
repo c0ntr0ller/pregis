@@ -9,11 +9,12 @@ import ru.gosuslugi.dom.schema.integration.services.bills.ServiceChargeType;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
-import ru.progmatik.java.pregis.connectiondb.SaveToBaseMessages;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 /**
  * Класс, импорт сведений о платежных документах.
@@ -43,7 +44,7 @@ public class ImportPaymentDocumentData {
     /**
      * Метод, импорт сведений о платежных документах в ГИС ЖКХ.
      */
-    public void callImportPaymentDocumentData() {
+    public void callImportPaymentDocumentData() throws SQLException {
 
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();

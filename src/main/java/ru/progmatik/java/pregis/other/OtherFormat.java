@@ -3,13 +3,14 @@ package ru.progmatik.java.pregis.other;
 import org.apache.commons.codec.digest.DigestUtils;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.BaseOrganization;
+import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
@@ -89,10 +90,12 @@ public class OtherFormat {
      * Метод возвращает готовый заголовок запроса с "SenderID".
      * @return RequestHeader готовый заголовок с содержанием "SenderID".
      */
-    public static RequestHeader getRequestHeader() {
+    public static RequestHeader getRequestHeader() throws SQLException {
 
         RequestHeader requestHeader = new RequestHeader();
-        requestHeader.setSenderID(BaseOrganization.getSenderID());
+//        замена SenderID на orgPPAGUID.
+//        requestHeader.setSenderID(BaseOrganization.getSenderID());
+        requestHeader.setOrgPPAGUID(getOrgPPAGUID());
         requestHeader.setMessageGUID(getRandomGUID());
         requestHeader.setDate(getDateNow());
 
@@ -111,6 +114,16 @@ public class OtherFormat {
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
+    }
+
+    /**
+     * Метод, получает orgPPAGUID - идентификатор зарегистрированной организации.
+     * @return orgPPAGUID.
+     * @throws SQLException
+     */
+    public static String getOrgPPAGUID() throws SQLException {
+        OrganizationDAO dao = new OrganizationDAO();
+        return dao.getOrgPPAGUID();
     }
 
     /**

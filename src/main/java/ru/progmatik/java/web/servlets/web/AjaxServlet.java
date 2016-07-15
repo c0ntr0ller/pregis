@@ -3,7 +3,6 @@ package ru.progmatik.java.web.servlets.web;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.ProgramAction;
-import ru.progmatik.java.web.accounts.AccountService;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
 import ru.progmatik.java.web.servlets.socket.ObjectForJSON;
@@ -22,13 +21,11 @@ import java.io.IOException;
 public class AjaxServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LoginClient.class);
-    private final AccountService accountService;
 
     private ProgramAction action;
 
     public AjaxServlet() {
         super();
-        accountService = ProfileSingleton.instance().getAccountService();
     }
 
     public AjaxServlet(ProgramAction action) {
@@ -71,7 +68,7 @@ public class AjaxServlet extends HttpServlet {
 //        Извлекаем id сессии
         String sessionId = request.getSession().getId();
 //        Получаем профиль по id сессии
-        UserProfile profile = accountService.getUserBySessionId(sessionId);
+        UserProfile profile = ProfileSingleton.instance().getAccountService().getUserBySessionId(sessionId);
 //        Если нет профиля отвечает что и так не авторизирован
         if (profile == null) {
             response.sendRedirect("/login");

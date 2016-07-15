@@ -57,16 +57,13 @@ $(function () {
 });
 function exitRequest() {
     $.ajax({
-        url: '/login',
-        type: 'DELETE'
-        // ,
-        // success: function () {
-        //     ws.close();
-        //     document.location.href = '/login';
-        // }
+        method: "DELETE",
+        url: "/login"
+    }).complete(function (answer) {
+        ws.close();
+        document.location.href = '/login';
+        console.log(answer.responseText);
     });
-    ws.close();
-    document.location.href = '/login';
 };
 function showState() {
     $('.hide-layout, .show-state').fadeIn(300);

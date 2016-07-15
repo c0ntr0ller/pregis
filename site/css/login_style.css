@@ -1,6 +1,9 @@
 html {
 	font-size: 10pt;
 }
+body {
+	background: url('../images/whitey.png');
+}
 label {
 	display: block;
 	color: #999;
@@ -22,6 +25,7 @@ label {
 }
 .loginform {
 	width: 410px;
+	height: 65px;
 	margin: 50px auto;
 	padding: 25px;
 	background-color: rgba(250,250,250,0.5);
@@ -45,6 +49,8 @@ label {
 	border-radius: 3px;
 	box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
 	0px 1px 0px 0px rgba(250, 250, 250, 0.5) ;
+	width: 143px;
+	height: 16px;
 }
 .loginform input[type=submit] {
 	border: 1px solid rgba(0, 0, 0, 0.3);
@@ -62,6 +68,7 @@ label {
 	margin-top: 15px;
 	border-radius: 3px;
 	text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
 }
 #error {
 	/*padding-top: 10px;*/

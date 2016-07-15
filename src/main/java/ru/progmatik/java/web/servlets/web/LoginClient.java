@@ -4,7 +4,6 @@ package ru.progmatik.java.web.servlets.web;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.web.accounts.AccountService;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
 import ru.progmatik.java.web.freemarkergen.PageGenerator;
@@ -33,7 +32,6 @@ import java.util.Map;
 public class LoginClient extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LoginClient.class);
-    private final AccountService accountService;
 
     private ProgramAction action;
 
@@ -42,17 +40,12 @@ public class LoginClient extends HttpServlet {
      */
     public LoginClient() throws SQLException {
         super();
-        accountService = ProfileSingleton.instance().getAccountService();
     }
 
     public LoginClient(ProgramAction action) throws SQLException {
         this();
         this.action = action;
     }
-
-    //    public LoginClient(AccountService accountService) {
-//        this.accountService = accountService;
-//    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -86,11 +79,11 @@ public class LoginClient extends HttpServlet {
         String sessionId = request.getSession().getId();
 
 //        Смотрим если сессия уже есть берем её.
-        UserProfile profile = accountService.getUserBySessionId(sessionId);
+        UserProfile profile = ProfileSingleton.instance().getAccountService().getUserBySessionId(sessionId);
 
         if (profile == null) {
 //            Если нет сессии ищем по логину
-            profile = accountService.getUserByLogin(login);
+            profile = ProfileSingleton.instance().getAccountService().getUserByLogin(login);
         }
 
 //        Если поле логи или пароль пустое
@@ -111,7 +104,8 @@ public class LoginClient extends HttpServlet {
             if (profile == null) {
                 LOGGER.debug("ProfileLogin: " + login + " - не найден!");
             } else {
-                LOGGER.debug("ProfileLogin: " + profile.getLogin() + " ProfilePassword: " + profile.getPassword());
+//                LOGGER.debug("ProfileLogin: " + profile.getLogin() + " ProfilePassword: " + profile.getPassword());
+                LOGGER.debug("ProfileLogin: " + profile.getLogin());
             }
 
             LOGGER.debug("request.getParameter: " + request.getParameter("password"));
@@ -122,7 +116,7 @@ public class LoginClient extends HttpServlet {
             return;
         }
 
-        accountService.addSession(request.getSession().getId(), profile);
+        ProfileSingleton.instance().getAccountService().addSession(request.getSession().getId(), profile);
 
         response.sendRedirect("/main");
 //        request.getRequestDispatcher("/main").forward(request, response);
@@ -138,7 +132,7 @@ public class LoginClient extends HttpServlet {
 //        Извлекаем id сессии
         String sessionId = request.getSession().getId();
 //        Получаем профиль по id сессии
-        UserProfile profile = accountService.getUserBySessionId(sessionId);
+        UserProfile profile = ProfileSingleton.instance().getAccountService().getUserBySessionId(sessionId);
 //        Если нет профиля отвечает что и так не авторизирован
         if (profile == null) {
             showPage(request, response, "", HttpServletResponse.SC_UNAUTHORIZED);
@@ -146,7 +140,7 @@ public class LoginClient extends HttpServlet {
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
 //            Удаляем профиль из "Map"
-            accountService.deleteSession(sessionId);
+            ProfileSingleton.instance().getAccountService().deleteSession(sessionId);
 //            showPage(request, response, "Goodbye!", HttpServletResponse.SC_OK);
             response.setContentType("text/html;charset=utf-8");
             response.getWriter().println("Goodbye!");

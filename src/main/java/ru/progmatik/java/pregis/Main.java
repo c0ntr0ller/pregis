@@ -115,7 +115,7 @@ public class Main {
             action.getSenderID();  // Получение SenderID
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new LoginClient(action)), "/login");
+        context.addServlet(new ServletHolder(new LoginClient(action)), "/*");
         context.addServlet(new ServletHolder(new MainServlet(action)), "/test");
         context.addServlet(new ServletHolder(new IndexServlet(action)), "/main");
         context.addServlet(new ServletHolder(new UsersServlet(action)), "/users");

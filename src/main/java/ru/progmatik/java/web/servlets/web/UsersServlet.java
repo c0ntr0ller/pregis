@@ -2,7 +2,8 @@ package ru.progmatik.java.web.servlets.web;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.ProgramAction;
-import ru.progmatik.java.web.accounts.AccountService;
+import ru.progmatik.java.pregis.connectiondb.UsersDAO;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
 import ru.progmatik.java.web.freemarkergen.PageGenerator;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,13 +25,11 @@ import java.util.Map;
 public class UsersServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LoginClient.class);
-    private final AccountService accountService;
 
     private ProgramAction action;
 
     public UsersServlet() {
         super();
-        accountService = ProfileSingleton.instance().getAccountService();
     }
 
     public UsersServlet(ProgramAction action) {
@@ -41,18 +41,34 @@ public class UsersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (checkLogin(request, response)) {
             showPage(request, response);
+        } else {
+            response.sendRedirect("/login");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Boolean isAdmin = request.getParameter("admin") != null ? request.getParameter("admin").equalsIgnoreCase("on") : false;
-        UserProfile profile = new UserProfile(request.getParameter("login"),
-                request.getParameter("password"), request.getParameter("name"),
-                request.getParameter("surname"), request.getParameter("patronymic"),
-                request.getParameter("description"), isAdmin);
-        System.out.println(isAdmin);
-        System.out.println(profile);
+        if (checkLogin(request, response)) {
+            Boolean isAdmin = request.getParameter("admin") != null ? request.getParameter("admin").equalsIgnoreCase("on") : false;
+            UserProfile profile = new UserProfile(request.getParameter("login"),
+                    OtherFormat.getMD5(request.getParameter("password")), request.getParameter("name"),
+                    request.getParameter("surname"), request.getParameter("patronymic"),
+                    request.getParameter("description"), isAdmin);
+            try {
+                UsersDAO dao = new UsersDAO();
+                response.setContentType("text/html;charset=utf-8");
+                String infoAdded = dao.addUser(profile);
+                response.getWriter().println(infoAdded);
+                LOGGER.debug(infoAdded);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } catch (SQLException e) {
+                LOGGER.error("doPost sql: ", e);
+            }
+        } else {
+            response.setContentType("text/html;charset=utf-8");
+            response.getWriter().println("Вы не авторизованы!");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 
     private void showPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -76,14 +92,9 @@ public class UsersServlet extends HttpServlet {
 //        Извлекаем id сессии
         String sessionId = request.getSession().getId();
 //        Получаем профиль по id сессии
-        UserProfile profile = accountService.getUserBySessionId(sessionId);
+        UserProfile profile = ProfileSingleton.instance().getAccountService().getUserBySessionId(sessionId);
 //        Если нет профиля отвечает что и так не авторизирован
-        if (profile == null) {
-            response.sendRedirect("/login");
-            return false;
-        }
-//        request.getSession().setMaxInactiveInterval(10);
-        return true;
+        return profile != null;
     }
 
 }

@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container">
-    <form class="user-form" action="/users" method="post" accept-charset="utf-8">
+    <form id="user-form-id" class="user-form" action="/users" method="post" accept-charset="utf-8">
         <ul>
             <li>
                 <label for="login-id">Логин</label>
@@ -50,21 +50,29 @@
         <button class="btn-message">Продолжить</button>
     </div>
 </div>
+<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
 <script>
-    $(document).on("submit", "#user-form", function(event) {
-        var $form = $(this);
+    $(document).ready(function () {
 
-        $.post($form.attr("action"), $form.serialize(), function(response) {
+        $(document).on("submit", "#user-form-id", function (event) { // Перехват формы
+            var $form = $(this);
 
-        }).success(function () {
-            console.log("Ajax done!")
-        }).error(function () {
-            console.log("Ajax fail!")
-        }).complete(function () {
-            console.log("Ajax complete!")
+            event.preventDefault(); // Important! Prevents submitting the form.
+
+//            Отправляет данные для добавления на сервер, получает ответ выводит пользователю.
+            $.post($form.attr("action"), $form.serialize()
+            ).complete(function (answer) {
+                $('#user-form-id').hide();
+                $('.text-message').html(answer.responseText);
+                $('.message-form').fadeIn(300);
+//                console.log(answer.responseText);
+//                console.log("Ajax complete!");
+            });
         });
 
-        event.preventDefault(); // Important! Prevents submitting the form.
+        $('.btn-message').click(function () { // по нажатию на кнопку обновляет страницу
+            location.reload(true);
+        })
     });
 </script>
 </body>

@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.web.accounts.ProfileSingleton;
 import ru.progmatik.java.web.accounts.UserProfile;
 
 import java.sql.*;
@@ -59,7 +60,6 @@ public class UsersDAO {
         while (resultSet.next()) {
             UserProfile profile = new UserProfile(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
                     resultSet.getString(4), resultSet.getString(5), resultSet.getString(6), resultSet.getString(7), resultSet.getBoolean(8));
-//            UserProfile profile = new UserProfile(resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
             listUsers.add(profile);
         }
         resultSet.close();
@@ -73,7 +73,7 @@ public class UsersDAO {
      * @param profile объект с описанием пользователя.
      * @throws SQLException
      */
-    public void addUser(UserProfile profile) throws SQLException {
+    public String addUser(UserProfile profile) throws SQLException {
 
         Integer profileId = getIdByLogin(profile.getLogin());
         if (profileId == null) {
@@ -92,6 +92,8 @@ public class UsersDAO {
             LOGGER.debug("added profile: " + profile.getLogin());
             ps.close();
             connection.close();
+            ProfileSingleton.instance().resetProfileSingleton();
+            return "Учётная запись успешно добавлена.";
         } else {
             try (Connection connection = ConnectionDB.instance().getConnectionDB();
                  PreparedStatement ps = connection.prepareStatement("UPDATE USERS_LOGIN SET LOGIN = ?, PASSWORD = ?, " +
@@ -105,9 +107,12 @@ public class UsersDAO {
                 ps.setBoolean(7, profile.isAdmin());
                 ps.setInt(8, profileId);
                 ps.executeUpdate();
+                ProfileSingleton.instance().resetProfileSingleton();
                 LOGGER.debug("update profile: " + profile.getLogin());
             }
+            return "Данные успешно обновлены.";
         }
+//        return "Возникли ошибки, данные не обработаны.";
     }
 
 

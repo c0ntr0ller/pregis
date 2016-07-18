@@ -110,8 +110,10 @@ public class OrganizationDAO {
      */
     private OrganizationDataSet isAddedByOgrn(OrganizationDataSet dataSet) throws SQLException {
         ArrayList<OrganizationDataSet> organizations = getAllOrganizations();
-        for (OrganizationDataSet organization : organizations) {
-            if (dataSet.getOgrn().equals(organization.getOgrn())) return organization;
+        if (organizations != null) {
+            for (OrganizationDataSet organization : organizations) {
+                if (dataSet.getOgrn().equals(organization.getOgrn())) return organization;
+            }
         }
         return null;
     }

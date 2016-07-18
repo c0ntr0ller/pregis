@@ -1,6 +1,8 @@
 package ru.progmatik.java.pregis;
 
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -23,6 +25,8 @@ import java.security.Security;
 
 public class Main {
 
+    private static final Logger LOGGER = Logger.getLogger(Main.class);
+
     static {
 
         java.net.Authenticator.setDefault(new java.net.Authenticator() {
@@ -36,12 +40,22 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+
+
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
         System.setProperty("javax.net.ssl.supportGVO", "false");
 
-        System.setProperty("javax.net.debug", "all");
+//        System.setProperty("javax.net.debug", "all");
+
+        for (String arg : args) {
+            if (arg.equalsIgnoreCase("debug") || Logger.getLogger("ru.progmatik").getLevel().equals(Level.DEBUG)) {
+                Logger.getLogger("ru.progmatik").setLevel(Level.DEBUG);
+                System.setProperty("javax.net.debug", "all");
+//                System.setProperty("javax.net.debug", "ssl,handshake");
+            }
+        }
 
 //        Инициализация сертификатов и Крипто-ПРО
         System.setProperty("com.sun.security.enableCRLDP", "true");
@@ -67,10 +81,7 @@ public class Main {
 //        // создание менеджеров ключей
 //        KeyManager[] kms = kmf.getKeyManagers();
 
-//
-//        System.setProperty("javax.net.debug", "all");
-
-        System.setProperty("javax.net.debug", "ssl,handshake");
+//        System.setProperty("javax.net.debug", "ssl,handshake");
 
 //        System.setProperty("javax.net.ssl.keyStoreType", "PKCS12");
 //        System.setProperty("javax.net.ssl.keyStore", "data/dubovik.p12.pfx");
@@ -88,25 +99,25 @@ public class Main {
 //        инициализация контекста через системные свойства
 //        sslContext.init(kms, null, null);
 
-        SSLServerSocketFactory factory =
-                (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 
-        SSLServerSocket sslSocket =
-                (SSLServerSocket)factory.createServerSocket(5757);
+        if (LOGGER.isDebugEnabled()) {
+            SSLServerSocketFactory factory =
+                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 
-        String [] cipherSuites = sslSocket.getEnabledCipherSuites();
+            SSLServerSocket sslSocket =
+                    (SSLServerSocket)factory.createServerSocket(5757);
 
-        for (int i = 0; i < cipherSuites.length; i++) {
-            System.out.println("Cipher Suite " + i +
-                    " = " + cipherSuites[i]);
+            String [] cipherSuites = sslSocket.getEnabledCipherSuites();
+
+            for (int i = 0; i < cipherSuites.length; i++) {
+                System.out.println("Cipher Suite " + i +
+                        " = " + cipherSuites[i]);
+            }
         }
 
 //
 //        System.setProperty("https.protocols", "TLSv1");
 //        System.setProperty("jdk.tls.client.protocols", "TLSv1");
-
-//        Start
-//        new ProgramAction().callExportOrgRegistry();
 
         WebSocketClientServlet webSocketClientServlet = new WebSocketClientServlet();
         ProgramAction action = new ProgramAction(webSocketClientServlet.getClientService());

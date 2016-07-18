@@ -43,6 +43,7 @@ public class UpdateAllMeteringDeviceData {
 
     /**
      * Метод, получает список домов готовых для выгрузки в ГИС ЖКХ, формирует по ним новые ПУ и отправляет в ГИС ЖКХ.
+     *
      * @throws SQLException
      * @throws PreGISException
      */
@@ -99,16 +100,18 @@ public class UpdateAllMeteringDeviceData {
 //                Повторно загружаем для занесения MeteringDeviceRootGUID.
                 exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
                 if (exportMeteringDeviceDataResult != null)
-                meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
+                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
 
                 countUpdate += meteringDeviceGRADDAO.getCountUpdate();
                 countAdded += meteringDeviceGRADDAO.getCountAdded();
+                if (errorState > meteringDeviceGRADDAO.getErrorState()) {
+                    errorState = meteringDeviceGRADDAO.getErrorState();
+                }
             }
-
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
-        answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
-        answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
+            answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
+            answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
         }
         return errorState;
     }

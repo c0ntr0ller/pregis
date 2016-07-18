@@ -19,12 +19,13 @@
     </appender>
 
     <logger name="ru.progmatik">
-        <level value="info"/>
+        <level value="debug"/>
         <appender-ref ref="file"/>
     </logger>
-    <logger name="ru.progmatik">
-        <level value="debug"/>
-    </logger>
+    <!--<logger name="ru.progmatik">-->
+        <!--<level value="info"/>-->
+        <!--<appender-ref ref="file"/>-->
+    <!--</logger>-->
     <root>
         <priority value="info"/>
         <appender-ref ref="consoleAppender"/>

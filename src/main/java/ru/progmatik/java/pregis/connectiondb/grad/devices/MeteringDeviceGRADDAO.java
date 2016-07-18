@@ -97,6 +97,7 @@ public class MeteringDeviceGRADDAO {
     private int countAll = 0;
     private int countAdded = 0;
     private int countUpdate = 0;
+    private int errorState = 1;
 
     public MeteringDeviceGRADDAO(AnswerProcessing answerProcessing, Integer houseId) throws SQLException, ParseException, PreGISException {
         this.answerProcessing = answerProcessing;
@@ -211,11 +212,28 @@ public class MeteringDeviceGRADDAO {
         MeteringDeviceBasicCharacteristicsType basicCharacteristics = new MeteringDeviceBasicCharacteristicsType();
 //            Номер ПУ
         basicCharacteristics.setMeteringDeviceNumber(exGisPu1Element[DEVICE_NUMBER]);
+
+//        Обработка Марка ПУ и Модель ПУ, в ГРАД всё хранится в одной строке
+        if (exGisPu1Element[4] == null) {
+            try {
+                String[] ModelAndStamp = parsePU(exGisPu1Element[3]);
+//                  Марка ПУ
+                basicCharacteristics.setMeteringDeviceStamp(ModelAndStamp[1]);
+
+//                   Модель ПУ, обязательный, из БД приходит пустое значение
+                basicCharacteristics.setMeteringDeviceModel(ModelAndStamp[0]);
+            } catch (NullPointerException e) {
+//                  Марка ПУ
+                basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[3]);
+
+//                  Модель ПУ, обязательный, из БД приходит пустое значение
+                basicCharacteristics.setMeteringDeviceModel(exGisPu1Element[3]);
+            }
+        } else {
 //            Марка ПУ
-        basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[3]);
+            basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[3]);
 
 //            Модель ПУ, обязательный, из БД приходит пустое значение
-        if (exGisPu1Element[4] != null) {
             basicCharacteristics.setMeteringDeviceModel(exGisPu1Element[4]);
         }
 
@@ -235,14 +253,17 @@ public class MeteringDeviceGRADDAO {
 //          Характеристики поверки  Дата первичной поверки
 //        в 9.0 поменяли на "Дата последней поверки", поле стало не обязательным
         basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
-        if (exGisPu1Element[VERIFICATION_DATE] != null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
+        if (exGisPu1Element[VERIFICATION_DATE] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
             basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
+        } else if (exGisPu1Element[VERIFICATION_DATE] == null) { // ГИС ЖКХ выдаёт ошибку, если не указана дата, хотя не обязательна
+//            Берем дату ввода в эксплуатацию
+            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
         }
 //            Межповерочный интервал (НСИ 16) стал необязательным
         basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
 
 //        Дата опломбирования ПУ заводом-изготовителем (обязательно для заполнения при импорте), обязательное, ГРАД возвращает путое значение
-        if (exGisPu1Element[20] != null || System.currentTimeMillis() < dateFromSQL.parse(exGisPu1Element[20]).getTime()) {
+        if (exGisPu1Element[20] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[20]).getTime()) {
             basicCharacteristics.setFactorySealDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[20])));
         }
 
@@ -336,7 +357,7 @@ public class MeteringDeviceGRADDAO {
     }
 
     /**
-     * Метод, проверяет добавляет данные о ПУ, если их ещё нет.
+     * Метод, проверяет и добавляет данные о ПУ, если их ещё нет.
      *
      * @param exportMeteringDeviceDataResult полученный ответ на запрос о состоянии ПУ.
      * @param connectionGRAD                 подключение к БД ГРАД.
@@ -348,10 +369,54 @@ public class MeteringDeviceGRADDAO {
             if (resultType.getStatusRootDoc().equals("Active")) {
                 checkMeteringDevice(resultType.getMeteringDeviceRootGUID(), resultType.getMeteringDeviceVersionGUID(),
                         resultType.getBasicChatacteristicts(), connectionGRAD);
-//  Пока откл              checkBasicCharacteristicsForUpdate(resultType);
+//  Пока откл, Проверка
+                checkBasicCharacteristicsForUpdate(resultType);
             }
         }
 
+    }
+
+    /**
+     * Метод, парсит строку на отдельные данные: Модель ПУ и Марку ПУ
+     *
+     * @param metering строка для разбора
+     * @return массив 0 элемент - Модель ПУ, 1 элемент - Марка ПУ.
+     * @throws NullPointerException
+     */
+    private String[] parsePU(String metering) throws NullPointerException {
+
+        String mark = "";
+        String model = "";
+
+//        Парсим на модель и марку ПУ
+//        Если название имеет имя меньшего размера начмная с цифр. Например: СВХ777111.99
+        if (metering.split("\\d")[0].length() <= metering.split("\\s")[0].length() &&
+                metering.split("\\d")[0].length() <= metering.split("-")[0].length()) {
+
+            mark = metering.split("\\d")[0].trim();
+            model = metering.substring(mark.length()).trim();
+
+//            Если название имеет имя меньшего размера начмная с тире. Например: СВХ-15.45-10
+        } else if (metering.split("-")[0].length() <= metering.split("\\s")[0].length() &&
+                metering.split("-")[0].length() <= metering.split("\\d")[0].length()) {
+
+            mark = metering.split("-")[0].trim();
+            model = metering.substring(mark.length()).trim();
+            if (model.charAt(0) == '-') { // если следующий разделитель тире. Например: СВХ - 15.45-10, нужно его убрать.
+                model = model.substring(1).trim();
+            }
+
+        } else { // Остальные случаи. Например: СВХ - 15.45-10
+            mark = metering.split("\\s")[0].trim();
+            model = metering.substring(mark.length()).trim();
+            if (model.charAt(0) == '-') { // если следующий разделитель тире. Например: СВХ - 15.45-10, нужно его убрать.
+                model = model.substring(1).trim();
+            }
+        }
+
+        return new String[]{model, mark};
+
+//        System.out.println("Original: " + metering + " Marka: " + mark + " Model: " + model);
     }
 
     /**
@@ -456,15 +521,21 @@ public class MeteringDeviceGRADDAO {
 
         tempDevice.setTransportGUID(OtherFormat.getRandomGUID());
         tempDevice.setDeviceDataToUpdate(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToUpdate());
+        tempDevice.getDeviceDataToUpdate().setMeteringDeviceVersionGUID(importDevice.getMeteringDeviceVersionGUID());
         if (getDeviceValueRequest(importDevice.getMeteringDeviceVersionGUID()) == null) {
             tempDevice.getDeviceDataToUpdate().setUpdateBeforeDevicesValues(device);
-        } else {
-            tempDevice.getDeviceDataToUpdate().setUpdateAfterDevicesValues(new MeteringDeviceToUpdateAfterDevicesValuesType());
-            tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().setBasicChatacteristicts(device.getBasicChatacteristicts());
             if (device.getMunicipalResourceEnergy() == null) {
                 tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().getMunicipalResourceNotEnergy().addAll(device.getMunicipalResourceNotEnergy());
             } else {
                 tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().setMunicipalResourceEnergy(device.getMunicipalResourceEnergy());
+            }
+        } else { // Если уже были выгружены показания ПУ
+            tempDevice.getDeviceDataToUpdate().setUpdateAfterDevicesValues(new MeteringDeviceToUpdateAfterDevicesValuesType());
+//            tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().setBasicChatacteristicts(device.getBasicChatacteristicts());
+            if (device.getMunicipalResourceEnergy() == null) {
+                tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().getMunicipalResourceNotEnergy().addAll(device.getMunicipalResourceNotEnergy());
+            } else {
+                tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().setMunicipalResourceEnergy(device.getMunicipalResourceEnergy());
             }
         }
         devicesForUpdateList.add(tempDevice);
@@ -601,11 +672,11 @@ public class MeteringDeviceGRADDAO {
         setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD);
         if (getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDeviceVersionGUID) == null) {
             setMeteringVersionGUIDToLocalDb(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID);
+            countUpdate++;
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Обновлен ПУ, идентификатор версии ПУ в ГИС ЖКХ: " + meteringDeviceVersionGUID);
+            LOGGER.info("Обновлен элемент ПУ: ID = " + meteringDeviceVersionGUID + " MeterId: " + meterId);
         }
-        countUpdate++;
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Обновлен ПУ, идентификатор версии ПУ в ГИС ЖКХ: " + meteringDeviceVersionGUID);
-        LOGGER.info("Обновлен элемент ПУ: ID = " + meteringDeviceVersionGUID + " MeterId: " + meterId);
     }
 
     /**
@@ -637,11 +708,11 @@ public class MeteringDeviceGRADDAO {
         setMeteringDeviceUniqueNumbers(meterId, null, meteringDeviceRootGUID, connectionGRAD);
         if (getMeterIdFromLocalBaseUseMeteringRootGUID(meteringDeviceRootGUID) == null) {
             setMeteringRootGUIDToLocalDb(meterId, meteringDeviceRootGUID);
+            countUpdate++;
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Обновлен ПУ, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID);
+            LOGGER.info("Обновлен элемент ПУ: ID = " + meteringDeviceRootGUID + " MeterId: " + meterId);
         }
-        countUpdate++;
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Обновлен ПУ, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID);
-        LOGGER.info("Обновлен элемент ПУ: ID = " + meteringDeviceRootGUID + " MeterId: " + meterId);
     }
 
     /**
@@ -824,10 +895,8 @@ public class MeteringDeviceGRADDAO {
                     setMeteringDevices(result.getUniqueNumber(), result.getGUID(),
                             result.getImportMeteringDevice().getMeteringDeviceVersionGUID(), result.getTransportGUID(), connectionGrad);
                 } else {
-                    answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
-                    answerProcessing.sendMessageToClient("Код ошибки: " + result.getError().get(0).getErrorCode());
-                    answerProcessing.sendMessageToClient("Описание ошибки: " + result.getError().get(0).getDescription());
-                    answerProcessing.sendMessageToClient("");
+                    showErrorMeteringDevices(result.getTransportGUID(), result.getError().get(0).getErrorCode(),
+                            result.getError().get(0).getDescription());
                 }
             }
         } else {  // Возвращает не тот объект ответа.
@@ -841,13 +910,25 @@ public class MeteringDeviceGRADDAO {
                     setMeteringDevices(resultType.getUniqueNumber(), null, resultType.getGUID(),
                             resultType.getTransportGUID(), connectionGrad);
                 } else {
-                    answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
-                    answerProcessing.sendMessageToClient("Код ошибки: " + resultType.getError().get(0).getErrorCode());
-                    answerProcessing.sendMessageToClient("Описание ошибки: " + resultType.getError().get(0).getDescription());
-                    answerProcessing.sendMessageToClient("");
+                    showErrorMeteringDevices(resultType.getTransportGUID(), resultType.getError().get(0).getErrorCode(),
+                            resultType.getError().get(0).getDescription());
                 }
             }
         }
+    }
+
+    /**
+     * Метод, формирует и выводит пользователю информацию об ошибках, которые возвращает ГИС ЖКХ.
+     * @param transportGUID транспортный идентификатор.
+     * @param errorCode код ошибки.
+     * @param description описание ошибки.
+     */
+    private void showErrorMeteringDevices(String transportGUID, String errorCode, String description) {
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("TransportGUID: " + transportGUID);
+        answerProcessing.sendMessageToClient("Код ошибки: " + errorCode);
+        answerProcessing.sendMessageToClient("Описание ошибки: " + description);
+        errorState = 0;
     }
 
     /**
@@ -1291,6 +1372,10 @@ public class MeteringDeviceGRADDAO {
 
     public int getCountAdded() {
         return countAdded;
+    }
+
+    public int getErrorState() {
+        return errorState;
     }
 
     public int getCountUpdate() {

@@ -132,7 +132,6 @@ public class OtherFormat {
      * @return String MD5 сумма текста.
      */
     public static String getMD5(String text) {
-        String md5Hex = DigestUtils.md5Hex(text);
-        return md5Hex;
+        return DigestUtils.md5Hex(text);
     }
 }

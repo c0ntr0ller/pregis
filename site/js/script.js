@@ -79,7 +79,7 @@ function hideErrorList() {
     hideLayoutHide();
 };
 function hideLayoutHide() {
-    if ($('.button-state').css('display') === 'none') {
+    if ($('.show-state').css('display') === 'none') {
         $('.hide-layout').fadeOut(300);
     }
 };

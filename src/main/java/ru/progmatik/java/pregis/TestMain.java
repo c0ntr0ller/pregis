@@ -45,6 +45,21 @@ public class TestMain {
 //        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
 //        System.out.println(graddao.getMeteringDeviceFromLocalBase(36, 7124, "asdasdas4646", "fdsfds"));
 
+//        String s = "СВХ - 15.45-10";
+//        String s = "СВХ15.45-10";
+//        String[] array = {"СВХ - 15.45-10", "СВХ15.45-10", "СВХ-15.45-10", "СВХ- 15.45-10", "СВХ1 5.45-10", "СВХ -15.45-10"};
+//
+//        for (String s1 : array) {
+//            parsePU(s1);
+//        }
+
+//
+//        String[] split = s.split("\\d");
+//        for (String s1 : split) {
+//            System.out.println(s1);
+//        }
+
+
         getArrayCount();
 //        getDoubleAbonId();
 
@@ -180,6 +195,40 @@ public class TestMain {
 
     }
 
+//    public static void parsePU(String metering) {
+//
+//        String mark = "";
+//        String model = "";
+//
+////        Парсим на модель и марку ПУ
+////        Если название имеет имя меньшего размера начмная с цифр. Например: СВХ777111.99
+//        if (metering.split("\\d")[0].length() <= metering.split("\\s")[0].length() &&
+//                metering.split("\\d")[0].length() <= metering.split("-")[0].length()) {
+//
+//            mark = metering.split("\\d")[0].trim();
+//            model = metering.substring(mark.length()).trim();
+//
+////            Если название имеет имя меньшего размера начмная с тире. Например: СВХ-15.45-10
+//        } else if (metering.split("-")[0].length() <= metering.split("\\s")[0].length() &&
+//                metering.split("-")[0].length() <= metering.split("\\d")[0].length()) {
+//
+//            mark = metering.split("-")[0].trim();
+//            model = metering.substring(mark.length()).trim();
+//            if (model.charAt(0) == '-') { // если следующий разделитель тире. Например: СВХ - 15.45-10, нужно его убрать.
+//                model = model.substring(1).trim();
+//            }
+//
+//        } else { // Остальные случаи. Например: СВХ - 15.45-10
+//            mark = metering.split("\\s")[0].trim();
+//            model = metering.substring(mark.length()).trim();
+//            if (model.charAt(0) == '-') { // если следующий разделитель тире. Например: СВХ - 15.45-10, нужно его убрать.
+//                model = model.substring(1).trim();
+//            }
+//        }
+//
+//        System.out.println("Original: " + metering + " Marka: " + mark + " Model: " + model);
+//    }
+
 
     public static void getDoubleAbonId() throws SQLException, ParseException, PreGISException {
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
@@ -211,6 +260,7 @@ public class TestMain {
                 System.out.println("AbonId: " + exGisPu1.get(i)[27] + " meterId: " +  exGisPu1.get(i)[26] +
                         " MUNICIPAL_RESOURCE: " + exGisPu1.get(i)[11] + " METERING_VALUE: " + exGisPu1.get(i)[13] +
                         " INSTALLATION_DATE: " + exGisPu1.get(i)[17] + " Дата ввода в эксплуатацию: " + exGisPu1.get(i)[18] + " Дата опломбирования заводом: " + exGisPu1.get(i)[20]);
+                System.out.println("setFirstVerificationDate: " + exGisPu1.get(i)[19]);
                 System.out.println("Count Array: " + countArray);
             }
         }

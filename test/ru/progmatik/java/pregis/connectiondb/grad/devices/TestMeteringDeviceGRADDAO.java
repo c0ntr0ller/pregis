@@ -7,13 +7,14 @@ import java.sql.SQLException;
 
 public class TestMeteringDeviceGRADDAO {
 
+
     @Test
     public void getDataFromBase() throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        String name = "";
-        String sureName = "";
-
-        System.out.println(name.equals(sureName));
+//        String name = "";
+//        String sureName = "";
+//
+//        System.out.println(name.equals(sureName));
 
 //        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()));
 //

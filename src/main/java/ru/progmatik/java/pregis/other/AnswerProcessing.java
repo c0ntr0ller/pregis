@@ -106,6 +106,7 @@ public class AnswerProcessing {
 
         if (errorMessage != null) {
 //            clientService.sendMessage("::setFailed()");
+            clientService.sendMessage("");
             clientService.sendMessage(TextForLog.ERROR_MESSAGE + nameMethod);
             clientService.sendMessage(TextForLog.ERROR_CODE + errorMessage.getErrorCode());
             clientService.sendMessage(TextForLog.ERROR_DESCRIPTION + errorMessage.getDescription());
@@ -115,7 +116,6 @@ public class AnswerProcessing {
         } else {
 //            clientService.sendMessage("::setOkLabelText()");
             clientService.sendMessage(TextForLog.DONE_RESPONSE + nameMethod);
-            clientService.sendMessage("");
 
             logger.info("Successful.");
         }

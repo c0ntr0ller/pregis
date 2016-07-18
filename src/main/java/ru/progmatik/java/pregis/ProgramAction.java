@@ -1,12 +1,10 @@
 package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.SaveToBaseOrganization;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -19,7 +17,6 @@ import ru.progmatik.java.pregis.services.nsi.UpdateReference;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
-import ru.progmatik.java.pregis.services.organizations.common.service.ExportDataProvider;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
@@ -47,47 +44,6 @@ public class ProgramAction {
     }
 
     /**
-     * Получение "SenderID".
-     * отправляем запрос exportOrgRegistry получаем данные организации,
-     * отправляем запрос "exportDataProvider", получаем "SenderID" (находится в теге "DataProviderGUID").
-     */
-    public void getSenderID() {
-
-        setStateRunOn(); // взводим флаг в состояния выполнения метода
-
-        answerProcessing.sendMessageToClient("Запуск получения SenderID...");
-
-        try {
-            ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
-            ExportDataProvider dataProvider = new ExportDataProvider(answerProcessing);
-
-            ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
-
-            if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() != null) {
-
-                ExportDataProviderResult dataProviderResult = dataProvider.callExportDataProvide();
-
-                if (dataProviderResult != null && dataProviderResult.getErrorMessage() != null) {
-                    if (exportOrgRegistryResult.getErrorMessage() == null && dataProviderResult.getErrorMessage() == null) {
-                        SaveToBaseOrganization saveToBaseOrganization = new SaveToBaseOrganization();
-                        saveToBaseOrganization.setOrganization(exportOrgRegistryResult, dataProviderResult);
-                        answerProcessing.sendOkMessageToClient("SenderID успешно получен!");
-                    }
-                } else {
-                    answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
-                }
-            } else {
-                answerProcessing.sendMessageToClient("::setFailed()");
-                answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
-            }
-        } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getSenderID: ", "\"Получения SenderID\" ", LOGGER, e);
-//            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
-        }
-        setStateRunOff(); // взводим флаг в состояние откл.
-    }
-
-    /**
      * Метод, получение orgPPAGUID - идентификатор зарегистрированной организации.
      */
     public void getOrgPPAGUID() {
@@ -100,7 +56,7 @@ public class ProgramAction {
 
             ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
 
-            if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() != null) {
+            if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() == null) {
 
 
                 OrganizationDataSet dataSet = new OrganizationDataSet(
@@ -118,14 +74,14 @@ public class ProgramAction {
                 OrganizationDAO organizationDAO = new OrganizationDAO();
                 organizationDAO.addOrganization(dataSet);
 
-                answerProcessing.sendOkMessageToClient("orgPPAGUID успешно получен!");
+                answerProcessing.sendOkMessageToClient("Идентификатор зарегистрированной организации успешно получен!");
 
             } else {
                 answerProcessing.sendMessageToClient("::setFailed()");
-                answerProcessing.sendMessageToClient("Возникли ошибки, SenderID не получен!");
+                answerProcessing.sendMessageToClient("Возникли ошибки, идентификатор зарегистрированной организации не получен!");
             }
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение orgPPAGUID\" ", LOGGER, e);
+            answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации\" ", LOGGER, e);
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
         }
         setStateRunOff(); // взводим флаг в состояние откл.
@@ -232,8 +188,11 @@ public class ProgramAction {
             answerProcessing.sendMessageToClient("Архивирование ПУ...");
             ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
             MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(answerProcessing, houseId);
+            
         } catch (SQLException | ParseException | PreGISException e) {
             answerProcessing.sendErrorToClient("Архивирование ПУ: ", "\"Архивирование ПУ\"", LOGGER, e);
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
 
     }

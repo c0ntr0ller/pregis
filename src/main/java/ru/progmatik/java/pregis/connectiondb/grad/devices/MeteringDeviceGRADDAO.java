@@ -247,7 +247,7 @@ public class MeteringDeviceGRADDAO {
 //            Внесение показаний осуществляется в ручном режиме
 //        в 9.0 формах стало "Наличие возможности дистанционного снятия показаний"
         if ("Да".equalsIgnoreCase(exGisPu1Element[IS_MANUAL_MODE_METERING])) {
-            basicCharacteristics.setManualModeMetering(true);
+            basicCharacteristics.setRemoteModeMetering(true);
         }
 
 //          Характеристики поверки  Дата первичной поверки
@@ -344,7 +344,7 @@ public class MeteringDeviceGRADDAO {
             basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().add(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "LIVINGROOMGUID", connectionGrad));
             for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
                 if (exGisPu1Element[METER_ID_PU1].equals(getAllData(arrayData)[METER_ID_PU2])) {
-                    basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
+                    basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
                 }
             }
         } else {
@@ -492,7 +492,7 @@ public class MeteringDeviceGRADDAO {
                     } else if (!importDevice.getBasicChatacteristicts().getMeteringDeviceNumber().equals(device.getBasicChatacteristicts().getMeteringDeviceNumber()) &&
                             !importDevice.getBasicChatacteristicts().getMeteringDeviceStamp().equals(device.getBasicChatacteristicts().getMeteringDeviceStamp()) &&
                             !importDevice.getBasicChatacteristicts().getMeteringDeviceModel().equals(device.getBasicChatacteristicts().getMeteringDeviceModel()) &&
-                            !(importDevice.getBasicChatacteristicts().isManualModeMetering() == device.getBasicChatacteristicts().isManualModeMetering()) &&
+                            !(importDevice.getBasicChatacteristicts().isRemoteModeMetering() == device.getBasicChatacteristicts().isRemoteModeMetering()) &&
                             !(importDevice.getBasicChatacteristicts().isPressureSensor() == device.getBasicChatacteristicts().isPressureSensor()) &&
                             !(importDevice.getBasicChatacteristicts().isTemperatureSensor() == device.getBasicChatacteristicts().isTemperatureSensor()) &&
                             !importDevice.getBasicChatacteristicts().getInstallationDate().equals(device.getBasicChatacteristicts().getInstallationDate()) &&
@@ -905,7 +905,7 @@ public class MeteringDeviceGRADDAO {
             for (CommonResultType resultType : castResult.getCommonResult()) {
 
                 if (resultType.getError() == null || resultType.getError().size() == 0) {
-                    LOGGER.debug("Activ: base.ImportResult.");
+                    LOGGER.debug("Active: base.ImportResult.");
 //                Этот объект вместо getGUID содержит meteringVersionGUID.
                     setMeteringDevices(resultType.getUniqueNumber(), null, resultType.getGUID(),
                             resultType.getTransportGUID(), connectionGrad);
@@ -932,7 +932,7 @@ public class MeteringDeviceGRADDAO {
     }
 
     /**
-     * Метод, по транспортному идентификатору определяет отправленный счетчик и назначает ему полученные идентификаторы.
+     * Метод, по транспортному идентификатору определяет отправленный ПУ и назначает ему полученные идентификаторы.
      *
      * @param meteringUniqueNumber уникальный реестровый номер.
      * @param meteringRootGUID     идентификатор ПУ в ГИС ЖКХ.

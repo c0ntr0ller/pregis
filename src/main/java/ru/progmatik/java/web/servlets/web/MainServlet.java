@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Класс, будет иметь все кнопки для операций.
  */
-@WebServlet(name = "MainServlet", urlPatterns = "/main")
+@WebServlet(name = "MainServlet", urlPatterns = "/test")
 public class MainServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(MainServlet.class);

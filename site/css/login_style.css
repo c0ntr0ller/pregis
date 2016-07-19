@@ -70,9 +70,22 @@ label {
 	text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
 	cursor: pointer;
 }
+.loginform input[type=submit]:hover {
+	background: #94d0ef; /* Old browsers */
+	background: -moz-linear-gradient(top, #94d0ef 0%, #0ba6e2 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#94d0ef), color-stop(100%,#0ba6e2)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #94d0ef 0%,#0ba6e2 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #94d0ef 0%,#0ba6e2 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #94d0ef 0%,#0ba6e2 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #94d0ef 0%,#0ba6e2 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#64c8ef', endColorstr='#0ba6e2',GradientType=0 ); /* IE6-9 */
+}
+.loginform input[type=submit]:active {
+	background: #0ba6e2; /* Old browsers */
+}
 #error {
 	/*padding-top: 10px;*/
-	margin-top: 20px;
+	margin-top: 10px;
 	margin-left: 30px;
 	font-size: 16px;
 	color: red;

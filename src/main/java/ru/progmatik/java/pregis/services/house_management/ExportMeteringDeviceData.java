@@ -37,6 +37,7 @@ public class ExportMeteringDeviceData {
      */
     public ExportMeteringDeviceDataResult callExportMeteringDeviceData(String fias) throws SQLException {
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();

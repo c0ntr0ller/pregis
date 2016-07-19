@@ -27,7 +27,7 @@ public class ProfileSingleton {
             usersDAO = new UsersDAO();
             List<UserProfile> listProfils = usersDAO.getUsers();
             if (listProfils.isEmpty()) {
-                accountService.addNewUser(new UserProfile("admin", OtherFormat.getMD5("admin"), "Администратор сервиса"));
+                accountService.addNewUser(new UserProfile("admin", OtherFormat.getMD5("admin"), "Администратор сервиса", true));
                 accountService.addNewUser(new UserProfile("test"));
             } else {
                 for (UserProfile userProfile : listProfils) {

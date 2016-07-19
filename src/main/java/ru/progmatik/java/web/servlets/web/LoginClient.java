@@ -98,7 +98,8 @@ public class LoginClient extends HttpServlet {
 
 //        Если профиль не найден или пароль указан неверно.
         if (profile == null || !password.equals(profile.getPassword())) {
-            showPage(request, response, "Проверьте правильность ввода данных!", HttpServletResponse.SC_UNAUTHORIZED);
+            showPage(request, response, "Проверьте достоверность веденных данных!", HttpServletResponse.SC_UNAUTHORIZED);
+//            showPage(request, response, "Проверьте правильность ввода данных!", HttpServletResponse.SC_UNAUTHORIZED);
             LOGGER.debug("Login: " + login + " password: " + password);
 
             if (profile == null) {

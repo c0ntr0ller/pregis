@@ -237,7 +237,7 @@
             <artifactId>giswsdl</artifactId>
             <version>${giswsdl.version}</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/giswsdl.jar</systemPath>
+            <systemPath>${project.basedir}/lib/giswsdl-2.jar</systemPath>
             <type>jar</type>
         </dependency>
 

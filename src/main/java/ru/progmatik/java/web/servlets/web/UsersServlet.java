@@ -63,6 +63,10 @@ public class UsersServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
             } catch (SQLException e) {
                 LOGGER.error("doPost sql: ", e);
+                response.setContentType("text/html;charset=utf-8");
+                response.getWriter().println("Возникла ошибка!");
+                response.getWriter().println("Сообщение: " + e.getMessage());
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {
             response.setContentType("text/html;charset=utf-8");
@@ -94,7 +98,7 @@ public class UsersServlet extends HttpServlet {
 //        Получаем профиль по id сессии
         UserProfile profile = ProfileSingleton.instance().getAccountService().getUserBySessionId(sessionId);
 //        Если нет профиля отвечает что и так не авторизирован
-        return profile != null;
+        return (profile != null && profile.isAdmin());
     }
 
 }

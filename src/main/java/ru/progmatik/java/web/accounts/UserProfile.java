@@ -61,7 +61,7 @@ public class UserProfile {
         this.admin = admin;
     }
 
-    public UserProfile(String login, String password, String description) {
+    public UserProfile(String login, String password, String description, Boolean admin) {
         this.id = -1;
         this.login = login;
         this.password = password;
@@ -69,7 +69,7 @@ public class UserProfile {
         this.surname = null;
         this.patronymic = null;
         this.description = description;
-        this.admin = false;
+        this.admin = admin;
     }
 
     public UserProfile(String login) {

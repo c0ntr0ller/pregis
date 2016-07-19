@@ -77,6 +77,7 @@ public class UsersDAO {
     public String addUser(UserProfile profile) throws SQLException {
 
         Integer profileId = getIdByLogin(profile.getLogin());
+        int size = getUsers().size();
         if (profileId == null) {
 
             Connection connection = ConnectionDB.instance().getConnectionDB();
@@ -88,7 +89,7 @@ public class UsersDAO {
             ps.setString(4, profile.getSurname());
             ps.setString(5, profile.getPatronymic());
             ps.setString(6, profile.getDescription());
-            ps.setBoolean(7, profile.isAdmin());
+            ps.setBoolean(7, size > 1 ? profile.isAdmin() : true); // если ещё нет учетных записей, то первая будет админом
             ps.executeUpdate();
             LOGGER.debug("added profile: " + profile.getLogin());
             ps.close();
@@ -105,7 +106,7 @@ public class UsersDAO {
                 ps.setString(4, profile.getSurname());
                 ps.setString(5, profile.getPatronymic());
                 ps.setString(6, profile.getDescription());
-                ps.setBoolean(7, profile.isAdmin());
+                ps.setBoolean(7, size > 1 ? profile.isAdmin() : true); // если ещё нет учетных записей, то первая будет админом
                 ps.setInt(8, profileId);
                 ps.executeUpdate();
                 ProfileSingleton.instance().resetProfileSingleton();

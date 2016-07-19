@@ -7,6 +7,7 @@ import ru.progmatik.java.web.accounts.UserProfile;
 import ru.progmatik.java.web.freemarkergen.PageGenerator;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@WebServlet(name = "IndexServlet", urlPatterns = "/main")
 public class IndexServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(IndexServlet.class);

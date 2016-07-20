@@ -3631,3 +3631,27 @@ The object is already closed [90007-190]
 2016-07-19 12:49:19 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLException: Объект уже закрыт
 The object is already closed [90007-190]
+2016-07-20 17:41:22 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Столбец "9yCA00008600137" не найден
+Column "9yCA00008600137" not found; SQL statement:
+SELECT * FROM METERING_DEVICE_IDENTIFIERS WHERE METERING_UNIQUE_NUMBER = "9yCA00008600137" [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.expression.Comparison.optimize(Comparison.java:180)
+	at org.h2.command.dml.Select.prepare(Select.java:838)
+	at org.h2.command.Parser.prepareCommand(Parser.java:246)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.execute(JDBCStatementImpl.java:345)
+	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCStatementImpl.executeStatement(JDBCStatementImpl.java:138)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.executeSingleQuery(SQLQueryJob.java:328)
+	at org.jkiss.dbeaver.runtime.sql.SQLQueryJob.extractData(SQLQueryJob.java:686)
+	at org.jkiss.dbeaver.ui.editors.sql.SQLEditor$QueryResultsContainer.readData(SQLEditor.java:1400)
+	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataPumpJob.run(ResultSetDataPumpJob.java:137)
+	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:99)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

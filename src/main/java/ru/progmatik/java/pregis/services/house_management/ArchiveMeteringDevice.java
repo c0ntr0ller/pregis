@@ -55,6 +55,7 @@ public class ArchiveMeteringDevice {
         return deviceList;
     }
 
+
     /**
      * Метод, формирует список ПУ для архивирования.
      * @param deviceForArchiveAndCreateMap список ПУ для архивации.

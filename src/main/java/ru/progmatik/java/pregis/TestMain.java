@@ -7,6 +7,7 @@ import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -25,8 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,8 +59,9 @@ public class TestMain {
 //            System.out.println(s1);
 //        }
 
+        getTableSize();
+//        getArrayCount();
 
-        getArrayCount();
 //        getDoubleAbonId();
 
 //        ArrayList<String> list = new ArrayList<String>();
@@ -195,6 +196,24 @@ public class TestMain {
 
     }
 
+    public static void getTableSize() {
+
+        Long size = 0L;
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement st = connection.createStatement()) {
+            ResultSet rs = st.executeQuery("SELECT SOAPMESSAGE FROM OBMEN_OPERATION");
+            while (rs.next()) {
+                Blob blob = rs.getBlob(1);
+                if (blob != null)
+                size += blob.length();
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(size);
+    }
+
 //    public static void parsePU(String metering) {
 //
 //        String mark = "";
@@ -239,7 +258,7 @@ public class TestMain {
                 for (int j = i + 1; j < exGisPu1.size(); j++) {
                     countArray++;
                     if (exGisPu1.get(i)[18].equals(exGisPu1.get(j)[18])) {
-                        System.out.println("Repiat: " + exGisPu1.get(i)[18] + " meterId: " +  exGisPu1.get(i)[17] + " i: " + i + " j" + j);
+                        System.out.println("Repiat: " + exGisPu1.get(i)[18] + " meterId: " + exGisPu1.get(i)[17] + " i: " + i + " j" + j);
                     }
                 }
                 System.out.println("Count Array: " + countArray);
@@ -257,7 +276,7 @@ public class TestMain {
                 for (int j = 0; j < exGisPu1.get(i).length; j++) {
                     countArray++;
                 }
-                System.out.println("AbonId: " + exGisPu1.get(i)[27] + " meterId: " +  exGisPu1.get(i)[26] +
+                System.out.println("AbonId: " + exGisPu1.get(i)[27] + " meterId: " + exGisPu1.get(i)[26] +
                         " MUNICIPAL_RESOURCE: " + exGisPu1.get(i)[11] + " METERING_VALUE: " + exGisPu1.get(i)[13] +
                         " INSTALLATION_DATE: " + exGisPu1.get(i)[17] + " Дата ввода в эксплуатацию: " + exGisPu1.get(i)[18] + " Дата опломбирования заводом: " + exGisPu1.get(i)[20]);
                 System.out.println("setFirstVerificationDate: " + exGisPu1.get(i)[19]);
@@ -311,6 +330,7 @@ public class TestMain {
 //            e.printStackTrace();
 //        }
     }
+
     public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException {
 
 

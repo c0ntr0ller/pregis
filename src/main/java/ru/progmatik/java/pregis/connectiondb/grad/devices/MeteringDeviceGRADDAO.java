@@ -44,7 +44,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                     "ACCOUNT_GUID varchar(40), " +
                     "PREMISE_GUID varchar(40), " +
                     "LIVING_ROOM_GUID varchar(40), " +
-                    "METERING_DEVICE_NUMBER varchar(255), " +
+                    "METERING_DEVICE_NUMBER varchar(100), " +
                     "METERING_UNIQUE_NUMBER varchar(40), " +
                     "METERING_ROOT_GUID varchar(40), " +
                     "METERING_VERSION_GUID varchar(40), " +

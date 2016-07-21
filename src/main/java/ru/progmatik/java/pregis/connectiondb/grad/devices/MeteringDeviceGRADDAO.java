@@ -565,11 +565,12 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         tempDevice.getDeviceDataToUpdate().setMeteringDeviceVersionGUID(importDevice.getMeteringDeviceVersionGUID());
         if (getDeviceValueRequest(importDevice.getMeteringDeviceVersionGUID()) == null) {  // если ещё не было выгрузки формирум иначе нет.
             tempDevice.getDeviceDataToUpdate().setUpdateBeforeDevicesValues(device.getDeviceDataToCreate());
-            if (device.getDeviceDataToCreate().getMunicipalResourceEnergy() == null) {
-                tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().getMunicipalResourceNotEnergy().addAll(device.getDeviceDataToCreate().getMunicipalResourceNotEnergy());
-            } else {
-                tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().setMunicipalResourceEnergy(device.getDeviceDataToCreate().getMunicipalResourceEnergy());
-            }
+//            if (device.getDeviceDataToCreate().getMunicipalResourceEnergy() == null) { // не нужен даные берем сверху
+//                tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().getMunicipalResourceNotEnergy().clear();
+//                tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().getMunicipalResourceNotEnergy().addAll(device.getDeviceDataToCreate().getMunicipalResourceNotEnergy());
+//            } else {
+//                tempDevice.getDeviceDataToUpdate().getUpdateBeforeDevicesValues().setMunicipalResourceEnergy(device.getDeviceDataToCreate().getMunicipalResourceEnergy());
+//            }
         } else { // Если уже были выгружены показания ПУ
             tempDevice.getDeviceDataToUpdate().setUpdateAfterDevicesValues(new MeteringDeviceToUpdateAfterDevicesValuesType());
 //            tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().setBasicChatacteristicts(device.getBasicChatacteristicts());

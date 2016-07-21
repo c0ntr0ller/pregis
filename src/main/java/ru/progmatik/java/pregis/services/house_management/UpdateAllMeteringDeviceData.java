@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,36 +72,16 @@ public class UpdateAllMeteringDeviceData {
 
                 countAll += meteringDeviceGRADDAO.getCountAll();
 
-                if (devices.size() > 0) {
-                    int count = 0;
-                    while (count < devices.size()) {
-                        ImportResult importResult;
-                        if (count + 20 > devices.size()) {
-                            importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(count, devices.size()));
-                            count += 20;
-                        } else {
-                            importResult = importMeteringDeviceData.callImportMeteringDeviceData(entryHouse.getKey(), devices.subList(count, count += 20));
-                        }
-                        if (importResult != null && importResult.getCommonResult() != null) {
-                            meteringDeviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
-
-                            for (ImportResult.CommonResult result : importResult.getCommonResult()) {
-                                answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
-                                answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
-                                answerProcessing.sendMessageToClient("MeteringDeviceVersionGUID: " + result.getImportMeteringDevice().getMeteringDeviceVersionGUID());
-                                answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
-                                answerProcessing.sendMessageToClient("");
-                            }
-                        } else {
-                            errorState = -1;
-                        }
-                    }
-                }
+                callImportMeteringDevices(importMeteringDeviceData, devices, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
 
 //                Повторно загружаем для занесения MeteringDeviceRootGUID.
                 exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
                 if (exportMeteringDeviceDataResult != null)
                     meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
+
+                if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
+                    setDevicesToArchiveAndCreate(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
+                }
 
                 countUpdate += meteringDeviceGRADDAO.getCountUpdate();
                 countAdded += meteringDeviceGRADDAO.getCountAdded();
@@ -114,5 +95,66 @@ public class UpdateAllMeteringDeviceData {
             answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
         }
         return errorState;
+    }
+
+    private void setDevicesToArchiveAndCreate(ImportMeteringDeviceData importMeteringDeviceData, String fias,
+                                              MeteringDeviceGRADDAO meteringDeviceGRADDAO, Connection connectionGRAD)
+            throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
+
+        LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> createMap = new LinkedHashMap<>();
+
+        for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().entrySet()) {
+            createMap.put(entry.getKey(), entry.getValue());
+            break;
+        }
+
+        MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, createMap);
+        callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
+        callImportMeteringDevices(importMeteringDeviceData, toArchive.getListForCreateDevices(), fias, meteringDeviceGRADDAO, connectionGRAD);
+    }
+
+    /**
+     * Метод, формирует запросы на порции по 20 устройст, ГИС ЖКХ выдаёт ошибки, когда устройств много.
+     *
+     * @param importMeteringDeviceData - через него отправляем запрос в ГИС ЖКХ.
+     * @param devices                  - список ПУ.
+     * @param fias                     - ФИАС дома.
+     * @param deviceGRADDAO            - объект для занисения данных в БД.
+     * @param connectionGRAD           - подключение к БД ГРАД.
+     * @throws SQLException
+     * @throws FileNotFoundException
+     * @throws SOAPException
+     * @throws JAXBException
+     */
+    private void callImportMeteringDevices(ImportMeteringDeviceData importMeteringDeviceData,
+                                           List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
+                                           String fias, IMeteringDevices deviceGRADDAO,
+                                           Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
+
+        if (devices.size() > 0) {
+            int count = 0;
+            while (count < devices.size()) {
+                ImportResult importResult;
+                if (count + 20 > devices.size()) {
+                    importResult = importMeteringDeviceData.callImportMeteringDeviceData(fias, devices.subList(count, devices.size()));
+                    count += 20;
+                } else {
+                    importResult = importMeteringDeviceData.callImportMeteringDeviceData(fias, devices.subList(count, count += 20));
+                }
+                if (importResult != null && importResult.getCommonResult() != null) {
+                    deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
+
+                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
+                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
+                        answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
+                        answerProcessing.sendMessageToClient("MeteringDeviceVersionGUID: " + result.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+                        answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
+                        answerProcessing.sendMessageToClient("");
+                    }
+                } else {
+                    errorState = -1;
+                }
+            }
+        }
     }
 }

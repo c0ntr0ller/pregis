@@ -74,6 +74,7 @@ public class ProgramAction {
                 OrganizationDAO organizationDAO = new OrganizationDAO();
                 organizationDAO.addOrganization(dataSet);
 
+                answerProcessing.sendOkMessageToClient("");
                 answerProcessing.sendOkMessageToClient("Идентификатор зарегистрированной организации успешно получен!");
 
             } else {

@@ -10,6 +10,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.services.house_management.IMeteringDevices;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -20,7 +21,9 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -28,7 +31,7 @@ import java.util.regex.Pattern;
  * Для каждого дома, нужно создавать по новой.
  * Что бы из БД каждый раз не запрашивать данные беру их один раз и храню в массивах.
  */
-public class MeteringDeviceGRADDAO {
+public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
     private static final Logger LOGGER = Logger.getLogger(MeteringDeviceGRADDAO.class);
     private static final String TABLE_NAME_METERING_DEVICE_IDENTIFIERS = "METERING_DEVICE_IDENTIFIERS";
@@ -138,16 +141,17 @@ public class MeteringDeviceGRADDAO {
             mapTransportMeteringDevice.put(meteringDevices.getTransportGUID(), new LinkedHashMap<>());
             mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
             mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), null);
-            LOGGER.debug("meterId: " + exGisPu1Element[METER_ID_PU1]);
-            if (getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERVERSIONGUID", connectionGRAD) == null) {
+//            LOGGER.debug("meterId: " + exGisPu1Element[METER_ID_PU1]);
+            String rootGUID = getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERVERSIONGUID", connectionGRAD);
+            if (rootGUID == null || isArchivingDevice(rootGUID)) {
                 meteringDeviceList.add(meteringDevices);
-                LOGGER.debug("ПУ добавлен для выгрузки meterId: " + exGisPu1Element[METER_ID_PU1] +
+                LOGGER.info("ПУ добавлен для выгрузки meterId: " + exGisPu1Element[METER_ID_PU1] +
                         " AbonId: " + exGisPu1Element[ABON_ID_PU1]);
             }
         }
         for (ImportMeteringDeviceDataRequest.MeteringDevice deviceForUpdate : devicesForUpdateList) {
             meteringDeviceList.add(deviceForUpdate);
-            LOGGER.debug("ПУ добавлен для обновления в ГИС ЖКХ: " + deviceForUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
+            LOGGER.info("ПУ добавлен для обновления в ГИС ЖКХ: " + deviceForUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
         }
 
         return meteringDeviceList;
@@ -169,8 +173,22 @@ public class MeteringDeviceGRADDAO {
         return countUpdate;
     }
 
+    /**
+     * Метод, возвращает все ПУ, которые не удалось обновить в ГИС ЖКХ. Они предназначены для дальнейшего архивирования.
+     * @return map, ключ - MeteringDeviceVersionGUID, значение - готовое устройство для создания.
+     */
     public LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> getDeviceForArchiveAndCreateMap() {
-        return deviceForArchiveAndCreateMap;
+
+        LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> outMap = new LinkedHashMap<>();
+
+        for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : deviceForArchiveAndCreateMap.entrySet()) {
+            for (ImportMeteringDeviceDataRequest.MeteringDevice deviceUpdate : devicesForUpdateList) {
+                if (entry.getKey().equals(deviceUpdate.getTransportGUID())) {
+                    outMap.put(deviceUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID(), entry.getValue());
+                }
+            }
+        }
+        return outMap;
     }
 
     /**
@@ -556,16 +574,17 @@ public class MeteringDeviceGRADDAO {
             tempDevice.getDeviceDataToUpdate().setUpdateAfterDevicesValues(new MeteringDeviceToUpdateAfterDevicesValuesType());
 //            tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().setBasicChatacteristicts(device.getBasicChatacteristicts());
             if (device.getDeviceDataToCreate().getMunicipalResourceEnergy() == null) {
-                tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().getMunicipalResourceNotEnergy().addAll(device.getDeviceDataToCreate().getMunicipalResourceNotEnergy());
+                tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().getMunicipalResourceNotEnergy().clear();
+                tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().getMunicipalResourceNotEnergy().add(device.getDeviceDataToCreate().getMunicipalResourceNotEnergy().get(0));
             } else {
                 tempDevice.getDeviceDataToUpdate().getUpdateAfterDevicesValues().setMunicipalResourceEnergy(device.getDeviceDataToCreate().getMunicipalResourceEnergy());
             }
         }
         devicesForUpdateList.add(tempDevice);
-//        добавим в MAP MeteringDeviceVersionGUID и устройство, если обновление не пройдет,
-//        можем идентифицировать устройство по MeteringDeviceVersionGUID и получить нужное устройство.
+//        добавим в MAP TransportGUID и устройство, если обновление не пройдет,
+//        можем идентифицировать устройство по TransportGUID и получить нужное устройство.
 //        затем можем заархивировать устройство в ГИС ЖКХ и создать по новой.
-        deviceForArchiveAndCreateMap.put(importDevice.getMeteringDeviceVersionGUID(), device);
+        deviceForArchiveAndCreateMap.put(tempDevice.getTransportGUID(), device);
     }
 
     /**
@@ -695,7 +714,7 @@ public class MeteringDeviceGRADDAO {
      * @param meteringDeviceVersionGUID идентификатор версии ПУ в ГИС ЖКХ.
      * @param connectionGRAD            подключение к БД ГРАД.
      */
-    private void updateMeteringVersionGUID(Integer meterId, String meteringDeviceRootGUID, String meteringDeviceVersionGUID, Connection connectionGRAD) throws SQLException {
+    public void updateMeteringVersionGUID(Integer meterId, String meteringDeviceRootGUID, String meteringDeviceVersionGUID, Connection connectionGRAD) throws SQLException {
         setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD);
         if (getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDeviceVersionGUID) == null) {
             setMeteringVersionGUIDToLocalDb(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID);
@@ -946,7 +965,7 @@ public class MeteringDeviceGRADDAO {
             Integer meterId = null;
 
 //            Если получили без ошибки ответ, то смотрим, есть в Map для добавления устройства в архив элемент, если нашли, удаляем его.
-            if (deviceForArchiveAndCreateMap.containsKey(meteringVersionGUID)) deviceForArchiveAndCreateMap.remove(meteringVersionGUID);
+            if (deviceForArchiveAndCreateMap.containsKey(transportGUID)) deviceForArchiveAndCreateMap.remove(transportGUID);
 
             for (Map.Entry<Integer, ImportMeteringDeviceDataRequest.MeteringDevice> entry : mapTransportMeteringDevice.get(transportGUID).entrySet()) {
 
@@ -1160,7 +1179,7 @@ public class MeteringDeviceGRADDAO {
      * @return meterId ид ПУ в БД ГРАД.
      * @throws SQLException
      */
-    private Integer getMeterIdFromLocalBaseUseMeteringVersionGUID(String meteringVersionGUID) throws SQLException {
+    public Integer getMeterIdFromLocalBaseUseMeteringVersionGUID(String meteringVersionGUID) throws SQLException {
 
         Integer meterId = null;
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
@@ -1189,10 +1208,11 @@ public class MeteringDeviceGRADDAO {
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement ps = connection.prepareStatement("UPDATE METERING_DEVICE_IDENTIFIERS " +
                      "SET ARCHIVING_REASON_CODE = ? WHERE METERING_VERSION_GUID = ?")) {
-//            if (!isArchivingDevice(meteringVersionGUID, connection)) {
                 ps.setInt(1, nsiCodeElement);
                 ps.setString(2, meteringVersionGUID);
                 ps.executeUpdate();
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("ПУ помечен как архивный: " + meteringVersionGUID);
 //            }
         }
     }
@@ -1201,15 +1221,14 @@ public class MeteringDeviceGRADDAO {
      * Метод, проверяет по указанному "MeteringVersionGUID", является ПУ архивным или нет.
      *
      * @param meteringVersionGUID уникальный реестровый номер ПУ в ГИС ЖХК.
-     * @param connectionLocalBase подключение к локальной БД.
      * @return true - если ПУ архивное, false - если ПУ не является архивным.
      * @throws SQLException
      */
-    private boolean isArchivingDevice(String meteringVersionGUID, Connection connectionLocalBase) throws SQLException {
+    private boolean isArchivingDevice(String meteringVersionGUID) throws SQLException {
 
         boolean isArchive;
 
-        try (Connection connection = connectionLocalBase;
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement pstm = connection.prepareStatement(
                      "SELECT ARCHIVING_REASON_CODE FROM METERING_DEVICE_IDENTIFIERS " +
                              "WHERE METERING_VERSION_GUID = ? AND ARCHIVING_REASON_CODE IS NOT NULL")) {
@@ -1379,7 +1398,7 @@ public class MeteringDeviceGRADDAO {
      * @throws SOAPException
      * @throws SQLException
      */
-    private ru.gosuslugi.dom.schema.integration.base.ImportResult getImportResultLastFromDataBase() throws JAXBException, FileNotFoundException, SOAPException, SQLException {
+    public ru.gosuslugi.dom.schema.integration.base.ImportResult getImportResultLastFromDataBase() throws JAXBException, FileNotFoundException, SOAPException, SQLException {
         MessageInBase messageInBase = new MessageInBase();
         JAXBContext jc = JAXBContext.newInstance(ru.gosuslugi.dom.schema.integration.base.ImportResult.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -1409,5 +1428,4 @@ public class MeteringDeviceGRADDAO {
         }
         return newArray;
     }
-
 }

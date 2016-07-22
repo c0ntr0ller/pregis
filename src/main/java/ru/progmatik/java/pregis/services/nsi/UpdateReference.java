@@ -81,6 +81,7 @@ public class UpdateReference {
             answerProcessing.sendMessageToClient("::clearLabelText");
         }
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Обновляю справочник 59 - \"Работы и услуги организации\".");
         if (updateDataProviderNsiItem("59")) {
             answerProcessing.sendMessageToClient("Справочник 59 - \"Работы и услуги организации\": успешно обновлен!");
@@ -90,6 +91,7 @@ public class UpdateReference {
             answerProcessing.sendMessageToClient("::clearLabelText");
         }
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Обновляю справочник 1 - \"Дополнительные услуги\".");
         if (updateDataProviderNsiItem("1")) {
             answerProcessing.sendMessageToClient("Справочник 1 - \"Дополнительные услуги\": успешно обновлен!");
@@ -125,6 +127,7 @@ public class UpdateReference {
         ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(answerProcessing);
         ExportNsiItemResult resultNsi = dataProviderNsiItem.callExportDataProviderNsiItem(codeNsi);
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Получаю справочники из БД с кодом: " + codeNsi);
         Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi);
 

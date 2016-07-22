@@ -59,7 +59,10 @@ public class TestMain {
 //            System.out.println(s1);
 //        }
 
-        getTableSize();
+//        setShutdownDefragToLocalBase(); // сжать локальную БД.
+        getTableSize(); // получить размер файлов из БД.
+
+
 //        getArrayCount();
 
 //        getDoubleAbonId();
@@ -196,7 +199,25 @@ public class TestMain {
 
     }
 
+    public static void setShutdownDefragToLocalBase() {
+
+        ConnectionDB.instance().setShutdownDefragToLocalBase();
+
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             Statement st = connection.createStatement()) {
+            st.executeUpdate("SHUTDOWN DEFRAG");
+            System.out.println("SHUTDOWN DEFRAG SUCCESS!!!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.close();
+        }
+
+    }
+
     public static void getTableSize() {
+
+        ConnectionDB.instance().setShutdownDefragToLocalBase();
 
         Long size = 0L;
         try (Connection connection = ConnectionDB.instance().getConnectionDB();

@@ -40,7 +40,7 @@ public class ConnectionDB {
         return connectionDB;
     }
 
-    public static void close() throws Exception {
+    public static void close() {
 
         if (cp != null) {
             cp.dispose();
@@ -84,6 +84,16 @@ public class ConnectionDB {
         try (Statement statement = getConnectionDB().createStatement()) {
             statement.executeUpdate(sqlCreateTable);
             LOGGER.debug(sqlCreateTable);
+        }
+    }
+
+    public void setShutdownDefragToLocalBase() {
+
+        try (Statement st = getConnectionDB().createStatement()) {
+            st.executeUpdate("SHUTDOWN DEFRAG");
+            LOGGER.info("SHUTDOWN DEFRAG SUCCESS!!!");
+        } catch (SQLException e) {
+            LOGGER.error("SHUTDOWN DEFRAG ERROR!!!", e);
         }
     }
 }

@@ -97,6 +97,7 @@ public class ProgramAction {
         try {
             setStateRunOn();
             answerProcessing.sendMessageToClient("Запуск получения Справочников...");
+            answerProcessing.sendMessageToClient("");
             UpdateReference updateReference = new UpdateReference(answerProcessing);
             updateReference.updateAllDataProviderNsiItem();
 //            setStateRunOff();
@@ -353,6 +354,15 @@ public class ProgramAction {
         }
     }
 
+
+//    /**
+//     * Метод, получает вопрос, который адресуется клиенту, если клиент ответил, то вернется true или false.
+//     * @param question сообщение.
+//     */
+//    public void showQuestionToClient(String question) {
+//        answerProcessing.sendMessageToClient(question);
+//    }
+
     /**
      * Метод, возвращает состояние выполнения какого либо метода.
      * Если статус "true", т.е. что то выполняется, значит мы не будем запускать новый метод,
@@ -387,6 +397,6 @@ public class ProgramAction {
     }
 
     public void checkSessions() {
-        clientService.checkSession();;
+        clientService.checkSession();
     }
 }

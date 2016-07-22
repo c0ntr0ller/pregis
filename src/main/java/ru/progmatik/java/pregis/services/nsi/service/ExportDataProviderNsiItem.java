@@ -44,6 +44,7 @@ public class ExportDataProviderNsiItem {
      */
     public ExportNsiItemResult callExportDataProviderNsiItem(String code) throws SQLException {
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
 //        Создание загаловков сообщений (запроса и ответа)

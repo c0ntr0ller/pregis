@@ -12,6 +12,7 @@ function getWebConnect() {
     };
     ws.onmessage = function (event) {
         var inMessage = event.data;
+        // var scrollSize = 0;
         if (inMessage.indexOf('::setButtonState(false)') != -1) {
             showButton();
         } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
@@ -26,7 +27,13 @@ function getWebConnect() {
             $('.label-text > span').html(inMessage);
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";
-            $textarea.scrollTop = $textarea.scrollHeight;
+
+            // if (scrollSize === 0 || scrollSize === $textarea.scrollTop) {
+                $textarea.scrollTop = $textarea.scrollHeight;
+                // scrollSize = $textarea.scrollTop;
+            // }
+            // console.log('scrollTop: ' + $textarea.scrollTop + ' scrollHeight: ' + $textarea.scrollHeight + ' scrollSize:' + scrollSize);
+
         }
     };
     ws.onclose = function (event) {

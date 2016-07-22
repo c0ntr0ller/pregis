@@ -41,14 +41,14 @@ public class ClientService {
         String command = json.getCommand();
         String value = json.getValue();
 
-        String answerToClient = "Получена команда: " + command;
+        String answerToClient = "\nПолучена команда: " + command;
         if (!value.isEmpty()) {
             answerToClient += " значение: " + value + "\n";
         } else {
             answerToClient += "\n";
         }
 
-        sendMessage(answerToClient);  // убрать
+        sendMessage(answerToClient);
 
         if (action.isRunning()) {
             sendMessage("Уже выполнятся другая операция!");

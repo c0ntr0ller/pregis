@@ -111,10 +111,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         nsi = new ReferenceNSI(answerProcessing);
 //        Если нет таблицы создаём
         if (!ConnectionDB.instance().tableExist(TABLE_NAME_METERING_DEVICE_IDENTIFIERS.toUpperCase())) {
-            try (Connection connection = ConnectionDB.instance().getConnectionDB();
-                 Statement statement = connection.createStatement()) {
-                statement.executeUpdate(SQL_CREATE_TABLE_METERING_DEVICE_IDENTIFIERS);
-            }
+            ConnectionDB.instance().sendSqlRequest(SQL_CREATE_TABLE_METERING_DEVICE_IDENTIFIERS);
         }
     }
 

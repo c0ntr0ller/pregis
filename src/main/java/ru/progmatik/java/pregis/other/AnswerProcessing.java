@@ -131,5 +131,12 @@ public class AnswerProcessing {
         clientService.sendMessage(message);
     }
 
-
+    /**
+     * Метод, получает вопрос, который адресуется клиенту, если клиент ответил, то вернется true или false.
+     * @param question сообщение.
+     */
+    public void showQuestionToClient(String question) {
+        sendMessageToClient("::question()");
+        sendMessageToClient(question);
+    }
 }

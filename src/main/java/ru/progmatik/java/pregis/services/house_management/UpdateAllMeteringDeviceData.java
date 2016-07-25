@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class UpdateAllMeteringDeviceData {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllMeteringDeviceData.class);
     private final AnswerProcessing answerProcessing;
+    private final ArrayList<ArchiveData> archiveDataList = new ArrayList<>();
     private int countAll = 0;
     private int countAdded = 0;
     private int countUpdate = 0;
@@ -80,7 +82,9 @@ public class UpdateAllMeteringDeviceData {
                     meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
 
                 if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
-                    setDevicesToArchiveAndCreate(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
+                    archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
+//                    TODO
+//                    setDevicesToArchiveAndCreate(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
                 }
 
                 countUpdate += meteringDeviceGRADDAO.getCountUpdate();
@@ -89,26 +93,59 @@ public class UpdateAllMeteringDeviceData {
                     errorState = meteringDeviceGRADDAO.getErrorState();
                 }
             }
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
-            answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
-            answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
+            showInfo();
         }
         return errorState;
     }
 
+    /**
+     * Метод, пересоздание ПУ.
+     * @throws SQLException
+     * @throws PreGISException
+     * @throws JAXBException
+     * @throws SOAPException
+     * @throws ParseException
+     * @throws FileNotFoundException
+     */
+    public void recreatingMeteringDevices() throws SQLException, PreGISException, JAXBException, SOAPException, ParseException, FileNotFoundException {
+
+        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            for (ArchiveData archiveData : archiveDataList) {
+                setDevicesToArchiveAndCreate(archiveData.getImportMeteringDeviceData(), archiveData.getFias(),
+                        archiveData.getMeteringDeviceGRADDAO(), connection);
+            }
+        }
+
+    }
+
+    /**
+     * Метод, выводит информацию пользователю.
+     */
+    private void showInfo() {
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
+        answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
+        answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
+    }
+
+    /**
+     * Метод, обрабатывает ПУ для пересоздания их в ГИС ЖКХ.
+     * @param importMeteringDeviceData объект отправляет запросы в ГИС ЖКХ.
+     * @param fias код дома по ФИАС.
+     * @param meteringDeviceGRADDAO объект содержащий данные о ПУ.
+     * @param connectionGRAD подключение к БД ГРАД.
+     * @throws ParseException
+     * @throws SQLException
+     * @throws PreGISException
+     * @throws FileNotFoundException
+     * @throws SOAPException
+     * @throws JAXBException
+     */
     private void setDevicesToArchiveAndCreate(ImportMeteringDeviceData importMeteringDeviceData, String fias,
                                               MeteringDeviceGRADDAO meteringDeviceGRADDAO, Connection connectionGRAD)
             throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
-        LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> createMap = new LinkedHashMap<>();
-
-        for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().entrySet()) {
-            createMap.put(entry.getKey(), entry.getValue());
-            break;
-        }
-
-        MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, createMap);
+        MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap());
         callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
         callImportMeteringDevices(importMeteringDeviceData, toArchive.getListForCreateDevices(), fias, meteringDeviceGRADDAO, connectionGRAD);
     }
@@ -134,6 +171,7 @@ public class UpdateAllMeteringDeviceData {
         if (devices.size() > 0) {
             int count = 0;
             while (count < devices.size()) {
+                answerProcessing.sendMessageToClient("::clearLabelText");
                 ImportResult importResult;
                 if (count + 20 > devices.size()) {
                     importResult = importMeteringDeviceData.callImportMeteringDeviceData(fias, devices.subList(count, devices.size()));
@@ -155,6 +193,33 @@ public class UpdateAllMeteringDeviceData {
                     errorState = -1;
                 }
             }
+        }
+    }
+
+    /**
+     * Класс, для описания объекта.
+     */
+    private class ArchiveData {
+        private ImportMeteringDeviceData importMeteringDeviceData;
+        private String fias;
+        private MeteringDeviceGRADDAO meteringDeviceGRADDAO;
+
+        private ArchiveData(ImportMeteringDeviceData importMeteringDeviceData, String fias, MeteringDeviceGRADDAO meteringDeviceGRADDAO) {
+            this.importMeteringDeviceData = importMeteringDeviceData;
+            this.fias = fias;
+            this.meteringDeviceGRADDAO = meteringDeviceGRADDAO;
+        }
+
+        private ImportMeteringDeviceData getImportMeteringDeviceData() {
+            return importMeteringDeviceData;
+        }
+
+        private String getFias() {
+            return fias;
+        }
+
+        private MeteringDeviceGRADDAO getMeteringDeviceGRADDAO() {
+            return meteringDeviceGRADDAO;
         }
     }
 }

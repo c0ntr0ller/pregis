@@ -354,15 +354,6 @@ public class ProgramAction {
         }
     }
 
-
-//    /**
-//     * Метод, получает вопрос, который адресуется клиенту, если клиент ответил, то вернется true или false.
-//     * @param question сообщение.
-//     */
-//    public void showQuestionToClient(String question) {
-//        answerProcessing.sendMessageToClient(question);
-//    }
-
     /**
      * Метод, возвращает состояние выполнения какого либо метода.
      * Если статус "true", т.е. что то выполняется, значит мы не будем запускать новый метод,

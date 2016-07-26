@@ -76,6 +76,7 @@ public class ProgramAction {
 
                 answerProcessing.sendOkMessageToClient("");
                 answerProcessing.sendOkMessageToClient("Идентификатор зарегистрированной организации успешно получен!");
+                answerProcessing.showQuestionToClient("Бебе всё нравится?");
 
             } else {
                 answerProcessing.sendMessageToClient("::setFailed()");

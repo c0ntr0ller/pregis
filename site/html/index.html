@@ -126,23 +126,32 @@
         </div>
     </div>
 </div>
+<div class="hide-layout"></div>
+<div class="show-state">
+    <div class="img"></div>
+    <div class="label-text"><span>Состояние...</span></div>
+    <a href="#" class="other-error show-report">Посмотреть лог...</a>
+    <div class="button button-state"><span>Продолжить</span></div>
+</div>
+<div class="error-list">
+    <a href="#" class="close-dialog"></a>
+    <label for="messages">Лог работы:</label>
+    <textarea id="messages" readonly="readonly"></textarea>
+</div>
+<div class="modal-window">
+    <!-- то, что не прокручивается -->
+    <div class="modal-text">
+        <!-- то, что прокручивается -->
+        It's test modal
+    </div>
+    <div class="button button-no"><span>Нет</span></div>
+    <div class="button button-yes"><span>Да</span></div>
+</div>
 <footer class="footer">
     <span>Разработано &#169; </span><a href="http://prog-matik.ru"><img src="images/progmatic_150x150.png"></a><span> г. Новосибирск 2016. </span>
     <br>
     <span class="show-log show-report">Посмотреть отчёт работы...</span>
 </footer>
-<div class="show-state">
-    <div class="img"></div>
-    <div class="label-text"><span>Состояние...</span></div>
-    <a href="#" class="other-error show-report">Посмотреть лог...</a>
-    <div class="button-state"><span>Продолжить</span></div>
-</div>
-<div class="error-list">
-    <a href="#" class="close-dialog"></a>
-    <label for="messages">Лог работы:</label>
-    <textarea id="messages" readonly="readonly"></textarea></div>
-<div class="hide-layout"></div>
-
 <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
 <script type="text/javascript" src="/js/websocket.js"></script>
 <script type="text/javascript" src="/js/script.js"></script>

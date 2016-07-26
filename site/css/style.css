@@ -203,7 +203,7 @@ body {
 }
 .label-text {
     background-color: #333;
-    margin: 0 auto;
+    margin: 0 auto 7px;
     color: #fff;
     font-size: 15px;
     overflow: auto;
@@ -222,10 +222,10 @@ body {
     width: 345px;
 }
 .other-error {
-    margin-top: 7px;
+    /*margin-top: 7px;*/
     margin-left: 5px;
-    text-align: left;
-    display: block;
+    /*text-align: left;*/
+    /*display: block;*/
 }
 .other-error:link, .other-error:visited {
     color: #00a2e2;
@@ -297,14 +297,58 @@ body {
     padding: 10px;
     background-color: #eeeeee;
 }
-
+.modal-window {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url('../images/whitey.png') -5px -5px;
+    border: 5px solid rgba(197, 192, 192, .7);
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    height: 198px;
+    position: fixed;
+    width: 345px;
+    z-index: 1001;
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+}
+.modal-text {
+    position: absolute;
+    overflow: auto;
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 70%;
+    padding: 20px 50px 0 20px;
+}
+/*.modal {*/
+    /*position: fixed;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+    /*!*width: 100px;*!*/
+    /*!*height: 100px;*!*/
+    /*!*background-color: white;*!*/
+    /*display: block;*/
+/*}*/
 
 /***BUTTON***/
 .button-state {
+    left: 26%;
+}
+.button-yes {
+    right: 15%;
+}
+.button-no {
+    left: 15%;
+}
+.button {
     clear: both;
     position: absolute;
     bottom: -20px;
-    left: 26%;
+    /*left: 26%;*/
     background: linear-gradient(to bottom,#515459 0%,#3B3C40 100%);
     padding: 1px;
     display: inline-block;
@@ -324,7 +368,7 @@ body {
     user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
 }
-.button-state span {
+.button span {
     background: linear-gradient(to bottom,#515459 0%,#3B3C40 100%);
     font-family: "Helvetica Neue", sans-serif;
     font-size: 16px;
@@ -340,14 +384,14 @@ body {
     -moz-box-shadow: 0 1px 1px rgba(255,255,255,0.3) inset;
     -webkit-box-shadow: 0 1px 1px rgba(255,255,255,0.3) inset;
 }
-.button-state:hover {
+.button:hover {
     background: linear-gradient(to bottom,#3B3C40 0%,#202124 100%);
     /*background: linear-gradient(to bottom,#37aff4 0%,#2764ca 100%);*/
 }
-.button-state:hover span {
+.button:hover span {
     background: linear-gradient(to bottom,#3B3C40 0%,#202124 100%);
 }
-.button-state:active {
+.button:active {
     background: linear-gradient(to bottom,#202124 0%,#3B3C40 100%);
     /*box-shadow: 0 1px 1px #FFF;*/
 }

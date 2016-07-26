@@ -136,7 +136,7 @@ public class AnswerProcessing {
      * @param question сообщение.
      */
     public void showQuestionToClient(String question) {
-        sendMessageToClient("::question()");
-        sendMessageToClient(question);
+        sendMessageToClient("::showModalWindow()" + question);
+//        sendMessageToClient(question);
     }
 }

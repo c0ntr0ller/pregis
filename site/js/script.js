@@ -45,7 +45,6 @@ $(function () {
     $('.thumb').click(function () { // вызов отправки операции
         var message = $(this).attr("id");
         if (message === undefined) {
-            //    Доработать вывод сообщения "модуль в разработке"
         } else if (message === "exit") {
             exitRequest();
         } else {
@@ -77,6 +76,11 @@ function showErrorList() {
 function hideErrorList() {
     $('.error-list').fadeOut(300);
     hideLayoutHide();
+};
+function showLayoutHide() {
+    if ($('.show-state').css('display') === 'none') {
+        $('.hide-layout').fadeIn(300);
+    }
 };
 function hideLayoutHide() {
     if ($('.show-state').css('display') === 'none') {

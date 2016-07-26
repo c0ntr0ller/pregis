@@ -2,6 +2,9 @@ var ws;
 
 $(document).ready(function () {
     getWebConnect();
+    $('.close-dialog').click(function () {
+        hideErrorList();
+    });
 });
 
 function getWebConnect() {
@@ -19,10 +22,12 @@ function getWebConnect() {
             showState();
         } else if (inMessage.indexOf('::setFailed()') != -1) {
             setFailedLabelText();
-        } else if (inMessage.indexOf('::setOkLabelText') != -1) {
+        } else if (inMessage.indexOf('::setOkLabelText()') != -1) {
             setOkLabelText();
         } else if (inMessage.indexOf('::clearLabelText') != -1) {
             clearLabelText();
+        } else if (inMessage.indexOf('::showModalWindow()') != -1) {
+            showModalWindow(event.data.replace('::showModalWindow()', ''));
         } else {
             $('.label-text > span').html(inMessage);
             var $textarea = document.getElementById("messages");
@@ -84,3 +89,13 @@ function clearLabelText() {
     $('.label-text').attr("class", "label-text");
     $('.show-state .img').css("background-image", "url('images/500.gif')");
 };
+function showModalWindow(text) {
+    $('.modal-text').text(text);
+    $('.modal-window').fadeIn(300);
+    showLayoutHide()
+};
+function hideModalWindow() {
+    $('.modal-window').fadeOut(300);
+    hideLayoutHide();
+};
+

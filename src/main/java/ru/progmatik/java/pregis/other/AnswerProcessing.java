@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
+import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 /**
@@ -135,8 +136,11 @@ public class AnswerProcessing {
      * Метод, получает вопрос, который адресуется клиенту, если клиент ответил, то вернется true или false.
      * @param question сообщение.
      */
-    public void showQuestionToClient(String question) {
+    public void showQuestionToClient(String question, ClientDialogWindowObservable observable) {
+        clientService.addListener(observable);
         sendMessageToClient("::showModalWindow()" + question);
-//        sendMessageToClient(question);
+//        sendMessageToClient(question); ::closeModalWindow()
     }
+
+
 }

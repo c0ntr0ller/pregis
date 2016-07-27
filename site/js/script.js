@@ -35,6 +35,12 @@ $(function () {
         }, 500);
         // $('#messages').val("");
     }).hide();
+    $('.button-no').click(function () {
+       answerNo();
+    });
+    $('.button-yes').click(function () {
+        answerYes();
+    });
 
     $('.close-dialog').click(function () {
         hideErrorList();

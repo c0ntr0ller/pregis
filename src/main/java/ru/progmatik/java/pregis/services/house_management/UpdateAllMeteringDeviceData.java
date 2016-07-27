@@ -9,6 +9,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.soap.SOAPException;
@@ -16,15 +17,12 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Класс, синхронизирует данные о ПУ.
  */
-public class UpdateAllMeteringDeviceData {
+public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllMeteringDeviceData.class);
     private final AnswerProcessing answerProcessing;
@@ -84,6 +82,7 @@ public class UpdateAllMeteringDeviceData {
                 if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
                     archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
 //                    TODO
+
 //                    setDevicesToArchiveAndCreate(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
                 }
 
@@ -94,6 +93,12 @@ public class UpdateAllMeteringDeviceData {
                 }
             }
             showInfo();
+        }
+        int countRecreate = getCountMeteringDevicesForRecreate();
+        System.out.println("countRecreate: " + countRecreate);
+        if (countRecreate > 0) {
+            answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " прибора учёта. " +
+                    "Желаете добавить эти устройства в архив ГИС ЖКХ и создать повторно?\n", this);
         }
         return errorState;
     }
@@ -107,15 +112,28 @@ public class UpdateAllMeteringDeviceData {
      * @throws ParseException
      * @throws FileNotFoundException
      */
-    public void recreatingMeteringDevices() throws SQLException, PreGISException, JAXBException, SOAPException, ParseException, FileNotFoundException {
+    private void recreatingMeteringDevices() throws SQLException, PreGISException, JAXBException, SOAPException, ParseException, FileNotFoundException {
 
         try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            answerProcessing.sendMessageToClient("Пересоздаю ПУ...");
             for (ArchiveData archiveData : archiveDataList) {
                 setDevicesToArchiveAndCreate(archiveData.getImportMeteringDeviceData(), archiveData.getFias(),
                         archiveData.getMeteringDeviceGRADDAO(), connection);
             }
         }
 
+    }
+
+    /**
+     * Метод, возвращает количество записей готовых для пересоздания.
+     * @return количество записей готовых для пересоздания.
+     */
+    private int getCountMeteringDevicesForRecreate() {
+        int count = 0;
+        for (ArchiveData data : archiveDataList) {
+            count += data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().size();
+        }
+        return count;
     }
 
     /**
@@ -194,6 +212,20 @@ public class UpdateAllMeteringDeviceData {
                 }
             }
         }
+    }
+
+    @Override
+    public void go() {
+        try {
+            recreatingMeteringDevices();
+        } catch (SQLException | FileNotFoundException | ParseException | SOAPException | JAXBException | PreGISException e) {
+            answerProcessing.sendErrorToClient("Обновление ПУ", "\"Обновление ПУ\"", LOGGER, e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        archiveDataList.clear();
     }
 
     /**

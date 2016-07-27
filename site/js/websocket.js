@@ -11,11 +11,13 @@ function getWebConnect() {
     var host = "ws://" + window.location.hostname + ":" + window.location.port + "/websocket";
     ws = new WebSocket(host);
     ws.onopen = function (event) {
+
         // console.log('Открыто соединение');
     };
+    var scrollSize = 0;
     ws.onmessage = function (event) {
         var inMessage = event.data;
-        // var scrollSize = 0;
+
         if (inMessage.indexOf('::setButtonState(false)') != -1) {
             showButton();
         } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
@@ -28,17 +30,17 @@ function getWebConnect() {
             clearLabelText();
         } else if (inMessage.indexOf('::showModalWindow()') != -1) {
             showModalWindow(event.data.replace('::showModalWindow()', ''));
+        } else if (inMessage.indexOf('::closeModalWindow()') != -1) {
+            hideModalWindow();
         } else {
             $('.label-text > span').html(inMessage);
             var $textarea = document.getElementById("messages");
             $textarea.value = $textarea.value + inMessage + "\n";
 
-            // if (scrollSize === 0 || scrollSize === $textarea.scrollTop) {
+            if (scrollSize === 0 || $textarea.scrollHeight < ($textarea.scrollTop + 500 )) {
                 $textarea.scrollTop = $textarea.scrollHeight;
-                // scrollSize = $textarea.scrollTop;
-            // }
-            // console.log('scrollTop: ' + $textarea.scrollTop + ' scrollHeight: ' + $textarea.scrollHeight + ' scrollSize:' + scrollSize);
-
+                scrollSize = $textarea.scrollTop;
+            }
         }
     };
     ws.onclose = function (event) {
@@ -63,23 +65,23 @@ function getWebConnect() {
 };
 
 function sendMessage(message) {
+    sendMessageWithParam(message, "");
+};
+function sendMessageWithParam(message, param) {
     var valueForm = "";
-    // sendMessage(message, "");
     if (ws.readyState != 1) location.reload(true);
-    //     if (document.getElementById(message) !== null) {
-    //         valueForm = document.getElementById(message).value;
-    //     }
+    if (param.length > 0) {
+        valueForm = param;
+    }
     var msgJSON = {
         command: message,
         value: valueForm
     };
-    // ws.send(message);
     ws.send(JSON.stringify(msgJSON));
 };
 
 function setFailedLabelText() {
     $('.label-text').attr("class", "label-text failed");
-//    $('.show-state .img').css("background-image", "url('images/fail66px.png')");
     $('.show-state .img').css("background-image", "url('images/error-64px.png')");
 };
 function setOkLabelText() {
@@ -92,10 +94,24 @@ function clearLabelText() {
 function showModalWindow(text) {
     $('.modal-text').text(text);
     $('.modal-window').fadeIn(300);
-    showLayoutHide()
+    if ($('.hide-layout').css('display') != 'none') {
+        $('.hide-layout').css("z-index", 1001);
+    }
+    showLayoutHide();
 };
 function hideModalWindow() {
     $('.modal-window').fadeOut(300);
+    if ($('.hide-layout').css('z-index') === '1001') {
+        $('.hide-layout').css("z-index", 998);
+    }
     hideLayoutHide();
+};
+function answerNo() {
+    hideModalWindow();
+    sendMessageWithParam("callQuestion", "false");
+};
+function answerYes() {
+    hideModalWindow();
+    sendMessageWithParam("callQuestion", "true");
 };
 

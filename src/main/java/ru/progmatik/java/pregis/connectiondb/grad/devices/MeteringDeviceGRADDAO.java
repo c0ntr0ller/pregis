@@ -171,6 +171,14 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     }
 
     /**
+     * Метод, возвращает количество записей готовых для пересоздания.
+     * @return количество записей готовых для пересоздания.
+     */
+    public int getCountRecreateMeteringDevice() {
+        return devicesForUpdateList.size();
+    }
+
+    /**
      * Метод, возвращает все ПУ, которые не удалось обновить в ГИС ЖКХ. Они предназначены для дальнейшего архивирования.
      * @return map, ключ - MeteringDeviceVersionGUID, значение - готовое устройство для создания.
      */

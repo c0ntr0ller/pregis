@@ -2,17 +2,19 @@ package ru.progmatik.java.web.servlets.socket;
 
 import com.google.gson.Gson;
 import ru.progmatik.java.pregis.ProgramAction;
+import ru.progmatik.java.web.servlets.listener.ClientDialogWindowListener;
+import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientService {
     private final List<String> dataList = new ArrayList<>();
+    private final ClientDialogWindowListener listener = new ClientDialogWindowListener();
     private Set<ClientWebSocket> webSockets;
     private ProgramAction action;
+    private Timer timer = new Timer();
+    private boolean question;
 
     public ClientService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -84,6 +86,9 @@ public class ClientService {
                 case "callExportMeteringDevice":
                     action.callExportMeteringDevice();
                     break;
+                case "callQuestion":
+                    setQuestion(Boolean.valueOf(value));
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.
@@ -115,9 +120,52 @@ public class ClientService {
         webSockets.remove(webSocket);
     }
 
+    /**
+     * Метод, добавляет наблюдателей к кому нужно послать ответ.
+     * Если в течении 3 минут ответа нет, то окно у клиента уйдет, а операция отменится.
+     * @param observable наблюдатель.
+     */
+    public void addListener(ClientDialogWindowObservable observable) {
+        listener.addListener(observable);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() { // заводим таймер на 3 минуты
+                closeQuestionWindowClient();
+                setQuestion(false);
+            }
+        },0, 1000 * 180);
+    }
+
+
+
     public void checkSession() {
         for (ClientWebSocket user : webSockets) {
                 user.checkAccount();
         }
     }
+
+    private void setQuestion(boolean question) {
+        listener.sendAnswer(question);
+        removeAllListener();
+        timer.cancel();
+    }
+
+    /**
+     * Метод, удаляет наблюдателя из списка.
+     */
+    private void removeAllListener() {
+        listener.removeAllListener();
+    }
+
+    private void startTimerForModalWindow() {
+
+    }
+
+    /**
+     * Метод, закрывает окно с вопросом у клиента.
+     */
+    public void closeQuestionWindowClient() {
+        sendMessage("::closeModalWindow()");
+    }
+
 }

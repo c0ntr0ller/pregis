@@ -58,9 +58,8 @@ public class TestMain {
 //        for (String s1 : split) {
 //            System.out.println(s1);
 //        }
-
 //        setShutdownDefragToLocalBase(); // сжать локальную БД.
-        getTableSize(); // получить размер файлов из БД.
+//        getTableSize(); // получить размер файлов из БД.
 
 
 //        getArrayCount();

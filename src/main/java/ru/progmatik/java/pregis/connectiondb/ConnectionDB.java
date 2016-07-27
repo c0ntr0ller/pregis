@@ -54,8 +54,9 @@ public class ConnectionDB {
      */
     public Connection getConnectionDB() throws SQLException {
 
-        if (connection == null || connection.isClosed())
+        if (connection == null || connection.isClosed()) {
             connection = cp.getConnection();
+        }
 
         return connection;
     }
@@ -91,6 +92,8 @@ public class ConnectionDB {
 
         try (Statement st = getConnectionDB().createStatement()) {
             st.executeUpdate("SHUTDOWN DEFRAG");
+            cp.dispose();
+            cp = JdbcConnectionPool.create(databaseURI, userName, password);
             LOGGER.info("SHUTDOWN DEFRAG SUCCESS!!!");
         } catch (SQLException e) {
             LOGGER.error("SHUTDOWN DEFRAG ERROR!!!", e);

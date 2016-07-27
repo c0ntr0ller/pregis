@@ -28,10 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class TestMain {
@@ -61,6 +58,8 @@ public class TestMain {
 //        setShutdownDefragToLocalBase(); // сжать локальную БД.
 //        getTableSize(); // получить размер файлов из БД.
 
+
+        showTime();
 
 //        getArrayCount();
 
@@ -231,7 +230,7 @@ public class TestMain {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println(size);
+        System.out.println(size/1024/1024);
     }
 
 //    public static void parsePU(String metering) {
@@ -349,6 +348,17 @@ public class TestMain {
 //            LOGGER.error(e.getMessage());
 //            e.printStackTrace();
 //        }
+    }
+
+    private static void showTime() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() { // заводим таймер на 3 минуты
+                System.out.println("Прошло типа 3 минуты");
+                timer.cancel();
+            }
+        }, 1000 * 20);
     }
 
     public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException {

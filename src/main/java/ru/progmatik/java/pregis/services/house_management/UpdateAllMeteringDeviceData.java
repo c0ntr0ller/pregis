@@ -97,7 +97,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
         int countRecreate = getCountMeteringDevicesForRecreate();
         System.out.println("countRecreate: " + countRecreate);
         if (countRecreate > 0) {
-            answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " прибора учёта. " +
+            answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " " + getDeviceTag(countRecreate) + " " +
                     "Желаете добавить эти устройства в архив ГИС ЖКХ и создать повторно?\n", this);
         }
         return errorState;
@@ -105,6 +105,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
 
     /**
      * Метод, пересоздание ПУ.
+     *
      * @throws SQLException
      * @throws PreGISException
      * @throws JAXBException
@@ -126,6 +127,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
 
     /**
      * Метод, возвращает количество записей готовых для пересоздания.
+     *
      * @return количество записей готовых для пересоздания.
      */
     private int getCountMeteringDevicesForRecreate() {
@@ -148,10 +150,11 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
 
     /**
      * Метод, обрабатывает ПУ для пересоздания их в ГИС ЖКХ.
+     *
      * @param importMeteringDeviceData объект отправляет запросы в ГИС ЖКХ.
-     * @param fias код дома по ФИАС.
-     * @param meteringDeviceGRADDAO объект содержащий данные о ПУ.
-     * @param connectionGRAD подключение к БД ГРАД.
+     * @param fias                     код дома по ФИАС.
+     * @param meteringDeviceGRADDAO    объект содержащий данные о ПУ.
+     * @param connectionGRAD           подключение к БД ГРАД.
      * @throws ParseException
      * @throws SQLException
      * @throws PreGISException
@@ -226,6 +229,25 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
     @Override
     public void stop() {
         archiveDataList.clear();
+    }
+
+    private String getDeviceTag(int size) {
+
+        int value;
+
+        if ((size / 10) % 10 == 1) {
+            value = size / 100;
+        } else {
+            value =  size % 10;
+        }
+
+        if (value == 1) {
+            return "прибор учёта";
+        } else if (value > 1 && value < 5) {
+            return "прибора учёта";
+        } else {
+            return "приборов учёта";
+        }
     }
 
     /**

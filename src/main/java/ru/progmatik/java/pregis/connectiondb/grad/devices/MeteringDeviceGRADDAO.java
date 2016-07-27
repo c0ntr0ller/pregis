@@ -481,8 +481,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         String meteringRootGUIDGrad;
         String meteringVersionGUIDGrad;
 
-        meterId = getMeterIdFromLocalBaseUseMeteringRootGUID(meteringDeviceRootGUID);
-        if (meterId == null) meterId = getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDeviceVersionGUID);
+        meterId = getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDeviceVersionGUID);
+        if (meterId == null) meterId = getMeterIdFromLocalBaseUseMeteringRootGUID(meteringDeviceRootGUID);
 
         if (meterId != null) { // если есть ид то берем оп нему идентификаторы ГИС ЖКХ.
             meteringRootGUIDGrad = getMeteringDeviceUniqueNumbersFromGrad(meterId, "METERROOTGUID", connectionGRAD);
@@ -495,6 +495,13 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             } else if (meteringRootGUIDGrad.equalsIgnoreCase(meteringDeviceRootGUID) &&
                     !meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) { // Если meteringRootGUIDGrad верный, а meteringDeviceVersionGUID изменился на устройстве.
                 updateMeteringVersionGUID(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID, connectionGRAD);
+            } else if (!meteringRootGUIDGrad.equalsIgnoreCase(meteringDeviceRootGUID) &&
+                    meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) { // Если VersionGUID один, а RootGUID старый.
+                setMeteringRootGUID(meterId, meteringDeviceRootGUID, connectionGRAD);
+            } else if (!meteringRootGUIDGrad.equalsIgnoreCase(meteringDeviceRootGUID) &&
+                    !meteringVersionGUIDGrad.equalsIgnoreCase(meteringDeviceVersionGUID)) {
+                setMeteringRootGUID(meterId, meteringDeviceRootGUID, connectionGRAD);
+//                updateMeteringVersionGUID(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID, connectionGRAD);
             }
         } else { // если нет, то надо найти по AccountGUID и PremiseGUID.
             setByAccountAndPremiseGUIDs(meteringDeviceRootGUID, meteringDeviceVersionGUID,
@@ -777,7 +784,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement ps = connection.prepareStatement("UPDATE METERING_DEVICE_IDENTIFIERS " +
-                     "SET METERING_ROOT_GUID = ? WHERE METER_ID = ?")) {
+                     "SET METERING_ROOT_GUID = ? WHERE METER_ID = ? AND ARCHIVING_REASON_CODE IS NULL")) {
             ps.setString(1, meteringDeviceRootGUID);
             ps.setInt(2, meterId);
             ps.executeUpdate();
@@ -1167,7 +1174,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement pstm = connection.prepareStatement(
-                     "SELECT METER_ID FROM METERING_DEVICE_IDENTIFIERS WHERE METERING_ROOT_GUID = ?")) {
+                     "SELECT METER_ID FROM METERING_DEVICE_IDENTIFIERS WHERE METERING_ROOT_GUID = ? AND ARCHIVING_REASON_CODE IS NULL")) {
             pstm.setString(1, meteringRootGUID);
             ResultSet rs = pstm.executeQuery();
 

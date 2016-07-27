@@ -13,7 +13,7 @@ public class ClientService {
     private final ClientDialogWindowListener listener = new ClientDialogWindowListener();
     private Set<ClientWebSocket> webSockets;
     private ProgramAction action;
-    private Timer timer = new Timer();
+    private Timer timer;
     private boolean question;
 
     public ClientService() {
@@ -126,14 +126,17 @@ public class ClientService {
      * @param observable наблюдатель.
      */
     public void addListener(ClientDialogWindowObservable observable) {
-        listener.addListener(observable);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() { // заводим таймер на 3 минуты
-                closeQuestionWindowClient();
-                setQuestion(false);
-            }
-        },0, 1000 * 180);
+        if (timer == null) {
+            timer = new Timer();
+            listener.addListener(observable);
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { // заводим таймер на 3 минуты
+                    closeQuestionWindowClient();
+                    setQuestion(false);
+                }
+            }, 1000 * 180);
+        }
     }
 
 
@@ -145,9 +148,11 @@ public class ClientService {
     }
 
     private void setQuestion(boolean question) {
+        timer.cancel();
+        timer = null;
         listener.sendAnswer(question);
         removeAllListener();
-        timer.cancel();
+
     }
 
     /**
@@ -157,14 +162,10 @@ public class ClientService {
         listener.removeAllListener();
     }
 
-    private void startTimerForModalWindow() {
-
-    }
-
     /**
      * Метод, закрывает окно с вопросом у клиента.
      */
-    public void closeQuestionWindowClient() {
+    private void closeQuestionWindowClient() {
         sendMessage("::closeModalWindow()");
     }
 

@@ -220,6 +220,7 @@ body {
     height: 45px;
     max-height: 45px;
     width: 345px;
+    cursor: pointer;
 }
 .other-error {
     /*margin-top: 7px;*/
@@ -330,6 +331,7 @@ body {
     font-size: 15px;
     top: 50%;
     transform: translateY(-50%);
+    cursor: pointer;
 }
 /*.modal {*/
     /*position: fixed;*/

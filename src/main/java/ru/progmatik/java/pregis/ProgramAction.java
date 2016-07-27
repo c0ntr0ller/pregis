@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
@@ -41,6 +42,7 @@ public class ProgramAction {
         this.clientService = clientService;
         this.answerProcessing = new AnswerProcessing(this.clientService);
         this.clientService.setProgramAction(this);
+        ConnectionDB.instance().setShutdownDefragToLocalBase();
     }
 
     /**

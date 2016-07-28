@@ -45,23 +45,23 @@ function getWebConnect() {
     };
     ws.onclose = function (event) {
         if (parseInt(event.code) === 1006 || parseInt(event.code) === 1008) {
-            console.log('Обрыв соединения');
-            // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
+            // console.log('Обрыв соединения');
+            // // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
             document.location.href = '/login';
-            console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
-        } else if (event.wasClean) {
+            // console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+        // } else if (event.wasClean) {
             // console.log('Соединение закрыто чисто');
-        } else {
-            console.log('Обрыв соединения'); // например, "убит" процесс сервера
-            console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+        // } else {
+            // console.log('Обрыв соединения'); // например, "убит" процесс сервера
+            // console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         }
-        console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
+        // console.log('Код: ' + event.code + ' причина: ' + event.reason); // убрать
         // location.reload(true);  //если сохранить страницу на комп и запустить в цикле будет долбить сервер
         // getWebConnect();
     };
     ws.onerror = function (evt) {
         console.log("The following error occurred: " + evt.data);
-    }
+    };
 };
 
 function sendMessage(message) {
@@ -92,15 +92,15 @@ function clearLabelText() {
     $('.show-state .img').css("background-image", "url('images/500.gif')");
 };
 function showModalWindow(text) {
-    $('.modal-text').text(text);
-    $('.modal-window').fadeIn(300);
+    $('#message-modal-window').text(text);
+    $('#view-modal-window').fadeIn(300);
     if ($('.hide-layout').css('display') != 'none') {
         $('.hide-layout').css("z-index", 1001);
     }
     showLayoutHide();
 };
 function hideModalWindow() {
-    $('.modal-window').fadeOut(300);
+    $('#view-modal-window').fadeOut(300);
     if ($('.hide-layout').css('z-index') === '1001') {
         $('.hide-layout').css("z-index", 998);
     }

@@ -1,6 +1,7 @@
 package ru.progmatik.java.web.servlets.socket;
 
 import com.google.gson.Gson;
+import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowListener;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
@@ -9,12 +10,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientService {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientService.class);
     private final List<String> dataList = new ArrayList<>();
     private final ClientDialogWindowListener listener = new ClientDialogWindowListener();
     private Set<ClientWebSocket> webSockets;
     private ProgramAction action;
     private Timer timer;
-    private boolean question;
 
     public ClientService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -36,21 +38,22 @@ public class ClientService {
         this.action = action;
     }
 
-    public void callCommands(String requestFromClient) {
+    void callCommands(String requestFromClient) {
 
         Gson gson = new Gson();
         ObjectForJSON json = gson.fromJson(requestFromClient, ObjectForJSON.class);
         String command = json.getCommand();
         String value = json.getValue();
 
-        String answerToClient = "\nПолучена команда: " + command;
-        if (!value.isEmpty()) {
-            answerToClient += " значение: " + value + "\n";
-        } else {
-            answerToClient += "\n";
+        if (LOGGER.isDebugEnabled()) {
+            String answerToClient = "\nПолучена команда: " + command;
+            if (!value.isEmpty()) {
+                answerToClient += " значение: " + value + "\n";
+            } else {
+                answerToClient += "\n";
+            }
+            sendMessage(answerToClient);
         }
-
-        sendMessage(answerToClient);
 
         if (action.isRunning()) {
             sendMessage("Уже выполнятся другая операция!");
@@ -101,7 +104,7 @@ public class ClientService {
     /**
      * Метод, отправляет все сообщения находящиееся в списке.
      */
-    public void sendListMessages(ClientWebSocket webSocket) {
+    void sendListMessages(ClientWebSocket webSocket) {
 
         for (String data : dataList) {
             webSocket.sendString(data);
@@ -123,6 +126,7 @@ public class ClientService {
     /**
      * Метод, добавляет наблюдателей к кому нужно послать ответ.
      * Если в течении 3 минут ответа нет, то окно у клиента уйдет, а операция отменится.
+     *
      * @param observable наблюдатель.
      */
     public void addListener(ClientDialogWindowObservable observable) {
@@ -140,10 +144,9 @@ public class ClientService {
     }
 
 
-
     public void checkSession() {
         for (ClientWebSocket user : webSockets) {
-                user.checkAccount();
+            user.checkAccount();
         }
     }
 

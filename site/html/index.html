@@ -79,7 +79,7 @@
             <img src="images/pu.jpg">
         </div>
     </div>
-    <div class="thumb">
+    <div class="thumb dont-play">
         <div class="content">
             <h2>Синхронизация показаний приборов учета</h2>
             <p>
@@ -90,7 +90,7 @@
             <img src="images/look.jpg">
         </div>
     </div>
-    <div class="thumb">
+    <div class="thumb dont-play">
         <div class="content">
             <h2>Выгрузка платежных документов</h2>
             <p>
@@ -101,7 +101,7 @@
             <img src="images/pd.jpg">
         </div>
     </div>
-    <div class="thumb">
+    <div class="thumb dont-play">
         <div class="content">
             <h2>Квитирование</h2>
             <p>
@@ -138,12 +138,16 @@
     <label for="messages">Лог работы:</label>
     <textarea id="messages" readonly="readonly"></textarea>
 </div>
-<div class="modal-window">
-    <div class="modal-text">
+<div id="view-modal-window" class="modal-window">
+    <div id="message-modal-window" class="modal-text">
         <!-- text -->
     </div>
-    <div class="button button-no"><span>Нет</span></div>
-    <div class="button button-yes"><span>Да</span></div>
+    <div id="button-no" class="button"><span>Нет</span></div>
+    <div id="button-yes" class="button"><span>Да</span></div>
+</div>
+<div id="dont-work-window" class="modal-window">
+    <div id="dont-work-text" class="modal-text">Модуль находится на стадии разработки.</div>
+    <div id="dont-work-button" class="button"><span>Продолжить</span></div>
 </div>
 <footer class="footer">
     <span>Разработано &#169; </span><a href="http://prog-matik.ru"><img src="images/progmatic_150x150.png"></a><span> г. Новосибирск 2016. </span>

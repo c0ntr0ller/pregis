@@ -15,7 +15,7 @@ public class OrganizationDAOTest {
         OrganizationDAO dao = new OrganizationDAO();
         ArrayList<OrganizationDataSet> allOrganizations = dao.getAllOrganizations();
 
-        assertEquals(allOrganizations, null);
+        assertEquals(allOrganizations.get(0).getOrgPPAGUID(), dao.getOrgPPAGUID());
 
     }
 

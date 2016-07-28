@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.prog_matik.java</groupId>
     <artifactId>pregis</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <version>2.0</version>
-    <name>pregis Maven Webapp</name>
+    <name>pregis</name>
     <url>http://maven.apache.org</url>
 
     <!--<modules>-->

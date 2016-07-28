@@ -1370,6 +1370,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
         String answer;
 
+        LOGGER.debug("EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , " + meterId + ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + identifier + ")");
+
         try (CallableStatement call = connectionGRAD.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}")) {
             call.setInt(1, meterId);
             call.setString(2, identifier);

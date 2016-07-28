@@ -35,13 +35,20 @@ $(function () {
         }, 500);
         // $('#messages').val("");
     }).hide();
-    $('.button-no').click(function () {
+    $('#button-no').click(function () {
        answerNo();
     });
-    $('.button-yes').click(function () {
+    $('#button-yes').click(function () {
         answerYes();
     });
-
+    $('#dont-work-button').click(function () {
+        hideAnyModalWindow($('#dont-work-window'));
+    });
+    $('.dont-play').click(function () {
+        showAnyModalWindow($('#dont-work-window'));
+        $('#dont-work-button').activeElement;
+    });
+    
     $('.close-dialog').click(function () {
         hideErrorList();
     });
@@ -54,7 +61,7 @@ $(function () {
         } else if (message === "exit") {
             exitRequest();
         } else {
-            console.log(message);
+            // console.log(message);
             sendMessage(message);
         }
     });
@@ -93,6 +100,14 @@ function hideLayoutHide() {
         $('.hide-layout').fadeOut(300);
     }
 };
+function showAnyModalWindow(modal) {
+    modal.fadeIn(300);
+    showLayoutHide();
+}
+function hideAnyModalWindow(modal) {
+    modal.fadeOut(300);
+    hideLayoutHide();
+};
 // функция принимает элемент, который необходимо центрировать
 function alignCenter(elem) {
     elem.css({ // назначение координат left и top
@@ -100,6 +115,7 @@ function alignCenter(elem) {
         top: ($(window).height() - elem.height()) / 2 + 'px'
     });
 };
+// Позиционирует footer
 function footerTop() {
     var temp = 30;
     if ($(window).height() > 800) {

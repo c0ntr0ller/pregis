@@ -76,7 +76,7 @@ public class ReferenceNSIDAO {
             "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.ID IS 'Идентификатор записей.'; " +
             "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.CODE IS 'Код справочника, который необходимо загрузить.'; " +
             "COMMENT ON COLUMN NSI_DATA_PROVIDER_FOR_DOWNLOAD.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.';";
-//            "INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, NSI_TYPE) VALUES('50', 'NSI');";
+//            "INSERT INTO NSI_DATA_PROVIDER_FOR_DOWNLOAD(CODE, NSI_TYPE) VALUES('50', 'NSI');"; // Если потребуется.
 
     private static final String SQL_CREATE_TABLE_NSI_DATA_PROVIDER_FOR_EXTRACT = "CREATE TABLE IF NOT EXISTS NSI_DATA_PROVIDER_FOR_EXTRACT (" +
             "ID identity not null primary key, " +

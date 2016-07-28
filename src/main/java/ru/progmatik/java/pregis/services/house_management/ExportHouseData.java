@@ -114,6 +114,7 @@ public class ExportHouseData {
 
                             answerProcessing.sendMessageToClient("Помещение: ");
                             for (ExportHouseResultType.ApartmentHouse.Entrance.ResidentialPremises residentialPremise : residentialPremises) {  // Пробегаем по помещениям
+                                answerProcessing.sendMessageToClient("");
                                 answerProcessing.sendMessageToClient("  Номер помещения: " + residentialPremise.getPremisesNum());
 //                            clientService.sendMessage("Этаж: " + residentialPremise.getFloor());
                                 answerProcessing.sendMessageToClient("  Номер подъезда: " + residentialPremise.getEntranceNum());
@@ -168,6 +169,7 @@ public class ExportHouseData {
 //                    result.getExportHouseResult().getLivingHouse().getLivingRoom().get(0)
 
                 }
+                answerProcessing.sendOkMessageToClient("");
                 answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
 
             } else {

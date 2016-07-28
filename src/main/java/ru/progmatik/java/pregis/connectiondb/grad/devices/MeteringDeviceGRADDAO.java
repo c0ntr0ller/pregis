@@ -5,7 +5,7 @@ import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -51,8 +51,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                     "TRANSPORT_GUID varchar(40), " +
                     "NON_RESIDENTIAL_PREMISE_DEVICE boolean DEFAULT false, " +
                     "ARCHIVING_REASON_CODE INT, " +
-                    "REPLACE_DEVICE_ID INT), " +
-                    "VALUE_REQUEST TIMESTAMP; " +
+                    "REPLACE_DEVICE_ID INT, " +
+                    "VALUE_REQUEST TIMESTAMP); " +
                     "COMMENT ON TABLE \"PUBLIC\".METERING_DEVICE_IDENTIFIERS IS 'Таблица содержит идентификаторы приборов учёта, полученых из ГИС ЖКХ.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.ID IS 'Идентификатор записей.'; " +
                     "COMMENT ON COLUMN METERING_DEVICE_IDENTIFIERS.ABON_ID IS 'ИД абонента в БД ГРАД.'; " +
@@ -643,7 +643,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                     null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                 LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
@@ -660,7 +660,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                     null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                 LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
@@ -677,7 +677,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                 null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, true, connectionGRAD)) {
                             LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
                             countAdded++;
-                            answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                            answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                             answerProcessing.sendMessageToClient("");
                         }
                     }
@@ -693,7 +693,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                     null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                 LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
@@ -709,7 +709,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                     null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                 LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
@@ -1414,12 +1414,12 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @throws SQLException
      */
     public ru.gosuslugi.dom.schema.integration.base.ImportResult getImportResultLastFromDataBase() throws JAXBException, FileNotFoundException, SOAPException, SQLException {
-        MessageInBase messageInBase = new MessageInBase();
+        MessageExecutor messageExecutor = new MessageExecutor();
         JAXBContext jc = JAXBContext.newInstance(ru.gosuslugi.dom.schema.integration.base.ImportResult.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         ru.gosuslugi.dom.schema.integration.base.ImportResult result =
                 (ru.gosuslugi.dom.schema.integration.base.ImportResult) unmarshaller.unmarshal(
-                        messageInBase.getLastSOAPFromBase().getSOAPBody().extractContentAsDocument());
+                        messageExecutor.getLastSOAPFromBase().getSOAPBody().extractContentAsDocument());
         return result;
     }
 

@@ -3,13 +3,11 @@ package ru.progmatik.java.pregis;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
-import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
-import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageInBase;
+import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.web.servlets.socket.ClientService;
@@ -59,7 +57,9 @@ public class TestMain {
 //        getTableSize(); // получить размер файлов из БД.
 
 
-        showTime();
+        getLastMessage();
+
+//        showTime();
 
 //        getArrayCount();
 
@@ -361,34 +361,55 @@ public class TestMain {
         }, 1000 * 20);
     }
 
-    public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException {
+    public static void getLastMessage() {
 
-
-        MessageInBase message = new MessageInBase();
-        JAXBContext jc = JAXBContext.newInstance(ImportResult.class);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-
-        File file = new File("temp" + File.separator + "ImportResult 0-20.xml");
-        System.out.println(file);
-
-        ImportResult result = (ImportResult) unmarshaller.unmarshal(message.getSOAPMessageFromDataBaseById(9954).getSOAPBody().extractContentAsDocument());
-
-
-        for (CommonResultType type : result.getCommonResult()) {
-            if (type.getError() == null || type.getError().size() == 0) {
-                System.out.println("GUID: " + type.getGUID());
-                System.out.println("UniqueNumber: " + type.getUniqueNumber());
-//            System.out.println("MeteringDeviceVersionGUID: " + type.getImportMeteringDevice().getMeteringDeviceVersionGUID());
-                System.out.println("TransportGUID: " + type.getTransportGUID());
-                System.out.println("");
-            } else {
-                System.out.println("ErrorCode: " + type.getError().get(0).getErrorCode());
-                System.out.println("Description: " + type.getError().get(0).getDescription());
-                System.out.println("");
-            }
+        try {
+            MessageExecutor executor = new MessageExecutor();
+            executor.getLastSOAPFromBase().writeTo(System.out);
+//
+//            MessageDAO dao = new MessageDAO();
+//
+//            String inputStreamString = new Scanner(dao.getLastSOAPMessage(ConnectionDB.instance().getConnectionDB()),"UTF-8").useDelimiter("\\A").next();
+//            System.out.println(inputStreamString);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (SOAPException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
+
+//    public static void getImportResult() throws JAXBException, ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException {
+//
+//
+//        MessageExecutor message = new MessageExecutor();
+//        JAXBContext jc = JAXBContext.newInstance(ImportResult.class);
+//        Unmarshaller unmarshaller = jc.createUnmarshaller();
+//
+//        File file = new File("temp" + File.separator + "ImportResult 0-20.xml");
+//        System.out.println(file);
+//
+//        ImportResult result = (ImportResult) unmarshaller.unmarshal(message.getSOAPMessageFromDataBaseById(9954).getSOAPBody().extractContentAsDocument());
+//
+//
+//        for (CommonResultType type : result.getCommonResult()) {
+//            if (type.getError() == null || type.getError().size() == 0) {
+//                System.out.println("GUID: " + type.getGUID());
+//                System.out.println("UniqueNumber: " + type.getUniqueNumber());
+////            System.out.println("MeteringDeviceVersionGUID: " + type.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+//                System.out.println("TransportGUID: " + type.getTransportGUID());
+//                System.out.println("");
+//            } else {
+//                System.out.println("ErrorCode: " + type.getError().get(0).getErrorCode());
+//                System.out.println("Description: " + type.getError().get(0).getDescription());
+//                System.out.println("");
+//            }
+//        }
+//
+//    }
 
 
     public static void remove(NamedNodeMap attributes) throws XMLStreamException {

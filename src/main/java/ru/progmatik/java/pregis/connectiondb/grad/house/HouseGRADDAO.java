@@ -123,7 +123,7 @@ public class HouseGRADDAO {
         // ИД прибора учета(:meter_id),
         // уникальный идентификатор ГИС ЖКХ(:gis_id),
         // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-        System.err.println("houseID: " + houseId + " houseUniqueNumber: " + houseUniqueNumber);
+//        System.err.println("houseID: " + houseId + " houseUniqueNumber: " + houseUniqueNumber);
         String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
         try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
             cstmt.setInt(1, houseId);

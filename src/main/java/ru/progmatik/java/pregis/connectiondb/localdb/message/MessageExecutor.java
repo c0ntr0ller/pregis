@@ -9,32 +9,13 @@ import javax.xml.soap.SOAPPart;
 import javax.xml.transform.stream.StreamSource;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Класс, работает с SOAP сообщениями, которые находятся в локальной БД.
  */
-public class MessageInBase {
-
-    /**
-     * Метод, по полученному ключу берет из таблицы сообщение и возвращает его.
-     * @param id идентификатор записи в БД.
-     * @return SOAP сообщение.
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws SOAPException
-     */
-    public SOAPMessage getSOAPMessageFromDataBaseById(Integer id) throws SQLException, FileNotFoundException, SOAPException {
-        try (PreparedStatement ps = ConnectionDB.instance().getConnectionDB().prepareCall("SELECT SOAPMESSAGE FROM OBMEN_OPERATION WHERE ID = ?;")) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return readSoapMessage(rs.getBinaryStream(1));
-        }
-    }
+public class MessageExecutor {
 
     /**
      * Метод, извлекает из БД последнее сообщение.
@@ -44,10 +25,9 @@ public class MessageInBase {
      * @throws SOAPException
      */
     public SOAPMessage getLastSOAPFromBase() throws SQLException, FileNotFoundException, SOAPException {
-        try (Statement statement = ConnectionDB.instance().getConnectionDB().createStatement();
-             ResultSet rs = statement.executeQuery("{CALL GET_MESSAGE()}")) {
-            rs.next();
-            return readSoapMessage(rs.getBinaryStream(8));
+        MessageDAO messageDAO = new MessageDAO();
+        try (Connection connection = ConnectionDB.instance().getConnectionDB()) {
+            return readSoapMessage(messageDAO.getLastSOAPMessage(connection));
         }
     }
 

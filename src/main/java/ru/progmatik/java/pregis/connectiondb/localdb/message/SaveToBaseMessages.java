@@ -18,8 +18,18 @@ public class SaveToBaseMessages {
 
     private static final Logger LOGGER = Logger.getLogger(SaveToBaseMessages.class);
 
-    private Connection connection;
+    private MessageDAO messageDAO;
     private String stateMessage = "OK";
+
+
+    public SaveToBaseMessages() {
+        try {
+            messageDAO = new MessageDAO();
+        } catch (SQLException e) {
+            LOGGER.error("Не удалось создать MessageDAO", e);
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Метод получает параметры "Запроса" и добавляет их в базу данных.
@@ -119,29 +129,8 @@ public class SaveToBaseMessages {
                                   java.io.InputStream soapMessage,
                                   String stateMessage) {
 
-        try {
-
-            if (connection == null || connection.isClosed()) {
-                connection = ConnectionDB.instance().getConnectionDB();
-            }
-
-            CallableStatement cs = connection.prepareCall( "{CALL SET_MESSAGE(?, ?, ?, ?, ?, ?)}" );
-
-            cs.setString(1, guid);
-            cs.setString(2, nameMethod);
-            cs.setTimestamp(3, dateMessage);
-            cs.setString(4, nameTypeEn);
-            cs.setBlob(5, soapMessage);
-            cs.setString(6, stateMessage);
-
-            int isResultSet = cs.executeUpdate();
-//            LOGGER.debug("setMessageToBase: - " + nameMethod + ", state set: - " +isResultSet);
-
-            if (!cs.isClosed()) cs.close();
-            if (connection != null || !connection.isClosed()) {
-                connection.close();
-            }
-
+        try (Connection connection = ConnectionDB.instance().getConnectionDB()) {
+            messageDAO.setTableContent(guid, nameMethod, dateMessage, nameTypeEn, soapMessage, stateMessage, connection);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             e.printStackTrace();

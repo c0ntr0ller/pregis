@@ -95,7 +95,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
             showInfo();
         }
         int countRecreate = getCountMeteringDevicesForRecreate();
-        System.out.println("countRecreate: " + countRecreate);
+//        System.out.println("countRecreate: " + countRecreate);
         if (countRecreate > 0) {
             answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " " + getDeviceTag(countRecreate) + " " +
                     "Желаете добавить эти устройства в архив ГИС ЖКХ и создать повторно?\n", this);

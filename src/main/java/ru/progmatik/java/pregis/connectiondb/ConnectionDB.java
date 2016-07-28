@@ -21,8 +21,8 @@ public class ConnectionDB {
 //    Она будет локальная и файловая - зачем выводить настройку?
 //    Приложение крутиться на сервере - нет смысла ставить логин и пароль.
     private static final String databaseURI = "jdbc:h2:file:./db/pregisdb.h2.db;IGNORECASE=TRUE";
-    private static final String userName = "";
-    private static final String password = "";
+    private static final String userName = "pregis";
+    private static final String password = "pregis2016";
 
     private static JdbcConnectionPool cp = JdbcConnectionPool.create(databaseURI, userName, password);
 

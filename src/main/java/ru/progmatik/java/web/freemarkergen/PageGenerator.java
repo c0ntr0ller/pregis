@@ -7,6 +7,7 @@ import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Locale;
 import java.util.Map;
 
 public class PageGenerator {
@@ -17,6 +18,8 @@ public class PageGenerator {
 
     private PageGenerator() {
         cfg = new Configuration();
+        cfg.setEncoding(new Locale("ru"), "utf-8");
+        cfg.setDefaultEncoding("utf-8");
     }
 
     public static PageGenerator instance() {

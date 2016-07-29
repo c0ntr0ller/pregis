@@ -40,7 +40,7 @@ public class AnswerProcessing {
         clientService.sendMessage(nameMethod + ": " + TextForLog.ERROR_ABORT);
         saveToBase.setRequestError(headerRequest, nameMethod, fault);
         logger.error(fault);
-        fault.printStackTrace();
+//        fault.printStackTrace();
     }
 
     /**
@@ -57,7 +57,7 @@ public class AnswerProcessing {
         clientService.sendMessage("Возникли ошибки! Подробнее смотрите в логе событий.");
 //        clientService.sendMessage("::setFailed()");
         logger.error(methodName, exception);
-        exception.printStackTrace();
+//        exception.printStackTrace();
     }
 
     /**

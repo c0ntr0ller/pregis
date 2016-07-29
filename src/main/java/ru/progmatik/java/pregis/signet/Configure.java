@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * Класс, в котором инициализируются сертификаты, и указывается хранилище ключей.
@@ -22,17 +21,14 @@ import java.util.ResourceBundle;
  */
 public class Configure {
 
-    private static Logger logger = Logger.getLogger(Configure.class);
-
     private static final String hdiPathConfig = HDImageStore.getDir();
-    private static String keyStoryPath = ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.path");
-    private static String trustStoryPath = ResourceBundle.getBundle("application").getString("config.cryptoPro.trustStore.path");
-
+    private static final Properties properties;
+    private static Logger logger = Logger.getLogger(Configure.class);
+    private static String keyStoryPath;
+    private static String trustStoryPath;
     private static char[] storePassword;
     private static String keyAlias;
     private static File pfxFile;
-
-    private static final Properties properties;
 
     /**
      * Метод инициализации криптопровайдера и указания каталога ключей.
@@ -47,12 +43,13 @@ public class Configure {
 //        if (!ru.CryptoPro.JCPxml.XmlInit.isInitialized())
 //            ru.CryptoPro.JCPxml.XmlInit.init();
 
-        setPathAuto();
         properties = ResourcesUtil.instance().getProperties();
+        keyStoryPath = properties.getProperty("config.cryptoPro.keyStore.path");
+        trustStoryPath = properties.getProperty("config.cryptoPro.trustStore.path");
         storePassword = properties.get("config.pfx.keyStore.password").toString().toCharArray();
         keyAlias = properties.get("config.pfx.keyStore.alias").toString();
         pfxFile = new File(properties.get("config.pfx.keyStore.path").toString());
-
+        setPathAuto();
     }
 
     /**
@@ -63,7 +60,7 @@ public class Configure {
 
         String pathData;
 
-        if (ResourceBundle.getBundle("application").getString("config.cryptoPro.path.auto.set").equalsIgnoreCase("yes")) {
+        if (properties.getProperty("config.cryptoPro.path.auto.set").equalsIgnoreCase("yes")) {
             pathData = System.getProperty("user.dir") + File.separator + "data" + File.separator;
 
 //        Для изменения пути к носителю необходимо дать доступ
@@ -74,7 +71,7 @@ public class Configure {
                 logger.debug("HDIImageStory: " + hdiPathConfig + " изменен на: " + pathData);
             }
             keyStoryPath = pathData;
-            trustStoryPath = pathData + File.separator + ResourceBundle.getBundle("application").getString("config.cryptoPro.trustStore.name.story");
+            trustStoryPath = pathData + File.separator + properties.getProperty("config.cryptoPro.trustStore.name.story");
         }
     }
 
@@ -93,7 +90,7 @@ public class Configure {
      */
     public static String getKeyStoreAlias() {
 
-        return ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.alias");
+        return properties.getProperty("config.cryptoPro.keyStore.alias");
     }
 
     /**
@@ -103,7 +100,7 @@ public class Configure {
      */
     public static char[] getKeyStorePassword() {
 
-        String passwordKeyStore = ResourceBundle.getBundle("application").getString("config.cryptoPro.keyStore.password");
+        String passwordKeyStore = properties.getProperty("config.cryptoPro.keyStore.password");
 
         return passwordKeyStore.toCharArray();
     }
@@ -167,7 +164,7 @@ public class Configure {
      */
     public static char[] getTrustStorePassword() {
 
-        String passwordTrustStore = ResourceBundle.getBundle("application").getString("config.cryptoPro.trustStore.password");
+        String passwordTrustStore = properties.getProperty("config.cryptoPro.trustStore.password");
 
         return passwordTrustStore.toCharArray();
     }

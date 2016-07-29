@@ -4,12 +4,15 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * Класс добавляет данные в базу данных, что-то похожее на лог, для хранения всех запросов и ответов.
@@ -17,6 +20,7 @@ import java.sql.*;
 public class SaveToBaseMessages {
 
     private static final Logger LOGGER = Logger.getLogger(SaveToBaseMessages.class);
+    private static final String SAVE_FOLDER = "temp";
 
     private MessageDAO messageDAO;
     private String stateMessage = "OK";
@@ -39,7 +43,8 @@ public class SaveToBaseMessages {
     public void setRequest(HeaderType headerRequest, String nameMethod) {
 
         String typeOperation = "Request";
-        File file = new File("temp" + File.separator + "outbound");
+        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
+        File file = new File(SAVE_FOLDER + File.separator + "outbound");
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
 
         try (FileInputStream inputStream = new FileInputStream(file)) {
@@ -60,8 +65,8 @@ public class SaveToBaseMessages {
     public void setResult(HeaderType headerRequest, String nameMethod, ErrorMessageType errorMessage) {
 
         String typeOperation = "Result";
-
-        File file = new File("temp" + File.separator + "inbound");
+        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
+        File file = new File(SAVE_FOLDER + File.separator + "inbound");
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
 
         StringBuilder stateBuilder = new StringBuilder("OK");

@@ -17,16 +17,14 @@ public class ResourcesUtil {
     private static final Logger LOGGER = Logger.getLogger(ResourcesUtil.class);
     private static final String FILE_PROPERTIES = "application.properties";
     private static final String FILE_DIRECTORY = "settings";
-
-    private Properties properties;
-
     private static ResourcesUtil resourcesUtil;
+    private Properties properties;
 
     private ResourcesUtil() {
         properties = getFileParameter();
     }
 
-    public static ResourcesUtil instance(){
+    public static ResourcesUtil instance() {
         if (resourcesUtil == null)
             resourcesUtil = new ResourcesUtil();
         return resourcesUtil;
@@ -39,6 +37,7 @@ public class ResourcesUtil {
 
     /**
      * Метод, берет с файла параметров ОГРН компании и возвращает его.
+     *
      * @return String ОГРН компании.
      */
     public String getOGRNCompany() throws PreGISException {
@@ -49,6 +48,7 @@ public class ResourcesUtil {
 
         return properties.getProperty("config.company.ogrn");
     }
+
     /**
      * <p>Метод открывает файл параметров, в котором хранятся параметры.</p>
      */
@@ -75,6 +75,7 @@ public class ResourcesUtil {
      * Метод, получает ID организации в БД ГРАД из файла параметров "application.properties".
      * Не понятно пока, в ГРАДе куча компаний может быть, сертификат может быть любой из них,
      * в некоторых случаях может по одному сертификату отправляться несколько компаний.
+     *
      * @return ID организации из БД ГРАД.
      * @throws PreGISException
      */
@@ -132,4 +133,14 @@ public class ResourcesUtil {
         return role;
     }
 
+    /**
+     * Метод, создаёт папку, если она не создана.
+     * @param folderName имя папки.
+     */
+    public void createFolder(String folderName) {
+
+        File saveFolder = new File(folderName);
+        if (!saveFolder.isDirectory())
+            saveFolder.mkdir();
+    }
 }

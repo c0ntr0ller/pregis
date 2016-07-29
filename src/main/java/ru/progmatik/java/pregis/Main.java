@@ -127,16 +127,17 @@ public class Main {
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient(action)), "/*");
-        context.addServlet(new ServletHolder(new MainServlet(action)), "/test");
+//        context.addServlet(new ServletHolder(new MainServlet(action)), "/test");
         context.addServlet(new ServletHolder(new IndexServlet(action)), "/main");
         context.addServlet(new ServletHolder(new UsersServlet(action)), "/users");
         context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
-        context.addServlet(new ServletHolder(new AjaxServlet()), "/ajax");
+//        context.addServlet(new ServletHolder(new AjaxServlet()), "/ajax");
         context.getSessionHandler().getSessionManager().setMaxInactiveInterval(600); // Время сессии
 
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);  // в конце убрать
         resource_handler.setWelcomeFiles(new String[]{"/html/login.html"});
+
         resource_handler.setResourceBase("site");
 
         HandlerList handlers = new HandlerList();

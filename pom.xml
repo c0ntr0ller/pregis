@@ -242,13 +242,13 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>ru.progmatik.java</groupId>-->
-            <!--<artifactId>giswsdl</artifactId>-->
-            <!--<version>${giswsdl.version}</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/giswsdl-sources.jar</systemPath>-->
-            <!--<type>jar</type>-->
-            <!--<classifier>sources</classifier>-->
+        <!--<groupId>ru.progmatik.java</groupId>-->
+        <!--<artifactId>giswsdl</artifactId>-->
+        <!--<version>${giswsdl.version}</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/giswsdl-sources.jar</systemPath>-->
+        <!--<type>jar</type>-->
+        <!--<classifier>sources</classifier>-->
         <!--</dependency>-->
 
         <dependency>
@@ -261,5 +261,82 @@
 
     <build>
         <finalName>pregis</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/java/ru/progmatik/java/pregis</directory>
+                <excludes>
+                    <exclude>**/TestMain.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>ru.progmatik.java.pregis.Main</mainClass>
+                            <packageName>ru.progmatik.java.pregis</packageName>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>compile</includeScope>
+                            <outputDirectory>${project.build.directory}/lib/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>ru.progmatik.java.pregis.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

@@ -137,7 +137,7 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private ArrayList<Rooms> getRooms(int houseID, Connection connection) throws ParseException, SQLException {
+    public ArrayList<Rooms> getRooms(int houseID, Connection connection) throws ParseException, SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
         ArrayList<Rooms> listRooms = new ArrayList();

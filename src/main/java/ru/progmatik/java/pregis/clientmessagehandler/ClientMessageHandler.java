@@ -70,15 +70,18 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                 messageContext.setMessage(msg);
 
 //                Debug
-//                if (LOGGER.isDebugEnabled()) {
-                System.out.println("\nOutbound message:");
-                printHeaders(msg.getMimeHeaders());
-                msg.writeTo(System.out);
-                System.out.println();
-//                }
+                if (LOGGER.isDebugEnabled()) {
+                    System.out.println("\nOutbound message:");
+                    printHeaders(msg.getMimeHeaders());
+                    msg.writeTo(System.out);
+                    System.out.println();
+                }
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
                     msg.writeTo(outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+//                    msg.writeTo(outputStream);
                 }
 
             } catch (Exception e) {
@@ -92,17 +95,19 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
                 try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "inbound")) {
                     msg.writeTo(outputStream);
+                    outputStream.flush();
+                    outputStream.close();
                 }
 
 //            Вывод сообщение запроса
-//                if (LOGGER.isDebugEnabled()) {
-                System.out.println("\nInbound message:");
+                if (LOGGER.isDebugEnabled()) {
+                    System.out.println("\nInbound message:");
 //                  Вывод заголовка сообщения
-                printHeaders(msg.getMimeHeaders());
-                System.out.println("\nMessage: \n");
-                msg.writeTo(System.out);
-                System.out.println("\n");
-//                }
+                    printHeaders(msg.getMimeHeaders());
+                    System.out.println("\nMessage: \n");
+                    msg.writeTo(System.out);
+                    System.out.println("\n");
+                }
 
 
             } catch (Exception e) {

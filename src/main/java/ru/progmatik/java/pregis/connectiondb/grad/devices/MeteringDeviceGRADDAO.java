@@ -1105,7 +1105,6 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                             String meteringRootGUID, String meteringVersionGUID, String transportGUID, boolean isNonResitential, Connection connectionGrad) throws SQLException {
 
         LOGGER.debug("abinId: " + abonId + " meterId: " + meterId + " houseId: " + houseId);
-        LOGGER.debug(!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID));
         if (getMeterIdFromLocalBaseUseMeteringRootGUID(meteringRootGUID) == null) {
             if (!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID)) {
                 setMeteringDeviceUniqueNumbers(meterId, meteringVersionGUID, meteringRootGUID, connectionGrad); // в БД ГРАД.

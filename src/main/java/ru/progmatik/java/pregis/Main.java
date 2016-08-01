@@ -66,7 +66,7 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStoreType", JCP.CERT_STORE_NAME);
         System.setProperty("javax.net.ssl.trustStore", Configure.getTrustStorePath());
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
-
+//        System.setProperty("file.encoding", "utf-8");
 
         Security.addProvider(new BouncyCastleProvider());  // Добавим Bouncy Castle
         XmlDSignTools.init("BC"); // Инициализация алгоритма ГОСТ для подписи файлов

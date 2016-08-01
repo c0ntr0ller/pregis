@@ -23,7 +23,7 @@ public class Configure {
 
     private static final String hdiPathConfig = HDImageStore.getDir();
     private static final Properties properties;
-    private static Logger logger = Logger.getLogger(Configure.class);
+    private static final Logger LOGGER = Logger.getLogger(Configure.class);
     private static String keyStoryPath;
     private static String trustStoryPath;
     private static char[] storePassword;
@@ -46,9 +46,9 @@ public class Configure {
         properties = ResourcesUtil.instance().getProperties();
         keyStoryPath = properties.getProperty("config.cryptoPro.keyStore.path");
         trustStoryPath = properties.getProperty("config.cryptoPro.trustStore.path");
+        pfxFile = new File(properties.get("config.pfx.keyStore.path").toString());
         storePassword = properties.get("config.pfx.keyStore.password").toString().toCharArray();
         keyAlias = properties.get("config.pfx.keyStore.alias").toString();
-        pfxFile = new File(properties.get("config.pfx.keyStore.path").toString());
         setPathAuto();
     }
 
@@ -68,7 +68,7 @@ public class Configure {
 //        "HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Prefs\ru\/Crypto/Pro\/J/C/P\/Key/Store\/H/D/Image".
             if (!pathData.equalsIgnoreCase(hdiPathConfig)) {
                 HDImageStore.setDir(pathData);
-                logger.debug("HDIImageStory: " + hdiPathConfig + " изменен на: " + pathData);
+                LOGGER.debug("HDIImageStory: " + hdiPathConfig + " изменен на: " + pathData);
             }
             keyStoryPath = pathData;
             trustStoryPath = pathData + File.separator + properties.getProperty("config.cryptoPro.trustStore.name.story");

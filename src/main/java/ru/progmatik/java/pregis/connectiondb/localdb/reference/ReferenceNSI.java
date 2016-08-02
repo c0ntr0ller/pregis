@@ -115,7 +115,7 @@ public class ReferenceNSI {
      * @throws PreGISException
      * @throws SQLException
      */
-    public boolean updateNSI(ReferenceDownloadNSIDataSet downloadNsiDataSet) throws PreGISException, SQLException {
+    private boolean updateNSI(ReferenceDownloadNSIDataSet downloadNsiDataSet) throws PreGISException, SQLException {
 
         Map<String, ReferenceItemDataSet> mapItems = nsiDao.getMapItemsCodeParent(downloadNsiDataSet.getCode());
         ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);

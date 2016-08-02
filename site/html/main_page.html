@@ -42,13 +42,17 @@
     <form name="updateMeteringDeviceData" accept-charset="utf-8">
         <br>
         <h2>Работа с ПУ:</h2>
-        <button id="sendExportMeteringDevice" type="button" onclick="sendMessage('callExportMeteringDevice');" ${buttonState}>Получение ПУ</button>
+        <button id="sendExportMeteringDevice" type="button" onclick="sendMessage('updateMeteringDevices');" ${buttonState}>Получение ПУ</button>
         <br>
         <div id="meteringDevicesToArchive" class="forAjax" style="border: 1px solid; margin: 20px; padding: 20px; background: #c0c0c0">
             <label>Идентификатор дома ГРАДа: <input class="textId" type="number"></label>
             <label>Идентификаторы ПУ ГРАД, через запятую: <input class="textValue" type="text"></label>
             <!--<br><br>-->
             <button type="button" ${buttonState}>Архивировать ПУ</button>
+        </div>
+        <div id="exportMeteringDeviceHistory">
+            <input type="text" id="getExportMeteringHistoryResultByFIAS" placeholder="ФИАС дома"/>
+            <button type="button" ${buttonState} onclick="sendMessage('getExportMeteringHistoryResultByFIAS');">Получить показания ПУ по ФИАС</button>
         </div>
     </form>
     <form name="paymentDocumentData" accept-charset="utf-8">

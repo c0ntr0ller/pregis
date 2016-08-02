@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
+import ru.progmatik.java.pregis.services.device_metering.ExportMeteringDeviceHistory;
 import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
 import ru.progmatik.java.pregis.services.house_management.*;
@@ -198,20 +199,25 @@ public class ProgramAction {
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
-
     }
 
-    public void callExportMeteringDevice() {
-
-            ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+    /**
+     * Метод, по коду дома по ФИАС получает показания ПУ.
+     * @param fias код дома по ФИАС
+     */
+    public void getExportMeteringDeviceHistory(String fias) {
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+        ExportMeteringDeviceHistory meteringDeviceHistory = new ExportMeteringDeviceHistory(answerProcessing);
         try {
-            if (exportMeteringDeviceData.callExportMeteringDeviceData("b58c5da4-8d62-438f-b11e-d28103220952") == null) {
-                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
+            if (meteringDeviceHistory.getExportMeteringHistoryResultByFIAS(fias) == null) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");
             } else {
-                answerProcessing.sendOkMessageToClient("\"Получение ПУ\" успешно выполнена.");
+                answerProcessing.sendOkMessageToClient("\"Получение показаний ПУ\" успешно выполнено.");
             }
         } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportMeteringDevice(): ", "", LOGGER, e);
+            answerProcessing.sendErrorToClient("getExportMeteringDeviceHistory(): ", "", LOGGER, e);
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
     }
 

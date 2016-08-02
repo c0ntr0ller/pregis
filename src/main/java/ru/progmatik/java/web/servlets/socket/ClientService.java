@@ -86,11 +86,12 @@ public class ClientService {
                 case "updateMeteringDevices":
                     action.updateMeteringDevices();
                     break;
-                case "callExportMeteringDevice":
-                    action.callExportMeteringDevice();
-                    break;
                 case "callQuestion":
                     setQuestion(Boolean.valueOf(value));
+                    break;
+                case "getExportMeteringHistoryResultByFIAS":
+                    if (value.isEmpty()) sendMessage("Не указан обязательный параметр: ФИАС дома.");
+                    else action.getExportMeteringDeviceHistory(value);
                     break;
                 default:
                     sendMessage("Неизвестная команда: " + command);

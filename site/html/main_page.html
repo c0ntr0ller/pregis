@@ -51,8 +51,8 @@
             <button type="button" ${buttonState}>Архивировать ПУ</button>
         </div>
         <div id="exportMeteringDeviceHistory">
-            <input type="text" id="getExportMeteringHistoryResultByFIAS" placeholder="ФИАС дома"/>
-            <button type="button" ${buttonState} onclick="sendMessage('getExportMeteringHistoryResultByFIAS');">Получить показания ПУ по ФИАС</button>
+            <!--<input type="text" id="getExportMeteringHistoryResultByFIAS" placeholder="ФИАС дома"/>-->
+            <button type="button" ${buttonState} onclick="sendMessage('getExportMeteringHistory');">Получить показания ПУ</button>
         </div>
     </form>
     <form name="paymentDocumentData" accept-charset="utf-8">

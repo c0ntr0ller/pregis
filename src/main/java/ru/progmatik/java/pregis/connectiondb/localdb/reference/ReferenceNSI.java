@@ -70,7 +70,7 @@ public class ReferenceNSI {
 
         if (allItems.size() == 0) {
             updateNSIFromTableList();
-            allItems = nsiDao.getAllItems();
+            allItems = nsiDao.getAllItemsCodeParent(nsiParentCode);
         }
 
         for (ReferenceItemDataSet item : allItems) {

@@ -47,8 +47,25 @@ public class ExportMeteringDeviceHistory {
 
         ExportMeteringDeviceHistoryRequest request = new ExportMeteringDeviceHistoryRequest();
         request.setFIASHouseGuid(fias); // b58c5da4-8d62-438f-b11e-d28103220952
-        request.getMeteringDeviceRootGUID().add("867812e9-3304-4c80-b0ba-821fba775469");
-        request.getMeteringDeviceRootGUID().add("0966d718-a5af-4770-a82b-0239f99b0214");
+//        request.getMeteringDeviceRootGUID().add("867812e9-3304-4c80-b0ba-821fba775469");
+//        request.getMeteringDeviceRootGUID().add("0966d718-a5af-4770-a82b-0239f99b0214");
+
+        return getExportMeteringHistoryResult(request);
+    }
+
+    /**
+     * Метод, по указанному коду дома по ФИАС, формирует запрос, отправляет в ГИС ЖКХ, возвращает ответ на запрос.
+     * @param request объект с параметрами для запроса
+     * @return ответ от ГИС ЖКХ
+     * @throws SQLException
+     */
+    public ExportMeteringDeviceHistoryResult getExportMeteringHistoryResult(ExportMeteringDeviceHistoryRequest request) throws SQLException {
+
+//        ExportMeteringDeviceHistoryRequest request = new ExportMeteringDeviceHistoryRequest();
+//        request.setFIASHouseGuid(fias); // b58c5da4-8d62-438f-b11e-d28103220952
+//        request.getMeteringDeviceType()
+//        request.getMeteringDeviceRootGUID().add("867812e9-3304-4c80-b0ba-821fba775469");
+//        request.getMeteringDeviceRootGUID().add("0966d718-a5af-4770-a82b-0239f99b0214");
 
         return callExportMeteringDeviceHistory(request);
     }

@@ -11,7 +11,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
-import ru.progmatik.java.pregis.services.device_metering.ExportMeteringDeviceHistory;
+import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
 import ru.progmatik.java.pregis.services.house_management.*;
@@ -203,18 +203,17 @@ public class ProgramAction {
 
     /**
      * Метод, по коду дома по ФИАС получает показания ПУ.
-     * @param fias код дома по ФИАС
      */
-    public void getExportMeteringDeviceHistory(String fias) {
+    public void getExportMeteringDeviceHistory() {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
-        ExportMeteringDeviceHistory meteringDeviceHistory = new ExportMeteringDeviceHistory(answerProcessing);
+        UpdateMeteringDeviceValues deviceValues = new UpdateMeteringDeviceValues(answerProcessing);
         try {
-            if (meteringDeviceHistory.getExportMeteringHistoryResultByFIAS(fias) == null) {
+            if (deviceValues.updateMeteringDeviceValues() == null) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");
             } else {
                 answerProcessing.sendOkMessageToClient("\"Получение показаний ПУ\" успешно выполнено.");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             answerProcessing.sendErrorToClient("getExportMeteringDeviceHistory(): ", "", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.

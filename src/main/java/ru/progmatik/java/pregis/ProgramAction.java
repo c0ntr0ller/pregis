@@ -208,8 +208,11 @@ public class ProgramAction {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         UpdateMeteringDeviceValues deviceValues = new UpdateMeteringDeviceValues(answerProcessing);
         try {
-            if (deviceValues.updateMeteringDeviceValues() == null) {
+            int state = deviceValues.updateAllMeteringDeviceValues();
+            if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");
+            } else if (state == 0) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" завершилась с ошибками!");
             } else {
                 answerProcessing.sendOkMessageToClient("\"Получение показаний ПУ\" успешно выполнено.");
             }

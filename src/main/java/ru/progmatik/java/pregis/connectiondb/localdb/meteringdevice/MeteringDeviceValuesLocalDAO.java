@@ -43,8 +43,9 @@ public class MeteringDeviceValuesLocalDAO {
      */
     public void setDateMeteringDeviceValues(String meteringRootGUID, java.util.Date date, Connection connectionLocalBase) throws SQLException {
 
-        if (date.getTime() > (getDateMeteringDeviceValuesUseMeteringRootGUID(meteringRootGUID, connectionLocalBase) == null
-                ? 0 :getDateMeteringDeviceValuesUseMeteringRootGUID(meteringRootGUID, connectionLocalBase).getTime())) {
+        Timestamp lastDateValue = getDateMeteringDeviceValuesUseMeteringRootGUID(meteringRootGUID, connectionLocalBase);
+
+        if (date.getTime() > (lastDateValue == null ? 0 :lastDateValue.getTime())) {
 
             try (PreparedStatement ps = connectionLocalBase.prepareStatement("UPDATE METERING_DEVICE_IDENTIFIERS " +
                     "SET VALUE_REQUEST = ? WHERE METERING_ROOT_GUID = ? AND ARCHIVING_REASON_CODE IS NULL")) {

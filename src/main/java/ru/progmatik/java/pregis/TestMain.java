@@ -9,10 +9,11 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.web.freemarkergen.PageGenerator;
+import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import javax.xml.bind.JAXBContext;
@@ -27,9 +28,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 
 public class TestMain {
@@ -59,12 +63,17 @@ public class TestMain {
 //        setShutdownDefragToLocalBase(); // сжать локальную БД.
 //        getTableSize(); // получить размер файлов из БД.
 
+//        testDecimal(new BigDecimal(19271561.15566663));
 
-        String HTML_DIR = PageGenerator.class.getClassLoader().getResource("ru/progmatik/java/web/site/html").toExternalForm().replace("file:/", "");
-        File file = new File(HTML_DIR);
+//        getAllMeteringDeviceValue();
 
-        System.out.println(file.getAbsolutePath().replaceAll("\\\\", "/"));
-        System.out.println("\\");
+        dateTest();
+
+//        String HTML_DIR = PageGenerator.class.getClassLoader().getResource("ru/progmatik/java/web/site/html").toExternalForm().replace("file:/", "");
+//        File file = new File(HTML_DIR);
+//
+//        System.out.println(file.getAbsolutePath().replaceAll("\\\\", "/"));
+//        System.out.println("\\");
 
 //        getLastMessage();
 //        getMeteringDeviceGradDaoPU1();
@@ -536,6 +545,12 @@ public class TestMain {
         return removeNamespace;
     }
 
+    static void testDecimal(BigDecimal decimal) {
+
+        BigDecimal testDecimal = decimal.setScale(4, BigDecimal.ROUND_DOWN);
+        System.out.println(testDecimal);
+    }
+
     public static void addSpace(Document document) {
 
 //        DeleteNamespace del = new DeleteNamespace();
@@ -558,5 +573,33 @@ public class TestMain {
 //        document.getFirstChild().getFirstChild().getFirstChild().getFirstChild().appendChild(document.createTextNode("\n\t\t"));
 //        document.getChildNodes().item(0).getChildNodes().item(0).appendChild(document.createTextNode("\n\t"));
 
+    }
+
+
+    private static void dateTest() throws ParseException {
+        SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
+        Date oneDate = dateFromSQL.parse("2016-02-27");
+        Date twoDate = dateFromSQL.parse("2016-03-01");
+        System.out.println("date 1: " + oneDate + " : " + oneDate.getTime());
+        System.out.println("date 2: " + twoDate + " : " + twoDate.getTime());
+        System.out.println(oneDate.getTime() > twoDate.getTime() ? "oneDate больше twoDate" : "twoDate больше oneDate");
+
+
+    }
+
+    private static void getAllMeteringDeviceValue() {
+        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            MeteringDeviceValuesGradDAO graddao = new MeteringDeviceValuesGradDAO();
+            HashMap<String, MeteringDeviceValuesObject> fromGrad = graddao.getMeteringDeviceValueFromGrad(7124, connection);
+            for (Map.Entry<String, MeteringDeviceValuesObject> entry : fromGrad.entrySet()) {
+                System.out.println("RootGUID: " + entry.getKey());
+                System.out.println("Object: " + entry.getValue().toString());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

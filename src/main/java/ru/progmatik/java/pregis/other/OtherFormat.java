@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Вспомогательный класс, для различных данных.
@@ -133,5 +134,26 @@ public class OtherFormat {
      */
     public static String getMD5(String text) {
         return DigestUtils.md5Hex(text);
+    }
+
+    /**
+     * Метод, возвращает обработанную строку в массиве с данными.
+     *
+     * @param data - строка с данными.
+     * @return String - массив данных.
+     */
+    public static synchronized String[] getAllDataFromString(String data) {
+
+        data = data + "|-1-"; // Если последний параметр пустой, то он в массив не попадет,
+        // возникнут ошибки на ссылки на индексы массива.
+        String[] array = data.split(Pattern.quote("|"));
+        String[] newArray = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+
+            if (array[i] != null && !array[i].trim().isEmpty()) {
+                newArray[i] = array[i];
+            }
+        }
+        return newArray;
     }
 }

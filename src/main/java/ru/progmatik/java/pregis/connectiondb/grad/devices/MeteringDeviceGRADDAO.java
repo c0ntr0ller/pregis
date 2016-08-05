@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Класс, получает данные из  БД ГРАД и формирует объект пригодный для ГИС ЖКХ.
@@ -367,8 +366,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             basicCharacteristics.getCollectiveApartmentDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
             basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                if (exGisPu1Element[METER_ID_PU1].equals(getAllData(arrayData)[METER_ID_PU2])) {
-                    basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
+                if (exGisPu1Element[METER_ID_PU1].equals(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
+                    basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(OtherFormat.getAllDataFromString(arrayData)[ABON_ID_PU2]), connectionGrad));
                 }
             }
 
@@ -377,8 +376,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
             basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                if (exGisPu1Element[METER_ID_PU1].equals(getAllData(arrayData)[METER_ID_PU2])) {
-                    basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
+                if (exGisPu1Element[METER_ID_PU1].equals(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
+                    basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(OtherFormat.getAllDataFromString(arrayData)[ABON_ID_PU2]), connectionGrad));
                 }
             }
 
@@ -387,8 +386,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
             basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().add(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "LIVINGROOMGUID", connectionGrad));
             for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                if (exGisPu1Element[METER_ID_PU1].equals(getAllData(arrayData)[METER_ID_PU2])) {
-                    basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(getAllData(arrayData)[ABON_ID_PU2]), connectionGrad));
+                if (exGisPu1Element[METER_ID_PU1].equals(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
+                    basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(OtherFormat.getAllDataFromString(arrayData)[ABON_ID_PU2]), connectionGrad));
                 }
             }
         } else {
@@ -831,8 +830,9 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")}",
                 connection, resultSet1 -> {
                     while (resultSet1.next()) {
-                        if (getAllData(resultSet1.getString(1))[ABON_ID_PU1] != null && !getAllData(resultSet1.getString(1))[ABON_ID_PU1].isEmpty()) {
-                            list.add(getAllData(resultSet1.getString(1)));
+                        if (OtherFormat.getAllDataFromString(resultSet1.getString(1))[ABON_ID_PU1] != null &&
+                                !OtherFormat.getAllDataFromString(resultSet1.getString(1))[ABON_ID_PU1].isEmpty()) {
+                            list.add(OtherFormat.getAllDataFromString(resultSet1.getString(1)));
                         } else {
                             LOGGER.debug("ПУ: " + resultSet1.getString(1) +
                                     " не имеет отличительных данных, не сможет быть загруженным в ГИС ЖКХ.");
@@ -877,7 +877,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             return executorProcedure("{EXECUTE PROCEDURE EX_GIS_IPU_IND(" + houseId + ", current_date)}",
                     connectionGrad, resultSet1 -> {
                         while (resultSet1.next())
-                            exGisIpuIndList.add(getAllData(resultSet1.getString(1)));
+                            exGisIpuIndList.add(OtherFormat.getAllDataFromString(resultSet1.getString(1)));
                         return exGisIpuIndList;
                     });
         } else {
@@ -1308,7 +1308,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         return executorProcedure("{EXECUTE PROCEDURE EX_GIS04(" + houseId + ")}",
                 connectionGrad, resultSet1 -> {
                     while (resultSet1.next())
-                        list.add(Integer.valueOf(getAllData(resultSet1.getString(1))[7]));
+                        list.add(Integer.valueOf(OtherFormat.getAllDataFromString(resultSet1.getString(1))[7]));
                     return list;
                 });
     }
@@ -1420,26 +1420,5 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 (ru.gosuslugi.dom.schema.integration.base.ImportResult) unmarshaller.unmarshal(
                         messageExecutor.getLastSOAPFromBase().getSOAPBody().extractContentAsDocument());
         return result;
-    }
-
-    /**
-     * Метод, возвращает обработанную строку в массиве с данными.
-     *
-     * @param data - строка с данными.
-     * @return String - массив данных.
-     */
-    private synchronized String[] getAllData(String data) {
-
-        data = data + "|-1-"; // Если последний параметр пустой, то он в массив не попадет,
-        // возникнут ошибки на ссылки на индексы массива.
-        String[] array = data.split(Pattern.quote("|"));
-        String[] newArray = new String[array.length];
-        for (int i = 0; i < array.length; i++) {
-
-            if (array[i] != null && !array[i].trim().isEmpty()) {
-                newArray[i] = array[i];
-            }
-        }
-        return newArray;
     }
 }

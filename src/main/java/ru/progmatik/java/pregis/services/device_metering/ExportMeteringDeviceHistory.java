@@ -18,7 +18,7 @@ import java.sql.SQLException;
 /**
  * Класс, формирует запрос и получает ответ от сервиса ГИС ЖКХ по SOAP протаколу.
  */
-public class ExportMeteringDeviceHistory {
+public final class ExportMeteringDeviceHistory {
 
     private static final Logger LOGGER = Logger.getLogger(ExportMeteringDeviceHistory.class);
     private static final String NAME_METHOD = "exportMeteringDeviceHistory";

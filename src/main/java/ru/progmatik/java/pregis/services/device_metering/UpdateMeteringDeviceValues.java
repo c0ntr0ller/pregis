@@ -4,13 +4,16 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.NsiRef;
 import ru.gosuslugi.dom.schema.integration.services.device_metering.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDeviceValuesLocalDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,15 +27,17 @@ public class UpdateMeteringDeviceValues {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateMeteringDeviceValues.class);
     private final AnswerProcessing answerProcessing;
+    private final ReferenceNSI referenceNSI;
     private MeteringDeviceValuesGradDAO deviceValuesGradDAO;
     private MeteringDeviceValuesLocalDAO deviceValuesLocalDAO;
-    private HashMap<String, MeteringDeviceValuesObject> tempMeteringDevicesValue;
+    private HashMap<String, MeteringDeviceValuesObject> tempMeteringDevicesValue; // хранит показания всех ПУ полученных из ГИС ЖКХ
     private int errorStatus;
 
-    public UpdateMeteringDeviceValues(AnswerProcessing answerProcessing) {
+    public UpdateMeteringDeviceValues(AnswerProcessing answerProcessing) throws SQLException {
 
         this.answerProcessing = answerProcessing;
         deviceValuesLocalDAO = new MeteringDeviceValuesLocalDAO();
+        referenceNSI = new ReferenceNSI(answerProcessing);
     }
 
     public int updateAllMeteringDeviceValues() throws SQLException, PreGISException, ParseException {
@@ -53,36 +58,110 @@ public class UpdateMeteringDeviceValues {
 
     /**
      * Метод, разбирает ответ, находит нужные показания и заносит их если они отличаются от показаний в ГРАДе.
+     * Если ГИС ЖКХ вернул ошибку или ничего, обработка прекращается.
      *
      */
-    private void updateMeteringDeviceValues(String fias, int houseId, Connection connectionGrad) throws SQLException, ParseException {
+    private void updateMeteringDeviceValues(String fias, int houseId, Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
-        parseMeteringDeviceValuesFromGISJKH(getExportMeteringDeviceHistory(fias));
-        deviceValuesGradDAO = new MeteringDeviceValuesGradDAO();
-        HashMap<String, MeteringDeviceValuesObject> deviceValuesFromGrad = deviceValuesGradDAO.getMeteringDeviceValueFromGrad(houseId, connectionGrad);
-        compareMeteringDevicesValue(deviceValuesFromGrad, tempMeteringDevicesValue);
+        ExportMeteringDeviceHistoryResult result = getExportMeteringDeviceHistory(fias);
+        if (result == null) {
+            answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
+        } else if (result.getErrorMessage() != null){
+            answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
+            answerProcessing.sendErrorToClientNotException("Сообщение от сервера ГИС ЖКХ: ");
+            answerProcessing.sendErrorToClientNotException("Код ошибки: " + result.getErrorMessage().getErrorCode());
+            answerProcessing.sendErrorToClientNotException("Описание ошибки: " + result.getErrorMessage().getDescription());
+        } else {
+            parseMeteringDeviceValuesFromGISJKH(result);
+            deviceValuesGradDAO = new MeteringDeviceValuesGradDAO(answerProcessing);
+            HashMap<String, MeteringDeviceValuesObject> deviceValuesFromGrad = deviceValuesGradDAO.getMeteringDeviceValueFromGrad(houseId, connectionGrad);
+            compareMeteringDevicesValue(fias, deviceValuesFromGrad, tempMeteringDevicesValue, connectionGrad);
+        }
     }
 
     /**
      * Метод, сравнивает показания ПУ полученных из ГИС ЖКХ и БД ГРАД.
      * В зависимости от расхождений добавляет в БД показания или формирует запрос для добавления показаний в ГИС ЖКХ.
+     * @param fias код дома по ФИАС
      * @param meteringDevicesValuesFromGrad показания ПУ полученные из БД ГРАД.
      * @param meteringDevicesValueFromGISJKH показания ПУ полученные из ГИС ЖКХ.
      */
-    private void compareMeteringDevicesValue(HashMap<String, MeteringDeviceValuesObject> meteringDevicesValuesFromGrad,
-                                             HashMap<String, MeteringDeviceValuesObject> meteringDevicesValueFromGISJKH) {
+    private void compareMeteringDevicesValue(String fias,
+                                             HashMap<String, MeteringDeviceValuesObject> meteringDevicesValuesFromGrad,
+                                             HashMap<String, MeteringDeviceValuesObject> meteringDevicesValueFromGISJKH,
+                                             Connection connectionGrad) throws SQLException {
 
-        ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
+        try (Connection connectionLocalDB = ConnectionDB.instance().getConnectionDB()) {
 
-        for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
-            MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
-            if (valuesObject == null) {
-                ImportMeteringDeviceValuesRequest.MeteringDevicesValues devicesValues = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues();
-                // TODO
-                request.getMeteringDevicesValues().add(new ImportMeteringDeviceValuesRequest.MeteringDevicesValues());
+            ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
+
+            for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
+                MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
+
+                ImportMeteringDeviceValuesRequest.MeteringDevicesValues devicesValues =
+                        new ImportMeteringDeviceValuesRequest.MeteringDevicesValues();
+
+                if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
+
+                    // TODO
+                    devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
+
+                    if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
+
+                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
+                                new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
+
+                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
+                                = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
+
+                        currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                        currentValue.setMeteringValueT1(entry.getValue().getMeteringValue());
+                        currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
+                        currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
+
+                        electricDeviceValue.getCurrentValue().add(currentValue);
+                        devicesValues.setElectricDeviceValue(electricDeviceValue);
+
+                    } else { // остальные ПУ
+
+                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
+                                new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
+
+                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
+                                = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
+
+                        currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                        currentValue.setMeteringValue(entry.getValue().getMeteringValue());
+                        currentValue.setMunicipalResource(entry.getValue().getNsiRef());
+
+                        deviceValue.getCurrentValue().add(currentValue);
+                        devicesValues.setOneRateDeviceValue(deviceValue);
+                    }
+
+                    request.setFIASHouseGuid(fias);
+                    request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
+
+                } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) {
+
+                    setMeteringDeviceValue(valuesObject, connectionGrad, connectionLocalDB);
+                }
             }
         }
+    }
 
+    /**
+     * Метод, добвляет в БД данные о показания ПУ.
+     * @param valuesObject объект содержащий данные о показаниях ПУ.
+     * @param connectionGrad подключение к БД ГРАДа.
+     * @param connectionLocalDB подключенте к локальной БД.
+     * @throws SQLException
+     */
+    private void setMeteringDeviceValue(MeteringDeviceValuesObject valuesObject,
+                                        Connection connectionGrad,
+                                        Connection connectionLocalDB) throws SQLException {
+
+        deviceValuesLocalDAO.setDateMeteringDeviceValues(valuesObject, connectionLocalDB);
+        deviceValuesGradDAO.setMeteringDeviceValue(valuesObject, connectionGrad);
 
     }
 
@@ -131,7 +210,7 @@ public class UpdateMeteringDeviceValues {
      *
      * @param result полученный из ГИС ЖКХ ответ.
      */
-    private void parseMeteringDeviceValuesFromGISJKH(ExportMeteringDeviceHistoryResult result) {
+    private void parseMeteringDeviceValuesFromGISJKH(ExportMeteringDeviceHistoryResult result) throws SQLException, PreGISException {
 
         for (ExportMeteringDeviceHistoryResultType resultType : result.getExportMeteringDeviceHistoryResult()) {
             String rootGUID = resultType.getMeteringDeviceRootGUID();
@@ -237,25 +316,26 @@ public class UpdateMeteringDeviceValues {
 
     /**
      * Метод, принимает объект из ГИС ЖКХ с текущими показаниями, сравнивает с текущими показаниями в БД,
-     * при необходимости обновляет в БД или сформирует новые показания для ГИС ЖКХ.
+     * добавляет в Map, при необходимости обновляет в БД или сформирует новые показания для ГИС ЖКХ.
      * @param rootGUID идентификатор ПУ в ГИС ЖКХ.
      * @param value показания по электричеству.
      */
     private void addMeteringDeviceValue(String rootGUID,
                                         ru.gosuslugi.dom.schema.integration.base.ElectricMeteringValueType value,
-                                        Date valueDate) {
+                                        Date valueDate) throws SQLException, PreGISException {
 
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
                 rootGUID,
                 value.getMeteringValueT1(),
                 value.getMeteringValueT2(),
                 value.getMeteringValueT3(),
-                valueDate));
+                valueDate,
+                referenceNSI.getNsiRef("2", "Электрическая энергия")));
     }
 
     /**
      * Метод, принимает объект из ГИС ЖКХ с текущими показаниями, сравнивает с текущими показаниями в БД,
-     * при необходимости обновляет в БД или сформирует новые показания для ГИС ЖКХ.
+     * добавляет в Map, при необходимости обновляет в БД или сформирует новые показания для ГИС ЖКХ.
      * @param rootGUID идентификатор ПУ в ГИС ЖКХ.
      * @param value показания по однотарифному ПУ.
      */
@@ -266,7 +346,8 @@ public class UpdateMeteringDeviceValues {
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
                 rootGUID,
                 value.getMeteringValue(),
-                valueDate));
+                valueDate,
+                value.getMunicipalResource()));
     }
 
     public int getErrorStatus() {

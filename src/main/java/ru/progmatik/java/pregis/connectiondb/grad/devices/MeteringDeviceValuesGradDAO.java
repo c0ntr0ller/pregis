@@ -1,6 +1,9 @@
 package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
+import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 
@@ -20,7 +23,12 @@ import java.util.HashMap;
 public final class MeteringDeviceValuesGradDAO {
 
     private static final Logger LOGGER = Logger.getLogger(MeteringDeviceValuesGradDAO.class);
+    private final AnswerProcessing answerProcessing;
     private SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
+
+    public MeteringDeviceValuesGradDAO(AnswerProcessing answerProcessing) {
+        this.answerProcessing = answerProcessing;
+    }
 
     /**
      * Метод, отправляет в БД запрос и получает в ответ Map где ключ - MeteringDeviceRootGUID,
@@ -31,7 +39,7 @@ public final class MeteringDeviceValuesGradDAO {
      * @throws SQLException
      * @throws ParseException
      */
-    public final HashMap<String, MeteringDeviceValuesObject> getMeteringDeviceValueFromGrad(int houseId, Connection connectionGrad) throws SQLException, ParseException {
+    public final HashMap<String, MeteringDeviceValuesObject> getMeteringDeviceValueFromGrad(int houseId, Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
         return getMeteringDeviceValueFromBase(houseId, null, connectionGrad);
     }
@@ -48,7 +56,9 @@ public final class MeteringDeviceValuesGradDAO {
      */
     private HashMap<String, MeteringDeviceValuesObject> getMeteringDeviceValueFromBase(int houseId, Date date,
                                                                                Connection connectionGrad)
-            throws SQLException, ParseException {
+            throws SQLException, ParseException, PreGISException {
+
+        ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
 
         HashMap<String, MeteringDeviceValuesObject> meteringDeviceValuesMap = new HashMap<>();
 
@@ -62,13 +72,33 @@ public final class MeteringDeviceValuesGradDAO {
                 meteringDeviceValuesMap.put(allData[0],
                         new MeteringDeviceValuesObject(
                                 allData[0],
-                                new BigDecimal(allData[1]),
-                                allData[2] != null ? new BigDecimal(allData[2]) : null,
+                                new BigDecimal(allData[2]),
                                 allData[3] != null ? new BigDecimal(allData[3]) : null,
-                                dateFromSQL.parse(allData[4])));
+                                allData[4] != null ? new BigDecimal(allData[4]) : null,
+                                dateFromSQL.parse(allData[5]),
+                                referenceNSI.getNsiRef("2", allData[1])));
             }
             rs.close();
         }
         return meteringDeviceValuesMap;
+    }
+
+    /**
+     * Метод, добавляет показания ПУ в БД ГРАДа.
+     * @param valuesObject объект содержащий данные показаний ПУ.
+     * @param connectionGrad подключение к БД ГРАД.
+     * @throws SQLException
+     */
+    public final void setMeteringDeviceValue(MeteringDeviceValuesObject valuesObject, Connection connectionGrad) throws SQLException {
+
+        // execute procedure EX_GIS_IND2GRAD(:METERROOTGUID, :METERINGVALUET1, :METERINGVALUET2, :DATEVALUE)
+        // Трехтарифных счетчиков у нас нет, поэтому MeteringValueT3 не нужен
+        try (CallableStatement call = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS_IND2GRAD(?, ?, ?, ?)}")) {
+            call.setString(1, valuesObject.getMeteringDeviceRootGUID());
+            call.setBigDecimal(2, valuesObject.getMeteringValue());
+            call.setBigDecimal(3, valuesObject.getMeteringValueTwo());
+            call.setDate(4, new java.sql.Date(valuesObject.getMeteringDate().getTime()));
+            call.executeQuery();
+        }
     }
 }

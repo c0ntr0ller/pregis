@@ -1,13 +1,14 @@
 package ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 
 import java.sql.*;
 
 /**
  * Класс, работает с локальной базой данных по модулю показания ПУ.
  */
-public class MeteringDeviceValuesLocalDAO {
+public final class MeteringDeviceValuesLocalDAO {
 
     private static final Logger LOGGER = Logger.getLogger(MeteringDeviceValuesLocalDAO.class);
 
@@ -19,7 +20,7 @@ public class MeteringDeviceValuesLocalDAO {
      * @return дата последнего обновления.
      * @throws SQLException
      */
-    public Timestamp getDateMeteringDeviceValuesUseMeteringRootGUID(String meteringRootGUID, Connection connectionLocalBase) throws SQLException {
+    public final Timestamp getDateMeteringDeviceValuesUseMeteringRootGUID(String meteringRootGUID, Connection connectionLocalBase) throws SQLException {
 
         try (PreparedStatement pstm = connectionLocalBase.prepareStatement(
                 "SELECT VALUE_REQUEST FROM METERING_DEVICE_IDENTIFIERS WHERE METERING_ROOT_GUID = ? AND ARCHIVING_REASON_CODE IS NULL")) {
@@ -41,7 +42,7 @@ public class MeteringDeviceValuesLocalDAO {
      * @param connectionLocalBase подключение клокальной БД.
      * @throws SQLException
      */
-    public void setDateMeteringDeviceValues(String meteringRootGUID, java.util.Date date, Connection connectionLocalBase) throws SQLException {
+    private void setDateMeteringDeviceValues(String meteringRootGUID, java.util.Date date, Connection connectionLocalBase) throws SQLException {
 
         Timestamp lastDateValue = getDateMeteringDeviceValuesUseMeteringRootGUID(meteringRootGUID, connectionLocalBase);
 
@@ -54,5 +55,19 @@ public class MeteringDeviceValuesLocalDAO {
                 ps.executeUpdate();
             }
         }
+    }
+
+    /**
+     * Метод, добавляет ПУ дату последней передачи показаний в локальную БД.
+     * @param valuesObject объект содержащий данные показаний.
+     * @param connectionLocalDB подключение к локальной БД.
+     * @throws SQLException
+     */
+    public final void setDateMeteringDeviceValues(MeteringDeviceValuesObject valuesObject, Connection connectionLocalDB) throws SQLException {
+
+        setDateMeteringDeviceValues(
+                valuesObject.getMeteringDeviceRootGUID(),
+                valuesObject.getMeteringDate(),
+                connectionLocalDB);
     }
 }

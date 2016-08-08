@@ -206,8 +206,9 @@ public class ProgramAction {
      */
     public void getExportMeteringDeviceHistory() {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
-        UpdateMeteringDeviceValues deviceValues = new UpdateMeteringDeviceValues(answerProcessing);
+        UpdateMeteringDeviceValues deviceValues = null;
         try {
+            deviceValues = new UpdateMeteringDeviceValues(answerProcessing);
             int state = deviceValues.updateAllMeteringDeviceValues();
             if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");

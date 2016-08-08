@@ -1,5 +1,7 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
+import ru.gosuslugi.dom.schema.integration.base.NsiRef;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -13,22 +15,32 @@ public final class MeteringDeviceValuesObject {
     private final BigDecimal meteringValueTwo; // Показания по тарифу 2
     private final BigDecimal meteringValueThree; // Показания по тарифу 3
     private final Date meteringDate;
+    private final ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef;
 
-    public MeteringDeviceValuesObject(String meteringDeviceRootGUID, BigDecimal meteringValue,
-                                      BigDecimal meteringValueTwo, BigDecimal meteringValueThree, Date meteringDate) {
+    public MeteringDeviceValuesObject(String meteringDeviceRootGUID,
+                                      BigDecimal meteringValue,
+                                      BigDecimal meteringValueTwo,
+                                      BigDecimal meteringValueThree,
+                                      Date meteringDate,
+                                      ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef) {
         this.meteringDeviceRootGUID = meteringDeviceRootGUID;
         this.meteringValue = meteringValue.setScale(4, BigDecimal.ROUND_DOWN);
         this.meteringValueTwo = meteringValueTwo != null ? meteringValueTwo.setScale(4, BigDecimal.ROUND_DOWN) : null;
         this.meteringValueThree = meteringValueThree != null ? meteringValueThree.setScale(4, BigDecimal.ROUND_DOWN) : null;
         this.meteringDate = meteringDate;
+        this.nsiRef = nsiRef;
     }
 
-    public MeteringDeviceValuesObject(String meteringDeviceRootGUID, BigDecimal meteringValue, Date meteringDate) {
+    public MeteringDeviceValuesObject(String meteringDeviceRootGUID,
+                                      BigDecimal meteringValue,
+                                      Date meteringDate,
+                                      ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef) {
         this.meteringDeviceRootGUID = meteringDeviceRootGUID;
         this.meteringValue = meteringValue.setScale(4, BigDecimal.ROUND_DOWN);
         this.meteringValueTwo = null;
         this.meteringValueThree = null;
         this.meteringDate = meteringDate;
+        this.nsiRef = nsiRef;
     }
 
     @Override
@@ -80,5 +92,9 @@ public final class MeteringDeviceValuesObject {
 
     public Date getMeteringDate() {
         return meteringDate;
+    }
+
+    public NsiRef getNsiRef() {
+        return nsiRef;
     }
 }

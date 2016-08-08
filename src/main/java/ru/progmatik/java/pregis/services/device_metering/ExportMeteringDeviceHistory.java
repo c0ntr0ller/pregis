@@ -79,6 +79,7 @@ public final class ExportMeteringDeviceHistory {
      */
     private ExportMeteringDeviceHistoryResult callExportMeteringDeviceHistory(ExportMeteringDeviceHistoryRequest request) throws SQLException {
 
+        answerProcessing.sendMessageToClient("::clearLabelText");
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();

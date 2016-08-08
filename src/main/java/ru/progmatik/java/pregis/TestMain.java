@@ -67,7 +67,11 @@ public class TestMain {
 
 //        getAllMeteringDeviceValue();
 
-        dateTest();
+        BigDecimal one = new BigDecimal(1222333.555);
+        BigDecimal two = new BigDecimal(1222335.555);
+        System.out.println(one.compareTo(two));
+
+//        dateTest();
 
 //        String HTML_DIR = PageGenerator.class.getClassLoader().getResource("ru/progmatik/java/web/site/html").toExternalForm().replace("file:/", "");
 //        File file = new File(HTML_DIR);
@@ -587,9 +591,9 @@ public class TestMain {
 
     }
 
-    private static void getAllMeteringDeviceValue() {
+    private static void getAllMeteringDeviceValue() throws PreGISException {
         try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            MeteringDeviceValuesGradDAO graddao = new MeteringDeviceValuesGradDAO();
+            MeteringDeviceValuesGradDAO graddao = new MeteringDeviceValuesGradDAO(new AnswerProcessing(new ClientService()));
             HashMap<String, MeteringDeviceValuesObject> fromGrad = graddao.getMeteringDeviceValueFromGrad(7124, connection);
             for (Map.Entry<String, MeteringDeviceValuesObject> entry : fromGrad.entrySet()) {
                 System.out.println("RootGUID: " + entry.getKey());

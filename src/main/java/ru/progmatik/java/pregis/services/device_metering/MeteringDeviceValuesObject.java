@@ -45,7 +45,9 @@ public final class MeteringDeviceValuesObject {
 
     @Override
     public String toString() {
-        return "[" + meteringDeviceRootGUID + ", " + meteringValue + ", " + meteringValueTwo + ", " + meteringValueThree + ", " + meteringDate + "]";
+        return "[" + meteringDeviceRootGUID + ", " + meteringValue + ", " + meteringValueTwo + ", " +
+                meteringValueThree + ", " + meteringDate + ", [ nsiRef name: " +
+                nsiRef.getName() + ", nsiRef code: " + nsiRef.getCode() + ", nsiRef GUID: " + nsiRef.getGUID() + "] ]";
     }
 
     @Override

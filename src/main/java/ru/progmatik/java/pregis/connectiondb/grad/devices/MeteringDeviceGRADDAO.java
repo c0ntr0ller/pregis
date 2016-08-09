@@ -414,6 +414,10 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                         resultType.getBasicChatacteristicts(), connectionGRAD);
 //  Пока откл, Проверка
                 checkBasicCharacteristicsForUpdate(resultType);
+            } else if (resultType.getStatusRootDoc().equals("Archival")) {
+                if (!isArchivingDeviceByRootGUID(resultType.getMeteringDeviceRootGUID())) {
+                    setArchivingReasonToLocalBaseByRootGUID(4, resultType);
+                }
             }
         }
 
@@ -607,9 +611,10 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param basicCharacteristics      базовые характеристики ПУ.
      * @param connectionGRAD            подключение к БД ГРАД.
      */
-    private void setByAccountAndPremiseGUIDs(String meteringDeviceRootGUID, String meteringDeviceVersionGUID,
-                                             MeteringDeviceBasicCharacteristicsType
-                                                     basicCharacteristics, Connection connectionGRAD) throws SQLException {
+    private void setByAccountAndPremiseGUIDs(String meteringDeviceRootGUID,
+                                             String meteringDeviceVersionGUID,
+                                             MeteringDeviceBasicCharacteristicsType basicCharacteristics,
+                                             Connection connectionGRAD) throws SQLException {
 
         for (Map.Entry<String, LinkedHashMap<Integer, ImportMeteringDeviceDataRequest.MeteringDevice>>
                 mapEntry : mapTransportMeteringDevice.entrySet()) {
@@ -1108,32 +1113,66 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         if (getMeterIdFromLocalBaseUseMeteringRootGUID(meteringRootGUID) == null) {
             if (!getMeteringDeviceFromLocalBase(abonId, houseId, accountGUID, meteringVersionGUID)) {
                 setMeteringDeviceUniqueNumbers(meterId, meteringVersionGUID, meteringRootGUID, connectionGrad); // в БД ГРАД.
-                try (Connection connection = ConnectionDB.instance().getConnectionDB();
-                     PreparedStatement pstm = connection.prepareStatement(
-                             "INSERT INTO METERING_DEVICE_IDENTIFIERS(ABON_ID, METER_ID, HOUSE_ID, ACCOUNT_GUID, " +
-                                     "PREMISE_GUID, LIVING_ROOM_GUID, METERING_DEVICE_NUMBER, METERING_UNIQUE_NUMBER, " +
-                                     "METERING_ROOT_GUID, METERING_VERSION_GUID, TRANSPORT_GUID, NON_RESIDENTIAL_PREMISE_DEVICE) " +
-                                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    pstm.setInt(1, abonId);
-                    pstm.setInt(2, meterId);
-                    pstm.setInt(3, houseId);
-                    pstm.setString(4, accountGUID);
-                    pstm.setString(5, premiseGUID);
-                    pstm.setString(6, livingRoomGUID);
-                    pstm.setString(7, meteringDeviceNumber);
-                    pstm.setString(8, meteringUniqueNumber);
-                    pstm.setString(9, meteringRootGUID);
-                    pstm.setString(10, meteringVersionGUID);
-                    pstm.setString(11, transportGUID);
-                    pstm.setBoolean(12, isNonResitential);
-                    pstm.executeUpdate();
-                }
+                setMeteringDeviceToLocalBase(abonId, meterId, houseId, accountGUID, premiseGUID, livingRoomGUID, // в локальную БД.
+                        meteringDeviceNumber, meteringUniqueNumber, meteringRootGUID, meteringVersionGUID,
+                        transportGUID, isNonResitential);
                 return true;
             }
         } else {
             updateMeteringVersionGUID(meterId, meteringRootGUID, meteringVersionGUID, connectionGrad);
         }
         return false;
+    }
+
+    /**
+     * Метод, добавляют в локальную БД запись ПУ.
+     *
+     * @param abonId               ид абонента в БД ГРАД.
+     * @param houseId              ид дома в БД ГРАД.
+     * @param accountGUID          идентификатор ЛС.
+     * @param premiseGUID          идентификатор жилого помещения.
+     * @param livingRoomGUID       идентификатор комнаты.
+     * @param meteringDeviceNumber Номер ПУ.
+     * @param meteringUniqueNumber уникальный реестровый номер.
+     * @param meteringRootGUID     идентификатор ПУ в ГИС ЖКХ.
+     * @param meteringVersionGUID  идентификатор версии ПУ.
+     * @param transportGUID        транспортный идентификатор.
+     * @param isNonResitential     статус помещения true - нежилое помещение, false - жилое помищение.
+     * @throws SQLException
+     */
+    private void setMeteringDeviceToLocalBase(Integer abonId,
+                                              Integer meterId,
+                                              Integer houseId,
+                                              String accountGUID,
+                                              String premiseGUID,
+                                              String livingRoomGUID,
+                                              String meteringDeviceNumber,
+                                              String meteringUniqueNumber,
+                                              String meteringRootGUID,
+                                              String meteringVersionGUID,
+                                              String transportGUID,
+                                              boolean isNonResitential) throws SQLException {
+
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             PreparedStatement pstm = connection.prepareStatement(
+                     "INSERT INTO METERING_DEVICE_IDENTIFIERS(ABON_ID, METER_ID, HOUSE_ID, ACCOUNT_GUID, " +
+                             "PREMISE_GUID, LIVING_ROOM_GUID, METERING_DEVICE_NUMBER, METERING_UNIQUE_NUMBER, " +
+                             "METERING_ROOT_GUID, METERING_VERSION_GUID, TRANSPORT_GUID, NON_RESIDENTIAL_PREMISE_DEVICE) " +
+                             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            pstm.setInt(1, abonId);
+            pstm.setInt(2, meterId);
+            pstm.setInt(3, houseId);
+            pstm.setString(4, accountGUID);
+            pstm.setString(5, premiseGUID);
+            pstm.setString(6, livingRoomGUID);
+            pstm.setString(7, meteringDeviceNumber);
+            pstm.setString(8, meteringUniqueNumber);
+            pstm.setString(9, meteringRootGUID);
+            pstm.setString(10, meteringVersionGUID);
+            pstm.setString(11, transportGUID);
+            pstm.setBoolean(12, isNonResitential);
+            pstm.executeUpdate();
+        }
     }
 
     /**
@@ -1230,6 +1269,59 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     }
 
     /**
+     * Метод, по указанному "MeteringDeviceROOTGUID", помечает ПУ как архивный и указаывает ему причину архивирования.
+     *
+     * @param nsiCodeElement      код причины архивирования ПУ.
+     * @param meteringRootGUID уникальный реестровый номер ПУ в ГИС ЖХК.
+     * @throws SQLException
+     */
+    public boolean setArchivingReasonToLocalBaseByRootGUID(Integer nsiCodeElement, String meteringRootGUID) throws SQLException {
+
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             PreparedStatement ps = connection.prepareStatement("UPDATE METERING_DEVICE_IDENTIFIERS " +
+                     "SET ARCHIVING_REASON_CODE = ? WHERE METERING_ROOT_GUID = ?")) {
+            ps.setInt(1, nsiCodeElement);
+            ps.setString(2, meteringRootGUID);
+            int codeUpdate = ps.executeUpdate();
+
+            LOGGER.debug("ps.executeUpdate(): " + codeUpdate);
+            if (codeUpdate == 1) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("ПУ помечен как архивный: " + meteringRootGUID);
+            }
+            return  (codeUpdate == 1);
+        }
+    }
+
+    /**
+     * Метод, если в БД не нашел, устройство для архивирования, то создаст его.
+     * @param nsiCodeElement код причины архивирования ПУ.
+     * @param resultType устройство для архивации.
+     * @throws SQLException
+     */
+    private void setArchivingReasonToLocalBaseByRootGUID(Integer nsiCodeElement, ExportMeteringDeviceDataResultType resultType) throws SQLException {
+
+        if (!setArchivingReasonToLocalBaseByRootGUID(nsiCodeElement, resultType.getMeteringDeviceRootGUID())) {
+            setMeteringDeviceToLocalBase(
+                    -1,
+                    -1,
+                    houseId,
+                    resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getAccountGUID().get(0),
+                    resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getPremiseGUID(),
+                    null,
+                    resultType.getBasicChatacteristicts().getMeteringDeviceNumber(),
+                    null,
+                    resultType.getMeteringDeviceRootGUID(),
+                    resultType.getMeteringDeviceVersionGUID(),
+                    null,
+                    false);
+            setArchivingReasonToLocalBaseByRootGUID(nsiCodeElement, resultType.getMeteringDeviceRootGUID());
+        }
+
+
+    }
+
+    /**
      * Метод, проверяет по указанному "MeteringVersionGUID", является ПУ архивным или нет.
      *
      * @param meteringVersionGUID уникальный реестровый номер ПУ в ГИС ЖХК.
@@ -1245,6 +1337,30 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                      "SELECT ARCHIVING_REASON_CODE FROM METERING_DEVICE_IDENTIFIERS " +
                              "WHERE METERING_VERSION_GUID = ? AND ARCHIVING_REASON_CODE IS NOT NULL")) {
             pstm.setString(1, meteringVersionGUID);
+            ResultSet rs = pstm.executeQuery();
+
+            isArchive = rs.next();
+            rs.close();
+        }
+        return isArchive;
+    }
+
+    /**
+     * Метод, проверяет по указанному "MeteringROOTGUID", является ПУ архивным или нет.
+     *
+     * @param meteringRootGUID уникальный номер ПУ в ГИС ЖХК.
+     * @return true - если ПУ архивное, false - если ПУ не является архивным.
+     * @throws SQLException
+     */
+    private boolean isArchivingDeviceByRootGUID(String meteringRootGUID) throws SQLException {
+
+        boolean isArchive;
+
+        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+             PreparedStatement pstm = connection.prepareStatement(
+                     "SELECT ARCHIVING_REASON_CODE FROM METERING_DEVICE_IDENTIFIERS " +
+                             "WHERE METERING_ROOT_GUID = ? AND ARCHIVING_REASON_CODE IS NOT NULL")) {
+            pstm.setString(1, meteringRootGUID);
             ResultSet rs = pstm.executeQuery();
 
             isArchive = rs.next();

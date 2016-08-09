@@ -1,6 +1,8 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
+import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.NsiRef;
 import ru.gosuslugi.dom.schema.integration.services.device_metering.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
@@ -31,6 +33,8 @@ public class UpdateMeteringDeviceValues {
     private MeteringDeviceValuesGradDAO deviceValuesGradDAO;
     private MeteringDeviceValuesLocalDAO deviceValuesLocalDAO;
     private HashMap<String, MeteringDeviceValuesObject> tempMeteringDevicesValue; // хранит показания всех ПУ полученных из ГИС ЖКХ
+    private int addedValueToGrad;
+    private int addedValueToGISJKH;
     private int errorStatus;
 
     public UpdateMeteringDeviceValues(AnswerProcessing answerProcessing) throws SQLException {
@@ -38,6 +42,8 @@ public class UpdateMeteringDeviceValues {
         this.answerProcessing = answerProcessing;
         deviceValuesLocalDAO = new MeteringDeviceValuesLocalDAO();
         referenceNSI = new ReferenceNSI(answerProcessing);
+        addedValueToGISJKH = 0;
+        addedValueToGrad = 0;
     }
 
     public int updateAllMeteringDeviceValues() throws SQLException, PreGISException, ParseException {
@@ -66,11 +72,13 @@ public class UpdateMeteringDeviceValues {
         ExportMeteringDeviceHistoryResult result = getExportMeteringDeviceHistory(fias);
         if (result == null) {
             answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
+            setErrorStatus(0);
         } else if (result.getErrorMessage() != null){
             answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
             answerProcessing.sendErrorToClientNotException("Сообщение от сервера ГИС ЖКХ: ");
             answerProcessing.sendErrorToClientNotException("Код ошибки: " + result.getErrorMessage().getErrorCode());
             answerProcessing.sendErrorToClientNotException("Описание ошибки: " + result.getErrorMessage().getDescription());
+            setErrorStatus(0);
         } else {
             parseMeteringDeviceValuesFromGISJKH(result);
             deviceValuesGradDAO = new MeteringDeviceValuesGradDAO(answerProcessing);
@@ -94,6 +102,7 @@ public class UpdateMeteringDeviceValues {
         try (Connection connectionLocalDB = ConnectionDB.instance().getConnectionDB()) {
 
             ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
+            request.setFIASHouseGuid(fias);
 
             for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
                 MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
@@ -103,7 +112,6 @@ public class UpdateMeteringDeviceValues {
 
                 if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
 
-                    // TODO
                     devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
 
                     if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
@@ -138,15 +146,54 @@ public class UpdateMeteringDeviceValues {
                         devicesValues.setOneRateDeviceValue(deviceValue);
                     }
 
-                    request.setFIASHouseGuid(fias);
                     request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
+                    addedValueToGISJKH++;
 
-                } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) {
+                } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
 
                     setMeteringDeviceValue(valuesObject, connectionGrad, connectionLocalDB);
+                    addedValueToGrad++;
+                }
+            }
+
+            if (request.getMeteringDevicesValues().size() > 0) { // если есть показания для отправки в ГИС ЖКХ
+                ImportMeteringDeviceValues importMeteringDeviceValues = new ImportMeteringDeviceValues(answerProcessing);
+                ImportResult result = importMeteringDeviceValues.callImportMeteringDeviceValues(request);
+
+                if (result != null) { // если есть ответ от ГИС ЖКХ
+                    if (result.getCommonResult().size() > 0) {
+                        for (CommonResultType resultType : result.getCommonResult()) { // смотрим каждый элемент
+                            if (resultType.getError().size() > 0) { // если есть ошибки
+                                for (CommonResultType.Error error : resultType.getError()) {
+                                    showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
+                                }
+                            } else {
+                                answerProcessing.sendMessageToClient("");
+                                answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. Уникальный номер: " +
+                                        resultType.getUniqueNumber() + " идентификатор: " + resultType.getGUID());
+                            }
+                        }
+                    }
+                } else {
+                    setErrorStatus(-1);
                 }
             }
         }
+    }
+
+    /**
+     * Метод, формирует и выводит пользователю информацию об ошибках, которые возвращает ГИС ЖКХ.
+     *
+     * @param transportGUID транспортный идентификатор.
+     * @param errorCode     код ошибки.
+     * @param description   описание ошибки.
+     */
+    private void showErrorMeteringDevices(String transportGUID, String errorCode, String description) {
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("TransportGUID: " + transportGUID);
+        answerProcessing.sendMessageToClient("Код ошибки: " + errorCode);
+        answerProcessing.sendMessageToClient("Описание ошибки: " + description);
+        setErrorStatus(0);
     }
 
     /**
@@ -162,7 +209,6 @@ public class UpdateMeteringDeviceValues {
 
         deviceValuesLocalDAO.setDateMeteringDeviceValues(valuesObject, connectionLocalDB);
         deviceValuesGradDAO.setMeteringDeviceValue(valuesObject, connectionGrad);
-
     }
 
     /**

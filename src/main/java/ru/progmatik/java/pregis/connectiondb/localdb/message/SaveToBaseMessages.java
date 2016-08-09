@@ -78,7 +78,7 @@ public class SaveToBaseMessages {
             stateBuilder.append(errorMessage.getDescription());
             stateBuilder.append("\n");
             stateBuilder.append(errorMessage.getStackTrace());
-            LOGGER.error(stateBuilder.toString());
+//            LOGGER.error(stateBuilder.toString());
         }
 
         try (FileInputStream inputStream = new FileInputStream(file)) {

@@ -65,6 +65,7 @@ public class ExportMeteringDeviceData {
 
         ExportMeteringDeviceDataRequest request = new ExportMeteringDeviceDataRequest();
         request.setFIASHouseGuid(fias);
+        request.setSearchArchived(true);
         request.setId(OtherFormat.getId());
 
         return request;

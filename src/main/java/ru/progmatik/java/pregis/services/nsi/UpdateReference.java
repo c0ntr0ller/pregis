@@ -203,8 +203,8 @@ public class UpdateReference {
                     addItemsInDB(mapNsiWithCodeNsi, nsiDataSet.getCode(), null);
                 }
             }
+            answerProcessing.sendMessageToClient("Справочник " + nsiDataForLog + ": успешно обновлен!");
         }
-        answerProcessing.sendMessageToClient("Справочник " + nsiDataForLog + ": успешно обновлен!");
         return true;
     }
 

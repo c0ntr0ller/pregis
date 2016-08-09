@@ -21,7 +21,7 @@ import java.sql.SQLException;
 public final class ImportMeteringDeviceValues {
 
     private static final Logger LOGGER = Logger.getLogger(ImportMeteringDeviceValues.class);
-    private static final String NAME_METHOD = "importMeteringDeviceHistory";
+    private static final String NAME_METHOD = "importMeteringDeviceValues";
 
     private final DeviceMeteringService service = new DeviceMeteringService();
     private final DeviceMeteringPortTypes port = service.getDeviceMeteringPort();
@@ -32,7 +32,7 @@ public final class ImportMeteringDeviceValues {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ImportResult callImporttMeteringDeviceValues(ImportMeteringDeviceValuesRequest request) throws SQLException {
+    public ImportResult callImportMeteringDeviceValues(ImportMeteringDeviceValuesRequest request) throws SQLException {
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);

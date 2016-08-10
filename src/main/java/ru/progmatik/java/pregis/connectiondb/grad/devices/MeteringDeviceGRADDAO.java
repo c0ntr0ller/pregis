@@ -141,6 +141,11 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             String rootGUID = getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERVERSIONGUID", connectionGRAD);
             if (rootGUID == null || isArchivingDevice(rootGUID)) {
                 meteringDeviceList.add(meteringDevices);
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("Добавлен прибор учёта для выгрузки в ГИС ЖКХ:\n" +
+                        "идентификатор ПУ в Граде: " + exGisPu1Element[METER_ID_PU1] + ",\n" +
+                        "идентификатор абонента в Граде: " + exGisPu1Element[ABON_ID_PU1]);
+
                 LOGGER.info("ПУ добавлен для выгрузки meterId: " + exGisPu1Element[METER_ID_PU1] +
                         " AbonId: " + exGisPu1Element[ABON_ID_PU1]);
             }
@@ -1317,8 +1322,6 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                     false);
             setArchivingReasonToLocalBaseByRootGUID(nsiCodeElement, resultType.getMeteringDeviceRootGUID());
         }
-
-
     }
 
     /**
@@ -1484,8 +1487,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     public String getMeteringDeviceUniqueNumbersFromGrad(Integer meterId, String identifier, Connection connectionGRAD) throws SQLException {
 
         String answer;
-
-        LOGGER.debug("EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , " + meterId + ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + identifier + ")");
+//        отслеживание параметров процедуры
+//        LOGGER.debug("EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , " + meterId + ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + identifier + ")");
 
         try (CallableStatement call = connectionGRAD.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}")) {
             call.setInt(1, meterId);

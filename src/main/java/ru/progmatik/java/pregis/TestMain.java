@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
@@ -67,8 +68,14 @@ public class TestMain {
 
 //        getAllMeteringDeviceValue();
 
-        BigDecimal one = new BigDecimal(1222333.555);
-        BigDecimal two = new BigDecimal(1222335.555);
+        ReferenceNSI referenceNSI = new ReferenceNSI(new AnswerProcessing(new ClientService()));
+
+        BigDecimal one = new BigDecimal(202.0000);
+        BigDecimal two = new BigDecimal(202.0000);
+
+        MeteringDeviceValuesObject valuesObject = new MeteringDeviceValuesObject("457878", one, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
+        MeteringDeviceValuesObject valuesObject2 = new MeteringDeviceValuesObject("147893", two, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
+        System.out.println(valuesObject.getMeteringValue().compareTo(valuesObject2.getMeteringValue()));
         System.out.println(one.compareTo(two));
 
 //        dateTest();

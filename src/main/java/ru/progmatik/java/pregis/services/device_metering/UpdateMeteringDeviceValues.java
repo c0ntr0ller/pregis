@@ -112,6 +112,14 @@ public class UpdateMeteringDeviceValues {
 
                 if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
 
+                    if (valuesObject == null) {
+                        System.err.println(" valueObject == null: " + entry.getValue());
+                    } else {
+                        System.err.println(" compareMeteringDevicesValue: valueObject: " + valuesObject +
+                                "\n entry: " + entry.getValue() + "\n compare: " + valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()));
+                    }
+
+
                     devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
 
                     if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
@@ -159,6 +167,7 @@ public class UpdateMeteringDeviceValues {
             if (request.getMeteringDevicesValues().size() > 0) { // если есть показания для отправки в ГИС ЖКХ
                 ImportMeteringDeviceValues importMeteringDeviceValues = new ImportMeteringDeviceValues(answerProcessing);
                 ImportResult result = importMeteringDeviceValues.callImportMeteringDeviceValues(request);
+//                ImportResult result = null;
 
                 if (result != null) { // если есть ответ от ГИС ЖКХ
                     if (result.getCommonResult().size() > 0) {
@@ -307,6 +316,16 @@ public class UpdateMeteringDeviceValues {
                                 tempCurrentValue,
                                 tempCurrentValue.getDateValue().toGregorianCalendar().getTime());
                     }
+                } else if (tempCurrentValue != null) {
+                    addMeteringDeviceValue(
+                            rootGUID,
+                            tempCurrentValue,
+                            tempCurrentValue.getDateValue().toGregorianCalendar().getTime());
+                } else if (tempControlValue != null) {
+                    addMeteringDeviceValue(
+                            rootGUID,
+                            tempControlValue,
+                            tempControlValue.getDateValue().toGregorianCalendar().getTime());
                 }
             } else if (resultType.getOneRateDeviceValue() != null) { // если однотарифный ПУ
 
@@ -355,10 +374,21 @@ public class UpdateMeteringDeviceValues {
                                 tempCurrentValueOneRate,
                                 tempCurrentValueOneRate.getDateValue().toGregorianCalendar().getTime());
                     }
+                } else if (tempCurrentValueOneRate != null) {
+                    addMeteringDeviceValue(
+                            rootGUID,
+                            tempCurrentValueOneRate,
+                            tempCurrentValueOneRate.getDateValue().toGregorianCalendar().getTime());
+                } else if (tempControlValueOneRate != null) {
+                    addMeteringDeviceValue(
+                            rootGUID,
+                            tempControlValueOneRate,
+                            tempControlValueOneRate.getDateValue().toGregorianCalendar().getTime());
                 }
             }// if однотарифный ПУ
         } // for
     }
+
 
     /**
      * Метод, принимает объект из ГИС ЖКХ с текущими показаниями, сравнивает с текущими показаниями в БД,

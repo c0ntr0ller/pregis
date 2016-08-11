@@ -5,6 +5,7 @@ import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
 import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -30,6 +31,7 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
     private final AnswerProcessing answerProcessing;
     private final ReferenceNSI nsi;
     private final MeteringDeviceGRADDAO graddao;
+    private final MeteringDevicesDataLocalDBDAO devicesDataLocalDBDAO;
     // Ключ - TransportGUID, значение - ПУ для архиввации
     private final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> meteringDevicesToArchiveLinkedHashMap = new LinkedHashMap<>();
     // Ключ - VersionGUID, значение - ПУ для создания
@@ -49,6 +51,7 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
         this.deviceForArchiveAndCreateMap = deviceForArchiveAndCreateMap;
         nsi = new ReferenceNSI(answerProcessing);
         graddao = new MeteringDeviceGRADDAO(answerProcessing, null);
+        devicesDataLocalDBDAO = new MeteringDevicesDataLocalDBDAO(answerProcessing);
     }
 
     /**
@@ -149,9 +152,9 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
 
         if (meteringDevicesToArchiveLinkedHashMap.containsKey(transportGUID)) {
             ImportMeteringDeviceDataRequest.MeteringDevice meteringDevice = meteringDevicesToArchiveLinkedHashMap.get(transportGUID);
-            Integer meterId = graddao.getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDevice.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
+            Integer meterId = devicesDataLocalDBDAO.getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDevice.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
             graddao.updateMeteringVersionGUID(meterId, null, meteringDeviceVersionGUID, connectionGrad);
-            graddao.setArchivingReasonToLocalBase(Integer.valueOf(meteringDevice.getDeviceDataToUpdate().getArchiveDevice().getArchivingReason().getCode()), meteringDeviceVersionGUID);  // в БД отметка
+            devicesDataLocalDBDAO.setArchivingReasonToLocalBase(Integer.valueOf(meteringDevice.getDeviceDataToUpdate().getArchiveDevice().getArchivingReason().getCode()), meteringDeviceVersionGUID);  // в БД отметка
         }
     }
 

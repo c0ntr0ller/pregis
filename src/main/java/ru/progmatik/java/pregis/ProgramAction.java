@@ -169,10 +169,13 @@ public class ProgramAction {
             UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
             int state = updateAllMeteringDeviceData.updateMeteringDeviceData();
             if (state == -1) {
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
             } else if (state == 0) {
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация ПУ\" завершилась с ошибками!");
             } else if (state == 1) {
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendOkMessageToClient("\"Синхронизация ПУ\" успешно выполнена.");
             }
         } catch (Exception e) {

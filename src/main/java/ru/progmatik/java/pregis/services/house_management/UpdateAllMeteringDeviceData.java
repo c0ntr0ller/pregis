@@ -134,6 +134,13 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
         int count = 0;
         for (ArchiveData data : archiveDataList) {
             count += data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().size();
+            for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().entrySet()) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("ПУ с идентификатором: " +
+                        entry.getKey() + " не удалось обновить.");
+            }
+
+
         }
         return count;
     }

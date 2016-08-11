@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGr
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDeviceValuesLocalDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -30,8 +31,9 @@ public class UpdateMeteringDeviceValues {
     private static final Logger LOGGER = Logger.getLogger(UpdateMeteringDeviceValues.class);
     private final AnswerProcessing answerProcessing;
     private final ReferenceNSI referenceNSI;
+    private final MeteringDeviceValuesLocalDAO deviceValuesLocalDAO;
+    private final MeteringDevicesDataLocalDBDAO devicesDataLocalDBDAO;
     private MeteringDeviceValuesGradDAO deviceValuesGradDAO;
-    private MeteringDeviceValuesLocalDAO deviceValuesLocalDAO;
     private HashMap<String, MeteringDeviceValuesObject> tempMeteringDevicesValue; // хранит показания всех ПУ полученных из ГИС ЖКХ
     private int addedValueToGrad;
     private int addedValueToGISJKH;
@@ -41,6 +43,7 @@ public class UpdateMeteringDeviceValues {
 
         this.answerProcessing = answerProcessing;
         deviceValuesLocalDAO = new MeteringDeviceValuesLocalDAO();
+        devicesDataLocalDBDAO = new MeteringDevicesDataLocalDBDAO(answerProcessing);
         referenceNSI = new ReferenceNSI(answerProcessing);
         addedValueToGISJKH = 0;
         addedValueToGrad = 0;
@@ -65,7 +68,6 @@ public class UpdateMeteringDeviceValues {
     /**
      * Метод, разбирает ответ, находит нужные показания и заносит их если они отличаются от показаний в ГРАДе.
      * Если ГИС ЖКХ вернул ошибку или ничего, обработка прекращается.
-     *
      */
     private void updateMeteringDeviceValues(String fias, int houseId, Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
@@ -73,7 +75,7 @@ public class UpdateMeteringDeviceValues {
         if (result == null) {
             answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
             setErrorStatus(0);
-        } else if (result.getErrorMessage() != null){
+        } else if (result.getErrorMessage() != null) {
             answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
             answerProcessing.sendErrorToClientNotException("Сообщение от сервера ГИС ЖКХ: ");
             answerProcessing.sendErrorToClientNotException("Код ошибки: " + result.getErrorMessage().getErrorCode());
@@ -90,8 +92,9 @@ public class UpdateMeteringDeviceValues {
     /**
      * Метод, сравнивает показания ПУ полученных из ГИС ЖКХ и БД ГРАД.
      * В зависимости от расхождений добавляет в БД показания или формирует запрос для добавления показаний в ГИС ЖКХ.
-     * @param fias код дома по ФИАС
-     * @param meteringDevicesValuesFromGrad показания ПУ полученные из БД ГРАД.
+     *
+     * @param fias                           код дома по ФИАС
+     * @param meteringDevicesValuesFromGrad  показания ПУ полученные из БД ГРАД.
      * @param meteringDevicesValueFromGISJKH показания ПУ полученные из ГИС ЖКХ.
      */
     private void compareMeteringDevicesValue(String fias,
@@ -101,66 +104,65 @@ public class UpdateMeteringDeviceValues {
 
         try (Connection connectionLocalDB = ConnectionDB.instance().getConnectionDB()) {
 
+
             ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
             request.setFIASHouseGuid(fias);
 
             for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
-                MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
 
-                ImportMeteringDeviceValuesRequest.MeteringDevicesValues devicesValues =
-                        new ImportMeteringDeviceValuesRequest.MeteringDevicesValues();
+                if (!devicesDataLocalDBDAO.isArchivingDeviceByRootGUID(entry.getKey())) {
 
-                if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
+                    MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
 
-                    if (valuesObject == null) {
-                        System.err.println(" valueObject == null: " + entry.getValue());
-                    } else {
-                        System.err.println(" compareMeteringDevicesValue: valueObject: " + valuesObject +
-                                "\n entry: " + entry.getValue() + "\n compare: " + valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()));
+                    ImportMeteringDeviceValuesRequest.MeteringDevicesValues devicesValues =
+                            new ImportMeteringDeviceValuesRequest.MeteringDevicesValues();
+
+                    if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
+
+                        devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
+
+                        if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
+
+                            ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
+                                    new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
+
+                            ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
+                                    = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
+
+                            currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                            currentValue.setMeteringValueT1(entry.getValue().getMeteringValue());
+                            currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
+                            currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
+
+                            electricDeviceValue.getCurrentValue().add(currentValue);
+                            devicesValues.setElectricDeviceValue(electricDeviceValue);
+
+                        } else { // остальные ПУ
+
+                            ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
+                                    new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
+
+                            ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
+                                    = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
+
+                            currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                            currentValue.setMeteringValue(entry.getValue().getMeteringValue());
+                            currentValue.setMunicipalResource(entry.getValue().getNsiRef());
+
+                            deviceValue.getCurrentValue().add(currentValue);
+                            devicesValues.setOneRateDeviceValue(deviceValue);
+                        }
+
+                        request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
+                        addedValueToGISJKH++;
+
+                    } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
+
+                        setMeteringDeviceValue(valuesObject, connectionGrad, connectionLocalDB);
+                        addedValueToGrad++;
                     }
-
-
-                    devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
-
-                    if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
-
-                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
-                                new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
-
-                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
-                                = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
-
-                        currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                        currentValue.setMeteringValueT1(entry.getValue().getMeteringValue());
-                        currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
-                        currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
-
-                        electricDeviceValue.getCurrentValue().add(currentValue);
-                        devicesValues.setElectricDeviceValue(electricDeviceValue);
-
-                    } else { // остальные ПУ
-
-                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
-                                new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
-
-                        ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
-                                = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
-
-                        currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                        currentValue.setMeteringValue(entry.getValue().getMeteringValue());
-                        currentValue.setMunicipalResource(entry.getValue().getNsiRef());
-
-                        deviceValue.getCurrentValue().add(currentValue);
-                        devicesValues.setOneRateDeviceValue(deviceValue);
-                    }
-
-                    request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
-                    addedValueToGISJKH++;
-
-                } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
-
-                    setMeteringDeviceValue(valuesObject, connectionGrad, connectionLocalDB);
-                    addedValueToGrad++;
+                } else {
+                    LOGGER.info("ПУ не удаётся обновить, возможно, оно архивировано: " + entry.getValue());
                 }
             }
 
@@ -178,14 +180,17 @@ public class UpdateMeteringDeviceValues {
                                 }
                             } else {
                                 answerProcessing.sendMessageToClient("");
-                                answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. Уникальный номер: " +
-                                        resultType.getUniqueNumber() + " идентификатор: " + resultType.getGUID());
+                                answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. " +
+                                        "идентификатор ПУ: " + resultType.getGUID());
                             }
                         }
                     }
                 } else {
                     setErrorStatus(-1);
                 }
+            } else {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("Не найдены показания приборов учёта для обновления.");
             }
         }
     }
@@ -207,8 +212,9 @@ public class UpdateMeteringDeviceValues {
 
     /**
      * Метод, добвляет в БД данные о показания ПУ.
-     * @param valuesObject объект содержащий данные о показаниях ПУ.
-     * @param connectionGrad подключение к БД ГРАДа.
+     *
+     * @param valuesObject      объект содержащий данные о показаниях ПУ.
+     * @param connectionGrad    подключение к БД ГРАДа.
      * @param connectionLocalDB подключенте к локальной БД.
      * @throws SQLException
      */
@@ -393,8 +399,9 @@ public class UpdateMeteringDeviceValues {
     /**
      * Метод, принимает объект из ГИС ЖКХ с текущими показаниями, сравнивает с текущими показаниями в БД,
      * добавляет в Map, при необходимости обновляет в БД или сформирует новые показания для ГИС ЖКХ.
+     *
      * @param rootGUID идентификатор ПУ в ГИС ЖКХ.
-     * @param value показания по электричеству.
+     * @param value    показания по электричеству.
      */
     private void addMeteringDeviceValue(String rootGUID,
                                         ru.gosuslugi.dom.schema.integration.base.ElectricMeteringValueType value,
@@ -412,8 +419,9 @@ public class UpdateMeteringDeviceValues {
     /**
      * Метод, принимает объект из ГИС ЖКХ с текущими показаниями, сравнивает с текущими показаниями в БД,
      * добавляет в Map, при необходимости обновляет в БД или сформирует новые показания для ГИС ЖКХ.
+     *
      * @param rootGUID идентификатор ПУ в ГИС ЖКХ.
-     * @param value показания по однотарифному ПУ.
+     * @param value    показания по однотарифному ПУ.
      */
     private void addMeteringDeviceValue(String rootGUID,
                                         ru.gosuslugi.dom.schema.integration.base.OneRateMeteringValueType value,
@@ -432,7 +440,8 @@ public class UpdateMeteringDeviceValues {
 
     private void setErrorStatus(int errorStatus) {
 
-        if (errorStatus < this.errorStatus) this.errorStatus = errorStatus; // если возникают ошибки из всех домов, храним их в переменой и возвращаем.
+        if (errorStatus < this.errorStatus)
+            this.errorStatus = errorStatus; // если возникают ошибки из всех домов, храним их в переменой и возвращаем.
         this.errorStatus = errorStatus;
     }
 }

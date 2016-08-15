@@ -96,6 +96,7 @@ public class ReferenceNSI {
         boolean isError = true;
         for (ReferenceDownloadNSIDataSet nsiDataSet : nsiListForDownload) {
             String nsiDataForLog = nsiDataSet.getNsiType().getNsi() + "-" + nsiDataSet.getCode() + " \"" + nsiDataSet.getWorldForExtract() + "\"";
+            answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Обновляю справочник " + nsiDataForLog + ".");
 
             if (updateNSI(nsiDataSet)) {

@@ -104,8 +104,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
             mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), null);
 //            LOGGER.debug("meterId: " + exGisPu1Element[METER_ID_PU1]);
-            String rootGUID = getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERVERSIONGUID", connectionGRAD);
-            if (rootGUID == null || devicesDataLocalDBDAO.isArchivingDevice(rootGUID)) {
+            String rootGUID = getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERROOTGUID", connectionGRAD);
+            if (rootGUID == null || devicesDataLocalDBDAO.isArchivingDeviceByRootGUID(rootGUID)) {
                 meteringDeviceList.add(meteringDevices);
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendMessageToClient("Добавлен прибор учёта для выгрузки в ГИС ЖКХ:");

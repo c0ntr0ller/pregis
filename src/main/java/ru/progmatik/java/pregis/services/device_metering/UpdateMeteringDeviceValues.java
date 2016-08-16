@@ -6,7 +6,6 @@ import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.NsiRef;
 import ru.gosuslugi.dom.schema.integration.services.device_metering.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
@@ -102,9 +101,6 @@ public class UpdateMeteringDeviceValues {
                                              HashMap<String, MeteringDeviceValuesObject> meteringDevicesValueFromGISJKH,
                                              Connection connectionGrad) throws SQLException {
 
-        try (Connection connectionLocalDB = ConnectionDB.instance().getConnectionDB()) {
-
-
             ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
             request.setFIASHouseGuid(fias);
 
@@ -158,7 +154,7 @@ public class UpdateMeteringDeviceValues {
 
                     } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
 
-                        setMeteringDeviceValue(valuesObject, connectionGrad, connectionLocalDB);
+                        setMeteringDeviceValue(valuesObject, connectionGrad);
                         addedValueToGrad++;
                     }
                 } else {
@@ -188,11 +184,10 @@ public class UpdateMeteringDeviceValues {
                 } else {
                     setErrorStatus(-1);
                 }
-            } else {
-                answerProcessing.sendMessageToClient("");
-                answerProcessing.sendMessageToClient("Не найдены показания приборов учёта для обновления.");
+//            } else {
+//                answerProcessing.sendMessageToClient("");
+//                answerProcessing.sendMessageToClient("Не найдены показания приборов учёта для обновления.");
             }
-        }
     }
 
     /**
@@ -215,14 +210,12 @@ public class UpdateMeteringDeviceValues {
      *
      * @param valuesObject      объект содержащий данные о показаниях ПУ.
      * @param connectionGrad    подключение к БД ГРАДа.
-     * @param connectionLocalDB подключенте к локальной БД.
      * @throws SQLException
      */
     private void setMeteringDeviceValue(MeteringDeviceValuesObject valuesObject,
-                                        Connection connectionGrad,
-                                        Connection connectionLocalDB) throws SQLException {
+                                        Connection connectionGrad) throws SQLException {
 
-        deviceValuesLocalDAO.setDateMeteringDeviceValues(valuesObject, connectionLocalDB);
+        deviceValuesLocalDAO.setDateMeteringDeviceValues(valuesObject);
         deviceValuesGradDAO.setMeteringDeviceValue(valuesObject, connectionGrad);
     }
 
@@ -432,6 +425,14 @@ public class UpdateMeteringDeviceValues {
                 value.getMeteringValue(),
                 valueDate,
                 value.getMunicipalResource()));
+    }
+
+    public int getAddedValueToGISJKH() {
+        return addedValueToGISJKH;
+    }
+
+    public int getAddedValueToGrad() {
+        return addedValueToGrad;
     }
 
     public int getErrorStatus() {

@@ -98,7 +98,15 @@ public final class MeteringDeviceValuesGradDAO {
             call.setBigDecimal(2, valuesObject.getMeteringValue());
             call.setBigDecimal(3, valuesObject.getMeteringValueTwo());
             call.setDate(4, new java.sql.Date(valuesObject.getMeteringDate().getTime()));
-            call.executeQuery();
+
+            LOGGER.debug("SQL: {EXECUTE PROCEDURE EX_GIS_IND2GRAD(" +
+                    valuesObject.getMeteringDeviceRootGUID() + ", " +
+                    valuesObject.getMeteringValue() + ", " +
+                    valuesObject.getMeteringValueTwo() + ", " +
+                    new java.sql.Date(valuesObject.getMeteringDate().getTime()) + ")}");
+
+            call.executeUpdate();
+
         }
     }
 }

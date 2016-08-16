@@ -81,9 +81,6 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
 
                 if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
                     archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
-//                    TODO
-
-//                    setDevicesToArchiveAndCreate(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
                 }
 
                 countUpdate += meteringDeviceGRADDAO.getCountUpdate();
@@ -121,6 +118,16 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
                 setDevicesToArchiveAndCreate(archiveData.getImportMeteringDeviceData(), archiveData.getFias(),
                         archiveData.getMeteringDeviceGRADDAO(), connection);
             }
+            if (errorState == -1) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Пересоздание ПУ\" прервана!");
+            } else if (errorState == 0) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendErrorToClientNotException("Операция: \"Пересоздание ПУ\" завершилась с ошибками!");
+            } else if (errorState == 1) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendOkMessageToClient("\"Пересоздание ПУ\" успешно выполнено.");
+            }
         }
 
     }
@@ -139,8 +146,6 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
                 answerProcessing.sendMessageToClient("ПУ с идентификатором: " +
                         entry.getKey() + " не удалось обновить.");
             }
-
-
         }
         return count;
     }
@@ -217,6 +222,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
                         answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
                         answerProcessing.sendMessageToClient("");
                     }
+                    if (errorState > deviceGRADDAO.getErrorState()) errorState = deviceGRADDAO.getErrorState();
                 } else {
                     errorState = -1;
                 }
@@ -227,6 +233,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
     @Override
     public void go() {
         try {
+            errorState = 1;
             recreatingMeteringDevices();
         } catch (SQLException | FileNotFoundException | ParseException | SOAPException | JAXBException | PreGISException e) {
             answerProcessing.sendErrorToClient("Обновление ПУ", "\"Обновление ПУ\"", LOGGER, e);

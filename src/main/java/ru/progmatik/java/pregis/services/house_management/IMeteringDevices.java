@@ -14,4 +14,6 @@ import java.sql.SQLException;
 public interface IMeteringDevices {
 
     public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException;
+
+    public int getErrorState();
 }

@@ -218,6 +218,11 @@ public class ProgramAction {
             } else if (state == 0) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" завершилась с ошибками!");
             } else {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("Итого обновлено показаний ПУ:");
+                answerProcessing.sendMessageToClient("Град: " + deviceValues.getAddedValueToGrad());
+                answerProcessing.sendMessageToClient("ГИС ЖКХ: " + deviceValues.getAddedValueToGISJKH());
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendOkMessageToClient("\"Получение показаний ПУ\" успешно выполнено.");
             }
         } catch (Exception e) {

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 /**
  * Класс, работает с локальной БД для обработки информации о приборах учёта.
  */
-public class MeteringDevicesDataLocalDBDAO {
+public final class MeteringDevicesDataLocalDBDAO {
 
     private static final String TABLE_NAME_METERING_DEVICE_IDENTIFIERS = "METERING_DEVICE_IDENTIFIERS";
     private static final String SQL_CREATE_TABLE_METERING_DEVICE_IDENTIFIERS =
@@ -78,7 +78,7 @@ public class MeteringDevicesDataLocalDBDAO {
      * @param isNonResitential     статус помещения true - нежилое помещение, false - жилое помищение.
      * @throws SQLException
      */
-    public void setMeteringDeviceToLocalBase(Integer abonId,
+    public final void setMeteringDeviceToLocalBase(Integer abonId,
                                               Integer meterId,
                                               Integer houseId,
                                               String accountGUID,

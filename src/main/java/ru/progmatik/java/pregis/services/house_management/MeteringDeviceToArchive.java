@@ -37,6 +37,8 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
     // Ключ - VersionGUID, значение - ПУ для создания
     private final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchiveAndCreateMap;
 
+    private int errorState;
+
     /**
      * Конструктор, создаёт класс для архивирования устройства и создания списка новых устройств для добавления.
      * @param answerProcessing - обработчик сообщений.
@@ -204,5 +206,14 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
             ImportMeteringDeviceDataRequest.MeteringDevice meteringDevice = meteringDevicesToArchiveLinkedHashMap.get(transportGUID);
             deviceForArchiveAndCreateMap.remove(meteringDevice.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
         }
+        setErrorState(0);
+    }
+
+    public int getErrorState() {
+        return errorState;
+    }
+
+    private void setErrorState(int errorState) {
+        if (this.errorState > errorState) this.errorState = errorState;
     }
 }

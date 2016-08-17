@@ -12,6 +12,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
@@ -68,17 +69,28 @@ public class TestMain {
 
 //        getAllMeteringDeviceValue();
 
-        showIsArchiveDevice();
+//        showIsArchiveDevice();
 
-//        ReferenceNSI referenceNSI = new ReferenceNSI(new AnswerProcessing(new ClientService()));
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 //
-//        BigDecimal one = new BigDecimal(202.0000);
-//        BigDecimal two = new BigDecimal(202.0000);
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTime(new Date(System.currentTimeMillis()));
 //
-//        MeteringDeviceValuesObject valuesObject = new MeteringDeviceValuesObject("457878", one, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
-//        MeteringDeviceValuesObject valuesObject2 = new MeteringDeviceValuesObject("147893", two, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
-//        System.out.println(valuesObject.getMeteringValue().compareTo(valuesObject2.getMeteringValue()));
-//        System.out.println(one.compareTo(two));
+//        System.out.println("Now: " + sdf.format(calendar.getTime()));
+//
+//        calendar.add(Calendar.MONTH, -8);
+//
+//        System.out.println("New: " + sdf.format(calendar.getTime()));
+
+        ReferenceNSI referenceNSI = new ReferenceNSI(new AnswerProcessing(new ClientService()));
+
+        BigDecimal one = new BigDecimal(78.0000);
+        BigDecimal two = new BigDecimal(77.0000);
+
+        MeteringDeviceValuesObject valuesObject = new MeteringDeviceValuesObject("457878", one, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
+        MeteringDeviceValuesObject valuesObject2 = new MeteringDeviceValuesObject("147893", two, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
+        System.out.println(valuesObject.getMeteringValue().compareTo(valuesObject2.getMeteringValue()));
+        System.out.println(one.compareTo(two));
 
 //        dateTest();
 

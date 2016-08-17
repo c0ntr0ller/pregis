@@ -239,10 +239,15 @@ public class UpdateMeteringDeviceValues {
             nsiList.add(nsiRef);
         }
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(System.currentTimeMillis()));
+        calendar.add(Calendar.MONTH, -2);
+
 //        Формируем объект для запроса
         ExportMeteringDeviceHistoryRequest request = new ExportMeteringDeviceHistoryRequest();
         request.setFIASHouseGuid(fias); // b58c5da4-8d62-438f-b11e-d28103220952
         request.getMeteringDeviceType().addAll(nsiList);
+        request.setInputDateFrom(OtherFormat.getDateForXML(calendar.getTime()));
 
         ExportMeteringDeviceHistory deviceHistory = new ExportMeteringDeviceHistory(answerProcessing);
         ExportMeteringDeviceHistoryResult result = deviceHistory.getExportMeteringHistoryResult(request);
@@ -281,8 +286,9 @@ public class UpdateMeteringDeviceValues {
 
                         if (tempControlValue == null) tempControlValue = controlValue;
                         else {
-                            if (controlValue.getDateValue().toGregorianCalendar().getTime().getTime() >
-                                    tempControlValue.getDateValue().toGregorianCalendar().getTime().getTime()) {
+                            if (controlValue.getDateValue().toGregorianCalendar().getTime().getTime() >=
+                                    tempControlValue.getDateValue().toGregorianCalendar().getTime().getTime() &&
+                                    controlValue.getMeteringValueT1().compareTo(tempControlValue.getMeteringValueT1()) == 1) {
                                 tempControlValue = controlValue;
                             }
                         }
@@ -295,8 +301,9 @@ public class UpdateMeteringDeviceValues {
 
                         if (tempCurrentValue == null) tempCurrentValue = currentValue;
                         else {
-                            if (currentValue.getDateValue().toGregorianCalendar().getTime().getTime() >
-                                    tempCurrentValue.getDateValue().toGregorianCalendar().getTime().getTime()) {
+                            if (currentValue.getDateValue().toGregorianCalendar().getTime().getTime() >=
+                                    tempCurrentValue.getDateValue().toGregorianCalendar().getTime().getTime() &&
+                                    currentValue.getMeteringValueT1().compareTo(tempCurrentValue.getMeteringValueT1()) == 1) {
                                 tempCurrentValue = currentValue;
                             }
                         }
@@ -336,13 +343,15 @@ public class UpdateMeteringDeviceValues {
                     for (OneRateMeteringValueKindType.ControlValue controlValueOneRate :
                             resultType.getOneRateDeviceValue().getValues().getControlValue()) {
 
-                        if (tempControlValueOneRate == null) tempControlValueOneRate = controlValueOneRate;
-                        else {
-                            if (controlValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime() >
-                                    tempControlValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime()) {
+                        if (tempControlValueOneRate == null) {
+                            tempControlValueOneRate = controlValueOneRate;
+
+                        } else if (controlValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime() >=
+                                tempControlValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime() &&
+                                controlValueOneRate.getMeteringValue().compareTo(tempControlValueOneRate.getMeteringValue()) == 1) {
+
                                 tempControlValueOneRate = controlValueOneRate;
                             }
-                        }
                     } // for
                 } // if контрольные показания
 
@@ -351,12 +360,14 @@ public class UpdateMeteringDeviceValues {
                     for (OneRateMeteringValueKindType.CurrentValue currentValueOneRate :
                             resultType.getOneRateDeviceValue().getValues().getCurrentValue()) {
 
-                        if (tempCurrentValueOneRate == null) tempCurrentValueOneRate = currentValueOneRate;
-                        else {
-                            if (currentValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime() >
-                                    tempCurrentValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime()) {
-                                tempCurrentValueOneRate = currentValueOneRate;
-                            }
+                        if (tempCurrentValueOneRate == null) {
+                            tempCurrentValueOneRate = currentValueOneRate;
+
+                        } else if (currentValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime() >=
+                                tempCurrentValueOneRate.getDateValue().toGregorianCalendar().getTime().getTime() &&
+                                currentValueOneRate.getMeteringValue().compareTo(tempCurrentValueOneRate.getMeteringValue()) == 1) {
+
+                            tempCurrentValueOneRate = currentValueOneRate;
                         }
                     } // for
                 } // if текущее показания
@@ -407,6 +418,8 @@ public class UpdateMeteringDeviceValues {
                 value.getMeteringValueT3(),
                 valueDate,
                 referenceNSI.getNsiRef("2", "Электрическая энергия")));
+        deviceValuesLocalDAO.setDateMeteringDeviceValues(rootGUID, valueDate);
+//        LOGGER.debug("Добавлены показания ПУ для сравнения: " + rootGUID + " показания: " + value.getMeteringValueT1());
     }
 
     /**
@@ -418,13 +431,15 @@ public class UpdateMeteringDeviceValues {
      */
     private void addMeteringDeviceValue(String rootGUID,
                                         ru.gosuslugi.dom.schema.integration.base.OneRateMeteringValueType value,
-                                        Date valueDate) {
+                                        Date valueDate) throws SQLException {
 
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
                 rootGUID,
                 value.getMeteringValue(),
                 valueDate,
                 value.getMunicipalResource()));
+        deviceValuesLocalDAO.setDateMeteringDeviceValues(rootGUID, valueDate);
+//        LOGGER.debug("Добавлены показания ПУ для сравнения: " + rootGUID + " показания: " + value.getMeteringValue());
     }
 
     public int getAddedValueToGISJKH() {

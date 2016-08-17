@@ -42,7 +42,7 @@ public final class MeteringDeviceValuesLocalDAO {
      * @param date                дата передачи показаний.
      * @throws SQLException
      */
-    private void setDateMeteringDeviceValues(String meteringRootGUID, java.util.Date date) throws SQLException {
+    public void setDateMeteringDeviceValues(String meteringRootGUID, java.util.Date date) throws SQLException {
 
         Timestamp lastDateValue = getDateMeteringDeviceValuesUseMeteringRootGUID(meteringRootGUID);
 

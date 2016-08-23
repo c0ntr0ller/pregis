@@ -9,7 +9,6 @@ import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDa
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.address.AddressValidation;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
@@ -335,16 +334,16 @@ public class ProgramAction {
         setStateRunOff();
     }
 
-    /**
-     * Метод, пока не извесный, замена exportOrgRegistry.
-     */
-    public void callAddressValidation() {
-
-        answerProcessing.sendMessageToClient("Запуск получения AddressAddition");
-        AddressValidation addressValidation = new AddressValidation(answerProcessing);
-        addressValidation.callAddressValidation();
-        answerProcessing.sendMessageToClient("Получения AddressAddition завершено.");
-    }
+//    /**
+//     * Метод, пока не извесный, замена exportOrgRegistry.
+//     */
+//    public void callAddressValidation() {
+//
+//        answerProcessing.sendMessageToClient("Запуск получения AddressAddition");
+//        AddressValidation addressValidation = new AddressValidation(answerProcessing);
+//        addressValidation.callAddressValidation();
+//        answerProcessing.sendMessageToClient("Получения AddressAddition завершено.");
+//    }
 
     /**
      * Метод асинхронный, экспорт реквизитов платежных документов для банков.

@@ -2,7 +2,9 @@ package ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
+import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.sql.*;
 
@@ -12,6 +14,15 @@ import java.sql.*;
 public final class MeteringDeviceValuesLocalDAO {
 
     private static final Logger LOGGER = Logger.getLogger(MeteringDeviceValuesLocalDAO.class);
+
+    public MeteringDeviceValuesLocalDAO() {
+        try {
+            // вдруг таблице ещё нет
+            MeteringDevicesDataLocalDBDAO dbdao = new MeteringDevicesDataLocalDBDAO(new AnswerProcessing(new ClientService()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Метод, идентификатору ПУ в ГИС ЖКХ находит meterId с помощью которого можно занести или получить данные в БД ГРАД.

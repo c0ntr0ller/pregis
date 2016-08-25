@@ -59,8 +59,7 @@ public class ExportHouseData {
             LinkedHashMap<String, Integer> fiasMap = gradDao.getAllFIAS(connectionGrad); // Берем из процедуры все дома, которые содержат ФИАС
             if (fiasMap != null) {
                 for (Map.Entry<String, Integer> entry : fiasMap.entrySet()) {
-                    answerProcessing.sendMessageToClient("Запрос по ФИАС: " + entry.getKey());
-                    getHouseData(entry.getKey(), entry.getValue(), gradDao, connectionGrad);
+                    getHouseData(entry, gradDao, connectionGrad);
                 }
             }
 
@@ -68,8 +67,7 @@ public class ExportHouseData {
             LinkedHashMap<String, Integer> mapJd = gradDao.getJDAllFias(connectionGrad);
             if (mapJd != null) {
                 for (Map.Entry<String, Integer> entry : mapJd.entrySet()) {
-                    answerProcessing.sendMessageToClient("Запрос по ФИАС: " + entry.getKey());
-                    getHouseData(entry.getKey(), entry.getValue(), gradDao, connectionGrad);
+                    getHouseData(entry, gradDao, connectionGrad);
                 }
             }
         }
@@ -173,7 +171,7 @@ public class ExportHouseData {
                 answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
 
             } else {
-                answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получены!");
+//                answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получены!");
             }
 
         } catch (PreGISException e) {
@@ -203,6 +201,23 @@ public class ExportHouseData {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
         }
         return result;
+    }
+
+    /**
+     * Метод, подготавливает данные и перенаправляет их в метод getHouseData().
+     * @param entry содержит данные о доме.
+     * @param gradDao работа с БД ГРАД.
+     * @param connectionGrad подключение к БД ГРАД
+     * @throws SQLException
+     */
+    private void getHouseData(Map.Entry<String, Integer> entry,
+                              HouseGRADDAO gradDao,
+                              Connection connectionGrad) throws SQLException {
+
+        answerProcessing.clearLabelForText();
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Запрос по ФИАС: " + entry.getKey());
+        getHouseData(entry.getKey(), entry.getValue(), gradDao, connectionGrad);
     }
 
     /**

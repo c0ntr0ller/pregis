@@ -12,7 +12,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
@@ -44,6 +43,10 @@ public class TestMain {
             "<S:Header><ISRequestHeader xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\"><Date>2016-03-08T23:21:56.517+06:00</Date><MessageGUID>7b824087-412b-4aa5-9b99-8afbd52bdb15</MessageGUID></ISRequestHeader></S:Header><S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>";
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
+
+
+//        Properties properties = ResourcesUtil.instance().getProperties();
+//        System.out.println(properties.getProperty("config.cryptoPro.keyStore.password"));
 
 
 //        MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
@@ -82,15 +85,15 @@ public class TestMain {
 //
 //        System.out.println("New: " + sdf.format(calendar.getTime()));
 
-        ReferenceNSI referenceNSI = new ReferenceNSI(new AnswerProcessing(new ClientService()));
-
-        BigDecimal one = new BigDecimal(78.0000);
-        BigDecimal two = new BigDecimal(77.0000);
-
-        MeteringDeviceValuesObject valuesObject = new MeteringDeviceValuesObject("457878", one, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
-        MeteringDeviceValuesObject valuesObject2 = new MeteringDeviceValuesObject("147893", two, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
-        System.out.println(valuesObject.getMeteringValue().compareTo(valuesObject2.getMeteringValue()));
-        System.out.println(one.compareTo(two));
+//        ReferenceNSI referenceNSI = new ReferenceNSI(new AnswerProcessing(new ClientService()));
+//
+//        BigDecimal one = new BigDecimal(78.0000);
+//        BigDecimal two = new BigDecimal(77.0000);
+//
+//        MeteringDeviceValuesObject valuesObject = new MeteringDeviceValuesObject("457878", one, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
+//        MeteringDeviceValuesObject valuesObject2 = new MeteringDeviceValuesObject("147893", two, new Date(System.currentTimeMillis()), referenceNSI.getNsiRef("2", "Электрическая энергия"));
+//        System.out.println(valuesObject.getMeteringValue().compareTo(valuesObject2.getMeteringValue()));
+//        System.out.println(one.compareTo(two));
 
 //        dateTest();
 

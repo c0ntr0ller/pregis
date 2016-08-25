@@ -142,5 +142,13 @@ public class AnswerProcessing {
 //        sendMessageToClient(question); ::closeModalWindow()
     }
 
+    /**
+     * Метод, отправляет клиенту в веб-интерфейс сообщение об очистки, логотипа в окошке
+     * обработки событий.
+     */
+    public void clearLabelForText() {
+        sendMessageToClient("::clearLabelText");
+    }
+
 
 }

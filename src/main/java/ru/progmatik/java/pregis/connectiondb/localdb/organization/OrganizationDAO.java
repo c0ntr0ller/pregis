@@ -153,8 +153,8 @@ public class OrganizationDAO {
 
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement ps = connection.prepareStatement("UPDATE ORGANIZATION " +
-                     "SET FULL_NAME = ?, SET SHORT_NAME = ?, SET INN = ?, SET KPP = ?, SET ORG_ROOT_ENTITY_GUID = ?, " +
-                     "SET ORG_PPA_GUID = ?, SET ROLE = ?, SET GRAD_ID = ?, SET DESCRIPTION = ? " +
+                     "SET FULL_NAME = ?, SHORT_NAME = ?, INN = ?, KPP = ?, ORG_ROOT_ENTITY_GUID = ?, " +
+                     "ORG_PPA_GUID = ?, ROLE = ?, GRAD_ID = ?, DESCRIPTION = ? " +
                      "WHERE OGRN = ?")) {
             ps.setString(1, dataSet.getFullName());
             ps.setString(2, dataSet.getShortName());

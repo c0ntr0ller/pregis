@@ -92,9 +92,9 @@ public class ClientService {
                 case "getExportMeteringHistory":
                     action.getExportMeteringDeviceHistory();
                     break;
-//                case "callAddressValidation":
-//                    action.callAddressValidation();
-//                    break;
+                case "callExportSupplyResourceContractData":
+                    action.callExportSupplyResourceContractData();
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

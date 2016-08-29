@@ -53,6 +53,7 @@ class NameMethodDAO {
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importSubsidiary', 'Импорт сведений об обособленном подразделении'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportCAChData', 'Экспорт договоров управления, уставов, доп. соглашений.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportStatusCAChData', 'Экспорт статусов договоров управления, уставов, доп. соглашений.'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportSupplyResourceContractData', 'Экспорт договоров ресурсоснабжения.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importContractData', 'Импорт договора управления'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importCharterData', 'Импорт устава'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportStatusPublicPropertyContract', 'Экспорт списка ДОИ.'); " +

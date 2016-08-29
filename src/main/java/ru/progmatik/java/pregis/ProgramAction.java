@@ -385,6 +385,19 @@ public class ProgramAction {
     }
 
     /**
+     * Экспорт договоров ресурсоснабжения.
+     */
+    public void callExportSupplyResourceContractData() {
+
+        ExportSupplyResourceContractData contractData = new ExportSupplyResourceContractData(answerProcessing);
+        try {
+            contractData.callExportSupplyResourceContractData();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Метод, возвращает состояние выполнения какого либо метода.
      * Если статус "true", т.е. что то выполняется, значит мы не будем запускать новый метод,
      * а обратимся к получению лога операций.

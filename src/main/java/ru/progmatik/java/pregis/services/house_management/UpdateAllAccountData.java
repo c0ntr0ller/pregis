@@ -91,7 +91,8 @@ public class UpdateAllAccountData {
             for (ExportAccountResultType resultTypeAccount : exportAccountResult.getAccounts()) { // полученные от ГИС ЖКХ записи перебераем
                 countAll++;
                 if (accountListFromGrad.containsKey(resultTypeAccount.getAccountNumber())) { // если в БД есть элемент, добавляем идентификаторы в БД
-                    if (!accountListFromGrad.get(resultTypeAccount.getAccountNumber()).getAccountGUID().equals(resultTypeAccount.getAccountGUID())) {
+                    if (accountListFromGrad.get(resultTypeAccount.getAccountNumber()).getAccountGUID() == null ||
+                            !accountListFromGrad.get(resultTypeAccount.getAccountNumber()).getAccountGUID().equals(resultTypeAccount.getAccountGUID())) {
 //                        System.err.println("GRAD: " + accountListFromGrad.get(resultTypeAccount.getAccountNumber()).getAccountGUID());
 //                        System.err.println("GIS" + resultTypeAccount.getAccountGUID());
 //                        setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getAccountUniqueNumber(), connection);
@@ -108,9 +109,18 @@ public class UpdateAllAccountData {
             if (exportAccountResult != null || entry.getValue().getAccountGUID() == null || entry.getValue().getAccountGUID().trim().isEmpty()) { // только если нет AccountGUID, тогда отправляем в ГИС.
 //                System.err.println("Отправляю в ГИС: " + entry.getKey() + " : " + entry.getValue().getAccountGUID());
                 ImportResult result = sendAccountToGis.callImportAccountData(sendAccountToGis.getNewImportAccountRequest(entry.getValue())); // отправляем в ГИС ЖКХ
-                if (result == null || result.getErrorMessage() != null) errorState = 0;
-                else
-                    setAccountToBase(houseId, entry.getValue().getAccountNumber(), result.getCommonResult().get(0).getGUID(), result.getCommonResult().get(0).getUniqueNumber(), connection); // добавляем идентификаторы в БД.
+                if (result == null || result.getErrorMessage() != null) {
+                    errorState = 0;
+                } else {
+                    try {
+                        // ГИС ЖКХ возвращает не верный ответ, вместо UniqueNumber отдаёт UnifiedAccountNumber, который не удаётся обработать
+                        setAccountToBase(houseId, entry.getValue().getAccountNumber(), result.getCommonResult().get(0).getGUID(), result.getCommonResult().get(0).getUniqueNumber(), connection); // добавляем идентификаторы в БД.
+                    } catch (NullPointerException | IndexOutOfBoundsException e) {
+                        LOGGER.error("Ожидался уникальный идентификатор из ГИС ЖХК", e);
+                    }
+                }
+
+
             }
             countAll++;
         }

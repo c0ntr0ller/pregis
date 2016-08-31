@@ -40,6 +40,7 @@ public class ImportAccountData {
 
     private ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
 
+        answerProcessing.clearLabelForText();
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
         Holder<ResultHeader> resultHolder = new Holder<>();

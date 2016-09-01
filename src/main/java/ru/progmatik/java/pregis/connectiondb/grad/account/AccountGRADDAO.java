@@ -14,6 +14,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformat
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
+import ru.progmatik.java.pregis.exception.PreGISArgumentNotFoundFromBaseException;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -369,10 +370,28 @@ public class AccountGRADDAO {
             sqlResult = resultSet.getString(1);
             resultSet.close();
             if (sqlResult == null || sqlResult.isEmpty()) {
+//                throw new PreGISArgumentNotFoundFromBaseException("В БД ГРАДа не найден \"AccountGUID\"!");
                 return null;
             }
         }
         return sqlResult;
+    }
+
+    /**
+     * Метод, вызывает метод "getAccountGUIDFromBase", но если вернулось пустое значение вызывает ошибку.
+     * @param abonId ид абонента в БД ГРАД.
+     * @param connection подключение к БД ГРАД
+     * @return AccountGUID идентификатор ЛС в ГИС ЖКХ.
+     * @throws SQLException
+     * @throws PreGISArgumentNotFoundFromBaseException
+     */
+    public String getAccountGUIDFromBaseWithException(Integer abonId, Connection connection) throws SQLException, PreGISArgumentNotFoundFromBaseException {
+
+        String accountGUID = getAccountGUIDFromBase(abonId, connection);
+        if (accountGUID == null) {
+            throw new PreGISArgumentNotFoundFromBaseException("В БД ГРАДа не найден \"AccountGUID\"!");
+        }
+        return accountGUID;
     }
 
     /**

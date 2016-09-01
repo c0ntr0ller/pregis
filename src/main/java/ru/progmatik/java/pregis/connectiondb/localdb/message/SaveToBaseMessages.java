@@ -116,6 +116,8 @@ public class SaveToBaseMessages {
         stateMessage = stateBuilder.toString();
 
         setRequest(headerRequest, nameMethod);
+
+        stateMessage = "OK";
     }
 
     /**

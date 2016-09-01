@@ -95,6 +95,9 @@ public class ClientService {
                 case "callExportSupplyResourceContractData":
                     action.callExportSupplyResourceContractData();
                     break;
+                case "getHouseAddedGisJkh":
+                    action.getHouseAddedGisJkh();
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

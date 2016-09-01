@@ -2,8 +2,10 @@ package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -24,8 +26,10 @@ import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.LinkedHashMap;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -394,6 +398,21 @@ public class ProgramAction {
             contractData.callExportSupplyResourceContractData();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод, отправляет в БД ГРАДа запрос, получает все дома,
+     * проверяет, имеется у дома идентификатор ГИС ЖКХ,
+     * если есть, то добавляет его в список для обработки.
+     */
+    public void getHouseAddedGisJkh() {
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
+            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Получение домов добавленых в ГИС ЖКХ\" ", LOGGER, e);
         }
     }
 

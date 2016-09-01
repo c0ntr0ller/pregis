@@ -37,12 +37,19 @@ public class ExportHouseData {
     private final HouseManagementPortsType port = service.getHouseManagementPort();
     private final AnswerProcessing answerProcessing;
 
+    // Статус ошибок:
+    //  1 - ошибок нет.
+    //  0 - ошибки есть, но работа продолжена.
+    // -1 - ошибка дальнейшая работа не возможна.
+    private int errorStatus;
+
     /**
      * Конструктор, получает в параметр сылку на веб-сокет.
      */
     public ExportHouseData(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);
         this.answerProcessing = answerProcessing;
+        errorStatus = 1;
     }
 
     /**
@@ -71,6 +78,16 @@ public class ExportHouseData {
                 }
             }
         }
+        if (getErrorStatus() == 1) {
+            answerProcessing.sendOkMessageToClient("");
+            answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
+        } else if (getErrorStatus() == 0) {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД получены с ошибками!");
+        } else if (getErrorStatus() == -1) {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получены!");
+        }
     }
 
     /**
@@ -89,7 +106,7 @@ public class ExportHouseData {
         try {
             result = callExportHouseData(fias);
 
-            if ( result == null || result.getErrorMessage() == null) { // Если нет ошибок
+            if (result != null && result.getErrorMessage() == null) { // Если нет ошибок
                 answerProcessing.sendMessageToClient("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
                 gradDao.setHouseUniqueNumber(houseId, result.getExportHouseResult().getHouseUniqueNumber(), connectionGrad);
 
@@ -167,14 +184,16 @@ public class ExportHouseData {
 //                    result.getExportHouseResult().getLivingHouse().getLivingRoom().get(0)
 
                 }
-                answerProcessing.sendOkMessageToClient("");
-                answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
+//                answerProcessing.sendOkMessageToClient("");
+//                answerProcessing.sendOkMessageToClient("Сведенья о МКД успешно получены!");
 
             } else {
+                setErrorStatus(0);
 //                answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведенья о МКД не получены!");
             }
 
         } catch (PreGISException e) {
+            setErrorStatus(-1);
             answerProcessing.sendErrorToClient("getHouseData(): ", "\"Получение данных о МКД\" ", LOGGER, e);
         }
 
@@ -199,14 +218,16 @@ public class ExportHouseData {
                     result.getErrorMessage(), LOGGER);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
+            setErrorStatus(-1);
         }
         return result;
     }
 
     /**
      * Метод, подготавливает данные и перенаправляет их в метод getHouseData().
-     * @param entry содержит данные о доме.
-     * @param gradDao работа с БД ГРАД.
+     *
+     * @param entry          содержит данные о доме.
+     * @param gradDao        работа с БД ГРАД.
      * @param connectionGrad подключение к БД ГРАД
      * @throws SQLException
      */
@@ -234,6 +255,27 @@ public class ExportHouseData {
         answerProcessing.sendMessageToClient("ФИАС дома: " + fias);
 
         return request;
+    }
+
+    /**
+     * Метод, возвращает код ошибки.
+     *
+     * @return код ошибки (от -1 до 1).
+     */
+    private int getErrorStatus() {
+        return errorStatus;
+    }
+
+    /**
+     * Метод, принимает код ошибки, если код по приоритету ниже, то статус получает этот код,
+     * иначе код ошибки остаётся прежним.
+     *
+     * @param errorNumber код ошибки.
+     */
+    private void setErrorStatus(int errorNumber) {
+        if (errorNumber < errorStatus) {
+            errorStatus = errorNumber;
+        }
     }
 
 }

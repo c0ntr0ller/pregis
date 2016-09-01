@@ -95,6 +95,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
         for (String[] exGisPu1Element : exGisPu1) {
             countAll++;
+            answerProcessing.clearLabelForText();
 
             ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
             meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
@@ -102,6 +103,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             try {
                 meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
             } catch (PreGISArgumentNotFoundFromBaseException e) {
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendInformationToClientAndLog(e.getMessage(), LOGGER);
                 errorState = 0;
                 continue;
@@ -297,9 +299,9 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 if (isResidentialPremiseGrad(houseId, Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad)) { // если помещение не является жилым, значит оно нежилое.
                     basicCharacteristics.setResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.ResidentialPremiseDevice());
                     basicCharacteristics.getResidentialPremiseDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
-                    basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
+                    basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
                 } else {
-                    String accountGUIDFromGrad = accountGRADDAO.getAccountGUIDFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad);
+                    String accountGUIDFromGrad = accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad);
                     String premiseGUIDFromGrad = accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad);
                     basicCharacteristics.setNonResidentialPremiseDevice(new MeteringDeviceBasicCharacteristicsType.NonResidentialPremiseDevice());
                     basicCharacteristics.getNonResidentialPremiseDevice().setPremiseGUID(premiseGUIDFromGrad);

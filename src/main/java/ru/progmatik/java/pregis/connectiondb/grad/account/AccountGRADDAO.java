@@ -389,7 +389,8 @@ public class AccountGRADDAO {
 
         String accountGUID = getAccountGUIDFromBase(abonId, connection);
         if (accountGUID == null) {
-            throw new PreGISArgumentNotFoundFromBaseException("В БД ГРАДа не найден \"AccountGUID\"!");
+            throw new PreGISArgumentNotFoundFromBaseException("В БД ГРАДа не найден \"AccountGUID\", " +
+                    "для абоента с ид в БД ГРАДЖ " + abonId + ".");
         }
         return accountGUID;
     }

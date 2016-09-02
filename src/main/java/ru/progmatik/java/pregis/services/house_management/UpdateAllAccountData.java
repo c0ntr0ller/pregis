@@ -26,6 +26,7 @@ public class UpdateAllAccountData {
     private final AnswerProcessing answerProcessing;
     private final AccountGRADDAO accountGRADDAO;
     private int countAll;
+    private int countAllGisJkh;
     private int countRemove;
     private int countAdded;
     private int errorState;
@@ -41,6 +42,7 @@ public class UpdateAllAccountData {
      */
     public int updateAllAccountData() throws SQLException, PreGISException, ParseException {
         countAll = 0;
+        countAllGisJkh = 0;
         countRemove = 0;
         countAdded = 0;
         errorState = 1;
@@ -63,11 +65,14 @@ public class UpdateAllAccountData {
 
                 if (exportAccountResult == null) {
                     errorState = 0;
+                } else {
+                    countAll = exportAccountResult.getAccounts().size();
                 }
                 sendAccountDataToGis(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
             }
         }
         answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
         answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
         answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
         answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);

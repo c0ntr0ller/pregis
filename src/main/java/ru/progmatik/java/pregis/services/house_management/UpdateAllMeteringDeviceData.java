@@ -28,6 +28,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
     private final AnswerProcessing answerProcessing;
     private final ArrayList<ArchiveData> archiveDataList = new ArrayList<>();
     private int countAll = 0;
+    private int countAllGisJkh = 0;
     private int countAdded = 0;
     private int countUpdate = 0;
     private int errorState;
@@ -76,9 +77,10 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
 
 //                Повторно загружаем для занесения MeteringDeviceRootGUID.
                 exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
-                if (exportMeteringDeviceDataResult != null)
+                if (exportMeteringDeviceDataResult != null) {
                     meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
-
+                    countAllGisJkh = exportMeteringDeviceDataResult.getMeteringDevice().size();
+                }
                 if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
                     archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
                 }
@@ -155,6 +157,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
      */
     private void showInfo() {
         answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Всего ПУ найденных в ГИС ЖКХ: " + countAllGisJkh);
         answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
         answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
         answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);

@@ -97,11 +97,11 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             countAll++;
             answerProcessing.clearLabelForText();
 
-            ImportMeteringDeviceDataRequest.MeteringDevice meteringDevices = new ImportMeteringDeviceDataRequest.MeteringDevice();
-            meteringDevices.setTransportGUID(OtherFormat.getRandomGUID());
+            ImportMeteringDeviceDataRequest.MeteringDevice meteringDevice = new ImportMeteringDeviceDataRequest.MeteringDevice();
+            meteringDevice.setTransportGUID(OtherFormat.getRandomGUID());
 
             try {
-                meteringDevices.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
+                meteringDevice.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
             } catch (PreGISArgumentNotFoundFromBaseException e) {
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendInformationToClientAndLog(e.getMessage(), LOGGER);
@@ -109,13 +109,13 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 continue;
             }
 
-            mapTransportMeteringDevice.put(meteringDevices.getTransportGUID(), new LinkedHashMap<>());
-            mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevices);
-            mapTransportMeteringDevice.get(meteringDevices.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), null);
+            mapTransportMeteringDevice.put(meteringDevice.getTransportGUID(), new LinkedHashMap<>());
+            mapTransportMeteringDevice.get(meteringDevice.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), meteringDevice);
+            mapTransportMeteringDevice.get(meteringDevice.getTransportGUID()).put(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), null);
 //            LOGGER.debug("meterId: " + exGisPu1Element[METER_ID_PU1]);
             String rootGUID = getMeteringDeviceUniqueNumbersFromGrad(Integer.valueOf(exGisPu1Element[METER_ID_PU1]), "METERROOTGUID", connectionGRAD);
             if (rootGUID == null || devicesDataLocalDBDAO.isArchivingDeviceByRootGUID(rootGUID)) {
-                meteringDeviceList.add(meteringDevices);
+                meteringDeviceList.add(meteringDevice);
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendMessageToClient("Добавлен прибор учёта для выгрузки в ГИС ЖКХ:");
                 answerProcessing.sendMessageToClient("идентификатор ПУ в Граде: " + exGisPu1Element[METER_ID_PU1] + ",\n" +
@@ -200,14 +200,27 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 //            Базовое показание T1
             device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(4, BigDecimal.ROUND_DOWN));
 //            Базовое показание T2, не обязательно к заполнению
-            if (exGisPu1Element[METERING_VALUE + 1] != null)
+            if (exGisPu1Element[METERING_VALUE + 1] != null) {
                 device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[METERING_VALUE + 1]).setScale(4, BigDecimal.ROUND_DOWN));
+//            } else {
+//                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
+            }
 //            Базовое показание T3. В зависимости от количества заданных при создании базовых значений ПУ определяется его тип по количеству тарифов. Не обязательно к заполнению
-            if (exGisPu1Element[METERING_VALUE + 2] != null)
+            if (exGisPu1Element[METERING_VALUE + 2] != null) {
                 device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[METERING_VALUE + 2]).setScale(4, BigDecimal.ROUND_DOWN));
+//            } else {
+//                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
+            }
 //            Время и дата снятия показания
 //            device.getMunicipalResourceEnergy().setReadingsSource(); // Кем внесено не обязательно к заполнению
-//            device.getMunicipalResourceEnergy().setTransformationRatio(); // Кэффициент трансформации
+
+            if (exGisPu1Element[16] != null) {  // Кэффициент трансформации
+                device.getMunicipalResourceEnergy().setTransformationRatio(new BigDecimal(exGisPu1Element[METERING_VALUE + 3]).setScale(4, BigDecimal.ROUND_DOWN));
+//            } else {
+//                device.getMunicipalResourceEnergy().setTransformationRatio(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
+//                device.getMunicipalResourceEnergy().setTransformationRatio(); // Кэффициент трансформации
+            }
+
 //            c версии 9.0.1.3 убрали
 //            device.getMunicipalResourceEnergy().setReadoutDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisIpuIndMap.get(Integer.valueOf(exGisPu1Element[METER_ID_PU1]))[4])));  // Время и дата снятия показания, можно попросить процедуру с которой брать показания и дату, вот её и можно занести
 //            device.getMunicipalResourceEnergy().setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[8])); // Коммунальный ресурс, берет из справочника 2
@@ -782,7 +795,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     }
 
     /**
-     * Метод, выполняет SQL процедуру полученый результат сохраняет в List.
+     * Метод, выполняет SQL процедуру "EX_GIS_PU1" полученый результат сохраняет в List.
      *
      * @param houseId    ид дома в БД ГРАД.
      * @param connection подключение к БД.

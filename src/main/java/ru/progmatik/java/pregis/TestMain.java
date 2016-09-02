@@ -14,6 +14,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.utils.MeteringDevicesDBSearch;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 
@@ -44,6 +45,7 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
+        getMeteringDevicesAbonIdByMeteringDeviceNumber();
 
 //        Properties properties = ResourcesUtil.instance().getProperties();
 //        System.out.println(properties.getProperty("config.cryptoPro.keyStore.password"));
@@ -267,6 +269,31 @@ public class TestMain {
 //            e.printStackTrace();
 //        }
 //    }
+
+    private static void getMeteringDevicesAbonIdByMeteringDeviceNumber() {
+
+        try {
+
+            ConnectionBaseGRAD.instance().setDataBaseURI("172.16.0.220:sibin");
+            Connection connection = ConnectionBaseGRAD.instance().getConnection();
+            HashSet<String> listNumbers = new HashSet<>();
+            listNumbers.add("12632138");
+            listNumbers.add("12562609");
+            listNumbers.add("10423621");
+            listNumbers.add("10420998");
+            listNumbers.add("1019098903604");
+            listNumbers.add("1019097640609");
+            listNumbers.add("1019097262405");
+            listNumbers.add("1019086957602");
+            MeteringDevicesDBSearch search = new MeteringDevicesDBSearch();
+
+            search.getMeteringDevicesAbonIdByMeteringDeviceNumber(109, listNumbers, connection);
+
+            ConnectionBaseGRAD.instance().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static ArrayList<Rooms> findCopy(Connection connection) {
         try {

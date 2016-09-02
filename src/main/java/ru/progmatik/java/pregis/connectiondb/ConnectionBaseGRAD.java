@@ -84,6 +84,10 @@ public class ConnectionBaseGRAD implements AutoCloseable {
         }
     }
 
+    public final void setDataBaseURI(String baseURI) {
+        databaseURI = baseURI;
+    }
+
     /**
      * Класс наследуется от интерфейса AutoCloseable, для наиболее удобного и выгодного закрытия соединения.
      *

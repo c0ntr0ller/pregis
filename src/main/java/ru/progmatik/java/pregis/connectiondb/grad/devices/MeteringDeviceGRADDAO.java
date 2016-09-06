@@ -285,20 +285,19 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 //            Внесение показаний осуществляется в ручном режиме
 //        в 9.0 формах стало "Наличие возможности дистанционного снятия показаний"
         if ("Да".equalsIgnoreCase(exGisPu1Element[IS_MANUAL_MODE_METERING])) {
-            basicCharacteristics.setRemoteModeMetering(true);
+            basicCharacteristics.setRemoteMeteringMode(true);
         }
 
 //          Характеристики поверки  Дата первичной поверки
 //        в 9.0 поменяли на "Дата последней поверки", поле стало не обязательным
-        basicCharacteristics.setVerificationCharacteristics(new MeteringDeviceBasicCharacteristicsType.VerificationCharacteristics());
         if (exGisPu1Element[VERIFICATION_DATE] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
-            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
+            basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
         } else if (exGisPu1Element[VERIFICATION_DATE] == null) { // ГИС ЖКХ выдаёт ошибку, если не указана дата, хотя не обязательна
 //            Берем дату ввода в эксплуатацию
-            basicCharacteristics.getVerificationCharacteristics().setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
+            basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
         }
 //            Межповерочный интервал (НСИ 16) стал необязательным
-        basicCharacteristics.getVerificationCharacteristics().setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
+        basicCharacteristics.setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
 
 //        Дата опломбирования ПУ заводом-изготовителем (обязательно для заполнения при импорте), обязательное, ГРАД возвращает путое значение
         if (exGisPu1Element[20] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[20]).getTime()) {
@@ -555,7 +554,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                     } else if (!importDevice.getBasicChatacteristicts().getMeteringDeviceNumber().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getMeteringDeviceNumber()) &&
                             !importDevice.getBasicChatacteristicts().getMeteringDeviceStamp().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getMeteringDeviceStamp()) &&
                             !importDevice.getBasicChatacteristicts().getMeteringDeviceModel().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getMeteringDeviceModel()) &&
-                            !(importDevice.getBasicChatacteristicts().isRemoteModeMetering() == device.getDeviceDataToCreate().getBasicChatacteristicts().isRemoteModeMetering()) &&
+                            !(importDevice.getBasicChatacteristicts().isRemoteMeteringMode() == device.getDeviceDataToCreate().getBasicChatacteristicts().isRemoteMeteringMode()) &&
                             !(importDevice.getBasicChatacteristicts().isPressureSensor() == device.getDeviceDataToCreate().getBasicChatacteristicts().isPressureSensor()) &&
                             !(importDevice.getBasicChatacteristicts().isTemperatureSensor() == device.getDeviceDataToCreate().getBasicChatacteristicts().isTemperatureSensor()) &&
                             !importDevice.getBasicChatacteristicts().getInstallationDate().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getInstallationDate()) &&

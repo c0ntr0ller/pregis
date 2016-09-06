@@ -102,7 +102,7 @@ public class AccountGRADDAO {
                     bi.setSurname(arrayData[3]);
                     bi.setName(arrayData[4]);
                     bi.setMiddleName(arrayData[5]);
-                    bi.setSnils(arrayData[6]);
+                    bi.setSnils(arrayData[6].replaceAll("-", "").replaceAll(" ", ""));
                     bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[7]));
                     bi.setNumberDocumentIdentity(arrayData[8]);
                     bi.setSeriesDocumentIdentity(arrayData[9]);

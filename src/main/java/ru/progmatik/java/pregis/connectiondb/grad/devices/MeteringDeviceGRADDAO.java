@@ -547,10 +547,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
                 if (meterId.equals(meterIdDevice)) {
                     if (importDevice.getMunicipalResourceNotEnergy() != null
-                            && device.getDeviceDataToCreate().getMunicipalResourceNotEnergy() != null &&
-                            !importDevice.getMunicipalResourceNotEnergy().get(0).getMunicipalResource().getGUID().equals(device.getDeviceDataToCreate().getMunicipalResourceNotEnergy().get(0).getMunicipalResource().getGUID())) {
-                        setUpdateDevice(importDevice, device);
-
+                            && device.getDeviceDataToCreate().getMunicipalResourceNotEnergy() != null) {
+//                        Оказалось, что теперь и сравнивать нечего.
                     } else if (!importDevice.getBasicChatacteristicts().getMeteringDeviceNumber().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getMeteringDeviceNumber()) &&
                             !importDevice.getBasicChatacteristicts().getMeteringDeviceStamp().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getMeteringDeviceStamp()) &&
                             !importDevice.getBasicChatacteristicts().getMeteringDeviceModel().equals(device.getDeviceDataToCreate().getBasicChatacteristicts().getMeteringDeviceModel()) &&

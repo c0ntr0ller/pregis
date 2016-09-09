@@ -81,10 +81,10 @@ public class ConnectionDB {
      * @param sqlCreateTable SQL запрос, в котором описано создание таблицы.
      * @throws SQLException
      */
-    public void sendSqlRequest(String sqlCreateTable) throws SQLException {
+    public int sendSqlRequest(String sqlCreateTable) throws SQLException {
         try (Statement statement = getConnectionDB().createStatement()) {
-            statement.executeUpdate(sqlCreateTable);
             LOGGER.debug(sqlCreateTable);
+            return statement.executeUpdate(sqlCreateTable);
         }
     }
 

@@ -8,8 +8,10 @@ import ru.gosuslugi.dom.schema.integration.services.bills.ExportOrgPeriodResult;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
@@ -46,7 +48,7 @@ public class ExportOrgPeriodData {
      * Метод, получает из ГИС ЖКХ сведения об открытых расчетных
      * периодах организации и открытых расчетных периодах домов.
      */
-    public ExportOrgPeriodResult getOrgPeriodData() throws SQLException {
+    public ExportOrgPeriodResult getOrgPeriodData() throws SQLException, PreGISException {
 
 
         answerProcessing.sendMessageToClient("::clearLabelText");
@@ -72,11 +74,13 @@ public class ExportOrgPeriodData {
         return result;
     }
 
-    private ExportOrgPeriodRequest getExportOrgPeriodRequest() {
+    private ExportOrgPeriodRequest getExportOrgPeriodRequest() throws PreGISException {
 
         ExportOrgPeriodRequest request = new ExportOrgPeriodRequest();
         request.setId(OtherFormat.getId());
-        request.setIsUO(true);
+
+        if (ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) request.setIsRSO(true);
+        else request.setIsUO(true);
 
         return request;
     }

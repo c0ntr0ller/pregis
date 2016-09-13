@@ -12,7 +12,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.utils.MeteringDevicesDBSearch;
@@ -46,10 +45,10 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-            ServicesGisJkhForGradDAO gradDAO = new ServicesGisJkhForGradDAO();
-            gradDAO.autoAllServicesAssociations(connection);
-        }
+//        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+//            ServicesGisJkhForGradDAO gradDAO = new ServicesGisJkhForGradDAO();
+//            gradDAO.autoAllServicesAssociations(connection);
+//        }
 //        System.out.println(args.length > 0 ? args[0] : "No parameters");
 //        getMeteringDevicesAbonIdByMeteringDeviceNumber();
 

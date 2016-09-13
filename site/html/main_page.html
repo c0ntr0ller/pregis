@@ -64,6 +64,7 @@
     <form name="paymentDocumentData" accept-charset="utf-8">
         <br>
         <h2>Работа с платежным документом:</h2>
+        <button id="sendExportOrgPeriodData" type="button" onclick="sendMessage('getOrgPeriodData');" ${buttonState}>Получить расчетные периоды</button>
         <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
         <br><br>
     </form>

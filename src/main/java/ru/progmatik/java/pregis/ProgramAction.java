@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDa
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
+import ru.progmatik.java.pregis.services.bills.ExportOrgPeriodData;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
@@ -336,6 +337,21 @@ public class ProgramAction {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
         }
         setStateRunOff();
+    }
+
+    public void callExportOrgPeriodData() {
+
+        setStateRunOn();
+        try {
+            answerProcessing.sendMessageToClient("Получение расчетного периода...");
+            ExportOrgPeriodData periodData = new ExportOrgPeriodData(answerProcessing);
+            periodData.getOrgPeriodData();
+            answerProcessing.sendMessageToClient("Расчетный период получен.");
+        } catch (SQLException | PreGISException e) {
+            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+        } finally {
+            setStateRunOff();
+        }
     }
 
 //    /**

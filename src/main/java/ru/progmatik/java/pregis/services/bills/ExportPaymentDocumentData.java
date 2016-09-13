@@ -73,11 +73,13 @@ public class ExportPaymentDocumentData {
         request.setId(OtherFormat.getId());
         request.setYear((short) 2016);
         request.setMonth(05);
+        request.setFIASHouseGuid("b58c5da4-8d62-438f-b11e-d28103220952");
+        request.getAccountNumber().add("1000438820");
 //        request.getAccountGuid().add("3cab9a71-d8ae-42b2-8caa-42e92aa9aba2"); // л.с. 1000438820
 //        request.getAccountGuid().add("9498a608-2a8c-4f3e-8243-de76bad293b7"); // л.с. 1000438821  80АА001486
 //        Версии 9.0.1.3 перестало существовать
 //        request.getAccountGuid().add("6fe12a9b-2bbf-4248-940d-9dd2ba1d868e"); // л.с. 1000438822  50АА001491
-        request.getUnifiedAccountNumber().add("50АА001491"); // л.с. 1000438822  50АА001491 попробовать
+//        request.getUnifiedAccountNumber().add("50АА001491"); // л.с. 1000438822  50АА001491 попробовать
 
         return request;
     }

@@ -49,6 +49,9 @@ class NameMethodDAO {
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importMeteringDeviceValues', 'Передать показания ПУ.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportPaymentDocumentData', 'Экспорт сведений о платежных документах'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importPaymentDocumentData', 'Импорт сведений о платежных документах'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportOrgPeriodData', 'Получить расчетные периоды организации. ВИ_ИЛС_РПО_ЭКСП.'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('openOrgPaymentPeriod', 'Открыть расчетный период организации. ВИ_ИЛС_РПО_ОТК.'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('closeHousePaymentPeriod', 'Закрыть расчетный период дома. ВИ_ИЛС_РПД_ЗАК.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportPaymentDocumentDetails', 'Экспорт реквизитов платежных документов (модуль payment)'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importSubsidiary', 'Импорт сведений об обособленном подразделении'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportCAChData', 'Экспорт договоров управления, уставов, доп. соглашений.'); " +

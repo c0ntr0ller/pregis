@@ -98,6 +98,9 @@ public class ClientService {
                 case "getHouseAddedGisJkh":
                     action.getHouseAddedGisJkh();
                     break;
+                case "getOrgPeriodData":
+                    action.callExportOrgPeriodData();
+                    break;
                 default:
                     sendMessage("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

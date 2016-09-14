@@ -4,10 +4,10 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.bills.CloseHousePaymentPeriodRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.bills.CloseHousePaymentPeriodRequest;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
+import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -95,6 +95,8 @@ public class CloseHousePaymentPeriod {
 
         CloseHousePaymentPeriodRequest request = new CloseHousePaymentPeriodRequest();
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
         return request;
     }
 }

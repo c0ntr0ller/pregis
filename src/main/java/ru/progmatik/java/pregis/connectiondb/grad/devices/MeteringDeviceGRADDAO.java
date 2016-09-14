@@ -2,7 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.*;
+import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;

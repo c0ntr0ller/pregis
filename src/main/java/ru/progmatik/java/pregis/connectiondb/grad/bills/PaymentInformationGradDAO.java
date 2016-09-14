@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.services.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;

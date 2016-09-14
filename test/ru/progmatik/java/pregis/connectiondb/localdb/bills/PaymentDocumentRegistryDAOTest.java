@@ -14,7 +14,8 @@ public class PaymentDocumentRegistryDAOTest {
         try {
             PaymentDocumentRegistryDAO dao = new PaymentDocumentRegistryDAO();
 
-//            PaymentDocumentRegistryDataSet dataSet = new PaymentDocumentRegistryDataSet("0001", 6, 2016, 212, "GUID");
+//            PaymentDocumentRegistryDataSet dataSet = new PaymentDocumentRegistryDataSet(
+//                    "0001", 6, 2016, new BigDecimal("2052.25"), 212, "GUID");
 //            dataSet.setNumberPdFromGisJkh("FFF555FFF-10");
 //            dao.addPaymentDocumentRegistryItem(dataSet);
 

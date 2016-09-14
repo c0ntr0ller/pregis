@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import org.junit.Test;
-import ru.gosuslugi.dom.schema.integration.services.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 
 public class PaymentInformationGradDAOTest {

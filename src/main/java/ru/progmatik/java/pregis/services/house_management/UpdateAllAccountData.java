@@ -1,10 +1,9 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.ImportResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportAccountResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportAccountResultType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResult;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResultType;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
@@ -113,7 +112,7 @@ public class UpdateAllAccountData {
         for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) { // бежим по оставшемся счетам которые не найдены в ГИС ЖКХ и добавляем их в ГИС ЖКХ
             if (exportAccountResult != null || entry.getValue().getAccountGUID() == null || entry.getValue().getAccountGUID().trim().isEmpty()) { // только если нет AccountGUID, тогда отправляем в ГИС.
 //                System.err.println("Отправляю в ГИС: " + entry.getKey() + " : " + entry.getValue().getAccountGUID());
-                ImportResult result = sendAccountToGis.callImportAccountData(sendAccountToGis.getNewImportAccountRequest(entry.getValue())); // отправляем в ГИС ЖКХ
+                ru.gosuslugi.dom.schema.integration.house_management.ImportResult result = sendAccountToGis.callImportAccountData(sendAccountToGis.getNewImportAccountRequest(entry.getValue())); // отправляем в ГИС ЖКХ
                 if (result == null || result.getErrorMessage() != null) {
                     errorState = 0;
                 } else {

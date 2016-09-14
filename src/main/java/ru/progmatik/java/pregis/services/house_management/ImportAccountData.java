@@ -1,13 +1,12 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
+import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -34,11 +33,11 @@ public class ImportAccountData {
         this.answerProcessing = answerProcessing;
     }
 
-    public ImportResult callImportAccountData(ImportAccountRequest request) throws SQLException {
+    public ru.gosuslugi.dom.schema.integration.house_management.ImportResult callImportAccountData(ImportAccountRequest request) throws SQLException {
         return sendImportAccountData(request);
     }
 
-    private ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
+    private ru.gosuslugi.dom.schema.integration.house_management.ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
 
         answerProcessing.clearLabelForText();
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
@@ -47,7 +46,7 @@ public class ImportAccountData {
 
         RequestHeader headerRequest = OtherFormat.getRequestHeader();
 
-        ImportResult result;
+        ru.gosuslugi.dom.schema.integration.house_management.ImportResult result;
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             result = port.importAccountData(request, headerRequest, resultHolder);
@@ -115,6 +114,7 @@ public class ImportAccountData {
 //        Если нужно закрыть счет, то закрываем где нибудь затем передаём в этот метод
         ImportAccountRequest request = new ImportAccountRequest();
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
 
         request.getAccount().add(account);
 

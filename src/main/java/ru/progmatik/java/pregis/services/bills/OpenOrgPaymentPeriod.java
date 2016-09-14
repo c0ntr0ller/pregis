@@ -4,11 +4,11 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.bills.OpenOrgPaymentPeriodRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.PaymentPeriodType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.bills.OpenOrgPaymentPeriodRequest;
+import ru.gosuslugi.dom.schema.integration.bills.PaymentPeriodType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
+import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -105,6 +105,7 @@ public class OpenOrgPaymentPeriod {
 
         OpenOrgPaymentPeriodRequest request = new OpenOrgPaymentPeriodRequest();
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
         request.setTransportGUID(OtherFormat.getRandomGUID());
 
         return request;

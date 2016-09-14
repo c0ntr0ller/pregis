@@ -2,8 +2,8 @@ package ru.progmatik.java.pregis.services.organizations.common.service;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResultType;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResultType;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 
 import javax.xml.ws.Holder;

@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
@@ -317,7 +317,7 @@ public class ProgramAction {
         ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData();
         try {
             importPaymentDocumentData.callImportPaymentDocumentData();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         }
     }
@@ -371,7 +371,11 @@ public class ProgramAction {
     public void callExportPaymentDocumentDetails() {
 
         ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
-        details.callExportPaymentDocumentDetails();
+        try {
+            details.callExportPaymentDocumentDetails();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+        }
     }
 
     /**
@@ -379,7 +383,11 @@ public class ProgramAction {
      */
     public void getStateExportPaymentDocumentDetails() {
         ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
-        details.getStateExportPaymentDocumentDetails();
+        try {
+            details.getStateExportPaymentDocumentDetails();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+        }
     }
 
 

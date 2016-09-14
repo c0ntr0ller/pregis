@@ -3,8 +3,10 @@ package ru.progmatik.java.pregis.services.device_metering;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
-import ru.gosuslugi.dom.schema.integration.base.NsiRef;
-import ru.gosuslugi.dom.schema.integration.services.device_metering.*;
+import ru.gosuslugi.dom.schema.integration.device_metering.*;
+import ru.gosuslugi.dom.schema.integration.metering_device_base.ElectricMeteringValueType;
+import ru.gosuslugi.dom.schema.integration.metering_device_base.OneRateMeteringValueType;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
@@ -238,10 +240,10 @@ public class UpdateMeteringDeviceValues {
 
         ReferenceNSIDAO nsidao = new ReferenceNSIDAO();
         ArrayList<ReferenceItemDataSet> allItems = nsidao.getAllItemsCodeParent("27");
-        ArrayList<ru.gosuslugi.dom.schema.integration.base.NsiRef> nsiList = new ArrayList<>();
+        ArrayList<NsiRef> nsiList = new ArrayList<>();
 
         for (ReferenceItemDataSet item : allItems) {
-            ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef = new NsiRef();
+            NsiRef nsiRef = new NsiRef();
             nsiRef.setCode(item.getCode());
             nsiRef.setGUID(item.getGuid());
             nsiRef.setName(item.getName());
@@ -417,7 +419,7 @@ public class UpdateMeteringDeviceValues {
      * @param value    показания по электричеству.
      */
     private void addMeteringDeviceValue(String rootGUID,
-                                        ru.gosuslugi.dom.schema.integration.base.ElectricMeteringValueType value,
+                                        ElectricMeteringValueType value,
                                         Date valueDate) throws SQLException, PreGISException {
 
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
@@ -439,7 +441,7 @@ public class UpdateMeteringDeviceValues {
      * @param value    показания по однотарифному ПУ.
      */
     private void addMeteringDeviceValue(String rootGUID,
-                                        ru.gosuslugi.dom.schema.integration.base.OneRateMeteringValueType value,
+                                        OneRateMeteringValueType value,
                                         Date valueDate) throws SQLException {
 
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(

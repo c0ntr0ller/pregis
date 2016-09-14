@@ -1,6 +1,6 @@
 package ru.progmatik.java.pregis.services.house_management;
 
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportResult;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.soap.SOAPException;

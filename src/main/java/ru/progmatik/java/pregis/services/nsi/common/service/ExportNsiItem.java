@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.nsi.common.service;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.Fault;
-import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiPortsType;
-import ru.gosuslugi.dom.schema.integration.services.nsi_common_service.NsiService;
+import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemRequest;
+import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration.nsi_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiPortsType;
+import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -70,6 +70,7 @@ public class ExportNsiItem {
 //        request.setListGroup("NSI"); // Обязательный атрибут
         request.setListGroup(nsi.getNsi()); // Обязательный атрибут
         request.setRegistryNumber(codeNsi); // Обязательный атрибут
+        request.setVersion(request.getVersion());
 //        request.setRegistryNumber(BigInteger.valueOf(225)); // Обязательный атрибут
 
         return request;

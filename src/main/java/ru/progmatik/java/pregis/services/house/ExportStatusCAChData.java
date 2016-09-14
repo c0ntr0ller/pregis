@@ -3,9 +3,11 @@ package ru.progmatik.java.pregis.services.house;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusCAChRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportStatusCAChResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportStatusCAChRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportStatusCAChResult;
+import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
@@ -18,8 +20,14 @@ import java.sql.SQLException;
 public class ExportStatusCAChData {
 
     private static final String NAME_METHOD = "exportStatusCAChData";
+    private final HouseManagementService service = new HouseManagementService();
+    private final HouseManagementPortsType port = service.getHouseManagementPort();
     private Logger logger = Logger.getLogger(ExportStatusCAChData.class);
     private Holder<ResultHeader> headerHolder;
+
+    public ExportStatusCAChData() {
+        OtherFormat.setPortSettings(service, port);
+    }
 
     public void callExportStatusCAChData() throws SQLException {
 
@@ -31,10 +39,8 @@ public class ExportStatusCAChData {
 
         ExportStatusCAChResult result;
 
-        HouseManagementPortsTypeImpl portsType = new HouseManagementPortsTypeImpl();
-
         try {
-            result = portsType.exportStatusCAChData(getExportStatusCAChRequest(), requestHeader, headerHolder);
+            result = port.exportStatusCAChData(getExportStatusCAChRequest(), requestHeader, headerHolder);
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
             logger.error(fault.getMessage());

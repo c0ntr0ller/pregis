@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.localdb.bills;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +25,7 @@ public class PaymentDocumentRegistryDAO {
                                     "NUMBER_PD_FROM_GISJKH varchar(20), " +
                                     "MONTH INT not null, " +
                                     "YEAR INT not null, " +
+                                    "SUMMA DECIMAL NOT NULL, " +
                                     "ABON_ID BIGINT not null, " +
                                     "ACCOUNT_GUID varchar(40) not null, " +
                                     "ARCHIVE BOOLEAN DEFAULT false); " +
@@ -33,6 +35,7 @@ public class PaymentDocumentRegistryDAO {
                                     "COMMENT ON COLUMN PD_REGISTRY.NUMBER_PD_FROM_GISJKH IS 'Номер платежного документа присвоенный ГИС ЖКХ.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.MONTH IS 'Месяц за который выгружен ПД.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.YEAR IS 'Год за который выгружен ПД.'; " +
+                                    "COMMENT ON COLUMN PD_REGISTRY.SUMMA IS 'Общая сумма платежного документа.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ABON_ID IS 'Идентификатор абонента в Граде.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ACCOUNT_GUID IS 'Идентификатор лицевого счета в ГИС ЖКХ.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ARCHIVE IS 'Если ПД архивирован, то нужно оставить пометку.';";
@@ -75,7 +78,8 @@ public class PaymentDocumentRegistryDAO {
         ArrayList<PaymentDocumentRegistryDataSet> paymentList = new ArrayList<>();
 
         try (Statement st = ConnectionDB.instance().getConnectionDB().createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM " + TABLE_NAME_PD_REGISTRY + " WHERE MONTH = " + month)) {
+             ResultSet rs = st.executeQuery(
+                     "SELECT * FROM " + TABLE_NAME_PD_REGISTRY + " WHERE MONTH = " + month + " AND WHERE YEAR = " + OtherFormat.getYear())) {
 
             return getPaymentDocumentRecordingFromResultSet(rs);
         }
@@ -98,9 +102,10 @@ public class PaymentDocumentRegistryDAO {
                     rs.getString(3),
                     rs.getInt(4),
                     rs.getInt(5),
-                    rs.getInt(6),
-                    rs.getString(7),
-                    rs.getBoolean(8)));
+                    rs.getBigDecimal(6),
+                    rs.getInt(7),
+                    rs.getString(8),
+                    rs.getBoolean(9)));
         }
 
         return paymentList;
@@ -115,15 +120,16 @@ public class PaymentDocumentRegistryDAO {
 
         try (PreparedStatement st = ConnectionDB.instance().getConnectionDB().prepareStatement(
                 "INSERT INTO \"PUBLIC\".PD_REGISTRY" +
-                        "(NUMBER_PD, NUMBER_PD_FROM_GISJKH, MONTH, YEAR, ABON_ID, ACCOUNT_GUID, ARCHIVE) " +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?);")) {
+                        "(NUMBER_PD, NUMBER_PD_FROM_GISJKH, MONTH, YEAR, SUMMA, ABON_ID, ACCOUNT_GUID, ARCHIVE) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?);")) {
             st.setString(1, registryItem.getNumberPd());
             st.setString(2, registryItem.getNumberPdFromGisJkh());
             st.setInt(3, registryItem.getMonth());
             st.setInt(4, registryItem.getYear());
-            st.setInt(5, registryItem.getAbonId());
-            st.setString(6, registryItem.getAccountGuid());
-            st.setBoolean(7, registryItem.isArchive());
+            st.setBigDecimal(5, registryItem.getSumma());
+            st.setInt(6, registryItem.getAbonId());
+            st.setString(7, registryItem.getAccountGuid());
+            st.setBoolean(8, registryItem.isArchive());
             st.executeUpdate();
         }
     }

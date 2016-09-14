@@ -1,6 +1,6 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
-import ru.gosuslugi.dom.schema.integration.base.NsiRef;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,14 +15,14 @@ public final class MeteringDeviceValuesObject {
     private final BigDecimal meteringValueTwo; // Показания по тарифу 2
     private final BigDecimal meteringValueThree; // Показания по тарифу 3
     private final Date meteringDate;
-    private final ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef;
+    private final NsiRef nsiRef;
 
     public MeteringDeviceValuesObject(String meteringDeviceRootGUID,
                                       BigDecimal meteringValue,
                                       BigDecimal meteringValueTwo,
                                       BigDecimal meteringValueThree,
                                       Date meteringDate,
-                                      ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef) {
+                                      NsiRef nsiRef) {
         this.meteringDeviceRootGUID = meteringDeviceRootGUID;
         this.meteringValue = meteringValue.setScale(4, BigDecimal.ROUND_DOWN);
         this.meteringValueTwo = meteringValueTwo != null ? meteringValueTwo.setScale(4, BigDecimal.ROUND_DOWN) : null;
@@ -34,7 +34,7 @@ public final class MeteringDeviceValuesObject {
     public MeteringDeviceValuesObject(String meteringDeviceRootGUID,
                                       BigDecimal meteringValue,
                                       Date meteringDate,
-                                      ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef) {
+                                      NsiRef nsiRef) {
         this.meteringDeviceRootGUID = meteringDeviceRootGUID;
         this.meteringValue = meteringValue.setScale(4, BigDecimal.ROUND_DOWN);
         this.meteringValueTwo = null;

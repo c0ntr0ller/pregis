@@ -1,20 +1,18 @@
 package ru.progmatik.java.pregis.services.payment;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.AckRequest;
-import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
-import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.payment.ExportPaymentDocumentDetailsRequest;
-import ru.gosuslugi.dom.schema.integration.services.payment.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.services.payment.Individual;
-import ru.gosuslugi.dom.schema.integration.services.payment_service_async.Fault;
-import ru.gosuslugi.dom.schema.integration.services.payment_service_async.PaymentPortsTypeAsync;
-import ru.gosuslugi.dom.schema.integration.services.payment_service_async.PaymentsServiceAsync;
+import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.payment.ExportPaymentDocumentDetailsRequest;
+import ru.gosuslugi.dom.schema.integration.payment.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.payment.Individual;
+import ru.gosuslugi.dom.schema.integration.payment_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.payment_service_async.PaymentPortsTypeAsync;
+import ru.gosuslugi.dom.schema.integration.payment_service_async.PaymentsServiceAsync;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
+import java.sql.SQLException;
 
 /**
  * Класс, экспорт реквизитов платежных документов (exportPaymentDocumentDetails).
@@ -48,10 +46,10 @@ public class ExportPaymentDocumentDetails {
     /**
      * Метод, экспорт реквизитов платежных документов для банков и т.п. контор.
      */
-    public void callExportPaymentDocumentDetails() {
+    public void callExportPaymentDocumentDetails() throws SQLException {
 
 //        Создание загаловков сообщений (запроса и ответа)
-        HeaderType requestHeader = OtherFormat.getISRequestHeader();
+        RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();
 //        Создание объекта для сохранения лога сообщений в БД.
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
@@ -73,10 +71,10 @@ public class ExportPaymentDocumentDetails {
 //        saveToBase.setResult(headerHolder.value, NAME_METHOD, request.getErrorMessage());
     }
 
-    public void getStateExportPaymentDocumentDetails() {
+    public void getStateExportPaymentDocumentDetails() throws SQLException {
 
         //        Создание загаловков сообщений (запроса и ответа)
-        HeaderType requestHeader = OtherFormat.getISRequestHeader();
+        RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();
 //        Создание объекта для сохранения лога сообщений в БД.
         SaveToBaseMessages saveToBase = new SaveToBaseMessages();
@@ -105,6 +103,8 @@ public class ExportPaymentDocumentDetails {
 
         ExportPaymentDocumentDetailsRequest request = new ExportPaymentDocumentDetailsRequest();
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
         request.setPaymentDocumentID("00АА001470-01-6051");
 //        request.setPaymentDocumentID("30АА001481-01-6051");
         request.setAmountRequired(new ExportPaymentDocumentDetailsRequest.AmountRequired());

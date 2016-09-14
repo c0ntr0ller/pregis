@@ -2,8 +2,8 @@ package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportResult;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportMeteringDeviceDataRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportResult;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;

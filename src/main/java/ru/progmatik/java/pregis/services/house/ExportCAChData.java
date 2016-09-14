@@ -3,9 +3,11 @@ package ru.progmatik.java.pregis.services.house;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportCAChResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportCAChRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportCAChResult;
+import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
@@ -17,8 +19,14 @@ public class ExportCAChData {
     private static final Logger logger = Logger.getLogger(ExportCAChData.class);
 
     private static final String NAME_METHOD = "exportCAChData";
+    private final HouseManagementService service = new HouseManagementService();
+    private final HouseManagementPortsType port = service.getHouseManagementPort();
 
     private Holder<ResultHeader> headerHolder = new Holder<>(new ResultHeader());
+
+    public ExportCAChData() {
+        OtherFormat.setPortSettings(service, port);
+    }
 
     public void callExportCAChData() throws SQLException {
 
@@ -28,10 +36,8 @@ public class ExportCAChData {
 
         ExportCAChResult result;
 
-        HouseManagementPortsTypeImpl portsType = new HouseManagementPortsTypeImpl();
-
         try {
-            result = portsType.exportCAChData(getExportCAChRequest(), requestHeader, headerHolder);
+            result = port.exportCAChData(getExportCAChRequest(), requestHeader, headerHolder);
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
             logger.error(fault.getMessage());

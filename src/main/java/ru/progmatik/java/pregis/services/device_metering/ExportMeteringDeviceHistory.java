@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.device_metering;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.device_metering.ExportMeteringDeviceHistoryRequest;
-import ru.gosuslugi.dom.schema.integration.services.device_metering.ExportMeteringDeviceHistoryResult;
-import ru.gosuslugi.dom.schema.integration.services.device_metering_service.DeviceMeteringPortTypes;
-import ru.gosuslugi.dom.schema.integration.services.device_metering_service.DeviceMeteringService;
-import ru.gosuslugi.dom.schema.integration.services.device_metering_service.Fault;
+import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryRequest;
+import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryResult;
+import ru.gosuslugi.dom.schema.integration.device_metering_service.DeviceMeteringPortTypes;
+import ru.gosuslugi.dom.schema.integration.device_metering_service.DeviceMeteringService;
+import ru.gosuslugi.dom.schema.integration.device_metering_service.Fault;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -108,6 +108,8 @@ public final class ExportMeteringDeviceHistory {
      */
     private ExportMeteringDeviceHistoryRequest setSignIdExportMeteringHistoryRequest(ExportMeteringDeviceHistoryRequest request) {
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
         return request;
     }
 

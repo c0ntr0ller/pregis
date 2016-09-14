@@ -1,13 +1,13 @@
 package ru.progmatik.java.pregis.connectiondb.grad.account;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.ID;
-import ru.gosuslugi.dom.schema.integration.base.RegOrgVersionType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.AccountIndType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.AccountType;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ImportAccountRequest;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportOrgRegistryResult;
+import ru.gosuslugi.dom.schema.integration.house_management.AccountIndType;
+import ru.gosuslugi.dom.schema.integration.house_management.AccountType;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
+import ru.gosuslugi.dom.schema.integration.individual_registry_base.ID;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_base.RegOrgVersionType;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryRequest;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;

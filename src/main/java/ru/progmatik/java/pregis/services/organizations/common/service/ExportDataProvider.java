@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.organizations.common.service;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderRequest;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common.ExportDataProviderResult;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.Fault;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgPortsType;
-import ru.gosuslugi.dom.schema.integration.services.organizations_registry_common_service.RegOrgService;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderRequest;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderResult;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.Fault;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.RegOrgPortsType;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.RegOrgService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -19,10 +19,9 @@ public class ExportDataProvider {
     private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);
 
     private static final String NAME_METHOD = "exportDataProvider";
-    private AnswerProcessing answerProcessing;
-
     private final RegOrgService service = new RegOrgService();
     private final RegOrgPortsType port = service.getRegOrgPort();
+    private AnswerProcessing answerProcessing;
 
     public ExportDataProvider(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);

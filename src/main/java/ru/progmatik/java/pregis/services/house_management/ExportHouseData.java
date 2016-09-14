@@ -3,12 +3,12 @@ package ru.progmatik.java.pregis.services.house_management;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportHouseResultType;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResultType;
+import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -252,6 +252,7 @@ public class ExportHouseData {
         ExportHouseRequest request = new ExportHouseRequest();
         request.setId(OtherFormat.getId());
         request.setFIASHouseGuid(fias);
+        request.setVersion(request.getVersion());
         answerProcessing.sendMessageToClient("ФИАС дома: " + fias);
 
         return request;

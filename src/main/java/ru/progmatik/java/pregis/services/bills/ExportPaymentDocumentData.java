@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.bills;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportPaymentDocumentResult;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.bills.ExportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.ExportPaymentDocumentResult;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
+import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
@@ -71,6 +71,8 @@ public class ExportPaymentDocumentData {
 
         ExportPaymentDocumentRequest request = new ExportPaymentDocumentRequest();
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
         request.setYear((short) 2016);
         request.setMonth(05);
         request.setFIASHouseGuid("b58c5da4-8d62-438f-b11e-d28103220952");

@@ -1,5 +1,7 @@
 package ru.progmatik.java.pregis.connectiondb.localdb.bills;
 
+import java.math.BigDecimal;
+
 /**
  * Класс, описывает объект (реестр платежных документов) для хранения в БД.
  */
@@ -9,6 +11,7 @@ public class PaymentDocumentRegistryDataSet {
     private final String numberPd; // Номер платежного документа.
     private final int month; // Месяц за который выгружен ПД.
     private final int year; // Год за который выгружен ПД.
+    private final BigDecimal summa; // общая сумма платежного документа.
     private final int abonId; // Идентификатор абонента в Граде.
     private final String accountGuid; // Идентификатор лицевого счета в ГИС ЖКХ.
     private String numberPdFromGisJkh; // Номер платежного документа присвоенный ГИС ЖКХ.
@@ -22,17 +25,19 @@ public class PaymentDocumentRegistryDataSet {
      * @param numberPdFromGisJkh номер платежного документа присвоенный ГИС ЖКХ.
      * @param month              месяц за который выгружен ПД.
      * @param year               год за который выгружен ПД.
+     * @param summa              общая сумма платежного документа.
      * @param abonId             идентификатор абонента в Граде.
      * @param accountGuid        идентификатор лицевого счета в ГИС ЖКХ.
      * @param archive            если ПД архивирован.
      */
     public PaymentDocumentRegistryDataSet(int id, String numberPd, String numberPdFromGisJkh, int month,
-                                          int year, int abonId, String accountGuid, boolean archive) {
+                                          int year, BigDecimal summa, int abonId, String accountGuid, boolean archive) {
         this.id = id;
         this.numberPd = numberPd;
         this.numberPdFromGisJkh = numberPdFromGisJkh;
         this.month = month;
         this.year = year;
+        this.summa = summa;
         this.abonId = abonId;
         this.accountGuid = accountGuid;
         this.archive = archive;
@@ -44,14 +49,16 @@ public class PaymentDocumentRegistryDataSet {
      * @param numberPd    номер платежного документа.
      * @param month       месяц за который выгружен ПД.
      * @param year        год за который выгружен ПД.
+     *                    @param summa              общая сумма платежного документа.
      * @param abonId      идентификатор абонента в Граде.
      * @param accountGuid идентификатор лицевого счета в ГИС ЖКХ.
      */
-    public PaymentDocumentRegistryDataSet(String numberPd, int month, int year, int abonId, String accountGuid) {
+    public PaymentDocumentRegistryDataSet(String numberPd, int month, int year, BigDecimal summa, int abonId, String accountGuid) {
         this.id = -1;
         this.numberPd = numberPd;
         this.month = month;
         this.year = year;
+        this.summa = summa;
         this.abonId = abonId;
         this.accountGuid = accountGuid;
     }
@@ -76,30 +83,32 @@ public class PaymentDocumentRegistryDataSet {
     }
 
     @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + numberPd.hashCode();
+        result = 31 * result + month;
+        result = 31 * result + year;
+        result = 31 * result + summa.hashCode();
+        result = 31 * result + abonId;
+        result = 31 * result + accountGuid.hashCode();
+        result = 31 * result + (numberPdFromGisJkh != null ? numberPdFromGisJkh.hashCode() : 0);
+        result = 31 * result + (archive ? 1 : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
 
         return
                 "{\nID: " + this.id +
-                "\nNumber payment document: " + this.numberPd +
-                "\nNumber from GIS JKH payment document: " + this.numberPdFromGisJkh +
-                "\nMonth: " + this.month +
-                "\nYear: " + this.year +
-                "\nabonent id from GRAD: " + this.abonId +
-                "\nAccountGUID from GIS JKH: " + this.accountGuid +
-                "\nIs Archive: " + this.archive + "\n}";
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + numberPd.hashCode();
-        result = 31 * result + (numberPdFromGisJkh != null ? numberPdFromGisJkh.hashCode() : 0);
-        result = 31 * result + month;
-        result = 31 * result + year;
-        result = 31 * result + abonId;
-        result = 31 * result + accountGuid.hashCode();
-        result = 31 * result + (archive ? 1 : 0);
-        return result;
+                        "\nNumber payment document: " + this.numberPd +
+                        "\nNumber from GIS JKH payment document: " + this.numberPdFromGisJkh +
+                        "\nMonth: " + this.month +
+                        "\nYear: " + this.year +
+                        "\nSumma: " + this.summa +
+                        "\nabonent id from GRAD: " + this.abonId +
+                        "\nAccountGUID from GIS JKH: " + this.accountGuid +
+                        "\nIs Archive: " + this.archive + "\n}";
     }
 
     public int getId() {
@@ -125,6 +134,10 @@ public class PaymentDocumentRegistryDataSet {
 
     public int getYear() {
         return year;
+    }
+
+    public BigDecimal getSumma() {
+        return summa;
     }
 
     public int getAbonId() {

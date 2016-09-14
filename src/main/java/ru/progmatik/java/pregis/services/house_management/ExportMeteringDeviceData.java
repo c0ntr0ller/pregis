@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.house_management;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.services.house_management.ExportMeteringDeviceDataResult;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration.services.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResult;
+import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -67,6 +67,7 @@ public class ExportMeteringDeviceData {
         request.setFIASHouseGuid(fias);
         request.setSearchArchived(true);
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
 
         return request;
     }

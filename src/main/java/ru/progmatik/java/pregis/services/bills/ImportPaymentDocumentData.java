@@ -1,14 +1,17 @@
 package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
-import ru.gosuslugi.dom.schema.integration.services.bills.ImportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.PDServiceChargeType;
-import ru.gosuslugi.dom.schema.integration.services.bills.PaymentDocumentType;
-import ru.gosuslugi.dom.schema.integration.services.bills.ServiceChargeType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.base.ImportResult;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.PDServiceChargeType;
+import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
+import ru.gosuslugi.dom.schema.integration.bills.ServiceChargeType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
+import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
@@ -139,6 +142,7 @@ public class ImportPaymentDocumentData {
         request.setMonth(05);
         request.setYear((short) 2016);
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
         request.getPaymentDocument().add(paymentDocument);
         request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
 

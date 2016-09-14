@@ -8,8 +8,11 @@
 package ru.progmatik.java.pregis.connectiondb.localdb.reference;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
-import ru.gosuslugi.dom.schema.integration.services.nsi_common.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementFieldType;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementIntegerFieldType;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementStringFieldType;
+import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementType;
+import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -47,7 +50,7 @@ public class ReferenceNSI {
      * @throws PreGISException
      * @throws SQLException
      */
-    public ru.gosuslugi.dom.schema.integration.base.NsiRef getTypeDocumentNsiRef(String nameTypeDocument) throws PreGISException, SQLException {
+    public ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef getTypeDocumentNsiRef(String nameTypeDocument) throws PreGISException, SQLException {
 
         String nsiCode = "95";
 
@@ -64,7 +67,7 @@ public class ReferenceNSI {
      * @throws PreGISException
      * @throws SQLException
      */
-    public ru.gosuslugi.dom.schema.integration.base.NsiRef getNsiRef(String nsiParentCode, String nameElement) throws PreGISException, SQLException {
+    public ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef getNsiRef(String nsiParentCode, String nameElement) throws PreGISException, SQLException {
 
         ArrayList<ReferenceItemDataSet> allItems = nsiDao.getAllItemsCodeParent(nsiParentCode);
 
@@ -75,7 +78,7 @@ public class ReferenceNSI {
 
         for (ReferenceItemDataSet item : allItems) {
             if (nameElement.equalsIgnoreCase(item.getName())) {
-                ru.gosuslugi.dom.schema.integration.base.NsiRef nsiRef = new NsiRef();
+                ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef nsiRef = new ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef();
                 nsiRef.setCode(item.getCode());
                 nsiRef.setGUID(item.getGuid());
                 nsiRef.setName(item.getName());

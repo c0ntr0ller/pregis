@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.bills;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportOrgPeriodRequest;
-import ru.gosuslugi.dom.schema.integration.services.bills.ExportOrgPeriodResult;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
-import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.bills.ExportOrgPeriodRequest;
+import ru.gosuslugi.dom.schema.integration.bills.ExportOrgPeriodResult;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
+import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -78,6 +78,7 @@ public class ExportOrgPeriodData {
 
         ExportOrgPeriodRequest request = new ExportOrgPeriodRequest();
         request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
 
         if (ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) request.setIsRSO(true);
         else request.setIsUO(true);

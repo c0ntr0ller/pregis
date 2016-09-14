@@ -3,11 +3,11 @@ package ru.progmatik.java.pregis.services.nsi.service;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.services.nsi.ExportDataProviderNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration.services.nsi.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration.services.nsi_service.Fault;
-import ru.gosuslugi.dom.schema.integration.services.nsi_service.NsiPortsType;
-import ru.gosuslugi.dom.schema.integration.services.nsi_service.NsiService;
+import ru.gosuslugi.dom.schema.integration.nsi.ExportDataProviderNsiItemRequest;
+import ru.gosuslugi.dom.schema.integration.nsi.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration.nsi_service.Fault;
+import ru.gosuslugi.dom.schema.integration.nsi_service.NsiPortsType;
+import ru.gosuslugi.dom.schema.integration.nsi_service.NsiService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -88,6 +88,7 @@ public class ExportDataProviderNsiItem {
 //        Если не указана, возвращаются все элементы справочника.
 //        request.setModifiedAfter();
         request.setId("signed-data-container");
+        request.setVersion(request.getVersion());
 
         return request;
     }

@@ -11,6 +11,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
@@ -61,11 +62,18 @@ public class OtherFormat {
      * Соответственно берем предыдущий месяц за который выставляются ПД.
      * @return предыдущий месяц для платежного документа.
      */
-    public static int getMonthForPaymantDocument() {
+    public static Calendar getCalendarForPaymentDocument() {
+
+        Calendar calendar = new GregorianCalendar();
+//        calendar.setTime(new Date()); // включить после испытаний.
+//        У месяца отсчет от 0, в нашем случае, нужен предыдущий месяц, так и оставлю.
 //        TODO
+//        Удалить после испытаний
+        calendar.set(Calendar.MONTH, Calendar.JULY);
+        calendar.set(Calendar.YEAR, 2016);
 //        return (getDateNow().getMonth() -1 ) % 12;
 //        Пока тестовый месяц потом вернуть на корректный
-        return 6;
+        return calendar;
     }
 
     /**

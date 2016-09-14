@@ -3,7 +3,6 @@ package ru.progmatik.java.pregis;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseRequest;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
@@ -11,6 +10,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -46,11 +46,27 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
-        ExportHouseRequest request = new ExportHouseRequest();
-        String version = request.getVersion();
-        request.setVersion("10.0.1.2");
-        System.out.println(request.getVersion());
-        System.out.println(version);
+//        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
+//        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.YEAR));
+
+        PaymentDocumentRegistryDAO registryDAO = new PaymentDocumentRegistryDAO();
+        System.out.println(registryDAO.getPaymentDocumentLastNumber());
+
+//        try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
+//
+//            HouseGRADDAO houseDAO = new HouseGRADDAO();
+//            HashMap<Integer, String> totalSquareMap = houseDAO.getTotalSquare(7124, connectionGrad);
+//            for (Map.Entry<Integer, String> entry : totalSquareMap.entrySet()) {
+//                System.out.println("AbonID: " + entry.getKey() + " total: " + entry.getValue());
+//            }
+//
+//        }
+
+//        ExportHouseRequest request = new ExportHouseRequest();
+//        String version = request.getVersion();
+//        request.setVersion("10.0.1.2");
+//        System.out.println(request.getVersion());
+//        System.out.println(version);
 
 //        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
 //            ServicesGisJkhForGradDAO gradDAO = new ServicesGisJkhForGradDAO();

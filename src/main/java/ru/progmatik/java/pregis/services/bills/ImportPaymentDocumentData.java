@@ -16,6 +16,7 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
@@ -39,18 +40,28 @@ public class ImportPaymentDocumentData {
 
     private final BillsService service = new BillsService();
     private final BillsPortsType port = service.getBillsPort();
+    private final AnswerProcessing answerProcessing;
+
 
     /**
      * Конструктор, добавляет параметры для соединения.
      */
-    public ImportPaymentDocumentData() {
+    public ImportPaymentDocumentData(AnswerProcessing answerProcessing) {
         OtherFormat.setPortSettings(service, port);
+        this.answerProcessing = answerProcessing;
+    }
+
+    public ImportResult sendPaymentDocument(ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
+                                            ImportPaymentDocumentRequest.PaymentInformation paymentInformation,
+                                            int month, short year) throws SQLException, PreGISException {
+
+        return callImportPaymentDocumentData(getImportPaymentDocumentRequest(paymentDocument, paymentInformation, month, year));
     }
 
     /**
      * Метод, импорт сведений о платежных документах в ГИС ЖКХ.
      */
-    public void callImportPaymentDocumentData() throws SQLException, PreGISException {
+    public ImportResult callImportPaymentDocumentData(ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
 
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
@@ -61,12 +72,12 @@ public class ImportPaymentDocumentData {
         ImportResult result;
 
         try {
-            result = port.importPaymentDocumentData(getImportPaymentDocumentRequest(), requestHeader, headerHolder);
+            result = port.importPaymentDocumentData(request, requestHeader, headerHolder);
         } catch (Fault fault) {
             saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
             LOGGER.error(fault.getMessage());
             fault.printStackTrace();
-            return;
+            return null;
         }
 
         saveToBase.setRequest(requestHeader, NAME_METHOD);
@@ -74,10 +85,25 @@ public class ImportPaymentDocumentData {
         saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
 
         LOGGER.info("ImportPaymentDocumentData - Successful.");
-
+        return result;
     }
 
-    private ImportPaymentDocumentRequest getImportPaymentDocumentRequest() throws SQLException, PreGISException {
+    private ImportPaymentDocumentRequest getImportPaymentDocumentRequest(
+            ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
+            ImportPaymentDocumentRequest.PaymentInformation paymentInformation, int month, short year) throws SQLException, PreGISException {
+
+        ImportPaymentDocumentRequest request = new ImportPaymentDocumentRequest();
+        request.setMonth(month);
+        request.setYear(year);
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+        request.getPaymentDocument().add(paymentDocument);
+        request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
+
+        return request;
+    }
+
+    private void getImportPaymentDocumentRequest() throws SQLException, PreGISException {
         //        Просто проба платежного документа
 
         ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
@@ -138,14 +164,6 @@ public class ImportPaymentDocumentData {
 //        paymentDocument.setWithdraw(false);
         paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
 
-        ImportPaymentDocumentRequest request = new ImportPaymentDocumentRequest();
-        request.setMonth(05);
-        request.setYear((short) 2016);
-        request.setId(OtherFormat.getId());
-        request.setVersion(request.getVersion());
-        request.getPaymentDocument().add(paymentDocument);
-        request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
-
-        return request;
+        sendPaymentDocument(paymentDocument, paymentInformation, 5, (short) 2016);
     }
 }

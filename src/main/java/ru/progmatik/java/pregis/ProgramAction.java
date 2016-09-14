@@ -314,9 +314,9 @@ public class ProgramAction {
      * Метод, импорт сведений о платежных документах.
      */
     public void callImportPaymentDocumentData() {
-        ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData();
+        ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData(answerProcessing);
         try {
-            importPaymentDocumentData.callImportPaymentDocumentData();
+//            importPaymentDocumentData.callImportPaymentDocumentData();
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         }

@@ -75,8 +75,10 @@ public class ExportPaymentDocumentData {
 
         request.setYear((short) 2016);
         request.setMonth(05);
-        request.setFIASHouseGuid("b58c5da4-8d62-438f-b11e-d28103220952");
-        request.getAccountNumber().add("1000438820");
+//        request.setFIASHouseGuid("b58c5da4-8d62-438f-b11e-d28103220952");
+        request.setFIASHouseGuid("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
+        request.getPaymentDocumentNumber().add("7777");
+//        request.getAccountNumber().add("1000438820");
 //        request.getAccountGuid().add("3cab9a71-d8ae-42b2-8caa-42e92aa9aba2"); // л.с. 1000438820
 //        request.getAccountGuid().add("9498a608-2a8c-4f3e-8243-de76bad293b7"); // л.с. 1000438821  80АА001486
 //        Версии 9.0.1.3 перестало существовать

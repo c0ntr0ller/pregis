@@ -21,11 +21,11 @@ public class PaymentDocumentRegistryDAO {
 
     private static final String SQL_CREATE_TABLE_PD_REGISTRY = "CREATE TABLE IF NOT EXISTS PD_REGISTRY (" +
                                     "ID identity not null primary key, " +
-                                    "NUMBER_PD varchar(20) not null, " +
+                                    "NUMBER_PD BIGINT not null, " +
                                     "NUMBER_PD_FROM_GISJKH varchar(20), " +
                                     "MONTH INT not null, " +
                                     "YEAR INT not null, " +
-                                    "SUMMA DECIMAL NOT NULL, " +
+                                    "SUMMA DECIMAL, " +
                                     "ABON_ID BIGINT not null, " +
                                     "ACCOUNT_GUID varchar(40) not null, " +
                                     "ARCHIVE BOOLEAN DEFAULT false); " +
@@ -98,7 +98,7 @@ public class PaymentDocumentRegistryDAO {
         while (rs.next()) {
             paymentList.add(new PaymentDocumentRegistryDataSet(
                     rs.getInt(1),
-                    rs.getString(2),
+                    rs.getInt(2),
                     rs.getString(3),
                     rs.getInt(4),
                     rs.getInt(5),
@@ -122,7 +122,7 @@ public class PaymentDocumentRegistryDAO {
                 "INSERT INTO \"PUBLIC\".PD_REGISTRY" +
                         "(NUMBER_PD, NUMBER_PD_FROM_GISJKH, MONTH, YEAR, SUMMA, ABON_ID, ACCOUNT_GUID, ARCHIVE) " +
                         "VALUES(?, ?, ?, ?, ?, ?, ?, ?);")) {
-            st.setString(1, registryItem.getNumberPd());
+            st.setInt(1, registryItem.getNumberPd());
             st.setString(2, registryItem.getNumberPdFromGisJkh());
             st.setInt(3, registryItem.getMonth());
             st.setInt(4, registryItem.getYear());
@@ -146,6 +146,22 @@ public class PaymentDocumentRegistryDAO {
                 ps.setBoolean(1, true);
                 ps.setInt(2, registryItem.getId());
                 ps.executeUpdate();
+            }
+        }
+    }
+
+    /**
+     * Метод, получает из БД последний номер ПД.
+     * @return новый номер ПД.
+     */
+    public int getPaymentDocumentLastNumber() throws SQLException {
+
+        try (ResultSet rs = ConnectionDB.instance().getConnectionDB().
+                createStatement().executeQuery("SELECT MAX(NUMBER_PD) FROM PD_REGISTRY")) {
+            if (rs.next()) {
+                return rs.getInt(1) + 1;
+            } else {
+                return 1;
             }
         }
     }

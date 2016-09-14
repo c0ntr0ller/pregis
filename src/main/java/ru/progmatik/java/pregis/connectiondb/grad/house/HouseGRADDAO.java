@@ -12,10 +12,12 @@
 package ru.progmatik.java.pregis.connectiondb.grad.house;
 
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -177,6 +179,27 @@ public class HouseGRADDAO {
         } else {
             throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
         }
+    }
+
+    /**
+     * Метод, получает из процедуры "EX_GIS04" площадь помещения.
+     * @param houseId идентификатор дома в БД ГРАДа.
+     * @param connectionGrad подключение к БД ГРАД.
+     * @return ключ - abonId, значение - общая площадь помещения.
+     */
+    public HashMap<Integer, String> getTotalSquare(int houseId, Connection connectionGrad) throws SQLException {
+
+        HashMap<Integer, String> totalSquareMap = new HashMap<>();
+        try (CallableStatement cstmt = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS04(?)}")) {
+            cstmt.setString(1, String.valueOf(houseId));
+            ResultSet resultSet = cstmt.executeQuery();
+
+            while (resultSet.next()) {
+                String[] data = OtherFormat.getAllDataFromString(resultSet.getString(1));
+                totalSquareMap.put(Integer.parseInt(data[7]), data[4]);
+            }
+        }
+        return totalSquareMap;
     }
 
     /**

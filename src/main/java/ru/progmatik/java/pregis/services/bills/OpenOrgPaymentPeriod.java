@@ -56,7 +56,7 @@ public class OpenOrgPaymentPeriod {
     /**
      * МетодЮ получает дату на которую необходимо открыть расчетный период.
      * @param calendar текущая дата.
-     * @return
+     * @return ответ от сервиса ГИС ЖКХ.
      * @throws PreGISException
      * @throws SQLException
      */

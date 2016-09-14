@@ -9,7 +9,10 @@ import ru.gosuslugi.dom.schema.integration.services.bills.ServiceChargeType;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsPortsType;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.services.bills_service.Fault;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.ws.Holder;
@@ -44,7 +47,7 @@ public class ImportPaymentDocumentData {
     /**
      * Метод, импорт сведений о платежных документах в ГИС ЖКХ.
      */
-    public void callImportPaymentDocumentData() throws SQLException {
+    public void callImportPaymentDocumentData() throws SQLException, PreGISException {
 
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
@@ -71,7 +74,7 @@ public class ImportPaymentDocumentData {
 
     }
 
-    private ImportPaymentDocumentRequest getImportPaymentDocumentRequest() {
+    private ImportPaymentDocumentRequest getImportPaymentDocumentRequest() throws SQLException, PreGISException {
         //        Просто проба платежного документа
 
         ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
@@ -80,6 +83,12 @@ public class ImportPaymentDocumentData {
 //        paymentDocument.setPaymentDocumentNumber(); //Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
 
 //        Банковские реквизиты
+        PaymentInformationGradDAO dao = new PaymentInformationGradDAO();
+        ImportPaymentDocumentRequest.PaymentInformation paymentInformation = dao.getPaymentInformation(ConnectionBaseGRAD.instance().getConnection());
+//        ImportPaymentDocumentRequest.PaymentInformation paymentInformation = new ImportPaymentDocumentRequest.PaymentInformation();
+//        paymentInformation.setTransportGUID(OtherFormat.getRandomGUID());
+//        paymentInformation.setBankBIK("045004725");
+//        paymentInformation.setOperatingAccountNumber("40702810232000000061");
 //        paymentDocument.setPaymentInformation(new PaymentInformationType());
 //        paymentDocument.getPaymentInformation().setRecipientINN("5404465096"); //ИНН получателя платежа
 //        paymentDocument.getPaymentInformation().setRecipientKPP("540201001"); //КПП получателя платежа
@@ -115,7 +124,7 @@ public class ImportPaymentDocumentData {
         PDServiceChargeType.MunicipalService.Consumption.Volume volume = new PDServiceChargeType.MunicipalService.Consumption.Volume();
 
         volume.setValue(new BigDecimal(25.965).setScale(2, BigDecimal.ROUND_HALF_UP));
-        volume.setType("I");
+        volume.setType("I"); // Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
         consumption.getVolume().add(volume);
 
         chargeInfo.getMunicipalService().setConsumption(consumption); // (I)ndividualConsumption house(O)verallNeeds
@@ -131,6 +140,7 @@ public class ImportPaymentDocumentData {
         request.setYear((short) 2016);
         request.setId(OtherFormat.getId());
         request.getPaymentDocument().add(paymentDocument);
+        request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
 
         return request;
     }

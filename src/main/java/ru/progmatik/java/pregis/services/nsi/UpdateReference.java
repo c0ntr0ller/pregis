@@ -37,6 +37,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
+import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
@@ -112,6 +113,13 @@ public class UpdateReference {
 
 
             if (countDone == 3 && referenceNSI.updateNSIFromTableList() && updateOtherNsiForProviderNsi(connectionGrad)) {
+
+                // попробуем ассоциировать услуги по названию.
+                ServicesGisJkhForGradDAO servicesGisJkhForGradDAO = new ServicesGisJkhForGradDAO();
+                if (servicesGisJkhForGradDAO.getAllServicesAssociations() == null) {
+                    servicesGisJkhForGradDAO.autoAllServicesAssociations(connectionGrad);
+                }
+
                 answerProcessing.sendOkMessageToClient("\nСправочники успешно обновлены!");
             } else if (countDone < 4 && countDone > 0) {
                 answerProcessing.sendInformationToClientAndLog("\nСправочники обновлены с ошибками!", LOGGER);

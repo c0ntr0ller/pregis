@@ -10,7 +10,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -49,8 +48,8 @@ public class TestMain {
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.YEAR));
 
-        PaymentDocumentRegistryDAO registryDAO = new PaymentDocumentRegistryDAO();
-        System.out.println(registryDAO.getPaymentDocumentLastNumber());
+//        PaymentDocumentRegistryDAO registryDAO = new PaymentDocumentRegistryDAO();
+//        System.out.println(registryDAO.getPaymentDocumentLastNumber());
 
 //        try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
 //

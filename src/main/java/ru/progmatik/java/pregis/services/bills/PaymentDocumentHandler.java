@@ -2,11 +2,13 @@ package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
@@ -23,6 +25,7 @@ public class PaymentDocumentHandler {
 
     private static final Logger LOGGER = Logger.getLogger(PaymentDocumentHandler.class);
     private final AnswerProcessing answerProcessing;
+    private int count = -1;
 
     public PaymentDocumentHandler(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
@@ -49,20 +52,31 @@ public class PaymentDocumentHandler {
                 HashMap<Integer, String> totalSquareMap = houseDAO.getTotalSquare(entry.getValue(), connectionGrad);
 
                 for (Rooms room : rooms) {
+//                    Создадим платежный документ
                     ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
+                    paymentDocument.setAccountGuid(accountGRADDAO.getAccountGUIDFromBase(room.getAbonId(), connectionGrad));
+                    paymentDocument.setPaymentDocumentNumber(String.format("%010d", getPaymentDocumentNumber()));
+//                    Общая площадь для ЛС
                     paymentDocument.getAddressInfo().setTotalSquare(new BigDecimal(totalSquareMap.get(room.getAbonId())));
+                    paymentDocument.getChargeInfo().add(new PaymentDocumentType.ChargeInfo());
 
                 }
-
-
-
-
             }
-
-
         }
+    }
 
-
+    /**
+     * Метод, получает из БД последний номер и выдаёт при каждом запросе следующий номер.
+     * @return номер документа.
+     */
+    private int getPaymentDocumentNumber() throws SQLException {
+        if (count == -1) {
+            PaymentDocumentRegistryDAO paymentDAO = new PaymentDocumentRegistryDAO();
+            count = paymentDAO.getPaymentDocumentLastNumber();
+        } else {
+            count++;
+        }
+        return count;
     }
 
 }

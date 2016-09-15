@@ -86,11 +86,14 @@ public class ClientService {
                 case "updateMeteringDevices":
                     action.updateMeteringDevices();
                     break;
-                case "callQuestion":
-                    setQuestion(Boolean.valueOf(value));
-                    break;
                 case "getExportMeteringHistory":
                     action.getExportMeteringDeviceHistory();
+                    break;
+                case "deleteAllMeteringDevicesInHouse":
+                    action.deleteAllMeteringDevicesInHouse();
+                    break;
+                case "callQuestion":
+                    setQuestion(Boolean.valueOf(value));
                     break;
                 case "callExportSupplyResourceContractData":
                     action.callExportSupplyResourceContractData();

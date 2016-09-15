@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResult;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.ImportMeteringDeviceDataRequest;
 import ru.gosuslugi.dom.schema.integration.house_management.ImportResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
@@ -44,6 +45,35 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
     }
 
     /**
+     * Метод, добавляет все приборы учёта в архив.
+     * ВНИМАНИЕ! Будьте внимательны, что действительно хотите грохнуть все приборы учёта?
+     *
+     * @param fias код дома по ФИАС.
+     * @throws SQLException
+     */
+    public void archiveAllDevices(String fias) throws SQLException, ParseException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
+
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+//        Получаем выгруженные ПУ.
+            ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+            ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(fias);
+
+            LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
+
+            for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResult.getMeteringDevice()) {
+                if (resultType.getStatusRootDoc().equals("Active")) {
+                    deviceForArchive.put(resultType.getMeteringDeviceVersionGUID(), null);
+                }
+            }
+
+            ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+
+            MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
+            callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
+        }
+    }
+
+    /**
      * Метод, получает список домов готовых для выгрузки в ГИС ЖКХ, формирует по ним новые ПУ и отправляет в ГИС ЖКХ.
      *
      * @throws SQLException
@@ -79,7 +109,14 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
                 exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
                 if (exportMeteringDeviceDataResult != null) {
                     meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
-                    countAllGisJkh = exportMeteringDeviceDataResult.getMeteringDevice().size();
+                    for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResult.getMeteringDevice()) {
+                        if (device.getStatusRootDoc().equalsIgnoreCase("Active")) {
+//                            только активные устройства
+                            countAllGisJkh++;
+                        }
+                    }
+//                    все устройства даже архивные
+//                    countAllGisJkh = exportMeteringDeviceDataResult.getMeteringDevice().size();
                 }
                 if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
                     archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
@@ -157,7 +194,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
      */
     private void showInfo() {
         answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Всего ПУ найденных в ГИС ЖКХ: " + countAllGisJkh);
+        answerProcessing.sendMessageToClient("Всего активных ПУ найденных в ГИС ЖКХ: " + countAllGisJkh);
         answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
         answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
         answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
@@ -255,7 +292,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
         if ((size / 10) % 10 == 1) {
             value = size / 100;
         } else {
-            value =  size % 10;
+            value = size % 10;
         }
 
         if (value == 1) {
@@ -265,6 +302,10 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
         } else {
             return "приборов учёта";
         }
+    }
+
+    public int getErrorState() {
+        return errorState;
     }
 
     /**
@@ -292,5 +333,6 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
         private MeteringDeviceGRADDAO getMeteringDeviceGRADDAO() {
             return meteringDeviceGRADDAO;
         }
+
     }
 }

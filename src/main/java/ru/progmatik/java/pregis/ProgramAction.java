@@ -191,6 +191,36 @@ public class ProgramAction {
     }
 
     /**
+     * Метод, архивирует (удалит) все приборы учёта
+     */
+    public void deleteAllMeteringDevicesInHouse() {
+
+        setStateRunOn(); // взводим флаг в состояния выполнения метода
+
+        answerProcessing.sendMessageToClient("Запуск архивации ПУ...");
+
+        UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
+        try {
+            updateAllMeteringDeviceData.archiveAllDevices("b58c5da4-8d62-438f-b11e-d28103220952");
+            int state = updateAllMeteringDeviceData.getErrorState();
+            if (state == -1) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Архивация ПУ\" прервана!");
+            } else if (state == 0) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendErrorToClientNotException("Операция: \"Архивация ПУ\" завершилась с ошибками!");
+            } else if (state == 1) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendOkMessageToClient("\"Архивация ПУ\" успешно выполнена.");
+            }
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("Архивация ПУ: ", "\"Архивация ПУ\" ", LOGGER, e);
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
+        }
+    }
+
+    /**
      * Метод, получает массив, разделенный запятой с ид ПУ В БД ГРАД, добавляет ПУ в архив с указанной причиной "Ошибка".
      * @param lineMeterId ид ПУ в БД ГРАД, разделенные запятой.
      */

@@ -128,6 +128,9 @@ public final class MeteringDevicesDataLocalDBDAO {
             ps.setInt(2, meterId);
             ps.setString(3, meteringDeviceRootGUID);
             ps.executeUpdate();
+        } catch (NullPointerException e) {
+            LOGGER.info("Не удалось найти нидентификатор прибора учёта! MeterID: " + meterId +
+                    ", RootGUID: " + meteringDeviceRootGUID + ", VersionGUID: " + meteringDeviceVersionGUID);
         }
     }
 

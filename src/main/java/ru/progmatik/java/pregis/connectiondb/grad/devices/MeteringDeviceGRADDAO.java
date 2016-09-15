@@ -1198,6 +1198,9 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             call.setString(2, meteringDeviceVersionGUID);
             call.setString(3, meteringDeviceRootGUID);
             call.executeQuery();
+        } catch (NullPointerException e) {
+            LOGGER.info("Не удалось найти нидентификатор прибора учёта! MeterID: " + meterId +
+                    ", RootGUID: " + meteringDeviceRootGUID + ", VersionGUID: " + meteringDeviceVersionGUID);
         }
 //        }
     }

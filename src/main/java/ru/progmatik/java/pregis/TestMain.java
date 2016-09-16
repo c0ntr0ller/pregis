@@ -3,11 +3,13 @@ package ru.progmatik.java.pregis;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
+import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
+import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
@@ -45,6 +47,20 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
+        try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
+            PaymentDocumentGradDAO dao = new PaymentDocumentGradDAO();
+            Calendar calendar = new GregorianCalendar();
+            calendar.set(Calendar.MONTH, 4);
+            calendar.set(Calendar.YEAR, 2016);
+
+            ImportPaymentDocumentRequest.PaymentDocument document = dao.getPaymentDocument(36, 12, calendar,
+                    new ImportPaymentDocumentRequest.PaymentDocument(), connectionGrad);
+            System.out.println(dao.getBigDecimalTwo(new BigDecimal(2555.2255545456D)));
+            System.out.println(document.getPaymentDocumentNumber());
+            System.out.println(document.getChargeInfo().get(0).getHousingService().getAccountingPeriodTotal());
+        } catch (PreGISException e) {
+            System.out.println(e.getMessage());
+        }
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.YEAR));
 

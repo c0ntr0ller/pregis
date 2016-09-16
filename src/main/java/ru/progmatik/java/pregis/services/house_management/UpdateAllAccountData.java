@@ -60,7 +60,7 @@ public class UpdateAllAccountData {
             for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
 
                 ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
-                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = accountGRADDAO.getAccountListFromGrad(itemHouse.getValue(), connectionGRAD);
+                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = accountGRADDAO.getAccountMapFromGrad(itemHouse.getValue(), connectionGRAD);
 
                 if (exportAccountResult == null) {
                     errorState = 0;
@@ -118,7 +118,7 @@ public class UpdateAllAccountData {
                 } else {
                     try {
                         // ГИС ЖКХ возвращает не верный ответ, вместо UniqueNumber отдаёт UnifiedAccountNumber, который не удаётся обработать
-                        setAccountToBase(houseId, entry.getValue().getAccountNumber(), result.getCommonResult().get(0).getGUID(), result.getCommonResult().get(0).getUniqueNumber(), connection); // добавляем идентификаторы в БД.
+                        setAccountToBase(houseId, entry.getValue().getAccountNumber(), result.getCommonResult().get(0).getGUID(), result.getCommonResult().get(0).getImportAccount().getUnifiedAccountNumber(), connection); // добавляем идентификаторы в БД.
                     } catch (NullPointerException | IndexOutOfBoundsException e) {
                         LOGGER.error("Ожидался уникальный идентификатор из ГИС ЖХК", e);
                     }

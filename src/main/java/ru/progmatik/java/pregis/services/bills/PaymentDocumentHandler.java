@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis.services.bills;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
 import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
@@ -12,11 +13,13 @@ import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegist
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Класс, обрабатывает платежные документы.
@@ -48,16 +51,28 @@ public class PaymentDocumentHandler {
 
                 Calendar paymentPeriod = periodHandler.getHousePaymentPeriod(entry.getKey());
                 AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
+
                 ArrayList<Rooms> rooms = accountGRADDAO.getRooms(entry.getValue(), connectionGrad);
-                HashMap<Integer, String> totalSquareMap = houseDAO.getTotalSquare(entry.getValue(), connectionGrad);
+                LinkedHashMap<String, ImportAccountRequest.Account> accountMapFromGrad =
+                        accountGRADDAO.getAccountMapFromGrad(entry.getValue(), connectionGrad);
 
                 for (Rooms room : rooms) {
 //                    Создадим платежный документ
                     ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
+//                    Идентификатор лицевого счета
                     paymentDocument.setAccountGuid(accountGRADDAO.getAccountGUIDFromBase(room.getAbonId(), connectionGrad));
+//                    Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
                     paymentDocument.setPaymentDocumentNumber(String.format("%010d", getPaymentDocumentNumber()));
 //                    Общая площадь для ЛС
-                    paymentDocument.getAddressInfo().setTotalSquare(new BigDecimal(totalSquareMap.get(room.getAbonId())));
+                    paymentDocument.getAddressInfo().setTotalSquare(accountMapFromGrad.get(room.getNumberLS()).getTotalSquare());
+                    paymentDocument.getAddressInfo().setResidentialSquare(accountMapFromGrad.get(room.getNumberLS()).getResidentialSquare());
+                    if (accountMapFromGrad.get(room.getNumberLS()).getHeatedArea() != null) {
+                        paymentDocument.getAddressInfo().setHeatedArea(accountMapFromGrad.get(room.getNumberLS()).getHeatedArea());
+                    }
+                    if (accountMapFromGrad.get(room.getNumberLS()).getLivingPersonsNumber() != 0) {
+                        paymentDocument.getAddressInfo().setLivingPersonsNumber(accountMapFromGrad.get(room.getNumberLS()).getLivingPersonsNumber());
+                    }
+//                    Начисление по услуге
                     paymentDocument.getChargeInfo().add(new PaymentDocumentType.ChargeInfo());
 
                 }

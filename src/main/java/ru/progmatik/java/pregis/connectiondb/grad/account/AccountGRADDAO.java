@@ -181,7 +181,7 @@ public class AccountGRADDAO {
      * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
      * @throws SQLException   возможны ошибки БД.
      */
-    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountListFromGrad(int houseID, Connection connection) throws ParseException, SQLException, PreGISException {
+    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountMapFromGrad(int houseID, Connection connection) throws ParseException, SQLException, PreGISException {
 
         answerProcessing.sendMessageToClient("Формирую данные...");
         ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);

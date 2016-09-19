@@ -22,7 +22,7 @@ public class HousePaymentPeriodHandler {
      * @param fias код дома по ФИАС.
      */
     public Calendar getHousePaymentPeriod(String fias) {
-
+//        Пока заглушка сервис не работает
         return OtherFormat.getCalendarForPaymentDocument();
     }
 }

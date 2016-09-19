@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
@@ -48,18 +49,43 @@ public class TestMain {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
         try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
-            PaymentDocumentGradDAO dao = new PaymentDocumentGradDAO();
+            PaymentDocumentGradDAO dao = new PaymentDocumentGradDAO(new AnswerProcessing(new ClientService()));
             Calendar calendar = new GregorianCalendar();
             calendar.set(Calendar.MONTH, 4);
             calendar.set(Calendar.YEAR, 2016);
 
-            ImportPaymentDocumentRequest.PaymentDocument document = dao.getPaymentDocument(36, 12, calendar,
+            ImportPaymentDocumentRequest.PaymentDocument document = dao.getPaymentDocument(36, null, calendar,
                     new ImportPaymentDocumentRequest.PaymentDocument(), connectionGrad);
             System.out.println(dao.getBigDecimalTwo(new BigDecimal(2555.2255545456D)));
+            System.out.println(dao.getBigDecimalTwo(new BigDecimal(2555.2255545456D)).add(new BigDecimal("5")));
             System.out.println(document.getPaymentDocumentNumber());
-            System.out.println(document.getChargeInfo().get(0).getHousingService().getAccountingPeriodTotal());
-        } catch (PreGISException e) {
-            System.out.println(e.getMessage());
+//            System.out.println(document.getChargeInfo().get(0).getHousingService().getAccountingPeriodTotal());
+            int count = 0;
+            System.out.println("Size: " + document.getChargeInfo().size());
+            System.out.println();
+            for (PaymentDocumentType.ChargeInfo info : document.getChargeInfo()) {
+
+                System.out.println("Count: " + count++);
+
+                if (info.getHousingService() != null) {
+                    System.out.println("Rate: " + info.getHousingService().getRate());
+                    System.out.println("AccountingPeriodTotal: " + info.getHousingService().getAccountingPeriodTotal());
+                    System.out.println("CalcExplanation: " + info.getHousingService().getCalcExplanation());
+                    System.out.println("TotalPayable: " + info.getHousingService().getTotalPayable());
+                    System.out.println("Nsi: " + info.getHousingService().getServiceType().getName());
+                } else if (info.getMunicipalService() != null) {
+                    System.out.println("Rate: " + info.getMunicipalService().getRate());
+                    System.out.println("AccountingPeriodTotal: " + info.getMunicipalService().getAccountingPeriodTotal());
+                    System.out.println("CalcExplanation: " + info.getMunicipalService().getCalcExplanation());
+                    System.out.println("TotalPayable: " + info.getMunicipalService().getTotalPayable());
+                    System.out.println("Nsi: " + info.getMunicipalService().getServiceType().getName());
+                }
+                System.out.println();
+            }
+            System.out.println(document.getAdvanceBllingPeriod());
+
+//        } catch (PreGISException e) {
+//            System.out.println(e.getMessage());
         }
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.YEAR));

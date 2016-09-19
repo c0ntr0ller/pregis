@@ -18,6 +18,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
@@ -61,8 +62,10 @@ public class ImportPaymentDocumentData {
     /**
      * Метод, импорт сведений о платежных документах в ГИС ЖКХ.
      */
-    public ImportResult callImportPaymentDocumentData(ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
+    private ImportResult callImportPaymentDocumentData(ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
 
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();
@@ -72,19 +75,16 @@ public class ImportPaymentDocumentData {
         ImportResult result;
 
         try {
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             result = port.importPaymentDocumentData(request, requestHeader, headerHolder);
+            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
         } catch (Fault fault) {
-            saveToBase.setRequestError(requestHeader, NAME_METHOD, fault);
-            LOGGER.error(fault.getMessage());
-            fault.printStackTrace();
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }
 
-        saveToBase.setRequest(requestHeader, NAME_METHOD);
-
-        saveToBase.setResult(headerHolder.value, NAME_METHOD, result.getErrorMessage());
-
-        LOGGER.info("ImportPaymentDocumentData - Successful.");
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
+        if (result.getErrorMessage() != null) return null;
         return result;
     }
 

@@ -13,7 +13,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.ExportOrgPeriodData;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
-import ru.progmatik.java.pregis.services.bills.ImportPaymentDocumentData;
+import ru.progmatik.java.pregis.services.bills.PaymentDocumentHandler;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
@@ -344,9 +344,10 @@ public class ProgramAction {
      * Метод, импорт сведений о платежных документах.
      */
     public void callImportPaymentDocumentData() {
-        ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData(answerProcessing);
+
         try {
-//            importPaymentDocumentData.callImportPaymentDocumentData();
+            PaymentDocumentHandler handler = new PaymentDocumentHandler(answerProcessing);
+
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         }

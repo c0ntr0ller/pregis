@@ -1,18 +1,19 @@
 package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.bills.PDServiceChargeType;
-import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
+import ru.gosuslugi.dom.schema.integration.bills.*;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDataSet;
-import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -23,6 +24,13 @@ import java.util.HashMap;
 public final class PaymentDocumentGradDAO {
 
     private static final Logger LOGGER = Logger.getLogger(PaymentDocumentGradDAO.class);
+    private final AnswerProcessing answerProcessing;
+
+    private int stateError;
+
+    public PaymentDocumentGradDAO(AnswerProcessing answerProcessing) {
+        this.answerProcessing = answerProcessing;
+    }
 
     /**
      * Метод, отправляет в БД Града запрос, формирует платежный документ.
@@ -36,7 +44,7 @@ public final class PaymentDocumentGradDAO {
      */
     public ImportPaymentDocumentRequest.PaymentDocument getPaymentDocument(int abonId, Integer gradId, Calendar calendar,
                                                                            ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
-                                                                           Connection connectionGrad) throws SQLException, PreGISException {
+                                                                           Connection connectionGrad) throws SQLException {
 
         ReferenceItemGRADDAO referenceItemGRADDAO = new ReferenceItemGRADDAO();
         ArrayList<ReferenceItemDataSet> referenceItemGRADDAOAllItems = referenceItemGRADDAO.getAllItems(connectionGrad);
@@ -44,61 +52,212 @@ public final class PaymentDocumentGradDAO {
 //        Процедура принимает: ид абонента, расчетный период (месяц), расчетный период (год),
 //        1 – подавлять вывод нулевых строк, ид жилищной организации, ид поставщика.
         try (Statement statement = connectionGrad.createStatement()) {
-             ResultSet rs = statement.executeQuery("SELECT " +
-                "RSUPPLIER_ID, " +      // 1  ид поставщика
-                "RGROUP, " +            // 2  группа услуг
-                "RSUPERGROUP_CODE, " +  // 3  код суперуслуги
-                "RUNIT, " +             // 4  ед. измерения услуги
-                "RAMOUNT_PERSONAL, " +  // 5  индивидуальное потребление
-                "RAMOUNT_SHARED, " +    // 6  потребление МОП/ОДН
-                "RTARIFF, " +           // 7  тариф
-                "RCHARGE_PERSONAL, " +  // 8  сумма начисления за индивидуальное потребление
-                "RCHARGE_SHARED, " +    // 9  сумма начисления за потребление МОП/ОДН
-                "RREPAYS_PERSONAL, " +  // 10 перерасчеты по индивидуальному потреблению
-                "RREPAYS_SHARED, " +    // 11 перерасчеты по потреблению МОП/ОДН
-                "RCHARGE, " +           // 12 итоговая сумма начислений
-                "RNORM_PERSONAL, " +    // 13 норматив потребления на индивидуальные нужды
-                "RNORM_SHARED, " +      // 14 норматив потребления на общедомовые нужды
-                "RMETERS_PERSONAL, " +  // 15 текущие показания ИПУ
-                "RPAYS_ADVANCE, " +     // 16 платежи в расчетном периоде (аванс)
-                "RDEBT_IN, " +          // 17 задолженность на начало расчетного периода
-                "RDEBT_OUT " +          // 18 задолженность на конец расчетного периода
-                "from REP_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
-                calendar.get(Calendar.YEAR) + ", 1, null, " + gradId + ")");
+            ResultSet rs = statement.executeQuery("SELECT " +
+                    "a.RSUPPLIER_ID, " +      // 1  ид поставщика
+                    "a.RGROUP, " +            // 2  группа услуг
+                    "a.RSUPERGROUP_CODE, " +  // 3  код суперуслуги
+                    "a.RUNIT, " +             // 4  ед. измерения услуги
+                    "a.RAMOUNT_PERSONAL, " +  // 5  индивидуальное потребление
+                    "a.RAMOUNT_SHARED, " +    // 6  потребление МОП/ОДН
+                    "a.RTARIFF, " +           // 7  тариф
+                    "a.RCHARGE_PERSONAL, " +  // 8  сумма начисления за индивидуальное потребление
+                    "a.RCHARGE_SHARED, " +    // 9  сумма начисления за потребление МОП/ОДН
+                    "a.RREPAYS_PERSONAL, " +  // 10 перерасчеты по индивидуальному потреблению
+                    "a.RREPAYS_SHARED, " +    // 11 перерасчеты по потреблению МОП/ОДН
+                    "a.RCHARGE, " +           // 12 итоговая сумма начислений
+                    "a.RNORM_PERSONAL, " +    // 13 норматив потребления на индивидуальные нужды
+                    "a.RNORM_SHARED, " +      // 14 норматив потребления на общедомовые нужды
+                    "a.RMETERS_PERSONAL, " +  // 15 текущие показания ИПУ
+                    "a.RPAYS_ADVANCE, " +     // 16 платежи в расчетном периоде (аванс)
+                    "a.RDEBT_IN, " +          // 17 задолженность на начало расчетного периода
+                    "a.RDEBT_OUT, " +         // 18 задолженность на конец расчетного периода
+                    "b.RREASON, " +           // 19 Основания перерасчётов
+                    "b.RSUM " +               // 20 Сумма перерасчётов
+                    "from REP_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
+                    calendar.get(Calendar.YEAR) + ", 1, null, " + gradId + ") a " +
+                    "LEFT OUTER join REP_INVOICE_REPAYS(" + abonId + ", " + calendar.get(Calendar.MONTH) +
+                    ", " + calendar.get(Calendar.YEAR) + ", null, null) b ON a.RSUPERGROUP_CODE = b.RSUPERGROUP_CODE");
 
             while (rs.next()) {
+
 //                TODO создать платежный документ
                 ReferenceItemDataSet referenceItem = getReferenceItemDataSet(rs.getString(2), rs.getString(3), referenceItemGRADDAOAllItems);
-                if (referenceItem == null) throw new PreGISException("Не удалось найти услугу " + rs.getString(2) + " в справочнике \"SERVICES_GIS_JKH\".");
+                if (referenceItem == null) {
+                    setStateError(0);
+                    answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу " +
+                            rs.getString(2) + " в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
+                } else {
 
-                PaymentDocumentType.ChargeInfo chargeInfo = new PaymentDocumentType.ChargeInfo();
+                    PaymentDocumentType.ChargeInfo chargeInfo = null;
 
-                if (referenceItem.getCodeParent().equals("51")) { // если Коммунальная услуга
+                    if (referenceItem.getCodeParent().equals("51")) { // если Коммунальная услуга
 //                    TODO
-//                    chargeInfo.setMunicipalService();
-                } else if (referenceItem.getCodeParent().equals("50")) { // если Жилищная услуга
+                        chargeInfo = new PaymentDocumentType.ChargeInfo();
+                        chargeInfo.setMunicipalService(new PDServiceChargeType.MunicipalService());
 
-                    chargeInfo.setHousingService(new PDServiceChargeType.HousingService());
 //                    Код услуги (жилищной, коммунальной или дополнительной)
-                    chargeInfo.getHousingService().setServiceType(new NsiRef());
-                    chargeInfo.getHousingService().getServiceType().setName(referenceItem.getName());
-                    chargeInfo.getHousingService().getServiceType().setCode(referenceItem.getCode());
-                    chargeInfo.getHousingService().getServiceType().setGUID(referenceItem.getGuid());
+                        chargeInfo.getMunicipalService().setServiceType(new NsiRef());
+                        chargeInfo.getMunicipalService().getServiceType().setName(referenceItem.getName());
+                        chargeInfo.getMunicipalService().getServiceType().setCode(referenceItem.getCode());
+                        chargeInfo.getMunicipalService().getServiceType().setGUID(referenceItem.getGuid());
+
 //                    Тариф
-                    chargeInfo.getHousingService().setRate(getBigDecimalTwo(rs.getBigDecimal(6)));
-                    chargeInfo.getHousingService().setTotalPayable(getBigDecimalTwo(rs.getBigDecimal(12)));
-                    chargeInfo.getHousingService().setAccountingPeriodTotal(
-                            getBigDecimalTwo(rs.getBigDecimal(12)).subtract(
-                                    getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
-                                    getBigDecimalTwo(rs.getBigDecimal(10))));
+                        chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(rs.getBigDecimal(7)));
 
+//                    Итого к оплате за расчетный период, руб.
+                        chargeInfo.getMunicipalService().setTotalPayable(getBigDecimalTwo(rs.getBigDecimal(12)));
 
-                } else if (referenceItem.getCodeParent().equals("1")) { // а если Дополнительная услуга
+//                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
+                        chargeInfo.getMunicipalService().setAccountingPeriodTotal(
+                                getBigDecimalTwo(rs.getBigDecimal(12)).subtract(
+                                        getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
+                                        getBigDecimalTwo(rs.getBigDecimal(10))));
+
+//                        Порядок расчетов ???
+                        chargeInfo.getMunicipalService().setCalcExplanation("");
+
+                        chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeType());
+//                        Перерасчеты, корректировки (руб)
+                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(rs.getBigDecimal(10)));
+//                          Льготы, субсидии, скидки (руб) - отсутствует в ГРАДе
+//                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyDiscount();
+
+//                        Рассрочка. Раздел 6. Иваненко Дмитрий сказал, что у наших клиентов нет таких.
+//                        chargeInfo.getMunicipalService().setPiecemealPayment(new PiecemealPayment());
+
+//                        Перерасчеты. Раздел 5.
+                        if (rs.getBigDecimal(20) != null && rs.getString(19) != null) {
+                            chargeInfo.getMunicipalService().setPaymentRecalculation(new PDServiceChargeType.MunicipalService.PaymentRecalculation());
+//                            Основания перерасчётов
+                            chargeInfo.getMunicipalService().getPaymentRecalculation().setRecalculationReason(rs.getString(19));
+//                            Сумма
+                            chargeInfo.getMunicipalService().getPaymentRecalculation().setSum(getBigDecimalTwo(rs.getBigDecimal(20)));
+                        }
+
+//                        Норматив потребления коммунальной услуги
+                        chargeInfo.getMunicipalService().setServiceInformation(new ServiceInformation());
+                        if (rs.getString(15) != null && !rs.getString(15).trim().isEmpty()) {
+//                        Текущие показания приборов учёта коммунальных услуг - индивидульное потребление
+                            chargeInfo.getMunicipalService().getServiceInformation().
+                                    setIndividualConsumptionCurrentValue(new BigDecimal(rs.getString(15)).setScale(4, BigDecimal.ROUND_DOWN));
+                        }
+
+//                        Текущие показания приборов учёта коммунальных услуг - общедомовые нужды
+//                        TODO Иваненко должен дать.
+//                        chargeInfo.getMunicipalService().getServiceInformation().setHouseOverallNeedsCurrentValue();
+
+//                        Суммарный объём коммунальных услуг в доме - индивидульное потребление
+//                        chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalIndividualConsumption();
+//                        Суммарный объём коммунальных услуг в доме - общедомовые нужды
+//                        chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalHouseOverallNeeds();
+
+//                        Норматив потребления коммунальных услуг - общедомовые нужды
+                        chargeInfo.getMunicipalService().getServiceInformation().
+                                setHouseOverallNeedsNorm(rs.getBigDecimal(14).setScale(4, BigDecimal.ROUND_DOWN));
+
+//                        Норматив потребления коммунальных услуг - индивидульное потребление
+                        chargeInfo.getMunicipalService().getServiceInformation().
+                                setIndividualConsumptionNorm(rs.getBigDecimal(13).setScale(4, BigDecimal.ROUND_DOWN));
+
+//                        Объем услуг - индивидульное потребление и(или) общедомовые нужды
+                        chargeInfo.getMunicipalService().setConsumption(new PDServiceChargeType.MunicipalService.Consumption());
+
+                        if (rs.getBigDecimal(5) != null) {
+
+                            PDServiceChargeType.MunicipalService.Consumption.Volume volumeIndividual = new PDServiceChargeType.MunicipalService.Consumption.Volume();
+//                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
+                            volumeIndividual.setType("I");
+//                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
+//                            volumeIndividual.setDeterminingMethod();
+                            volumeIndividual.setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
+                            chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeIndividual);
+
+                        } else if (rs.getBigDecimal(6) != null) {
+
+                            PDServiceChargeType.MunicipalService.Consumption.Volume volumeOverall = new PDServiceChargeType.MunicipalService.Consumption.Volume();
+//                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
+                            volumeOverall.setType("O");
+//                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
+//                            volumeIndividual.setDeterminingMethod();
+                            volumeOverall.setValue(rs.getBigDecimal(6).setScale(3, BigDecimal.ROUND_DOWN));
+                            chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeOverall);
+                        }
+
+//                        К оплате за индивидуальное потребление коммунальной услуги, руб.
+                        chargeInfo.getMunicipalService().setMunicipalServiceIndividualConsumptionPayable(getBigDecimalTwo(rs.getBigDecimal(8)));
+//                        К оплате за общедомовое потребление коммунальной услуги, руб.
+                        chargeInfo.getMunicipalService().setMunicipalServiceCommunalConsumptionPayable(getBigDecimalTwo(rs.getBigDecimal(9)));
+
+                    } else if (referenceItem.getCodeParent().equals("50")) { // если Жилищная услуга
+
+                        chargeInfo = new PaymentDocumentType.ChargeInfo();
+                        chargeInfo.setHousingService(new PDServiceChargeType.HousingService());
+//                    Код услуги (жилищной, коммунальной или дополнительной)
+                        chargeInfo.getHousingService().setServiceType(new NsiRef());
+                        chargeInfo.getHousingService().getServiceType().setName(referenceItem.getName());
+                        chargeInfo.getHousingService().getServiceType().setCode(referenceItem.getCode());
+                        chargeInfo.getHousingService().getServiceType().setGUID(referenceItem.getGuid());
+
+//                    Тариф
+                        chargeInfo.getHousingService().setRate(getBigDecimalTwo(rs.getBigDecimal(7)));
+
+//                    Итого к оплате за расчетный период, руб.
+                        chargeInfo.getHousingService().setTotalPayable(getBigDecimalTwo(rs.getBigDecimal(12)));
+
+//                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
+                        chargeInfo.getHousingService().setAccountingPeriodTotal(
+                                getBigDecimalTwo(rs.getBigDecimal(12)).subtract(
+                                        getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
+                                        getBigDecimalTwo(rs.getBigDecimal(10))));
+
+//                    Порядок расчетов. Вообще ниразу нигде не написано что это?
+                        chargeInfo.getHousingService().setCalcExplanation("");
+
+//                    Перерасчеты, корректировки
+                        chargeInfo.getHousingService().setServiceCharge(new ServiceChargeType());
+//                    Перерасчеты, корректировки (руб)
+                        chargeInfo.getHousingService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(rs.getBigDecimal(10)));
+//                    Льготы, субсидии, скидки (руб) - отсутствует в ГРАДе
+//                    chargeInfo.getHousingService().getServiceCharge().setMoneyDiscount();
+
+//                    Объем услуг - индивидульное потребление и(или) общедомовые нужды
+                        chargeInfo.getHousingService().setConsumption(new PDServiceChargeType.HousingService.Consumption());
+//                    Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление
+                        chargeInfo.getHousingService().getConsumption().setVolume(new PDServiceChargeType.HousingService.Consumption.Volume());
+                        chargeInfo.getHousingService().getConsumption().getVolume().setType("I");
+                        chargeInfo.getHousingService().getConsumption().getVolume().setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
+
+                    } else if (referenceItem.getCodeParent().equals("1")) { // а если Дополнительная услуга
 //                    TODO
+                        chargeInfo = new PaymentDocumentType.ChargeInfo();
 //                    chargeInfo.setAdditionalService();
+                    }
+                    if (chargeInfo != null) {
+                        paymentDocument.getChargeInfo().add(chargeInfo);
+                    }
+
+//                    Аванс на начало расчетного периода, руб.
+                    if (paymentDocument.getAdvanceBllingPeriod() != null) {
+                        paymentDocument.setAdvanceBllingPeriod(paymentDocument.getAdvanceBllingPeriod().add(getBigDecimalTwo(rs.getBigDecimal(16))));
+                    } else {
+                        paymentDocument.setAdvanceBllingPeriod(getBigDecimalTwo(rs.getBigDecimal(16)));
+                    }
+
+//                    Задолженность за предыдущие периоды, руб
+                    if (paymentDocument.getDebtPreviousPeriods() != null) {
+                        paymentDocument.setDebtPreviousPeriods(paymentDocument.getDebtPreviousPeriods().add(getBigDecimalTwo(rs.getBigDecimal(17))));
+                    } else {
+                        paymentDocument.setDebtPreviousPeriods(getBigDecimalTwo(rs.getBigDecimal(17)));
+                    }
+
+//                    Сумма к оплате с учетом рассрочки платежа и процентов за рассрочку, руб
+                    if (paymentDocument.getTotalPiecemealPaymentSum() != null) {
+                        paymentDocument.setTotalPiecemealPaymentSum(paymentDocument.getTotalPiecemealPaymentSum().add(getBigDecimalTwo(rs.getBigDecimal(18))));
+                    } else {
+                        paymentDocument.setTotalPiecemealPaymentSum(getBigDecimalTwo(rs.getBigDecimal(18)));
+                    }
+
                 }
-                paymentDocument.getChargeInfo().add(chargeInfo);
-//                System.out.println(paymentDocument.getChargeInfo().get(0).getHousingService().getAccountingPeriodTotal());
             }
             rs.close();
         }
@@ -182,5 +341,23 @@ public final class PaymentDocumentGradDAO {
             map.put(association.getServiceGrad(), association.getServiceGisJkh());
         }
         return map;
+    }
+
+    /**
+     * Метод, возвращает статус ошибки.
+     *
+     * @return состояния обработки получения данных из процедуры "REP_INVOICE".
+     * -1 - Ошибка, дальнейшая работа невозможна,
+     * 0 - Возникли ошибки при работе, дальнейшая работа возможна,
+     * 1 - Всё прошло успешно, ошибок не обнаружено.
+     */
+    public int getStateError() {
+        return stateError;
+    }
+
+    public void setStateError(int stateError) {
+        if (stateError < this.stateError) {
+            this.stateError = stateError;
+        }
     }
 }

@@ -98,8 +98,13 @@ public class ImportPaymentDocumentData {
         request.setId(OtherFormat.getId());
         request.setVersion(request.getVersion());
         request.getPaymentDocument().add(paymentDocument);
-        request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
 
+        if (request.getPaymentInformation().size() == 0) {
+            request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
+        } else if (!paymentInformation.getOperatingAccountNumber().equals(
+                request.getPaymentInformation().get(0).getOperatingAccountNumber())) {
+            request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
+        }
         return request;
     }
 
@@ -152,7 +157,7 @@ public class ImportPaymentDocumentData {
         PDServiceChargeType.MunicipalService.Consumption consumption = new PDServiceChargeType.MunicipalService.Consumption();
         PDServiceChargeType.MunicipalService.Consumption.Volume volume = new PDServiceChargeType.MunicipalService.Consumption.Volume();
 
-        volume.setValue(new BigDecimal(25.965).setScale(2, BigDecimal.ROUND_HALF_UP));
+        volume.setValue(new BigDecimal(25.965).setScale(2, BigDecimal.ROUND_DOWN));
         volume.setType("I"); // Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
         consumption.getVolume().add(volume);
 

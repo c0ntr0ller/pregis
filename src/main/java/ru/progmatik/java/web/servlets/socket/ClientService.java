@@ -77,9 +77,9 @@ public class ClientService {
                 case "getExportDataProviderNsiItem":
                     action.callExportDataProviderNsiItem();
                     break;
-                case "getExportAccountData":
-                    action.callExportAccountData();
-                    break;
+//                case "getExportAccountData":
+//                    action.callExportAccountData();
+//                    break;
                 case "updateAccountData":
                     action.updateAccountData();
                     break;
@@ -91,6 +91,9 @@ public class ClientService {
                     break;
                 case "deleteAllMeteringDevicesInHouse":
                     action.deleteAllMeteringDevicesInHouse();
+                    break;
+                case "callImportPaymentDocumentData":
+                    action.callImportPaymentDocumentData();
                     break;
                 case "callQuestion":
                     setQuestion(Boolean.valueOf(value));

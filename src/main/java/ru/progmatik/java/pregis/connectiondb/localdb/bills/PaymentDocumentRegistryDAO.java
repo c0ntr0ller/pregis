@@ -22,7 +22,8 @@ public class PaymentDocumentRegistryDAO {
     private static final String SQL_CREATE_TABLE_PD_REGISTRY = "CREATE TABLE IF NOT EXISTS PD_REGISTRY (" +
                                     "ID identity not null primary key, " +
                                     "NUMBER_PD BIGINT not null, " +
-                                    "NUMBER_PD_FROM_GISJKH varchar(20), " +
+                                    "UNIQUE_NUMBER varchar(20), " +
+                                    "DOCUMENT_GUID varchar(40), " +
                                     "MONTH INT not null, " +
                                     "YEAR INT not null, " +
                                     "SUMMA DECIMAL, " +
@@ -32,7 +33,8 @@ public class PaymentDocumentRegistryDAO {
                                     "COMMENT ON TABLE PD_REGISTRY IS 'Таблица, хранит реестр платежных документов выгруженных в ГИС ЖКХ.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ID IS 'Идентификатор записей.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.NUMBER_PD IS 'Номер платежного документа. Последний номер будет основанием для следующего документа.'; " +
-                                    "COMMENT ON COLUMN PD_REGISTRY.NUMBER_PD_FROM_GISJKH IS 'Номер платежного документа присвоенный ГИС ЖКХ.'; " +
+                                    "COMMENT ON COLUMN PD_REGISTRY.UNIQUE_NUMBER IS 'Номер платежного документа присвоенный ГИС ЖКХ.'; " +
+                                    "COMMENT ON COLUMN PD_REGISTRY.DOCUMENT_GUID IS 'GUID платежного документа присвоенный ГИС ЖКХ.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.MONTH IS 'Месяц за который выгружен ПД.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.YEAR IS 'Год за который выгружен ПД.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.SUMMA IS 'Общая сумма платежного документа.'; " +
@@ -97,15 +99,16 @@ public class PaymentDocumentRegistryDAO {
 
         while (rs.next()) {
             paymentList.add(new PaymentDocumentRegistryDataSet(
-                    rs.getInt(1),
-                    rs.getInt(2),
-                    rs.getString(3),
-                    rs.getInt(4),
-                    rs.getInt(5),
-                    rs.getBigDecimal(6),
-                    rs.getInt(7),
-                    rs.getString(8),
-                    rs.getBoolean(9)));
+                    rs.getInt(1),       // ID
+                    rs.getInt(2),       // NUMBER_PD
+                    rs.getString(3),    // UNIQUE_NUMBER
+                    rs.getString(4),    // DOCUMENT_GUID
+                    rs.getInt(5),       // MONTH
+                    rs.getInt(6),       // YEAR
+                    rs.getBigDecimal(7),// SUMMA
+                    rs.getInt(8),       // ABON_ID
+                    rs.getString(9),    // ACCOUNT_GUID
+                    rs.getBoolean(10)));// ARCHIVE
         }
 
         return paymentList;
@@ -120,17 +123,33 @@ public class PaymentDocumentRegistryDAO {
 
         try (PreparedStatement st = ConnectionDB.instance().getConnectionDB().prepareStatement(
                 "INSERT INTO \"PUBLIC\".PD_REGISTRY" +
-                        "(NUMBER_PD, NUMBER_PD_FROM_GISJKH, MONTH, YEAR, SUMMA, ABON_ID, ACCOUNT_GUID, ARCHIVE) " +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?);")) {
+                        "(NUMBER_PD, UNIQUE_NUMBER, DOCUMENT_GUID, MONTH, YEAR, SUMMA, ABON_ID, ACCOUNT_GUID, ARCHIVE) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
             st.setInt(1, registryItem.getNumberPd());
-            st.setString(2, registryItem.getNumberPdFromGisJkh());
-            st.setInt(3, registryItem.getMonth());
-            st.setInt(4, registryItem.getYear());
-            st.setBigDecimal(5, registryItem.getSumma());
-            st.setInt(6, registryItem.getAbonId());
-            st.setString(7, registryItem.getAccountGuid());
-            st.setBoolean(8, registryItem.isArchive());
+            st.setString(2, registryItem.getUniqueNumber());
+            st.setString(3, registryItem.getGuid());
+            st.setInt(4, registryItem.getMonth());
+            st.setInt(5, registryItem.getYear());
+            st.setBigDecimal(6, registryItem.getSumma());
+            st.setInt(7, registryItem.getAbonId());
+            st.setString(8, registryItem.getAccountGuid());
+            st.setBoolean(9, registryItem.isArchive());
             st.executeUpdate();
+        }
+    }
+
+    /**
+     * Метод, по идентификатору записи в таблице определяет, находится ли она в архиве.
+     * @param id идентификатор записи в таблице.
+     * @return true - запись в архиве, false - запись в архиве не найдена.
+     * @throws SQLException
+     */
+    public boolean isArchivePaymentDocument(int id) throws SQLException {
+
+        try (PreparedStatement ps = ConnectionDB.instance().getConnectionDB().prepareStatement(
+                "SELECT ARCHIVE FROM PD_REGISTRY WHERE ID = ? AND ARCHIVE IS NOT NULL")) {
+            ps.setInt(1, id);
+            return ps.executeQuery().next();
         }
     }
 

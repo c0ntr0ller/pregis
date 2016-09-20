@@ -69,7 +69,7 @@ public class OtherFormat {
 //        У месяца отсчет от 0, в нашем случае, нужен предыдущий месяц, так и оставлю.
 //        TODO
 //        Удалить после испытаний
-        calendar.set(Calendar.MONTH, Calendar.JULY);
+        calendar.set(Calendar.MONTH, Calendar.JUNE);
         calendar.set(Calendar.YEAR, 2016);
 //        return (getDateNow().getMonth() -1 ) % 12;
 //        Пока тестовый месяц потом вернуть на корректный

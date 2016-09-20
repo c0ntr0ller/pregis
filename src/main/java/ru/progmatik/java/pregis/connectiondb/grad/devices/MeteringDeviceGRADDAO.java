@@ -907,7 +907,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
                 if (resultType.getError() == null || resultType.getError().size() == 0) {
                     LOGGER.debug("Active: base.ImportResult.");
-//                Этот объект вместо getGUID содержит meteringVersionGUID.
+//                Этот объект вместо getGuid содержит meteringVersionGUID.
                     setMeteringDevices(resultType.getUniqueNumber(), null, resultType.getGUID(),
                             resultType.getTransportGUID(), connectionGrad);
                 } else {
@@ -1017,7 +1017,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 //        for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 
 //            meteringUniqueNumber = result.getUniqueNumber();
-//            meteringRootGUID = result.getGUID();
+//            meteringRootGUID = result.getGuid();
 //            meteringVersionGUID = result.getImportMeteringDevice().getMeteringDeviceVersionGUID();
 //            transportGUID = result.getTransportGUID();
 

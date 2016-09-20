@@ -212,7 +212,7 @@ public class TestMain {
 ////                    System.out.print(string);
 ////                    System.out.print(" : ");
 ////                }
-//                System.out.println(nsi.getNsiRef("16", strings[16].split(" ")[1]).getGUID());
+//                System.out.println(nsi.getNsiRef("16", strings[16].split(" ")[1]).getGuid());
 //                System.out.println(strings[18]);
 //            }
 //        }
@@ -622,7 +622,7 @@ public class TestMain {
 //
 //        for (CommonResultType type : result.getCommonResult()) {
 //            if (type.getError() == null || type.getError().size() == 0) {
-//                System.out.println("GUID: " + type.getGUID());
+//                System.out.println("GUID: " + type.getGuid());
 //                System.out.println("UniqueNumber: " + type.getUniqueNumber());
 ////            System.out.println("MeteringDeviceVersionGUID: " + type.getImportMeteringDevice().getMeteringDeviceVersionGUID());
 //                System.out.println("TransportGUID: " + type.getTransportGUID());

@@ -114,7 +114,7 @@ public final class PaymentDocumentGradDAO {
                                         getBigDecimalTwo(rs.getBigDecimal(10))));
 
 //                        Порядок расчетов ???
-                        chargeInfo.getMunicipalService().setCalcExplanation("");
+                        chargeInfo.getMunicipalService().setCalcExplanation("??? что тут писать???");
 
                         chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeType());
 //                        Перерасчеты, корректировки (руб)
@@ -211,7 +211,7 @@ public final class PaymentDocumentGradDAO {
                                         getBigDecimalTwo(rs.getBigDecimal(10))));
 
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это?
-                        chargeInfo.getHousingService().setCalcExplanation("");
+                        chargeInfo.getHousingService().setCalcExplanation("??? что тут писать???");
 
 //                    Перерасчеты, корректировки
                         chargeInfo.getHousingService().setServiceCharge(new ServiceChargeType());

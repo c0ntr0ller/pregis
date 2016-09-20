@@ -120,7 +120,7 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
 
                 if (resultType.getError() == null || resultType.getError().size() == 0) {
                     LOGGER.debug("Active: base.ImportResult.");
-//                Этот объект вместо getGUID содержит meteringVersionGUID.
+//                Этот объект вместо getGuid содержит meteringVersionGUID.
                     setMeteringDevices(resultType.getGUID(), resultType.getTransportGUID(), connectionGrad);
                 } else {
                     showErrorMeteringDevices(resultType.getTransportGUID(), resultType.getError().get(0).getErrorCode(),

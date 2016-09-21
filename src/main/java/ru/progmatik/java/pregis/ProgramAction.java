@@ -10,6 +10,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDA
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.ExportOrgPeriodData;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
@@ -30,7 +31,9 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -367,8 +370,14 @@ public class ProgramAction {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("Запуск получения ПД...");
-            ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData();
-            paymentDocumentData.callExportPaymentDocumentData();
+            ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
+            List<String> list = new ArrayList<>();
+            list.add("210870201");
+            list.add("210887401");
+            list.add("210889101");
+            list.add("210915701");
+            list.add("212866301 ");
+            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
             answerProcessing.sendMessageToClient("Получения ПД завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);

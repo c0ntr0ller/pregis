@@ -46,6 +46,9 @@ public final class PaymentDocumentGradDAO {
                                                                            ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
                                                                            Connection connectionGrad) throws SQLException {
 
+//        TODO удалить
+        calendar.set(Calendar.YEAR, 2015);
+
         ReferenceItemGRADDAO referenceItemGRADDAO = new ReferenceItemGRADDAO();
         ArrayList<ReferenceItemDataSet> referenceItemGRADDAOAllItems = referenceItemGRADDAO.getAllItems(connectionGrad);
 
@@ -86,10 +89,13 @@ public final class PaymentDocumentGradDAO {
                     setStateError(0);
                     answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу " +
                             rs.getString(2) + " в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
+                } else if (referenceItem.getName() == null) {
+                    setStateError(0);
+                    answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу " +
+                            "без имени в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
                 } else {
 
                     PaymentDocumentType.ChargeInfo chargeInfo = null;
-
                     if (referenceItem.getCodeParent().equals("51")) { // если Коммунальная услуга
 //                    TODO
                         chargeInfo = new PaymentDocumentType.ChargeInfo();
@@ -113,8 +119,8 @@ public final class PaymentDocumentGradDAO {
                                         getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
                                         getBigDecimalTwo(rs.getBigDecimal(10))));
 
-//                        Порядок расчетов ???
-                        chargeInfo.getMunicipalService().setCalcExplanation("??? что тут писать???");
+//                        Порядок расчетов ??? TODO
+                        chargeInfo.getMunicipalService().setCalcExplanation("Иное");
 
                         chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeType());
 //                        Перерасчеты, корректировки (руб)
@@ -210,8 +216,8 @@ public final class PaymentDocumentGradDAO {
                                         getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
                                         getBigDecimalTwo(rs.getBigDecimal(10))));
 
-//                    Порядок расчетов. Вообще ниразу нигде не написано что это?
-                        chargeInfo.getHousingService().setCalcExplanation("??? что тут писать???");
+//                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
+                        chargeInfo.getHousingService().setCalcExplanation("Иное");
 
 //                    Перерасчеты, корректировки
                         chargeInfo.getHousingService().setServiceCharge(new ServiceChargeType());
@@ -261,6 +267,18 @@ public final class PaymentDocumentGradDAO {
             }
             rs.close();
         }
+        if (paymentDocument.getDebtPreviousPeriods() != null) {
+            if (paymentDocument.getDebtPreviousPeriods().compareTo(BigDecimal.valueOf(0.0)) < 0) {
+                paymentDocument.setDebtPreviousPeriods(new BigDecimal(0.0));
+            }
+        }
+        if (paymentDocument.getTotalPiecemealPaymentSum() != null &&
+                paymentDocument.getTotalPiecemealPaymentSum().compareTo(BigDecimal.valueOf(0.0)) < 0) {
+            paymentDocument.setTotalPiecemealPaymentSum(new BigDecimal(0.0));
+        }
+
+        paymentDocument.setExpose(true);
+
         return paymentDocument;
     }
 

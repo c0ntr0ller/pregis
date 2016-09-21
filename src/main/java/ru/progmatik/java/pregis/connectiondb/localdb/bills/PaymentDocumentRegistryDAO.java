@@ -21,14 +21,15 @@ public class PaymentDocumentRegistryDAO {
 
     private static final String SQL_CREATE_TABLE_PD_REGISTRY = "CREATE TABLE IF NOT EXISTS PD_REGISTRY (" +
                                     "ID identity not null primary key, " +
-                                    "NUMBER_PD BIGINT not null, " +
+                                    "NUMBER_PD BIGINT NOT NULL, " +
                                     "UNIQUE_NUMBER varchar(20), " +
                                     "DOCUMENT_GUID varchar(40), " +
-                                    "MONTH INT not null, " +
-                                    "YEAR INT not null, " +
+                                    "MONTH INT NOT NULL, " +
+                                    "YEAR INT NOT NULL, " +
                                     "SUMMA DECIMAL, " +
-                                    "ABON_ID BIGINT not null, " +
-                                    "ACCOUNT_GUID varchar(40) not null, " +
+                                    "ABON_ID BIGINT NOT NULL, " +
+                                    "ACCOUNT_NUMBER VARCHAR(40) NOT NULL, " +
+                                    "ACCOUNT_GUID varchar(40) NOT NULL, " +
                                     "ARCHIVE BOOLEAN DEFAULT false); " +
                                     "COMMENT ON TABLE PD_REGISTRY IS 'Таблица, хранит реестр платежных документов выгруженных в ГИС ЖКХ.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ID IS 'Идентификатор записей.'; " +
@@ -39,6 +40,7 @@ public class PaymentDocumentRegistryDAO {
                                     "COMMENT ON COLUMN PD_REGISTRY.YEAR IS 'Год за который выгружен ПД.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.SUMMA IS 'Общая сумма платежного документа.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ABON_ID IS 'Идентификатор абонента в Граде.'; " +
+                                    "COMMENT ON COLUMN PD_REGISTRY.ACCOUNT_NUMBER IS 'Номер лицевого счета абонента.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ACCOUNT_GUID IS 'Идентификатор лицевого счета в ГИС ЖКХ.'; " +
                                     "COMMENT ON COLUMN PD_REGISTRY.ARCHIVE IS 'Если ПД архивирован, то нужно оставить пометку.';";
 
@@ -107,8 +109,9 @@ public class PaymentDocumentRegistryDAO {
                     rs.getInt(6),       // YEAR
                     rs.getBigDecimal(7),// SUMMA
                     rs.getInt(8),       // ABON_ID
-                    rs.getString(9),    // ACCOUNT_GUID
-                    rs.getBoolean(10)));// ARCHIVE
+                    rs.getString(9),    // ACCOUNT_NUMBER
+                    rs.getString(10),    // ACCOUNT_GUID
+                    rs.getBoolean(11)));// ARCHIVE
         }
 
         return paymentList;
@@ -123,8 +126,8 @@ public class PaymentDocumentRegistryDAO {
 
         try (PreparedStatement st = ConnectionDB.instance().getConnectionDB().prepareStatement(
                 "INSERT INTO \"PUBLIC\".PD_REGISTRY" +
-                        "(NUMBER_PD, UNIQUE_NUMBER, DOCUMENT_GUID, MONTH, YEAR, SUMMA, ABON_ID, ACCOUNT_GUID, ARCHIVE) " +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
+                        "(NUMBER_PD, UNIQUE_NUMBER, DOCUMENT_GUID, MONTH, YEAR, SUMMA, ABON_ID, ACCOUNT_NUMBER, ACCOUNT_GUID, ARCHIVE) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
             st.setInt(1, registryItem.getNumberPd());
             st.setString(2, registryItem.getUniqueNumber());
             st.setString(3, registryItem.getGuid());
@@ -132,8 +135,9 @@ public class PaymentDocumentRegistryDAO {
             st.setInt(5, registryItem.getYear());
             st.setBigDecimal(6, registryItem.getSumma());
             st.setInt(7, registryItem.getAbonId());
-            st.setString(8, registryItem.getAccountGuid());
-            st.setBoolean(9, registryItem.isArchive());
+            st.setString(8, registryItem.getAccountNumber());
+            st.setString(9, registryItem.getAccountGuid());
+            st.setBoolean(10, registryItem.isArchive());
             st.executeUpdate();
         }
     }

@@ -35,6 +35,18 @@ public class ReferenceItemDataSet {
         this.codeParent = codeParent;
     }
 
+    @Override
+    public String toString() {
+        return "ReferenceItemDataSet{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", guid='" + guid + '\'' +
+                ", groupName='" + groupName + '\'' +
+                ", codeParent='" + codeParent + '\'' +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

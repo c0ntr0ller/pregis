@@ -14,7 +14,6 @@ import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -69,8 +68,6 @@ public class ImportPaymentDocumentData {
 //        Создание загаловков сообщений (запроса и ответа)
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         Holder<ResultHeader> headerHolder = new Holder<>();
-//        Создание объекта для сохранения лога сообщений в БД.
-        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
         ImportResult result;
 
@@ -78,12 +75,15 @@ public class ImportPaymentDocumentData {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             result = port.importPaymentDocumentData(request, requestHeader, headerHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+
+//            Если есть ошибка вывидет пользователю
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value,
+                    result.getErrorMessage(), LOGGER);
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }
 
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
         if (result.getErrorMessage() != null) return null;
         return result;
     }
@@ -105,6 +105,7 @@ public class ImportPaymentDocumentData {
                 request.getPaymentInformation().get(0).getOperatingAccountNumber())) {
             request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
         }
+
         return request;
     }
 

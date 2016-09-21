@@ -17,7 +17,6 @@ import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegist
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -109,13 +108,14 @@ public class PaymentDocumentHandler {
 //                    Начисление по услуге
             paymentDocument = pdGradDao.getPaymentDocument(
                     room.getAbonId(),
-                    ResourcesUtil.instance().getCompanyGradId(),
+                    null, // временно TODO
+//                    ResourcesUtil.instance().getCompanyGradId(),
                     paymentPeriod, paymentDocument, connectionGrad);
 
             PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
                     Integer.valueOf(paymentDocument.getPaymentDocumentNumber()), paymentPeriod.get(Calendar.MONTH),
                     paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getAbonId(),
-                    paymentDocument.getAccountGuid());
+                    room.getNumberLS(), paymentDocument.getAccountGuid());
 
             paymentMap.put(paymentDocument, registryDataSet);
         }
@@ -135,6 +135,8 @@ public class PaymentDocumentHandler {
                                       ImportPaymentDocumentRequest.PaymentInformation paymentInformation,
                                       Calendar paymentPeriod) throws SQLException, PreGISException {
 
+        int tempCount = 0;
+
         ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData(answerProcessing);
         PaymentDocumentRegistryDAO registryDAO = new PaymentDocumentRegistryDAO();
 
@@ -144,9 +146,14 @@ public class PaymentDocumentHandler {
         for (Map.Entry<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> entry :
                 paymentDocumentMap.entrySet()) {
 
+            tempCount++;
+
             for (PaymentDocumentRegistryDataSet dataSet : allPaymentDocumentRecording) {
                 if (checkAddedDocument(entry.getValue(), dataSet)) continue outer;
             }
+
+//            Ссылка на платежные реквизиты ??? TODO
+            entry.getKey().setPaymentInformationKey(paymentInformation.getTransportGUID());
 
             ImportResult result = importPaymentDocumentData.sendPaymentDocument(entry.getKey(), paymentInformation,
                     paymentPeriod.get(Calendar.MONTH), (short) paymentPeriod.get(Calendar.YEAR));
@@ -162,7 +169,7 @@ public class PaymentDocumentHandler {
 //                        added to DB
                         entry.getValue().setGuid(resultType.getGUID());
                         entry.getValue().setUniqueNumber(resultType.getUniqueNumber());
-                        registryDAO.setPaymentDocumentRegistryItemToArchive(entry.getValue());
+                        registryDAO.addPaymentDocumentRegistryItem(entry.getValue());
 
                         addedGisJkhCount++;
 
@@ -176,7 +183,8 @@ public class PaymentDocumentHandler {
                 setErrorState(-1);
             }
 //            TODO убрать break, временно.
-            break;
+//            break;
+            if (tempCount > 4) break;
         }
     }
 

@@ -102,11 +102,16 @@ public class ResourcesUtil {
 
     /**
      * Метод, получает из файла настроек идентификатр компании, услуги которой будут выгружены в платежный документ.
-     *
+     * Если идентификатора нет, то выгружает все услуги.
      * @return идентификатор компании для платежного документа.
      */
-    public Integer getCompanyGradIdForPaymentDocument() {
-        return Integer.valueOf(properties.getProperty("config.company.gradid.pd"));
+    public Integer getCompanyGradIdForPaymentDocument() throws PreGISException {
+
+        if (properties.getProperty("config.company.pd.all").equalsIgnoreCase("yes")) {
+            return null;
+        } else {
+            return getCompanyGradId();
+        }
     }
 
     public int getWebPort() throws PreGISException {

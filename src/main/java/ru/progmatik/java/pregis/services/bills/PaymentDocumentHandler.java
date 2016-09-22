@@ -17,6 +17,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegist
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -108,8 +109,7 @@ public class PaymentDocumentHandler {
 //                    Начисление по услуге
             paymentDocument = pdGradDao.getPaymentDocument(
                     room.getAbonId(),
-                    null, // временно TODO
-//                    ResourcesUtil.instance().getCompanyGradIdForPaymentDocument(),
+                    ResourcesUtil.instance().getCompanyGradIdForPaymentDocument(),
                     paymentPeriod, paymentDocument, connectionGrad);
 
             PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
@@ -117,9 +117,34 @@ public class PaymentDocumentHandler {
                     paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getAbonId(),
                     room.getNumberLS(), paymentDocument.getAccountGuid());
 
+            //            Ссылка на платежные реквизиты ??? TODO
+            paymentDocument.setPaymentInformationKey(paymentInformation.getTransportGUID());
+
             paymentMap.put(paymentDocument, registryDataSet);
         }
         return paymentMap;
+    }
+
+    /**
+     * Метод, получает идентификаторы компаний, которые указаны получателями денежных средств для ПД.
+     * @param gradDAO
+     * @param abonId
+     * @param calendar
+     * @param connectionGrad
+     * @return
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    private ArrayList<Integer> getOrganizzationIds(PaymentDocumentGradDAO gradDAO, Integer abonId, Calendar calendar,
+                                                   Connection connectionGrad) throws SQLException, PreGISException {
+
+        if (ResourcesUtil.instance().getCompanyGradIdForPaymentDocument() == null) {
+            return gradDAO.getOrganizationIdsFromPaymantsDocument(abonId, calendar, connectionGrad);
+        } else {
+            ArrayList<Integer> list = new ArrayList<>();
+            list.add(ResourcesUtil.instance().getCompanyGradIdForPaymentDocument());
+            return list;
+        }
     }
 
     /**
@@ -151,9 +176,6 @@ public class PaymentDocumentHandler {
             for (PaymentDocumentRegistryDataSet dataSet : allPaymentDocumentRecording) {
                 if (checkAddedDocument(entry.getValue(), dataSet)) continue outer;
             }
-
-//            Ссылка на платежные реквизиты ??? TODO
-            entry.getKey().setPaymentInformationKey(paymentInformation.getTransportGUID());
 
             ImportResult result = importPaymentDocumentData.sendPaymentDocument(entry.getKey(), paymentInformation,
                     paymentPeriod.get(Calendar.MONTH), (short) paymentPeriod.get(Calendar.YEAR));

@@ -57,30 +57,31 @@ public final class PaymentDocumentGradDAO {
 //        1 – подавлять вывод нулевых строк, ид жилищной организации, ид поставщика.
         try (Statement statement = connectionGrad.createStatement()) {
             ResultSet rs = statement.executeQuery("SELECT " +
-                    "a.RSUPPLIER_ID, " +      // 1  ид поставщика
-                    "a.RGROUP, " +            // 2  группа услуг
-                    "a.RSUPERGROUP_CODE, " +  // 3  код суперуслуги
-                    "a.RUNIT, " +             // 4  ед. измерения услуги
-                    "a.RAMOUNT_PERSONAL, " +  // 5  индивидуальное потребление
-                    "a.RAMOUNT_SHARED, " +    // 6  потребление МОП/ОДН
-                    "a.RTARIFF, " +           // 7  тариф
-                    "a.RCHARGE_PERSONAL, " +  // 8  сумма начисления за индивидуальное потребление
-                    "a.RCHARGE_SHARED, " +    // 9  сумма начисления за потребление МОП/ОДН
-                    "a.RREPAYS_PERSONAL, " +  // 10 перерасчеты по индивидуальному потреблению
-                    "a.RREPAYS_SHARED, " +    // 11 перерасчеты по потреблению МОП/ОДН
-                    "a.RCHARGE, " +           // 12 итоговая сумма начислений
-                    "a.RNORM_PERSONAL, " +    // 13 норматив потребления на индивидуальные нужды
-                    "a.RNORM_SHARED, " +      // 14 норматив потребления на общедомовые нужды
-                    "a.RMETERS_PERSONAL, " +  // 15 текущие показания ИПУ
-                    "a.RPAYS_ADVANCE, " +     // 16 платежи в расчетном периоде (аванс)
-                    "a.RDEBT_IN, " +          // 17 задолженность на начало расчетного периода
-                    "a.RDEBT_OUT, " +         // 18 задолженность на конец расчетного периода
-                    "b.RREASON, " +           // 19 Основания перерасчётов
-                    "b.RSUM " +               // 20 Сумма перерасчётов
-                    "from REP_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
-                    calendar.get(Calendar.YEAR) + ", 1, null, " + gradId + ") a " +
-                    "LEFT OUTER join REP_INVOICE_REPAYS(" + abonId + ", " + calendar.get(Calendar.MONTH) +
-                    ", " + calendar.get(Calendar.YEAR) + ", null, null) b ON a.RSUPERGROUP_CODE = b.RSUPERGROUP_CODE");
+                    "RSUPPLIER_ID, " +      // 1  ид поставщика
+                    "RGROUP, " +            // 2  группа услуг
+                    "RSUPERGROUP_CODE, " +  // 3  код суперуслуги
+                    "RUNIT, " +             // 4  ед. измерения услуги
+                    "RAMOUNT_PERSONAL, " +  // 5  индивидуальное потребление
+                    "RAMOUNT_SHARED, " +    // 6  потребление МОП/ОДН
+                    "RTARIFF, " +           // 7  тариф
+                    "RCHARGE_PERSONAL, " +  // 8  сумма начисления за индивидуальное потребление
+                    "RCHARGE_SHARED, " +    // 9  сумма начисления за потребление МОП/ОДН
+                    "RREPAYS_PERSONAL, " +  // 10 перерасчеты по индивидуальному потреблению
+                    "RREPAYS_SHARED, " +    // 11 перерасчеты по потреблению МОП/ОДН
+                    "RCHARGE, " +           // 12 итоговая сумма начислений
+                    "RNORM_PERSONAL, " +    // 13 норматив потребления на индивидуальные нужды
+                    "RNORM_SHARED, " +      // 14 норматив потребления на общедомовые нужды
+                    "RMETERS_PERSONAL, " +  // 15 текущие показания ИПУ
+                    "RPAYS_ADVANCE, " +     // 16 платежи в расчетном периоде (аванс)
+                    "RDEBT_IN, " +          // 17 задолженность на начало расчетного периода
+                    "RDEBT_OUT, " +         // 18 задолженность на конец расчетного периода
+                    "RREASON, " +           // 19 Основания перерасчётов
+                    "RSUM, " +              // 20 Сумма перерасчётов
+                    "RMETERS_SHARED, " +    // Текущие показания приборов учета коммунальных услуг. Общедомовые (ОДПУ). Раздел 4.
+                    "RSUMM_AMOUNT_PERSONAL, " + // Суммарный объем коммунальных услуг в доме. В помещениях дома. Раздел 4.
+                    "RSUMM_AMOUNT_SHARED " + // Суммарный объем коммунальных услуг в доме. На ощедомовые нужды. Раздел 4.
+                    "FROM EX_GIS_INVOICE(" + abonId +", " + calendar.get(Calendar.MONTH) + ", " +
+                    calendar.get(Calendar.YEAR) + ", null,  null, " + gradId + ", null)");
 
             while (rs.next()) {
 
@@ -304,6 +305,31 @@ public final class PaymentDocumentGradDAO {
         value = value.setScale(2, BigDecimal.ROUND_DOWN);
 
         return value;
+    }
+
+    /**
+     * Метод, получает все идентификаторы организаций из платежного документа.
+     * @param abonId идентификатор абонент в БД ГРАДа.
+     * @param calendar дата на которую нужно сформировать ПД.
+     * @param connectionGrad подключение к БД ГРАД.
+     * @return список идентификаторов организаци получателей денежных средств.
+     * @throws SQLException
+     */
+    public ArrayList<Integer> getOrganizationIdsFromPaymantsDocument(Integer abonId, Calendar calendar, Connection connectionGrad) throws SQLException {
+
+        ArrayList<Integer> list = new ArrayList<>();
+
+        try (Statement statement = connectionGrad.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT " +
+                    "RSUPPLIER_ID " +      // 1  ид поставщика
+                    "FROM EX_GIS_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
+                    calendar.get(Calendar.YEAR) + ", null,  null, null, null)");
+            while (rs.next()) {
+                list.add(rs.getInt(1));
+            }
+            rs.close();
+        }
+        return list;
     }
 
     /**

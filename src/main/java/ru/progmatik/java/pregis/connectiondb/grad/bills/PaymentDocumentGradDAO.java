@@ -7,6 +7,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDataSet;
+import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
 import java.math.BigDecimal;
@@ -150,12 +151,28 @@ public final class PaymentDocumentGradDAO {
 
 //                        Текущие показания приборов учёта коммунальных услуг - общедомовые нужды
 //                        TODO Иваненко должен дать.
-//                        chargeInfo.getMunicipalService().getServiceInformation().setHouseOverallNeedsCurrentValue();
+                        if (rs.getString(21) != null) {
+                            try {
+                                chargeInfo.getMunicipalService().getServiceInformation().
+                                        setHouseOverallNeedsCurrentValue(new BigDecimal(rs.getString(21)));
+                            } catch (NumberFormatException e) {
+                                answerProcessing.sendErrorToClient("Формирование ПД", "\"Формирование ПД\"", LOGGER,
+                                        new PreGISException("Неверное значение указанно в процедуре \"WEB_INVOICE\", " +
+                                        "ГИС ЖКХ ожидает BigDecimal"));
+                            }
+                        }
+
 
 //                        Суммарный объём коммунальных услуг в доме - индивидульное потребление
-//                        chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalIndividualConsumption();
+                        if (rs.getBigDecimal(22) != null) {
+                            chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalIndividualConsumption(
+                                rs.getBigDecimal(22).setScale(4, BigDecimal.ROUND_HALF_UP));
+                        }
 //                        Суммарный объём коммунальных услуг в доме - общедомовые нужды
-//                        chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalHouseOverallNeeds();
+                        if (rs.getBigDecimal(23) != null) {
+                            chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalHouseOverallNeeds(
+                                    rs.getBigDecimal(23).setScale(4, BigDecimal.ROUND_HALF_UP));
+                        }
 
 //                        Норматив потребления коммунальных услуг - общедомовые нужды
                         chargeInfo.getMunicipalService().getServiceInformation().

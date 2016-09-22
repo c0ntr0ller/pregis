@@ -6,6 +6,8 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
+import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -377,7 +379,19 @@ public class ProgramAction {
             list.add("210889101");
             list.add("210915701");
             list.add("212866301 ");
-            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
+
+            ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
+            List<String> listServiceID = new ArrayList<>();
+
+            try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
+
+                ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
+                for (ReferenceItemDataSet item : allItems) {
+                    listServiceID.add(item.getGuid());
+                }
+            }
+
+            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
             answerProcessing.sendMessageToClient("Получения ПД завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);

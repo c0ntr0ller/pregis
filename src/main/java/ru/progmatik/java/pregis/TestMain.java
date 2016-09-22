@@ -48,7 +48,7 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
-        if (new BigDecimal(-123.0).compareTo(new BigDecimal(0.0)) < 0) {
+        if (new BigDecimal(-123.000).compareTo(new BigDecimal(0.0)) < 0) {
             System.out.println(new BigDecimal(-123.0).negate());
         }
 

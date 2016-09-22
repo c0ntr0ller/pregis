@@ -16,6 +16,7 @@ import ru.progmatik.java.pregis.other.TextForLog;
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Класс, экспорт сведений о платежных документах.
@@ -47,9 +48,9 @@ public class ExportPaymentDocumentData {
      * @throws SQLException
      */
     public ExportPaymentDocumentResult getExportPaymentDocumentDataWithAccountNumbers(
-            java.util.List<java.lang.String> accountList, String fias, Calendar periodExport) throws SQLException {
+            java.util.List<java.lang.String> accountList, List<String> listServiceID, String fias, Calendar periodExport) throws SQLException {
 
-        return callExportPaymentDocumentData(getExportPaymentDocumentRequest(accountList, fias, periodExport));
+        return callExportPaymentDocumentData(getExportPaymentDocumentRequest(accountList, listServiceID, fias, periodExport));
     }
 
     /**
@@ -90,6 +91,7 @@ public class ExportPaymentDocumentData {
      * @return ExportPaymentDocumentRequest объект с указанными значениями, для передачи сервису ГИС ЖКХ.
      */
     private ExportPaymentDocumentRequest getExportPaymentDocumentRequest(java.util.List<java.lang.String> accountList,
+                                                                         List<String> listServiceID,
                                                                          String fias, Calendar periodExport) {
 
         ExportPaymentDocumentRequest request = new ExportPaymentDocumentRequest();
@@ -100,6 +102,7 @@ public class ExportPaymentDocumentData {
         request.setYear((short) periodExport.get(Calendar.YEAR));
         request.setMonth(periodExport.get(Calendar.MONTH));
         request.getAccountNumber().addAll(accountList);
+//        request.getServiceID().addAll(listServiceID);
 //        request.getAccountNumber().addAll(accountList);
 
 //        request.get

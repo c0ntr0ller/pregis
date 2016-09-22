@@ -109,7 +109,7 @@ public class PaymentDocumentHandler {
             paymentDocument = pdGradDao.getPaymentDocument(
                     room.getAbonId(),
                     null, // временно TODO
-//                    ResourcesUtil.instance().getCompanyGradId(),
+//                    ResourcesUtil.instance().getCompanyGradIdForPaymentDocument(),
                     paymentPeriod, paymentDocument, connectionGrad);
 
             PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(

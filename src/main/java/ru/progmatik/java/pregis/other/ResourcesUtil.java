@@ -100,6 +100,15 @@ public class ResourcesUtil {
         return gradId;
     }
 
+    /**
+     * Метод, получает из файла настроек идентификатр компании, услуги которой будут выгружены в платежный документ.
+     *
+     * @return идентификатор компании для платежного документа.
+     */
+    public Integer getCompanyGradIdForPaymentDocument() {
+        return Integer.valueOf(properties.getProperty("config.company.gradid.pd"));
+    }
+
     public int getWebPort() throws PreGISException {
 
         int webPort;

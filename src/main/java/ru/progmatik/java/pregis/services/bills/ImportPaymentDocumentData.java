@@ -22,6 +22,7 @@ import ru.progmatik.java.pregis.other.TextForLog;
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Класс, импорт сведений о платежных документах.
@@ -51,11 +52,11 @@ public class ImportPaymentDocumentData {
         this.answerProcessing = answerProcessing;
     }
 
-    public ImportResult sendPaymentDocument(ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
-                                            ImportPaymentDocumentRequest.PaymentInformation paymentInformation,
-                                            int month, short year) throws SQLException, PreGISException {
+    ImportResult sendPaymentDocument(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,
+                                     List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
+                                     int month, short year) throws SQLException, PreGISException {
 
-        return callImportPaymentDocumentData(getImportPaymentDocumentRequest(paymentDocument, paymentInformation, month, year));
+        return callImportPaymentDocumentData(getImportPaymentDocumentRequest(paymentDocumentList, paymentInformationList, month, year));
     }
 
     /**
@@ -89,22 +90,18 @@ public class ImportPaymentDocumentData {
     }
 
     private ImportPaymentDocumentRequest getImportPaymentDocumentRequest(
-            ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
-            ImportPaymentDocumentRequest.PaymentInformation paymentInformation, int month, short year) throws SQLException, PreGISException {
+            List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,
+            List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
+            int month, short year) throws SQLException, PreGISException {
 
         ImportPaymentDocumentRequest request = new ImportPaymentDocumentRequest();
-        request.setMonth(month);
-        request.setYear(year);
         request.setId(OtherFormat.getId());
         request.setVersion(request.getVersion());
-        request.getPaymentDocument().add(paymentDocument);
 
-        if (request.getPaymentInformation().size() == 0) {
-            request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
-        } else if (!paymentInformation.getOperatingAccountNumber().equals(
-                request.getPaymentInformation().get(0).getOperatingAccountNumber())) {
-            request.getPaymentInformation().add(paymentInformation); // Банковские реквизиты
-        }
+        request.setMonth(month);
+        request.setYear(year);
+        request.getPaymentDocument().addAll(paymentDocumentList); // Платежные документы
+        request.getPaymentInformation().addAll(paymentInformationList); // Банковские реквизиты
 
         return request;
     }
@@ -170,6 +167,6 @@ public class ImportPaymentDocumentData {
 //        paymentDocument.setWithdraw(false);
         paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
 
-        sendPaymentDocument(paymentDocument, paymentInformation, 5, (short) 2016);
+//        sendPaymentDocument(paymentDocument, paymentInformation, 5, (short) 2016);
     }
 }

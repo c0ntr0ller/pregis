@@ -7,6 +7,7 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,16 +86,16 @@ public final class PaymentInformationGradDAO {
     private HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> getAllOrganizationsRequisites(List<Integer> organizationsList, Connection connectionGrad) throws SQLException, PreGISException {
 
         HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = new HashMap<>();
+        SimpleDateFormat sDate = new SimpleDateFormat("dd.MM.yyyy");
 
-        try (PreparedStatement ps = connectionGrad.prepareStatement("{SELECT RBANK_ACCOUNT, RBIK FROM PROC_ORG_GET_BANK_DETAILS(?, ?)}")) {
+        try (Statement statement = connectionGrad.createStatement()) {
 
             ResultSet rs = null;
 
             for (Integer item : organizationsList) {
-                ps.setInt(1, item);
-                ps.setDate(2, new Date(System.currentTimeMillis()));
 
-                rs = ps.executeQuery();
+                rs = statement.executeQuery("SELECT RBANK_ACCOUNT, RBIK FROM PROC_ORG_GET_BANK_DETAILS(" + item + ", \'" +
+                        sDate.format(new Date(System.currentTimeMillis())) + "\')");
 
                 while (rs.next()) {
                     if (rs.getString(1) != null && rs.getString(2) != null) {

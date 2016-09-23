@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 /**
  * Класс, получает из БД ГРАДа информацию о платежном документе.
@@ -46,9 +47,6 @@ public final class PaymentDocumentGradDAO {
     public ImportPaymentDocumentRequest.PaymentDocument getPaymentDocument(int abonId, Integer gradId, Calendar calendar,
                                                                            ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
                                                                            Connection connectionGrad) throws SQLException {
-
-//        TODO удалить
-        calendar.set(Calendar.YEAR, 2015);
 
         ReferenceItemGRADDAO referenceItemGRADDAO = new ReferenceItemGRADDAO();
         ArrayList<ReferenceItemDataSet> referenceItemGRADDAOAllItems = referenceItemGRADDAO.getAllItems(connectionGrad);
@@ -81,7 +79,7 @@ public final class PaymentDocumentGradDAO {
                     "RSUMM_AMOUNT_PERSONAL, " + // Суммарный объем коммунальных услуг в доме. В помещениях дома. Раздел 4.
                     "RSUMM_AMOUNT_SHARED " + // Суммарный объем коммунальных услуг в доме. На ощедомовые нужды. Раздел 4.
                     "FROM EX_GIS_INVOICE(" + abonId +", " + calendar.get(Calendar.MONTH) + ", " +
-                    calendar.get(Calendar.YEAR) + ", null,  null, " + gradId + ", null)");
+                    (calendar.get(Calendar.YEAR) - 1) + ", null,  null, " + gradId + ", null)"); // TODO удалить -1
 
             while (rs.next()) {
 
@@ -89,8 +87,8 @@ public final class PaymentDocumentGradDAO {
                 ReferenceItemDataSet referenceItem = getReferenceItemDataSet(rs.getString(2), rs.getString(3), referenceItemGRADDAOAllItems);
                 if (referenceItem == null) {
                     setStateError(0);
-                    answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу " +
-                            rs.getString(2) + " в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
+                    answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу \"" +
+                            rs.getString(2) + "\" в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
                 } else if (referenceItem.getName() == null) {
                     setStateError(0);
                     answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу " +
@@ -315,21 +313,21 @@ public final class PaymentDocumentGradDAO {
      * @return список идентификаторов организаци получателей денежных средств.
      * @throws SQLException
      */
-    public ArrayList<Integer> getOrganizationIdsFromPaymantsDocument(Integer abonId, Calendar calendar, Connection connectionGrad) throws SQLException {
+    public TreeSet<Integer> getOrganizationIdsFromPaymentsDocument(Integer abonId, Calendar calendar, Connection connectionGrad) throws SQLException {
 
-        ArrayList<Integer> list = new ArrayList<>();
+        TreeSet<Integer> treeSet = new TreeSet<>();
 
         try (Statement statement = connectionGrad.createStatement()) {
             ResultSet rs = statement.executeQuery("SELECT " +
                     "RSUPPLIER_ID " +      // 1  ид поставщика
                     "FROM EX_GIS_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
-                    calendar.get(Calendar.YEAR) + ", null,  null, null, null)");
+                    (calendar.get(Calendar.YEAR) -1 )+ ", null,  null, null, null)"); // TODO delete -1
             while (rs.next()) {
-                list.add(rs.getInt(1));
+                treeSet.add(rs.getInt(1));
             }
             rs.close();
         }
-        return list;
+        return treeSet;
     }
 
     /**

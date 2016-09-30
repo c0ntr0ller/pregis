@@ -137,7 +137,7 @@ public class ResourcesUtil {
 
     public String getCompanyRole() throws PreGISException {
 
-        String role = null;
+        String role;
 
         if (properties.getProperty("config.company.role") == null) {
             throw new PreGISException("ResourcesUtil: Не указана роль компнании в файле параметров \"settings\\application.properties\".");
@@ -145,6 +145,22 @@ public class ResourcesUtil {
             role = properties.getProperty("config.company.role");
         }
         return role;
+    }
+
+    /**
+     * Метод, из файла параметров получает адресс сервера stunnel для соединения с ГИС ЖКХ.
+     * @return адресс сервера stunnel.
+     */
+    public String getStunnelHost() throws PreGISException {
+
+        String host = null;
+
+        if (properties.getProperty("config.server.binding") == null) {
+            throw new PreGISException("ResourcesUtil: Не указан сервер stunnel в файле параметров \"settings\\application.properties\".");
+        } else {
+            host = properties.getProperty("config.server.binding");
+        }
+        return host;
     }
 
     /**

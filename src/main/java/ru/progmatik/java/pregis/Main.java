@@ -71,35 +71,6 @@ public class Main {
         Security.addProvider(new BouncyCastleProvider());  // Добавим Bouncy Castle
         XmlDSignTools.init("BC"); // Инициализация алгоритма ГОСТ для подписи файлов
 
-//        Security.addProvider(new ViPNetProvider());  // Добавим криптопровайдер VipNet нужен для TLS соединения.
-//        Security.addProvider(new ViPNetSSLProvider());  // Добавим криптопровайдер VipNet нужен для TLS соединения.
-
-        // создание фабрики менеджеров ключей
-//        KeyManagerFactory kmf = KeyManagerFactory.getInstance("ViPNet");
-//        // передача фабрике хранилища ключей и пароля
-//        kmf.init(Configure.getKeyStorePfx(), null);
-//        // создание менеджеров ключей
-//        KeyManager[] kms = kmf.getKeyManagers();
-
-//        System.setProperty("javax.net.debug", "ssl,handshake");
-
-//        System.setProperty("javax.net.ssl.keyStoreType", "PKCS12");
-//        System.setProperty("javax.net.ssl.keyStore", "data/dubovik.p12.pfx");
-//        System.setProperty("javax.net.ssl.keyStoreProvider", "BC");
-////        System.setProperty("javax.net.ssl.keyStoreType", "ViPNetContainer");
-//        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
-//
-//        System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-//        System.setProperty("javax.net.ssl.trustStore", "data/trust_store.jks");
-//        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
-
-
-//        создание SSL-контекста, поддерживающего алгоритмы ГОСТ
-//        SSLContext sslContext = SSLContext.getInstance("TLS", "ViPNetSSL");
-//        инициализация контекста через системные свойства
-//        sslContext.init(kms, null, null);
-
-
         if (LOGGER.isDebugEnabled()) {
             SSLServerSocketFactory factory =
                     (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();

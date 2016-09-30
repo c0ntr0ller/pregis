@@ -151,16 +151,9 @@ public class ResourcesUtil {
      * Метод, из файла параметров получает адресс сервера stunnel для соединения с ГИС ЖКХ.
      * @return адресс сервера stunnel.
      */
-    public String getStunnelHost() throws PreGISException {
+    public String getStunnelHost() {
 
-        String host = null;
-
-        if (properties.getProperty("config.server.binding") == null) {
-            throw new PreGISException("ResourcesUtil: Не указан сервер stunnel в файле параметров \"settings\\application.properties\".");
-        } else {
-            host = properties.getProperty("config.server.binding");
-        }
-        return host;
+        return properties.getProperty("config.server.binding");
     }
 
     /**

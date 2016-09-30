@@ -142,10 +142,18 @@ public class OtherFormat {
      */
     public static void setPortSettings(Service service, Object port) {
 
+        String url = service.getWSDLDocumentLocation().toString();
+
+        if (ResourcesUtil.instance().getStunnelHost() != null &&
+                !"localhost:8088".equalsIgnoreCase(ResourcesUtil.instance().getStunnelHost())) {
+            url = url.replace("localhost:8088", ResourcesUtil.instance().getStunnelHost());
+        }
+
         BindingProvider provider = (BindingProvider) port;
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
-        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
+//        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
+        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
     }
 
     /**

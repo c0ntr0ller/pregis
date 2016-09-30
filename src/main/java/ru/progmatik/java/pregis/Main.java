@@ -10,7 +10,7 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import ru.CryptoPro.JCP.JCP;
+//import ru.CryptoPro.JCP.JCP;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -45,7 +45,7 @@ public class Main {
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
-        System.setProperty("javax.net.ssl.supportGVO", "false");
+//        System.setProperty("javax.net.ssl.supportGVO", "false");
 
 //        System.setProperty("javax.net.debug", "all");
 
@@ -58,33 +58,33 @@ public class Main {
         }
 
 //        Инициализация сертификатов и Крипто-ПРО
-        System.setProperty("com.sun.security.enableCRLDP", "true");
-        System.setProperty("com.ibm.security.enableCRLDP", "true");
-        System.setProperty("javax.net.ssl.keyStoreType", JCP.HD_STORE_NAME);
-        System.setProperty("javax.net.ssl.keyStoreProvider", JCP.PROVIDER_NAME);
-        System.setProperty("javax.net.ssl.keyStorePassword", String.valueOf(Configure.getKeyStorePassword()));
-        System.setProperty("javax.net.ssl.trustStoreType", JCP.CERT_STORE_NAME);
-        System.setProperty("javax.net.ssl.trustStore", Configure.getTrustStorePath());
-        System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
+//        System.setProperty("com.sun.security.enableCRLDP", "true");
+//        System.setProperty("com.ibm.security.enableCRLDP", "true");
+//        System.setProperty("javax.net.ssl.keyStoreType", JCP.HD_STORE_NAME);
+//        System.setProperty("javax.net.ssl.keyStoreProvider", JCP.PROVIDER_NAME);
+//        System.setProperty("javax.net.ssl.keyStorePassword", String.valueOf(Configure.getKeyStorePassword()));
+//        System.setProperty("javax.net.ssl.trustStoreType", JCP.CERT_STORE_NAME);
+//        System.setProperty("javax.net.ssl.trustStore", Configure.getTrustStorePath());
+//        System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(Configure.getTrustStorePassword()));
 //        System.setProperty("file.encoding", "utf-8");
 
         Security.addProvider(new BouncyCastleProvider());  // Добавим Bouncy Castle
         XmlDSignTools.init("BC"); // Инициализация алгоритма ГОСТ для подписи файлов
 
-        if (LOGGER.isDebugEnabled()) {
-            SSLServerSocketFactory factory =
-                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-
-            SSLServerSocket sslSocket =
-                    (SSLServerSocket)factory.createServerSocket(5757);
-
-            String [] cipherSuites = sslSocket.getEnabledCipherSuites();
-
-            for (int i = 0; i < cipherSuites.length; i++) {
-                System.out.println("Cipher Suite " + i +
-                        " = " + cipherSuites[i]);
-            }
-        }
+//        if (LOGGER.isDebugEnabled()) {
+//            SSLServerSocketFactory factory =
+//                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+//
+//            SSLServerSocket sslSocket =
+//                    (SSLServerSocket)factory.createServerSocket(5757);
+//
+//            String [] cipherSuites = sslSocket.getEnabledCipherSuites();
+//
+//            for (int i = 0; i < cipherSuites.length; i++) {
+//                System.out.println("Cipher Suite " + i +
+//                        " = " + cipherSuites[i]);
+//            }
+//        }
 
 //
 //        System.setProperty("https.protocols", "TLSv1");
@@ -126,22 +126,5 @@ public class Main {
 
         server.start();
         server.join();
-
-//        new ProgramAction().removeSenderID();  // Упразднен
-//        new ProgramAction().callExportDataProvider(); // Просто запрос организации
-//        new ProgramAction().callExportNsiList(); // 1
-//        new ProgramAction().callExportNsiItem(); // 2
-//        new ProgramAction().callExportDataProviderNsiItem(); //экспортирует справочники №1, 51, 59
-//        new ProgramAction().callExportAccountData(); // экспорт сведений о лицевых счетах.
-//        new ProgramAction().callImportPaymentDocumentData(); // импорт сведений о платежных документах.
-//        new ProgramAction().callExportPaymentDocumentData(); // экспорт сведений о платежных документах.
-
-//        Асинхронный вызов
-//        new ProgramAction().callExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
-//        new ProgramAction().getStateExportPaymentDocumentDetails(); // экспорт реквизитов платежных документов для банков и т.п. контор.
-
-//        new ProgramAction().callExportStatusCAChData();
-//        new ProgramAction().callExportCAChData();
-
     }
 }

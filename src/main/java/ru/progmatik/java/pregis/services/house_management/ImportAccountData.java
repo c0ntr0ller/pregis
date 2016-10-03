@@ -8,10 +8,7 @@ import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
 import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -24,13 +21,18 @@ public class ImportAccountData {
     private static final Logger LOGGER = Logger.getLogger(ImportAccountData.class);
     private static final String NAME_METHOD = "importAccountData";
 
-    private final HouseManagementService service = new HouseManagementService();
-    private final HouseManagementPortsType port = service.getHouseManagementPort();
+    private final HouseManagementPortsType port;
     private AnswerProcessing answerProcessing;
 
     public ImportAccountData(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
+                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+
+        port = service.getHouseManagementPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     public ru.gosuslugi.dom.schema.integration.house_management.ImportResult callImportAccountData(ImportAccountRequest request) throws SQLException {

@@ -17,6 +17,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.UrlLoader;
 import ru.progmatik.java.pregis.other.utils.MeteringDevicesDBSearch;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 import ru.progmatik.java.web.servlets.socket.ClientService;
@@ -29,16 +30,16 @@ import javax.xml.soap.SOAPException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+import java.util.Timer;
 
 
 public class TestMain {
@@ -48,9 +49,13 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
-        if (new BigDecimal(-123.000).compareTo(new BigDecimal(0.0)) < 0) {
-            System.out.println(new BigDecimal(-123.0).negate());
-        }
+//        ResourceBundle bundle = PropertyResourceBundle.getBundle("url.properties");
+//        System.out.println(bundle.getString("url.config.homeManagement"));
+        UrlLoader.instance();
+
+//        if (new BigDecimal(-123.000).compareTo(new BigDecimal(0.0)) < 0) {
+//            System.out.println(new BigDecimal(-123.0).negate());
+//        }
 
 
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
@@ -603,13 +608,7 @@ public class TestMain {
 //
 //            String inputStreamString = new Scanner(dao.getLastSOAPMessage(ConnectionDB.instance().getConnectionDB()),"UTF-8").useDelimiter("\\A").next();
 //            System.out.println(inputStreamString);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SQLException | SOAPException | IOException e) {
             e.printStackTrace();
         }
     }

@@ -18,6 +18,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
@@ -39,8 +40,8 @@ public class ImportPaymentDocumentData {
 
     private static final String NAME_METHOD = "importPaymentDocumentData";
 
-    private final BillsService service = new BillsService();
-    private final BillsPortsType port = service.getBillsPort();
+    private final BillsService service;
+    private final BillsPortsType port;
     private final AnswerProcessing answerProcessing;
 
 
@@ -48,8 +49,13 @@ public class ImportPaymentDocumentData {
      * Конструктор, добавляет параметры для соединения.
      */
     public ImportPaymentDocumentData(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        service = UrlLoader.instance().getUrlMap().get("bills") == null ? new BillsService()
+                : new BillsService(UrlLoader.instance().getUrlMap().get("bills"));
+        port = service.getBillsPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     ImportResult sendPaymentDocument(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,

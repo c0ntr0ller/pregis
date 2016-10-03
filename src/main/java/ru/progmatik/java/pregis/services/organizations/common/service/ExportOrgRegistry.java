@@ -9,10 +9,7 @@ import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.RegOrgPortsType;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.RegOrgService;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.ws.Holder;
 
@@ -24,13 +21,18 @@ public class ExportOrgRegistry {
     private static final Logger LOGGER = Logger.getLogger(ExportOrgRegistry.class);
     private static final String NAME_METHOD = "exportOrgRegistry";
 
-    private final RegOrgService service = new RegOrgService();
-    private final RegOrgPortsType port = service.getRegOrgPort();
+    private final RegOrgPortsType port;
     private AnswerProcessing answerProcessing;
 
     public ExportOrgRegistry(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        RegOrgService service = UrlLoader.instance().getUrlMap().get("orgRegistryCommon") == null ? new RegOrgService()
+                : new RegOrgService(UrlLoader.instance().getUrlMap().get("orgRegistryCommon"));
+
+        port = service.getRegOrgPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     /**

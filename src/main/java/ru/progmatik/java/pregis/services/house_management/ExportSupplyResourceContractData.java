@@ -11,6 +11,7 @@ import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagem
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -24,12 +25,16 @@ public class ExportSupplyResourceContractData {
     private static final Logger LOGGER = Logger.getLogger(ExportMeteringDeviceData.class);
     private static final String NAME_METHOD = "exportSupplyResourceContractData";
 
-    private final HouseManagementService service = new HouseManagementService();
-    private final HouseManagementPortsType port = service.getHouseManagementPort();
+    private final HouseManagementPortsType port;
     private final AnswerProcessing answerProcessing;
 
     public ExportSupplyResourceContractData(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
+
+        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
+                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+
+        port = service.getHouseManagementPort();
         OtherFormat.setPortSettings(service, port);
     }
 

@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis.services.device_metering;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryRequest;
 import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryResult;
 import ru.gosuslugi.dom.schema.integration.device_metering_service.DeviceMeteringPortTypes;
@@ -11,6 +12,7 @@ import ru.gosuslugi.dom.schema.integration.device_metering_service.Fault;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -23,8 +25,8 @@ public final class ExportMeteringDeviceHistory {
     private static final Logger LOGGER = Logger.getLogger(ExportMeteringDeviceHistory.class);
     private static final String NAME_METHOD = "exportMeteringDeviceHistory";
 
-    private final DeviceMeteringService service = new DeviceMeteringService();
-    private final DeviceMeteringPortTypes port = service.getDeviceMeteringPort();
+    private final DeviceMeteringService service;
+    private final DeviceMeteringPortTypes port;
     private final AnswerProcessing answerProcessing;
 
     /**
@@ -34,6 +36,10 @@ public final class ExportMeteringDeviceHistory {
      */
     public ExportMeteringDeviceHistory(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
+
+        service = UrlLoader.instance().getUrlMap().get("deviceMetering") == null ? new DeviceMeteringService()
+                : new DeviceMeteringService(UrlLoader.instance().getUrlMap().get("deviceMetering"));
+        port = service.getDeviceMeteringPort();
         OtherFormat.setPortSettings(service, port);
     }
 

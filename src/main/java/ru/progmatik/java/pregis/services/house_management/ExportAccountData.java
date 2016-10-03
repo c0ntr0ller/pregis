@@ -11,6 +11,7 @@ import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagem
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -25,16 +26,21 @@ public class ExportAccountData {
 
     private static final String NAME_METHOD = "exportAccountData";
 
-    private final HouseManagementService service = new HouseManagementService();
-    private final HouseManagementPortsType port = service.getHouseManagementPort();
+    private final HouseManagementPortsType port;
     private AnswerProcessing answerProcessing;
 
     /**
      * Конструктор, добавляет параметры для соединения.
      */
     public ExportAccountData(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
+                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+
+        port = service.getHouseManagementPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     public ExportAccountResult callExportAccountData(String homeFias) throws SQLException {

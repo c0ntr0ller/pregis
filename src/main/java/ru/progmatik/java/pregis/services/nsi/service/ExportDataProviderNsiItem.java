@@ -11,6 +11,7 @@ import ru.gosuslugi.dom.schema.integration.nsi_service.NsiService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.math.BigInteger;
@@ -25,8 +26,7 @@ public class ExportDataProviderNsiItem {
 
     private static final String NAME_METHOD = "exportDataProviderNsiItem";
 
-    private final NsiService service = new NsiService();
-    private final NsiPortsType port = service.getNsiPort();
+    private final NsiPortsType port;
     private AnswerProcessing answerProcessing;
 
     /**
@@ -34,8 +34,13 @@ public class ExportDataProviderNsiItem {
      * @param answerProcessing куда сохранять ошибки.
      */
     public ExportDataProviderNsiItem(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        NsiService service = UrlLoader.instance().getUrlMap().get("nsi") == null ? new NsiService()
+                : new NsiService(UrlLoader.instance().getUrlMap().get("nsi"));
+        port = service.getNsiPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     /**

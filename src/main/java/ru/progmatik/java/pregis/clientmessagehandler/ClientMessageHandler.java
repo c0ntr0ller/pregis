@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.clientmessagehandler;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.signet.RequestSiginet;
 import ru.progmatik.java.pregis.signet.bcsign.command.SignCommand;
 
@@ -27,6 +28,9 @@ import java.util.Set;
 public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     private static final Logger LOGGER = Logger.getLogger(ClientMessageHandler.class);
+    private static final String SAVE_FOLDER = "temp";
+    private static final String SAVE_FOLDER_OUTBOUND = "outbound";
+    private static final String SAVE_FOLDER_INBOUND = "inbound";
 
     /**
      * Метод перехватывает сообщения.
@@ -35,6 +39,11 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
      * @return boolean true.
      */
     public boolean handleMessage(SOAPMessageContext messageContext) {
+
+//        Создание папок
+        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
+        ResourcesUtil.instance().createFolder(SAVE_FOLDER_OUTBOUND);
+        ResourcesUtil.instance().createFolder(SAVE_FOLDER_INBOUND);
 
         RequestSiginet requestSiginet = new RequestSiginet();
         SignCommand signCommand = new SignCommand();
@@ -77,7 +86,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                     System.out.println();
                 }
 
-                try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "outbound")) {
+                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + SAVE_FOLDER_OUTBOUND)) {
                     msg.writeTo(outputStream);
                     outputStream.flush();
                     outputStream.close();
@@ -93,7 +102,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
             try {
 
-                try (FileOutputStream outputStream = new FileOutputStream("temp" + File.separator + "inbound")) {
+                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + SAVE_FOLDER_INBOUND)) {
                     msg.writeTo(outputStream);
                     outputStream.flush();
                     outputStream.close();

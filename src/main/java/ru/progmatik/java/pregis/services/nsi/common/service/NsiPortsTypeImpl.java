@@ -10,6 +10,7 @@ import ru.gosuslugi.dom.schema.integration.nsi_common_service.Fault;
 import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiPortsType;
 import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiService;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 
@@ -35,7 +36,8 @@ public class NsiPortsTypeImpl implements NsiPortsType {
 
     private NsiPortsType getPort() {
 
-        NsiService service = new NsiService();
+        NsiService service = UrlLoader.instance().getUrlMap().get("nsiCommon") == null ? new NsiService()
+                : new NsiService(UrlLoader.instance().getUrlMap().get("nsiCommon"));
         NsiPortsType port = service.getNsiPort();
             OtherFormat.setPortSettings(service, port);
 

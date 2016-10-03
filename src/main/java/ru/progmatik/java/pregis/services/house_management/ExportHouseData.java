@@ -15,6 +15,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.Connection;
@@ -33,8 +34,7 @@ public class ExportHouseData {
     private static final Logger LOGGER = Logger.getLogger(ExportHouseData.class);
     private static final String NAME_METHOD = "exportHouseData";
 
-    private final HouseManagementService service = new HouseManagementService();
-    private final HouseManagementPortsType port = service.getHouseManagementPort();
+    private final HouseManagementPortsType port;
     private final AnswerProcessing answerProcessing;
 
     // Статус ошибок:
@@ -47,8 +47,15 @@ public class ExportHouseData {
      * Конструктор, получает в параметр сылку на веб-сокет.
      */
     public ExportHouseData(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
+                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+
+        port = service.getHouseManagementPort();
+        OtherFormat.setPortSettings(service, port);
+
         errorStatus = 1;
     }
 

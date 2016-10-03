@@ -10,6 +10,7 @@ import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagem
 import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -20,12 +21,15 @@ import java.sql.SQLException;
 public class ExportStatusCAChData {
 
     private static final String NAME_METHOD = "exportStatusCAChData";
-    private final HouseManagementService service = new HouseManagementService();
-    private final HouseManagementPortsType port = service.getHouseManagementPort();
+    private final HouseManagementPortsType port;
     private Logger logger = Logger.getLogger(ExportStatusCAChData.class);
     private Holder<ResultHeader> headerHolder;
 
     public ExportStatusCAChData() {
+
+        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
+                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+        port = service.getHouseManagementPort();
         OtherFormat.setPortSettings(service, port);
     }
 

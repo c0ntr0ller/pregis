@@ -9,17 +9,14 @@ import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
 import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
 /**
  * Класс, экспорт сведений о расчетных периодах организации.
- *
+ * <p>
  * Операция позволяет экспортировать из ГИС ЖКХ сведения об
  * открытых расчетных периодах организации и открытых расчетных
  * периодах домов (см. openOrgPaymentPeriod)
@@ -30,8 +27,8 @@ public class ExportOrgPeriodData {
 
     private static final String NAME_METHOD = "exportOrgPeriodData";
 
-    private final BillsService service = new BillsService();
-    private final BillsPortsType port = service.getBillsPort();
+    private final BillsService service;
+    private final BillsPortsType port;
     private final AnswerProcessing answerProcessing;
 
     /**
@@ -41,6 +38,9 @@ public class ExportOrgPeriodData {
      */
     public ExportOrgPeriodData(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
+        service = UrlLoader.instance().getUrlMap().get("bills") == null ? new BillsService()
+                : new BillsService(UrlLoader.instance().getUrlMap().get("bills"));
+        port = service.getBillsPort();
         OtherFormat.setPortSettings(service, port);
     }
 

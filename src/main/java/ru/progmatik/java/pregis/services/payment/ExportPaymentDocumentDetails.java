@@ -10,6 +10,7 @@ import ru.gosuslugi.dom.schema.integration.payment_service_async.PaymentPortsTyp
 import ru.gosuslugi.dom.schema.integration.payment_service_async.PaymentsServiceAsync;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -32,14 +33,17 @@ public class ExportPaymentDocumentDetails {
 
     private static final String NAME_METHOD = "exportPaymentDocumentDetails";
 
-    private final PaymentsServiceAsync serviceAsync = new PaymentsServiceAsync();
-    private final PaymentPortsTypeAsync portAsync = serviceAsync.getPaymentPortAsync();
+    private final PaymentPortsTypeAsync portAsync;
 
     /**
      * Конструктор, добавляет параметры для соединения.
      */
     public ExportPaymentDocumentDetails() {
 
+        PaymentsServiceAsync serviceAsync = UrlLoader.instance().getUrlMap().get("paymentAsync") == null ? new PaymentsServiceAsync()
+                : new PaymentsServiceAsync(UrlLoader.instance().getUrlMap().get("paymentAsync"));
+
+        portAsync = serviceAsync.getPaymentPortAsync();
         OtherFormat.setPortSettings(serviceAsync, portAsync);
     }
 

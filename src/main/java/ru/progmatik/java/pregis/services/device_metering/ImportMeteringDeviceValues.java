@@ -11,6 +11,7 @@ import ru.gosuslugi.dom.schema.integration.device_metering_service.Fault;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -23,12 +24,16 @@ public final class ImportMeteringDeviceValues {
     private static final Logger LOGGER = Logger.getLogger(ImportMeteringDeviceValues.class);
     private static final String NAME_METHOD = "importMeteringDeviceValues";
 
-    private final DeviceMeteringService service = new DeviceMeteringService();
-    private final DeviceMeteringPortTypes port = service.getDeviceMeteringPort();
+    private final DeviceMeteringService service;
+    private final DeviceMeteringPortTypes port;
     private final AnswerProcessing answerProcessing;
 
     public ImportMeteringDeviceValues(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
+
+        service = UrlLoader.instance().getUrlMap().get("deviceMetering") == null ? new DeviceMeteringService()
+                : new DeviceMeteringService(UrlLoader.instance().getUrlMap().get("deviceMetering"));
+        port = service.getDeviceMeteringPort();
         OtherFormat.setPortSettings(service, port);
     }
 

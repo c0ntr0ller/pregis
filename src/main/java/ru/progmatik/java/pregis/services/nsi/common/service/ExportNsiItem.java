@@ -11,6 +11,7 @@ import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiService;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.math.BigInteger;
@@ -25,14 +26,19 @@ public class ExportNsiItem {
     private static final Logger LOGGER = Logger.getLogger(ExportNsiItem.class);
     private static final String NAME_METHOD = "exportNsiItem";
 
-    private final NsiService service = new NsiService();
-    private final NsiPortsType port = service.getNsiPort();
+    private final NsiPortsType port;
 
     private AnswerProcessing answerProcessing;
 
     public ExportNsiItem(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        NsiService service = UrlLoader.instance().getUrlMap().get("nsiCommon") == null ? new NsiService()
+                : new NsiService(UrlLoader.instance().getUrlMap().get("nsiCommon"));
+
+        port = service.getNsiPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     public ExportNsiItemResult callExportNsiItem(NsiListGroupEnum nsi, BigInteger codeNsi) {

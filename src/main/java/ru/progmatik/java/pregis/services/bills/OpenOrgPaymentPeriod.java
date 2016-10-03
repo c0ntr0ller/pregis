@@ -11,10 +11,7 @@ import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
 import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
 import ru.progmatik.java.pregis.ProgramAction;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
@@ -40,12 +37,17 @@ public class OpenOrgPaymentPeriod {
 
     private static final String NAME_METHOD = "openOrgPaymentPeriod";
 
-    private final BillsService service = new BillsService();
-    private final BillsPortsType port = service.getBillsPort();
+    private final BillsService service;
+    private final BillsPortsType port;
     private final AnswerProcessing answerProcessing;
 
     public OpenOrgPaymentPeriod(AnswerProcessing answerProcessing, ProgramAction action) {
+
         this.answerProcessing = answerProcessing;
+
+        service = UrlLoader.instance().getUrlMap().get("bills") == null ? new BillsService()
+                : new BillsService(UrlLoader.instance().getUrlMap().get("bills"));
+        port = service.getBillsPort();
         OtherFormat.setPortSettings(service, port);
     }
 

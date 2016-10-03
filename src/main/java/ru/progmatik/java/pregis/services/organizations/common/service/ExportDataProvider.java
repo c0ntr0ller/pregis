@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis.services.organizations.common.service;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.Fault;
@@ -11,6 +12,7 @@ import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
+import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 
@@ -19,13 +21,18 @@ public class ExportDataProvider {
     private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);
 
     private static final String NAME_METHOD = "exportDataProvider";
-    private final RegOrgService service = new RegOrgService();
-    private final RegOrgPortsType port = service.getRegOrgPort();
+    private final RegOrgPortsType port;
     private AnswerProcessing answerProcessing;
 
     public ExportDataProvider(AnswerProcessing answerProcessing) {
-        OtherFormat.setPortSettings(service, port);
+
         this.answerProcessing = answerProcessing;
+
+        RegOrgService service = UrlLoader.instance().getUrlMap().get("orgRegistryCommon") == null ? new RegOrgService()
+                : new RegOrgService(UrlLoader.instance().getUrlMap().get("orgRegistryCommon"));
+
+        port = service.getRegOrgPort();
+        OtherFormat.setPortSettings(service, port);
     }
 
     public ExportDataProviderResult callExportDataProvide() {

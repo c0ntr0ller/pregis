@@ -153,7 +153,7 @@ public class ResourcesUtil {
      */
     public String getStunnelHost() {
 
-        return properties.getProperty("config.server.binding");
+        return properties.getProperty("config.server.stunnel.address");
     }
 
     /**

@@ -29,8 +29,8 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
     private static final Logger LOGGER = Logger.getLogger(ClientMessageHandler.class);
     private static final String SAVE_FOLDER = "temp";
-    private static final String SAVE_FOLDER_OUTBOUND = "outbound";
-    private static final String SAVE_FOLDER_INBOUND = "inbound";
+    private static final String FILE_OUTBOUND = "outbound.xml";
+    private static final String FILE_INBOUND = "inbound.xml";
 
     /**
      * Метод перехватывает сообщения.
@@ -42,8 +42,6 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
 //        Создание папок
         ResourcesUtil.instance().createFolder(SAVE_FOLDER);
-        ResourcesUtil.instance().createFolder(SAVE_FOLDER_OUTBOUND);
-        ResourcesUtil.instance().createFolder(SAVE_FOLDER_INBOUND);
 
         RequestSiginet requestSiginet = new RequestSiginet();
         SignCommand signCommand = new SignCommand();
@@ -86,7 +84,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
                     System.out.println();
                 }
 
-                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + SAVE_FOLDER_OUTBOUND)) {
+                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + FILE_OUTBOUND)) {
                     msg.writeTo(outputStream);
                     outputStream.flush();
                     outputStream.close();
@@ -102,7 +100,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
             try {
 
-                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + SAVE_FOLDER_INBOUND)) {
+                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + FILE_INBOUND)) {
                     msg.writeTo(outputStream);
                     outputStream.flush();
                     outputStream.close();

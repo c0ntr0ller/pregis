@@ -21,6 +21,8 @@ public class SaveToBaseMessages {
 
     private static final Logger LOGGER = Logger.getLogger(SaveToBaseMessages.class);
     private static final String SAVE_FOLDER = "temp";
+    private static final String FILE_OUTBOUND = "outbound.xml";
+    private static final String FILE_INBOUND = "inbound.xml";
 
     private MessageDAO messageDAO;
     private String stateMessage = "OK";
@@ -43,8 +45,8 @@ public class SaveToBaseMessages {
     public void setRequest(HeaderType headerRequest, String nameMethod) {
 
         String typeOperation = "Request";
-        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
-        File file = new File(SAVE_FOLDER + File.separator + "outbound");
+//        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
+        File file = new File(SAVE_FOLDER + File.separator + FILE_OUTBOUND);
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
 
         try (FileInputStream inputStream = new FileInputStream(file)) {
@@ -52,7 +54,9 @@ public class SaveToBaseMessages {
             file.deleteOnExit();
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
-            e.printStackTrace();
+//            e.printStackTrace();
+        } finally {
+            file.delete();
         }
     }
 
@@ -66,7 +70,7 @@ public class SaveToBaseMessages {
 
         String typeOperation = "Result";
         ResourcesUtil.instance().createFolder(SAVE_FOLDER);
-        File file = new File(SAVE_FOLDER + File.separator + "inbound");
+        File file = new File(SAVE_FOLDER + File.separator + FILE_INBOUND);
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
 
         StringBuilder stateBuilder = new StringBuilder("OK");
@@ -86,7 +90,9 @@ public class SaveToBaseMessages {
             file.deleteOnExit();
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
-            e.printStackTrace();
+//            e.printStackTrace();
+        } finally {
+            file.delete();
         }
     }
 
@@ -139,8 +145,8 @@ public class SaveToBaseMessages {
         try (Connection connection = ConnectionDB.instance().getConnectionDB()) {
             messageDAO.setTableContent(guid, nameMethod, dateMessage, nameTypeEn, soapMessage, stateMessage, connection);
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+//            e.printStackTrace();
         }
     }
 

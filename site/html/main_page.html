@@ -42,7 +42,7 @@
     <form name="accountDataForm" accept-charset="utf-8">
         <br>
         <h2>Работа с лицевыми счетами:</h2>
-        <button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
+        <label>Укажите код дома по ФИАС: <input id="getExportAccountData" class="textValue" type="text"></label><button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
         <br><br>
     </form>
     <form name="updateMeteringDeviceData" accept-charset="utf-8">

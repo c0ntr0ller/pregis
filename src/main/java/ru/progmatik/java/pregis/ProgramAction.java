@@ -327,24 +327,23 @@ public class ProgramAction {
 
     }
 
-//
-//    /**
-//     * Метод, экспорт сведений о лицевых счетах.
-//     * Тестовый метод какой-то.
-//     */
-//    public void callExportAccountData() {
-//
-//        setStateRunOn();
-//        try {
-//            answerProcessing.sendMessageToClient("Запуск получения ЛС...");
-//            ExportAccountData accountData = new ExportAccountData(answerProcessing);
-//            accountData.callExportAccountData("f20a2f00-c9cf-485f-ac41-92af5b77e29a");
-//            answerProcessing.sendMessageToClient("Получения ЛС завершено.");
-//        } catch (Exception e) {
-//            answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);
-//        }
-//        setStateRunOff();
-//    }
+    /**
+     * Метод, экспорт сведений о лицевых счетах.
+     * Тестовый метод какой-то.
+     */
+    public void callExportAccountData(String fias) {
+
+        setStateRunOn();
+        try {
+            answerProcessing.sendMessageToClient("Запуск получения ЛС...");
+            ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            accountData.callExportAccountData(fias);
+            answerProcessing.sendMessageToClient("Получения ЛС завершено.");
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);
+        }
+        setStateRunOff();
+    }
 
     /**
      * Метод, импорт сведений о платежных документах.

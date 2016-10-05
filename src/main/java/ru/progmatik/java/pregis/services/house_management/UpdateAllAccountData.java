@@ -5,6 +5,7 @@ import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResult;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -59,15 +60,22 @@ public class UpdateAllAccountData {
 
             for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
 
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("Обрабатываю дом...");
+                answerProcessing.sendMessageToClient("Код дома по ФИАС: " + itemHouse.getKey());
+                answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue());
+
                 ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
                 LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = accountGRADDAO.getAccountMapFromGrad(itemHouse.getValue(), connectionGRAD);
 
-                if (exportAccountResult == null) {
+                if (exportAccountResult == null) { // если не получили не однин лс.
                     errorState = 0;
+                } else if (exportAccountResult.getErrorMessage() != null && exportAccountResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
+                    sendAccountDataToGis(null, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
                 } else {
-                    countAll = exportAccountResult.getAccounts().size();
+                    countAllGisJkh += exportAccountResult.getAccounts().size();
+                    sendAccountDataToGis(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
                 }
-                sendAccountDataToGis(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
             }
         }
         answerProcessing.sendMessageToClient("");
@@ -137,8 +145,10 @@ public class UpdateAllAccountData {
      * @param accountNumber номер ЛС.
      */
     private void removeAccount(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
-        accountGRADDAO.addAccountForRemove(houseId, accountNumber, connection);
-        countRemove++;
+        try (Connection connectionLocal = ConnectionDB.instance().getConnectionDB()) {
+            accountGRADDAO.addAccountForRemove(houseId, accountNumber, connectionLocal, connection);
+            countRemove++;
+        }
     }
 
     /**

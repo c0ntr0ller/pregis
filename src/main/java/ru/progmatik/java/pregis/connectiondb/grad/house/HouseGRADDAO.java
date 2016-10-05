@@ -98,7 +98,7 @@ public class HouseGRADDAO {
 //        Получение данных из БД о ЖД.
         for (String itemData : listAllJD) {
             if (getAllData(itemData)[1] != null && !getAllData(itemData)[1].isEmpty() &&
-                   isAddedHouseInGisJkh(Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]), connectionGrad)) { // проверяем содержится ФИАС, если есть то добавляем
+                    isAddedHouseInGisJkh(Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]), connectionGrad)) { // проверяем содержится ФИАС, если есть то добавляем
                 mapAllHouseWithIdGis.put(getAllData(itemData)[HOUSE_FIAS], Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]));
             }
         }
@@ -183,7 +183,8 @@ public class HouseGRADDAO {
 
     /**
      * Метод, получает из процедуры "EX_GIS04" площадь помещения.
-     * @param houseId идентификатор дома в БД ГРАДа.
+     *
+     * @param houseId        идентификатор дома в БД ГРАДа.
      * @param connectionGrad подключение к БД ГРАД.
      * @return ключ - abonId, значение - общая площадь помещения.
      */
@@ -223,7 +224,7 @@ public class HouseGRADDAO {
         try (Statement statement = connectionGrad.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
 
-                if (apartmentNumber.equalsIgnoreCase(getAllData(resultSet.getString(1))[3])) {
+                if (resultSet.getString(1) != null && apartmentNumber.equalsIgnoreCase(getAllData(resultSet.getString(1))[3])) {
                     listData.add(resultSet.getString(1));
                 }
             }
@@ -320,6 +321,7 @@ public class HouseGRADDAO {
 
     /**
      * Метод, проверяет, получен уникальный номер дома или нет.
+     *
      * @param houseId ИД дома в БД ГРАДа.
      * @return true - у дома есть уникальный номер ГИС ЖКХ, false - дом не получил уникальный идентификатор ГИС ЖКХ.
      * @throws SQLException

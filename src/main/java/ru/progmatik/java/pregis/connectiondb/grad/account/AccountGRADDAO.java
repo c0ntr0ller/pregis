@@ -146,6 +146,9 @@ public class AccountGRADDAO {
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
 
+//                Бывают попадаются null
+                if (resultSet.getString(1) == null) continue;
+
                 Rooms rooms = new Rooms();
 
                 try {
@@ -183,6 +186,7 @@ public class AccountGRADDAO {
      */
     public LinkedHashMap<String, ImportAccountRequest.Account> getAccountMapFromGrad(int houseID, Connection connection) throws ParseException, SQLException, PreGISException {
 
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Формирую данные...");
         ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
         ArrayList<Rooms> roomsList = getRooms(houseID, connection);
@@ -229,7 +233,7 @@ public class AccountGRADDAO {
 //                        account.getPayerInfo().getInd().setSex(); // не указан
 //                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
                     if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
-                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils());
+                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
                     }
 
                     if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
@@ -424,17 +428,20 @@ public class AccountGRADDAO {
      * @throws ParseException
      * @throws SQLException
      */
-    public boolean addAccountForRemove(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
+    public boolean addAccountForRemove(Integer houseId, String accountNumber, Connection connectionLocal,
+                                       Connection connectionGrad) throws ParseException, SQLException {
 
         String fio = "";
 
 
-        ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId, connection);
+        ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId, connectionGrad);
         if (basicInformation != null)
             for (BasicInformation information : basicInformation) {
                 if (accountNumber.equals(information.getNumberLS())) {
                     fio = information.getSurname() + " " + information.getName() + " " + information.getMiddleName();
-                    setAccountForRemove(getAbonentIdFromGrad(houseId, accountNumber, connection), accountNumber, fio, connection);
+                    Integer abonId = getAbonentIdFromGrad(houseId, accountNumber, connectionGrad);
+                    java.sql.Date dateEnd = getAccountEndDate(abonId, connectionGrad);
+                    setAccountForRemove(abonId, accountNumber, fio, dateEnd, connectionLocal);
                 }
             }
         return !fio.isEmpty(); // если не составили фио значит что то пошло не так.
@@ -448,9 +455,8 @@ public class AccountGRADDAO {
      * @param fio           ФИО абонента.
      * @throws SQLException
      */
-    private void setAccountForRemove(Integer abonId, String accountNumber, String fio, Connection connection) throws SQLException {
+    private void setAccountForRemove(Integer abonId, String accountNumber, String fio, java.sql.Date dateEnd, Connection connection) throws SQLException {
         if (!isAccountForRemove(accountNumber, connection)) {
-            java.sql.Date dateEnd = getAccountEndDate(abonId, connection);
             try (PreparedStatement ps = connection.prepareStatement("INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, ENDDATE, CLOSED) VALUES(?, ?, ?, ?, ?)")) {
 
                 ps.setInt(1, abonId);
@@ -508,11 +514,9 @@ public class AccountGRADDAO {
      */
     private boolean isAccountForRemove(String accountNumber, Connection connection) throws SQLException {
 
-        String sqlRequest = "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '" + accountNumber + "' AND CLOSED = FALSE";
+        String sqlRequest = "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '" + accountNumber + "' AND CLOSED = TRUE";
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
-            resultSet.next();
-            String result = resultSet.getString(1);
-            return !(result == null || result.isEmpty());
+            return resultSet.next();
         }
     }
 

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Класс подписывает наш отправляемый запрос.
@@ -313,9 +315,17 @@ public class RequestSiginet {
 
         message = serializer.writeToString(doc);
         message = message.replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?>", "");
-        message = message.replaceAll("^<\\w?\\w?\\w?\\W?SNILS/>$", "");
         message = message.replaceAll("<SNILS/>", "");
-        message = message.replaceAll("<ns2:SNILS/>", "");
+        message = message.replaceAll("<Patronymic/>", "");
+
+        ArrayList<Pattern> list = new ArrayList();
+        list.add(Pattern.compile("<\\w{3,5}:SNILS/>"));
+        list.add(Pattern.compile("<\\w{3,5}:Patronymic/>"));
+
+        for (Pattern pattern : list) {
+            Matcher matcher = pattern.matcher(message);
+            message = matcher.replaceAll("");
+        }
 
         return toMessage(message);
 //        return doc;

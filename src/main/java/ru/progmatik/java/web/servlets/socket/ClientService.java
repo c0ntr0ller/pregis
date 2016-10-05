@@ -77,9 +77,9 @@ public class ClientService {
                 case "getExportDataProviderNsiItem":
                     action.callExportDataProviderNsiItem();
                     break;
-//                case "getExportAccountData":
-//                    action.callExportAccountData();
-//                    break;
+                case "getExportAccountData":
+                    action.callExportAccountData(value);
+                    break;
                 case "updateAccountData":
                     action.updateAccountData();
                     break;

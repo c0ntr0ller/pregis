@@ -70,6 +70,10 @@ public class ExportDataProviderNsiItem {
         }
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
 
+        if (result.getErrorMessage() != null) {
+            return null;
+        }
+
         return result;
     }
 

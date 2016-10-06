@@ -46,8 +46,8 @@ abstract class SignatureGostR34102001 extends SignatureAlgorithmSpi {
 	SignatureGostR34102001() throws XMLSignatureException {
 
 		String algorithmID = JCEMapper.translateURItoJCEID(engineGetURI());
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Created SignatureGostr34102001Gostr3411 using " + algorithmID);
+//		if (LOGGER.isDebugEnabled())
+//			LOGGER.debug("Created SignatureGostr34102001Gostr3411 using " + algorithmID);
 
 		String provider = JCEMapper.getProviderId();
 		try {

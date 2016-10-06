@@ -1,5 +1,6 @@
 package ru.progmatik.java.pregis.connectiondb.grad.account;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.AccountIndType;
 import ru.gosuslugi.dom.schema.integration.house_management.AccountType;
@@ -18,6 +19,7 @@ import ru.progmatik.java.pregis.exception.PreGISArgumentNotFoundFromBaseExceptio
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -213,7 +215,9 @@ public class AccountGRADDAO {
                     account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
                     account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()).setScale(2, BigDecimal.ROUND_DOWN));
                     account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()).setScale(2, BigDecimal.ROUND_DOWN));
-                    account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                    if (basicInformation.getHeadtedArea() > 0.0) {
+                        account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                    }
 //                    account.setClosed(); // проверить, если в ГИС ЖКХ есть, а в БД ГРАД нет, то установить в ExportAccountData.
                     AccountType.Accommodation accommodation = new AccountType.Accommodation();
                     accommodation.setPremisesGUID(getBuildingIdentifiersFromBase(roomsList.get(i).getAbonId(), "PREMISESGUID", connection));
@@ -267,6 +271,8 @@ public class AccountGRADDAO {
 
                     account.setAccountNumber(basicInformation.getNumberLS());
                     account.setAccountGUID(getAccountGUIDFromBase(roomsList.get(i).getAbonId(), connection));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                    setIsAccount(account);
+                    account.setCreationDate(OtherFormat.getDateNow());
 
                     mapAccount.put(basicInformation.getNumberLS(), account);
 
@@ -325,11 +331,12 @@ public class AccountGRADDAO {
      * @param accountNumber       номер ЛС.
      * @param accountGUID         идентификатор ЛС в ГИС ЖКХ.
      * @param accountUniqueNumber уникальный номер ЛС, присвоенный ГИС ЖКХ.
+     * @return true - идентификатор успешно добавлен, false - идентификатор не удалось добавить.
      * @throws SQLException
      * @throws PreGISException
      * @throws ParseException
      */
-    public void setAccountGuidAndUniqueNumber(Integer houseId, String accountNumber,
+    public boolean setAccountGuidAndUniqueNumber(Integer houseId, String accountNumber,
                                               String accountGUID, String accountUniqueNumber, Connection connection) throws SQLException, PreGISException, ParseException {
 
         Integer abonentId = getAbonentIdFromGrad(houseId, accountNumber, connection);
@@ -348,10 +355,21 @@ public class AccountGRADDAO {
                 cstmt.executeUpdate();
 //                int codeReturn = cstmt.executeUpdate();
 //                System.err.println("Apartment code return: " + codeReturn);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.info(String.format("SQL request: %s", sqlRequest));
+                    LOGGER.info(String.format("set attribute for LS (%s) - abonID: %s; AccountGUID: %s; AccountUniqueNumber: %s.",
+                            accountNumber, abonentId, accountGUID, accountUniqueNumber));
+                }
+                if (!accountGUID.equalsIgnoreCase(getAccountGUIDFromBase(abonentId, connection))) {
+                    answerProcessing.sendErrorToClientNotException(String.format("Идентификатор %s не занесен в БД ГРАД для ЛС %s", accountGUID, accountNumber));
+                    LOGGER.error(String.format("Идентификатор %s не занесен в БД ГРАД для ЛС %s", accountGUID, accountNumber));
+                    return false;
+                }
             }
         } else {
             throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
         }
+        return true;
     }
 
     /**
@@ -532,6 +550,22 @@ public class AccountGRADDAO {
             return "0";
         } else
             return textForNumber;
+    }
+
+    /**
+     * Метод, задаёт абоненту тип компании (УО, РСО, РКЦ и т.д.)
+     * @param account данные абонента.
+     * @throws PreGISException возможна ошибка, если не будет найдена роль компании в файле "application.properties".
+     */
+    private void setIsAccount(ImportAccountRequest.Account account) throws PreGISException {
+
+        if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
+            account.setIsRSOAccount(true); // Если РСО
+        } else if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RCA")) {
+            account.setIsRSOAccount(true); // Если РКЦ
+        } else {
+            account.setIsUOAccount(true); // По-умолчанию УО.
+        }
     }
 
     /**

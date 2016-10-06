@@ -12,6 +12,7 @@ import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Метод, отправляет информацию о лицевых счетах в ГИС ЖКХ.
@@ -35,8 +36,8 @@ public class ImportAccountData {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ru.gosuslugi.dom.schema.integration.house_management.ImportResult callImportAccountData(ImportAccountRequest request) throws SQLException {
-        return sendImportAccountData(request);
+    public ru.gosuslugi.dom.schema.integration.house_management.ImportResult callImportAccountData(List<ImportAccountRequest.Account> accounts) throws SQLException {
+        return sendImportAccountData(getImportAccountRequest(accounts));
     }
 
     private ru.gosuslugi.dom.schema.integration.house_management.ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
@@ -65,77 +66,60 @@ public class ImportAccountData {
         return result;
     }
 
-    /**
-     * Метод, формирует запрос для закрытия ЛС.
-     * @param account принимает абонента с указанной причиной закрытия ЛС и статуса isClosed.
-     * @return сформированный запрос.
-     */
-    public ImportAccountRequest getClosedImportAccountRequest(ImportAccountRequest.Account account) {
+//    /**
+//     * Метод, формирует запрос для закрытия ЛС.
+//     * @param account принимает абонента с указанной причиной закрытия ЛС и статуса isClosed.
+//     * @return сформированный запрос.
+//     */
+//    public ImportAccountRequest getClosedImportAccountRequest(ImportAccountRequest.Account account) {
+//
+//        return getImportAccountRequest(account);
+//    }
 
-        return getImportAccountRequest(account);
-    }
+//    /**
+//     * Метод, формирует запрос для обновления данных абонента.
+//     * @param account данные абонента.
+//     * @return сформированный запрос.
+//     * @throws PreGISException
+//     */
+//    public ImportAccountRequest getUpdateImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
+//
+//        setIsAccount(account);
+//
+//        return getImportAccountRequest(account);
+//    }
 
-    /**
-     * Метод, формирует запрос для обновления данных абонента.
-     * @param account данные абонента.
-     * @return сформированный запрос.
-     * @throws PreGISException
-     */
-    public ImportAccountRequest getUpdateImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
-
-        setIsAccount(account);
-
-        return getImportAccountRequest(account);
-    }
-
-    /**
-     * Метод, создаёт данные для нового лицевого счета.
-     *
-     * @param account данные абонента.
-     * @return сформированный запрос.
-     */
-    public ImportAccountRequest getNewImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
-
-
-        setIsAccount(account);
-
-        account.setCreationDate(OtherFormat.getDateNow()); // попробую без даты
-        account.setAccountGUID(null);
-        account.setTransportGUID(OtherFormat.getRandomGUID()); // добавлять только если это новый элемент.
-
-        return getImportAccountRequest(account);
-    }
+//    /**
+//     * Метод, создаёт данные для нового лицевого счета.
+//     *
+//     * @param account данные абонента.
+//     * @return сформированный запрос.
+//     */
+//    public ImportAccountRequest getNewImportAccountRequest(ImportAccountRequest.Account account) throws PreGISException {
+//
+//        account.setAccountGUID(null);
+//        account.setTransportGUID(OtherFormat.getRandomGUID()); // добавлять только если это новый элемент.
+//
+//        return getImportAccountRequest(account);
+//    }
 
     /**
      * Метод, формирует запрос для отправки
      *
-     * @param account информацию о лицевом счете абонента
+     * @param accounts список абонентов для добавления информации в ГИС ЖКХ.
      * @return сформированный запрос.
      */
-    private ImportAccountRequest getImportAccountRequest(ImportAccountRequest.Account account) {
+    private ImportAccountRequest getImportAccountRequest(List<ImportAccountRequest.Account> accounts) {
 //        Если нужно закрыть счет, то закрываем где нибудь затем передаём в этот метод
         ImportAccountRequest request = new ImportAccountRequest();
+
         request.setId(OtherFormat.getId());
+
         request.setVersion(request.getVersion());
 
-        request.getAccount().add(account);
+        request.getAccount().addAll(accounts);
 
         return request;
     }
 
-    /**
-     * Метод, задаёт статус компании.
-     * @param account абонент.
-     * @throws PreGISException
-     */
-    private void setIsAccount(ImportAccountRequest.Account account) throws PreGISException {
-
-        if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
-            account.setIsRSOAccount(true);
-//            account.setIsUOAccount(false);
-        } else {
-            account.setIsUOAccount(true);
-//            account.setIsRSOAccount(false);
-        }
-    }
 }

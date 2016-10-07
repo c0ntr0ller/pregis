@@ -64,10 +64,10 @@ public class ReferenceNSI {
      * @param nsiParentCode код справочника.
      * @param nameElement   имя нужного элемента.
      * @return объект пригодный для указания справочника ГИС ЖКХ.
-     * @throws PreGISException
+     * @throws PreGISException возникнит ошибка, если не удастся загрузить справочник из ГИС ЖКХ.
      * @throws SQLException
      */
-    public ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef getNsiRef(String nsiParentCode, String nameElement) throws PreGISException, SQLException {
+    public ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef getNsiRef(String nsiParentCode, String nameElement) throws SQLException, PreGISException {
 
         ArrayList<ReferenceItemDataSet> allItems = nsiDao.getAllItemsCodeParent(nsiParentCode);
 
@@ -91,7 +91,8 @@ public class ReferenceNSI {
     /**
      * Метод, обновляет справочники, найденные в таблице NSI_FOR_DOWNLOAD.
      *
-     * @throws SQLException
+     * @throws SQLException любые ошибки из базы даных.
+     * @throws PreGISException возникнит ошибка, если не удастся загрузить справочник из ГИС ЖКХ.
      */
     public boolean updateNSIFromTableList() throws SQLException, PreGISException {
 
@@ -116,8 +117,8 @@ public class ReferenceNSI {
      * Метод, обновляет справочник.
      *
      * @return true если обновление прошло успешно, false - если справочники не удалось обновить.
-     * @throws PreGISException
-     * @throws SQLException
+     * @throws PreGISException возникнит ошибка, если не удастся загрузить справочник из ГИС ЖКХ.
+     * @throws SQLException любые ошибки из базы даных.
      */
     private boolean updateNSI(ReferenceDownloadNSIDataSet downloadNsiDataSet) throws PreGISException, SQLException {
 

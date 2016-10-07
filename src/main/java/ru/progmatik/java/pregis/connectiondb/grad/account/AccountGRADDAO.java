@@ -1,6 +1,5 @@
 package ru.progmatik.java.pregis.connectiondb.grad.account;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.AccountIndType;
 import ru.gosuslugi.dom.schema.integration.house_management.AccountType;
@@ -360,7 +359,7 @@ public class AccountGRADDAO {
                     LOGGER.info(String.format("set attribute for LS (%s) - abonID: %s; AccountGUID: %s; AccountUniqueNumber: %s.",
                             accountNumber, abonentId, accountGUID, accountUniqueNumber));
                 }
-                if (!accountGUID.equalsIgnoreCase(getAccountGUIDFromBase(abonentId, connection))) {
+                if (accountGUID != null && !accountGUID.equalsIgnoreCase(getAccountGUIDFromBase(abonentId, connection))) {
                     answerProcessing.sendErrorToClientNotException(String.format("Идентификатор %s не занесен в БД ГРАД для ЛС %s", accountGUID, accountNumber));
                     LOGGER.error(String.format("Идентификатор %s не занесен в БД ГРАД для ЛС %s", accountGUID, accountNumber));
                     return false;
@@ -370,6 +369,18 @@ public class AccountGRADDAO {
             throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД.");
         }
         return true;
+    }
+
+    /**
+     * Метод, получает уникальный идентификатор ЛС из БД ГРАДА.
+     * @param abonId идентификатор абонента в БД ГРАД.
+     * @param connection подключение к БД ГРАД.
+     * @return Уникальный идентификатор ГИС ЖКХ.
+     * @throws SQLException любые ошибки полученные во время работ с базой данных.
+     */
+    public String getUnifiedAccountNumber(Integer abonId, Connection connection) throws SQLException {
+
+        return getBuildingIdentifiersFromBase(abonId, "ACCOUNTUNIQNUM", connection);
     }
 
     /**
@@ -426,7 +437,7 @@ public class AccountGRADDAO {
      * @throws ParseException
      * @throws SQLException
      */
-    private Integer getAbonentIdFromGrad(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
+    public Integer getAbonentIdFromGrad(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
         ArrayList<Rooms> rooms = getRooms(houseId, connection);
         if (rooms != null)
             for (Rooms room : rooms) {
@@ -557,7 +568,7 @@ public class AccountGRADDAO {
      * @param account данные абонента.
      * @throws PreGISException возможна ошибка, если не будет найдена роль компании в файле "application.properties".
      */
-    private void setIsAccount(ImportAccountRequest.Account account) throws PreGISException {
+    public void setIsAccount(ImportAccountRequest.Account account) throws PreGISException {
 
         if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
             account.setIsRSOAccount(true); // Если РСО

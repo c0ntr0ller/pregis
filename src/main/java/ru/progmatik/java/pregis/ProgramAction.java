@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResult;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
@@ -337,7 +338,8 @@ public class ProgramAction {
         try {
             answerProcessing.sendMessageToClient("Запуск получения ЛС...");
             ExportAccountData accountData = new ExportAccountData(answerProcessing);
-            accountData.callExportAccountData(fias);
+            ExportAccountResult exportAccountResult = accountData.callExportAccountData(fias);
+            answerProcessing.sendMessageToClient(String.format("Получено: %d ЛС", exportAccountResult.getAccounts().size()));
             answerProcessing.sendMessageToClient("Получения ЛС завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);

@@ -85,7 +85,14 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
                     checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
                 } else {
                     countAllGisJkh += exportAccountResult.getAccounts().size();
-                    checkAndSendAccountData(exportAccountResult, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
+//                    List<ExportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
+////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.
+//                    while (countAllGisJkh % 50 == 0) {
+//                        exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
+//                        countAllGisJkh += exportAccountResult.getAccounts().size();
+//                        accountsListFromGISJKH.addAll(exportAccountResult.getAccounts());
+//                    }
+                    checkAndSendAccountData(exportAccountResult.getAccounts(), accountListFromGrad, itemHouse.getValue(), connectionGRAD);
 
                 }
             }
@@ -113,19 +120,20 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * Метод, передаёт на проверку список абонентов из БД ГРАДа и список абонентов полученных из ГИС ЖКХ.
      * Заносит идентификаторы в БД и передаёт в ГИС ЖКХ новые данные.
      *
-     * @param exportAccountResult полученный список абонентов из ГИС ЖКХ.
+     * @param accountsListFromGISJKH полученный список абонентов из ГИС ЖКХ.
      * @param accountListFromGrad список абонентов из БД ГРАД.
      * @param houseId             идентификатор дома в БД ГРАД
      * @param connection          подключение к БД ГРАД.
      */
-    private void checkAndSendAccountData(ExportAccountResult exportAccountResult, LinkedHashMap<String,
+    private void checkAndSendAccountData(List<ExportAccountResultType> accountsListFromGISJKH, LinkedHashMap<String,
             ImportAccountRequest.Account> accountListFromGrad, Integer houseId, Connection connection) throws SQLException, PreGISException, ParseException {
 
 //        Ключ - TransportGUID, значение - Account
         LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();
 
-        if (exportAccountResult != null) {
-            checkDuplicateAccountDataGisJkh(exportAccountResult.getAccounts());
+
+        if (accountsListFromGISJKH != null) {
+            checkDuplicateAccountDataGisJkh(accountsListFromGISJKH);
 
             for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
                 if (!isDuplicateAccountData(entry.getKey())) {
@@ -135,7 +143,7 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
 
                     if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
 
-                    if (!checkAccountDataIsAddedGrad(exportAccountResult, entry.getValue(),
+                    if (!checkAccountDataIsAddedGrad(accountsListFromGISJKH, entry.getValue(),
                             houseId, uniqueNumberFromDB, connection)) {
 
                             String transportGUID = OtherFormat.getRandomGUID();
@@ -239,16 +247,16 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * Если, по указанному ЛС найдены идентификаторы ГИС ЖКХ, то заносим их в БД ГРАДа.
      * Если, ЛС не найден в БД ГРАД, значит он не существует, такой счет будет помещен в таблицу "ACCOUNT_FOR_REMOVE".
      *
-     * @param exportAccountResult данные полученные из ГИС ЖКХ.
+     * @param accountsListFromGISJKH данные полученные из ГИС ЖКХ.
      * @param account             данные абонента полученные из БД ГРАДа.
      * @param houseId             ид дома в БД.
      */
-    private boolean checkAccountDataIsAddedGrad(ExportAccountResult exportAccountResult,
+    private boolean checkAccountDataIsAddedGrad(List<ExportAccountResultType> accountsListFromGISJKH,
                                                 ImportAccountRequest.Account account,
                                                 Integer houseId, String uniqueNumberFromDB, Connection connection)
             throws ParseException, SQLException, PreGISException {
 
-        for (ExportAccountResultType resultTypeAccount : exportAccountResult.getAccounts()) { // полученные от ГИС ЖКХ записи перебераем
+        for (ExportAccountResultType resultTypeAccount : accountsListFromGISJKH) { // полученные от ГИС ЖКХ записи перебераем
 
             if (account.getAccountNumber().equalsIgnoreCase(resultTypeAccount.getAccountNumber())) { // если в БД есть элемент, добавляем идентификаторы в БД
 

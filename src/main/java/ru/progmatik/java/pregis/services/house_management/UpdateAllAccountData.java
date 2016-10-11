@@ -76,7 +76,7 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
 
 
                 ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
-                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = accountGRADDAO.getAccountMapFromGrad(itemHouse.getValue(), connectionGRAD);
+                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
                 countAll += accountListFromGrad.size();
 
                 if (exportAccountResult == null) { // если не получили не однин лс.
@@ -121,12 +121,13 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * Заносит идентификаторы в БД и передаёт в ГИС ЖКХ новые данные.
      *
      * @param accountsListFromGISJKH полученный список абонентов из ГИС ЖКХ.
-     * @param accountListFromGrad список абонентов из БД ГРАД.
-     * @param houseId             идентификатор дома в БД ГРАД
-     * @param connection          подключение к БД ГРАД.
+     * @param accountListFromGrad    список абонентов из БД ГРАД.
+     * @param houseId                идентификатор дома в БД ГРАД
+     * @param connection             подключение к БД ГРАД.
      */
-    private void checkAndSendAccountData(List<ExportAccountResultType> accountsListFromGISJKH, LinkedHashMap<String,
-            ImportAccountRequest.Account> accountListFromGrad, Integer houseId, Connection connection) throws SQLException, PreGISException, ParseException {
+    private void checkAndSendAccountData(List<ExportAccountResultType> accountsListFromGISJKH,
+                                         LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad,
+                                         Integer houseId, Connection connection) throws SQLException, PreGISException, ParseException {
 
 //        Ключ - TransportGUID, значение - Account
         LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();
@@ -143,8 +144,8 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
 
                     if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
 
-                    if (!checkAccountDataIsAddedGrad(accountsListFromGISJKH, entry.getValue(),
-                            houseId, uniqueNumberFromDB, connection)) {
+                        if (!checkAccountDataIsAddedGrad(accountsListFromGISJKH, entry.getValue(),
+                                houseId, uniqueNumberFromDB, connection)) {
 
                             String transportGUID = OtherFormat.getRandomGUID();
                             entry.getValue().setTransportGUID(transportGUID);
@@ -248,8 +249,8 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * Если, ЛС не найден в БД ГРАД, значит он не существует, такой счет будет помещен в таблицу "ACCOUNT_FOR_REMOVE".
      *
      * @param accountsListFromGISJKH данные полученные из ГИС ЖКХ.
-     * @param account             данные абонента полученные из БД ГРАДа.
-     * @param houseId             ид дома в БД.
+     * @param account                данные абонента полученные из БД ГРАДа.
+     * @param houseId                ид дома в БД.
      */
     private boolean checkAccountDataIsAddedGrad(List<ExportAccountResultType> accountsListFromGISJKH,
                                                 ImportAccountRequest.Account account,
@@ -285,6 +286,7 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
                     }
                 } else { // Если нет уникального идентификатора, заносим всё на честное слово
                     setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getUnifiedAccountNumber(), connection);
+                    return true;
                 }
             }
         }
@@ -379,9 +381,9 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
 
             if (accountGUID != null && accountUniqueNumber != null) {
                 answerProcessing.sendMessageToClient(String.format("Для лицевого счета № %s:\n" +
-                        "\tДобавлен идентификатор: %s\n\tДобавлен уникальный идентификатор: %s.",
+                                "Добавлен идентификатор: %s\nДобавлен уникальный идентификатор: %s.",
                         accountNumber, accountGUID, accountUniqueNumber));
-            } else if (accountGUID != null){
+            } else if (accountGUID != null) {
                 answerProcessing.sendMessageToClient(String.format("Добавлен идентификатор: %s, для лицевого счета № %s", accountGUID, accountNumber));
             } else if (accountUniqueNumber != null) {
                 answerProcessing.sendMessageToClient(String.format("Добавлен уникальный идентификатор: %s, для лицевого счета № %s", accountUniqueNumber, accountNumber));
@@ -450,10 +452,25 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
         }
     }
 
-    public void setErrorState(int errorState) {
+    private void setErrorState(int errorState) {
         if (this.errorState > errorState) {
             this.errorState = errorState;
         }
+    }
+
+    /**
+     * Метод, возвращает из БД Града, ассоциативный массив где:
+     * ключ - ЛС, значение - класс Account пригодный для импорта ЛС в ГИС ЖКХ.
+     * @param houseId идентификатор дома в БД Град.
+     * @param connectionGrad объект пригодный для импорта ЛС в ГИС ЖКХ.
+     * @return ассоциативный массив где:
+     * ключ - ЛС, значение - класс Account пригодный для импорта ЛС в ГИС ЖКХ.
+     * @throws ParseException
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    private LinkedHashMap<String, ImportAccountRequest.Account> getAccountsFromGrad(int houseId, Connection connectionGrad) throws ParseException, SQLException, PreGISException {
+        return accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad);
     }
 
     @Override

@@ -14,15 +14,15 @@ public class MeteringDeviceValuesGradDAOTest {
     @Test
     public void getMeteringDeviceValueFromGrad() throws Exception {
 
-        MeteringDeviceValuesGradDAO gradDao = new MeteringDeviceValuesGradDAO(new AnswerProcessing(new ClientService()));
-
-        HashMap<String, MeteringDeviceValuesObject> valueFromGrad =
-                gradDao.getMeteringDeviceValueFromGrad(7124, ConnectionBaseGRAD.instance().getConnection());
-
-        ConnectionBaseGRAD.instance().close();
-
-        for (Map.Entry<String, MeteringDeviceValuesObject> entry : valueFromGrad.entrySet()) {
-            System.out.println(entry.getValue());
-        }
+//        MeteringDeviceValuesGradDAO gradDao = new MeteringDeviceValuesGradDAO(new AnswerProcessing(new ClientService()));
+//
+//        HashMap<String, MeteringDeviceValuesObject> valueFromGrad =
+//                gradDao.getMeteringDeviceValueFromGrad(7124, ConnectionBaseGRAD.instance().getConnection());
+//
+//        ConnectionBaseGRAD.instance().close();
+//
+//        for (Map.Entry<String, MeteringDeviceValuesObject> entry : valueFromGrad.entrySet()) {
+//            System.out.println(entry.getValue());
+//        }
     }
 }

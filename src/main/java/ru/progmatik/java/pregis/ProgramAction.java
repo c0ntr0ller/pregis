@@ -154,6 +154,7 @@ public class ProgramAction {
             answerProcessing.sendMessageToClient("Синхронизация лицевых счетов...");
             UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
             int state = updateAllAccountData.updateAllAccountData();
+            answerProcessing.clearLabelForText();
             if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка! Операция: \"Синхронизация лицевых счетов\" прервана!");

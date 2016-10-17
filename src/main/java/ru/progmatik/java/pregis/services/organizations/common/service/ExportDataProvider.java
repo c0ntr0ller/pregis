@@ -83,6 +83,7 @@ public class ExportDataProvider {
 
         ExportDataProviderRequest exportDataProviderRequest = new ExportDataProviderRequest();
         exportDataProviderRequest.setId("signed-data-container");
+        exportDataProviderRequest.setVersion(exportDataProviderRequest.getVersion());
 //        exportDataProviderRequest.setIsActual(true);
 
         return exportDataProviderRequest;

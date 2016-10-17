@@ -48,11 +48,7 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * Получает из БД по ИД этого же дома информацию о счетах, производит проверку, при необходимости закрывает счет в ГИС ЖКХ или выгружает новый.
      */
     public int updateAllAccountData() throws SQLException, PreGISException, ParseException {
-        countAll = 0;
-        countAllGisJkh = 0;
-        countRemove = 0;
-        countAdded = 0;
-        countAddedToGRAD = 0;
+
         errorState = 1;
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
@@ -67,6 +63,8 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
             ExportAccountData accountData = new ExportAccountData(answerProcessing);
 
             for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
+
+                clearCounts();
 
                 answerProcessing.clearLabelForText();
                 answerProcessing.sendMessageToClient("");
@@ -95,17 +93,9 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
                     checkAndSendAccountData(exportAccountResult.getAccounts(), accountListFromGrad, itemHouse.getValue(), connectionGRAD);
 
                 }
+                printReport(itemHouse.getKey());
             }
         }
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
-        answerProcessing.sendMessageToClient("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
-        answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
-        answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
-        answerProcessing.sendMessageToClient("Идентификаторов добавлено в ГРАД: " + countAddedToGRAD);
-        LOGGER.debug("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
-        LOGGER.debug("Обработано записей - " + countAll);
-        LOGGER.debug("Лицевых счетов помечено на удаление: " + countRemove + ", Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
 
         if (accountsForCloseList.size() > 0) {
             setErrorState(0);
@@ -114,6 +104,35 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
         }
 
         return errorState;
+    }
+
+    /**
+     * Метод, выводит пользователю информацию о количестве обработанных ЛС.
+     * @param fias код дома по ФИАС.
+     */
+    private void printReport(String fias) {
+
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient(String.format("По дому с кодом ФИАС: %s", fias));
+        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
+        answerProcessing.sendMessageToClient("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
+        answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
+        answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
+        answerProcessing.sendMessageToClient("Идентификаторов добавлено в ГРАД: " + countAddedToGRAD);
+        LOGGER.debug("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
+        LOGGER.debug("Обработано записей - " + countAll);
+        LOGGER.debug("Лицевых счетов помечено на удаление: " + countRemove + ", Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
+    }
+
+    /**
+     * Метод, сбрасывает счетчики.
+     */
+    private void clearCounts() {
+        countAll = 0;
+        countAllGisJkh = 0;
+        countRemove = 0;
+        countAdded = 0;
+        countAddedToGRAD = 0;
     }
 
     /**

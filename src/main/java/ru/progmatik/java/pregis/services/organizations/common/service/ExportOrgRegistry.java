@@ -90,6 +90,7 @@ public class ExportOrgRegistry {
 
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
+        exportOrgRegistryRequest.setVersion(exportOrgRegistryRequest.getVersion());
 //        list.setOGRN("1116027009702"); // Test ООО "ЖЭУ-1" какой-то г. Иваново.
 //        list.setKPP("540201001"); // Test
 //        list.setOGRN("1125476111903");

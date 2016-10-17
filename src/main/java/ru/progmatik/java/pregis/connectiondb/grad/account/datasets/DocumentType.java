@@ -38,11 +38,11 @@ public enum  DocumentType {
         this.typeDocument = typeDocument;
     }
 
-    public String getTypeDocument() {
-        return typeDocument;
-    }
-
     public static DocumentType getTypeDocument(String typeDocument) {
+
+        if (typeDocument.equalsIgnoreCase("паспорт")) {
+            return PASSPORT_RF;
+        }
 
         DocumentType[] types = DocumentType.values();
 
@@ -52,5 +52,9 @@ public enum  DocumentType {
             }
         }
         return null;
+    }
+
+    public String getTypeDocument() {
+        return typeDocument;
     }
 }

@@ -159,11 +159,14 @@ public class ProgramAction {
                 answerProcessing.sendErrorToClientNotException("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка! Операция: \"Синхронизация лицевых счетов\" прервана!");
             } else if (state == 0) {
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация лицевых счетов\" завершилась с ошибками!");
             } else if (state == 1) {
+                answerProcessing.sendMessageToClient("");
                 answerProcessing.sendOkMessageToClient("\"Синхронизация лицевых счетов\" успешно выполнена.");
             }
         } catch (Exception e) {
+            answerProcessing.sendMessageToClient("");
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.

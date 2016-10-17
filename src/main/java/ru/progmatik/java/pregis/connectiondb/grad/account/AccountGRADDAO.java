@@ -192,7 +192,7 @@ public class AccountGRADDAO {
         ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
         ArrayList<Rooms> roomsList = getRooms(houseID, connection);
         ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
-        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
+//        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
         LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 
@@ -245,7 +245,9 @@ public class AccountGRADDAO {
                             account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
                             account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
                             account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                            account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
+                            if (basicInformation.getDateDocumentIdentity() != null) {
+                                account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
+                            }
                         }
 
                     } else {
@@ -258,9 +260,9 @@ public class AccountGRADDAO {
                             } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
                                 criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
                             }
-                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
-                            account.getPayerInfo().setOrg(new RegOrgVersionType());
-                            account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
+//                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
+//                            account.getPayerInfo().setOrg(new RegOrgVersionType());
+//                            account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
                         }
                     }
 
@@ -283,8 +285,29 @@ public class AccountGRADDAO {
             if (count == 1) {
                 continue;
             } else if (count == 0) {
-                answerProcessing.sendInformationToClientAndLog("Для счета - "
-                        + basicInformation.getNumberLS() + ", не удалось найти соответствие в базе данных.", LOGGER);
+                String notFound = "Отсутствует";
+
+                StringBuilder builder = new StringBuilder();
+                builder.append(basicInformation.getSurname());
+                builder.append(" ");
+                builder.append(basicInformation.getName());
+                builder.append(" ");
+                builder.append(basicInformation.getMiddleName());
+                builder.append(" ");
+
+                String fio = builder.toString().replaceAll("null", "").trim();
+                fio = fio.isEmpty() ? notFound : fio;
+
+                if (basicInformation.getTypeDocument() == null || basicInformation.getTypeDocument().getTypeDocument() == null || basicInformation.getNumberDocumentIdentity() == null) {
+                    answerProcessing.sendInformationToClientAndLog(String.format(
+                            "\nДля абонента с ФИО: %s,\nНомер счета: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
+                            fio, basicInformation.getNumberLS()), LOGGER);
+                } else {
+                    answerProcessing.sendInformationToClientAndLog(String.format(
+                            "\nДля абонента с ФИО: %s,\nНомер счета: %s,\nТип документа: %s,\nНомер документа: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
+                            fio, basicInformation.getNumberLS(), basicInformation.getTypeDocument().getTypeDocument(), basicInformation.getNumberDocumentIdentity()), LOGGER);
+                }
+
             } else if (count >= 2) {
                 answerProcessing.sendInformationToClientAndLog("Для счета - "
                         + basicInformation.getNumberLS() + ", найдено более одного соответствия в базе данных.", LOGGER);

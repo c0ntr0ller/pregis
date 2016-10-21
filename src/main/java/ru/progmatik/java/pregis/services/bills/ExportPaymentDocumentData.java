@@ -107,6 +107,7 @@ public class ExportPaymentDocumentData {
         request.setYear((short) periodExport.get(Calendar.YEAR));
         request.setMonth(periodExport.get(Calendar.MONTH));
         request.getAccountNumber().addAll(accountList);
+
 //        request.getServiceID().addAll(listServiceID);
 //        request.getAccountNumber().addAll(accountList);
 

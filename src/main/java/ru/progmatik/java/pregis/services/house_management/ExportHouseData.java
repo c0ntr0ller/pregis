@@ -127,6 +127,7 @@ public class ExportHouseData {
                     for (ExportHouseResultType.ApartmentHouse.Entrance entrance : entrances) {  // Пробегаем подъезды
 //                    Заменить на БД
 
+                        answerProcessing.sendMessageToClient("");
                         answerProcessing.sendMessageToClient("Идентификатор подъезда: " + entrance.getEntranceGUID());
                         answerProcessing.sendMessageToClient("Номер подъезда : " + entrance.getEntranceNum());
                         answerProcessing.sendMessageToClient("Этажность: " + entrance.getStoreysCount());
@@ -260,6 +261,7 @@ public class ExportHouseData {
         request.setId(OtherFormat.getId());
         request.setFIASHouseGuid(fias);
         request.setVersion(request.getVersion());
+        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("ФИАС дома: " + fias);
 
         return request;

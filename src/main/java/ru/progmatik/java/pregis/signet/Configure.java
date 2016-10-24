@@ -127,7 +127,7 @@ public class Configure {
      * @return приваьный ключ.
      * @throws GeneralSecurityException
      */
-    public static KeyStore.PrivateKeyEntry getPrivateKeyFromPfx() throws GeneralSecurityException {
+    public static KeyStore.PrivateKeyEntry getPrivateKeyFromPfx() throws GeneralSecurityException, IOException {
 
         KeyStore.PrivateKeyEntry keyEntry = KeyLoader.loadPrivateKey(getKeyStorePfx(), keyAlias, null);
         if (keyEntry == null) {
@@ -141,7 +141,7 @@ public class Configure {
      * @return криптохранилище.
      * @throws GeneralSecurityException
      */
-    public static KeyStore getKeyStorePfx() throws GeneralSecurityException {
+    public static KeyStore getKeyStorePfx() throws GeneralSecurityException, IOException {
 
         KeyStore keyStore = KeyStore.getInstance("pkcs12", "BC");
         KeyStoreUtils.loadKeyStoreFromFile(keyStore, pfxFile, storePassword);

@@ -98,8 +98,10 @@ public class ProgramAction {
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации\" ", LOGGER, e);
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
+        } finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
-        setStateRunOff(); // взводим флаг в состояние откл.
+
     }
 
     /**
@@ -347,8 +349,9 @@ public class ProgramAction {
             answerProcessing.sendMessageToClient("Получения ЛС завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);
+        }finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
-        setStateRunOff();
     }
 
     /**
@@ -400,8 +403,9 @@ public class ProgramAction {
             answerProcessing.sendMessageToClient("Получения ПД завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
+        }finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
         }
-        setStateRunOff();
     }
 
     public void callExportOrgPeriodData() {
@@ -416,92 +420,6 @@ public class ProgramAction {
             answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
         } finally {
             setStateRunOff();
-        }
-    }
-
-//    /**
-//     * Метод, пока не извесный, замена exportOrgRegistry.
-//     */
-//    public void callAddressValidation() {
-//
-//        answerProcessing.sendMessageToClient("Запуск получения AddressAddition");
-//        AddressValidation addressValidation = new AddressValidation(answerProcessing);
-//        addressValidation.callAddressValidation();
-//        answerProcessing.sendMessageToClient("Получения AddressAddition завершено.");
-//    }
-
-    /**
-     * Метод асинхронный, экспорт реквизитов платежных документов для банков.
-     */
-    public void callExportPaymentDocumentDetails() {
-
-        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
-        try {
-            details.callExportPaymentDocumentDetails();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
-        }
-    }
-
-    /**
-     * Метод асинхронный, получить ответ, экспорт реквизитов платежных документов для банков.
-     */
-    public void getStateExportPaymentDocumentDetails() {
-        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
-        try {
-            details.getStateExportPaymentDocumentDetails();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
-        }
-    }
-
-
-
-
-
-    public void callExportStatusCAChData() {
-        ExportStatusCAChData statusCAChData = new ExportStatusCAChData();
-        try {
-            statusCAChData.callExportStatusCAChData();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportStatusCAChData(): ", "", LOGGER, e);
-        }
-    }
-
-    public void callExportCAChData() {
-        ExportCAChData caChData = new ExportCAChData();
-        try {
-            caChData.callExportCAChData();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportCAChData(): ", "", LOGGER, e);
-        }
-    }
-
-    /**
-     * Экспорт договоров ресурсоснабжения.
-     */
-    public void callExportSupplyResourceContractData() {
-
-        ExportSupplyResourceContractData contractData = new ExportSupplyResourceContractData(answerProcessing);
-        try {
-            contractData.callExportSupplyResourceContractData();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Метод, отправляет в БД ГРАДа запрос, получает все дома,
-     * проверяет, имеется у дома идентификатор ГИС ЖКХ,
-     * если есть, то добавляет его в список для обработки.
-     */
-    public void getHouseAddedGisJkh() {
-        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
-            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
-
-        } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Получение домов добавленых в ГИС ЖКХ\" ", LOGGER, e);
         }
     }
 
@@ -541,4 +459,81 @@ public class ProgramAction {
     public void checkSessions() {
         clientService.checkSession();
     }
+
+
+//    Не используются
+
+    /**
+     * Метод асинхронный, экспорт реквизитов платежных документов для банков.
+     */
+    public void callExportPaymentDocumentDetails() {
+
+        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
+        try {
+            details.callExportPaymentDocumentDetails();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+        }
+    }
+
+    /**
+     * Метод асинхронный, получить ответ, экспорт реквизитов платежных документов для банков.
+     */
+    public void getStateExportPaymentDocumentDetails() {
+        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
+        try {
+            details.getStateExportPaymentDocumentDetails();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+        }
+    }
+
+    public void callExportStatusCAChData() {
+        ExportStatusCAChData statusCAChData = new ExportStatusCAChData();
+        try {
+            statusCAChData.callExportStatusCAChData();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportStatusCAChData(): ", "", LOGGER, e);
+        }
+    }
+
+    public void callExportCAChData() {
+        ExportCAChData caChData = new ExportCAChData();
+        try {
+            caChData.callExportCAChData();
+        } catch (SQLException e) {
+            answerProcessing.sendErrorToClient("callExportCAChData(): ", "", LOGGER, e);
+        }
+    }
+
+    /**
+     * Экспорт договоров ресурсоснабжения.
+     */
+    public void callExportSupplyResourceContractData() {
+
+        ExportSupplyResourceContractData contractData = new ExportSupplyResourceContractData(answerProcessing);
+        try {
+            contractData.callExportSupplyResourceContractData();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод, отправляет в БД ГРАДа запрос, получает все дома,
+     * проверяет, имеется у дома идентификатор ГИС ЖКХ,
+     * если есть, то добавляет его в список для обработки.
+     */
+    public void getHouseAddedGisJkh() {
+//        На даработке
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
+            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Получение домов добавленых в ГИС ЖКХ\" ", LOGGER, e);
+        }
+    }
+
+
 }

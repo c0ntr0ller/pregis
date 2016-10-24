@@ -1,9 +1,6 @@
 package ru.progmatik.java.pregis.signet.bcsign.jce;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -30,13 +27,9 @@ public class KeyStoreUtils {
      * @param storePassword пароль на доступ к хранилищу
      * @throws GeneralSecurityException в случае если при загрузке хранилища произошла ошибка
      */
-    public static void loadKeyStoreFromFile(KeyStore keyStore, File file, char[] storePassword) throws GeneralSecurityException {
-        try {
-            try (FileInputStream fs = new FileInputStream(file)) {
-                keyStore.load(fs, storePassword);
-            }
-        } catch (IOException e) {
-            throw new KeyStoreException("Cannot load keystore from file: " + file, e);
+    public static void loadKeyStoreFromFile(KeyStore keyStore, File file, char[] storePassword) throws GeneralSecurityException, IOException {
+        try (FileInputStream fs = new FileInputStream(file)) {
+            keyStore.load(fs, storePassword);
         }
     }
 

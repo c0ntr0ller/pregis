@@ -65,12 +65,13 @@ public class OtherFormat {
     public static Calendar getCalendarForPaymentDocument() {
 
         Calendar calendar = new GregorianCalendar();
-//        calendar.setTime(new Date()); // включить после испытаний.
+        calendar.setTime(new Date()); // включить после испытаний.
+        calendar.set(Calendar.MONTH, (calendar.get(Calendar.MONTH) -1) % 11);
 //        У месяца отсчет от 0, в нашем случае, нужен предыдущий месяц, так и оставлю.
 //        TODO
 //        Удалить после испытаний
-        calendar.set(Calendar.MONTH, Calendar.JUNE);
-        calendar.set(Calendar.YEAR, 2016);
+//        calendar.set(Calendar.MONTH, Calendar.JUNE);
+//        calendar.set(Calendar.YEAR, 2016);
 //        return (getDateNow().getMonth() -1 ) % 12;
 //        Пока тестовый месяц потом вернуть на корректный
         return calendar;

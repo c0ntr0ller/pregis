@@ -102,7 +102,7 @@ public class Main {
         context.addServlet(new ServletHolder(new IndexServlet(action)), "/main");
         context.addServlet(new ServletHolder(new UsersServlet(action)), "/users");
         context.addServlet(new ServletHolder(webSocketClientServlet), "/websocket");
-        context.addServlet(new ServletHolder(new AjaxServlet()), "/ajax");
+//        context.addServlet(new ServletHolder(new AjaxServlet()), "/ajax");
         context.getSessionHandler().getSessionManager().setMaxInactiveInterval(600); // Время сессии
 
         ResourceHandler resource_handler = new ResourceHandler();

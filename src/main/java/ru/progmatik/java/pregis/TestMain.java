@@ -17,6 +17,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.UrlLoader;
 import ru.progmatik.java.pregis.other.utils.MeteringDevicesDBSearch;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
@@ -49,9 +50,13 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
+        System.out.println(OtherFormat.getCalendarForPaymentDocument());
+        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
+
 //        ResourceBundle bundle = PropertyResourceBundle.getBundle("url.properties");
 //        System.out.println(bundle.getString("url.config.homeManagement"));
-        UrlLoader.instance();
+//        UrlLoader.instance();
+
 
 //        if (new BigDecimal(-123.000).compareTo(new BigDecimal(0.0)) < 0) {
 //            System.out.println(new BigDecimal(-123.0).negate());

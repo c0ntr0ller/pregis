@@ -50,8 +50,9 @@ public class TestMain {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
 
-        System.out.println(OtherFormat.getCalendarForPaymentDocument());
-        System.out.println(OtherFormat.getCalendarForPaymentDocument().get(Calendar.MONTH));
+
+//        System.out.println(OtherFormat.getCalendarForPaymentDocument());
+//        System.out.println(OtherFormat.getCalendarForPaymentDocument().getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH));
 
 //        ResourceBundle bundle = PropertyResourceBundle.getBundle("url.properties");
 //        System.out.println(bundle.getString("url.config.homeManagement"));

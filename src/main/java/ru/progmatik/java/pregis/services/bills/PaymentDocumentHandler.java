@@ -132,7 +132,7 @@ public class PaymentDocumentHandler {
                         paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getAbonId(),
                         room.getNumberLS(), paymentDocument.getAccountGuid());
 
-                //            Ссылка на платежные реквизиты ??? TODO
+                //            Ссылка на платежные реквизиты
                 paymentDocument.setPaymentInformationKey(paymentInformationIdsMap.get(organizationId).getTransportGUID());
 
                 paymentMap.put(paymentDocument, registryDataSet);
@@ -184,7 +184,6 @@ public class PaymentDocumentHandler {
         ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList = new ArrayList<>();
         ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList = new ArrayList<>();
 
-//        Пока поштучно. Со временем сделать шаг до 5 или 10 за отдин запрос
         outer:
         for (Map.Entry<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> entry :
                 paymentDocumentMap.entrySet()) {
@@ -200,7 +199,7 @@ public class PaymentDocumentHandler {
 
             paymentDocumentList.add(entry.getKey());
 
-            if ((paymentDocumentList.size() % 10) == 0) {
+            if ((paymentDocumentList.size() % 10) == 0) { // отправляет по 10 документов
                 sendPaymentDocumentsList(paymentDocumentList, paymentDocumentMap, paymentInformationList,
                         paymentPeriod, registryDAO);
                 paymentDocumentList.clear();
@@ -208,9 +207,11 @@ public class PaymentDocumentHandler {
             }
         }
 
-        if (paymentDocumentList.size() > 0) {
+        if (paymentDocumentList.size() > 0) { // отправляет оставшиеся документы
             sendPaymentDocumentsList(paymentDocumentList, paymentDocumentMap, paymentInformationList,
                     paymentPeriod, registryDAO);
+            paymentDocumentList.clear();
+            paymentInformationList.clear();
         } else {
             answerProcessing.sendMessageToClient("Не найдены документы для выгрузки.");
         }

@@ -58,6 +58,7 @@ $(function () {
     $('.thumb').click(function () { // вызов отправки операции
         var message = $(this).attr("id");
         if (message === undefined) {
+        //
         } else if (message === "exit") {
             exitRequest();
         } else {

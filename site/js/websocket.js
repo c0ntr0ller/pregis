@@ -99,6 +99,9 @@ function showModalWindow(text) {
     }
     showLayoutHide();
 };
+function showHouseListModalWindow() {
+    
+}
 function hideModalWindow() {
     $('#view-modal-window').fadeOut(300);
     if ($('.hide-layout').css('z-index') === '1001') {

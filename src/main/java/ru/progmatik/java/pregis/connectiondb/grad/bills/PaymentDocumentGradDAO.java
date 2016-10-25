@@ -78,7 +78,7 @@ public final class PaymentDocumentGradDAO {
                     "RMETERS_SHARED, " +    // Текущие показания приборов учета коммунальных услуг. Общедомовые (ОДПУ). Раздел 4.
                     "RSUMM_AMOUNT_PERSONAL, " + // Суммарный объем коммунальных услуг в доме. В помещениях дома. Раздел 4.
                     "RSUMM_AMOUNT_SHARED " + // Суммарный объем коммунальных услуг в доме. На ощедомовые нужды. Раздел 4.
-                    "FROM EX_GIS_INVOICE(" + abonId +", " + calendar.get(Calendar.MONTH) + ", " +
+                    "FROM EX_GIS_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
                     (calendar.get(Calendar.YEAR) - 1) + ", null,  null, " + gradId + ", null)"); // TODO удалить -1
 
             while (rs.next()) {
@@ -142,8 +142,10 @@ public final class PaymentDocumentGradDAO {
 
 //                        Норматив потребления коммунальной услуги
                         chargeInfo.getMunicipalService().setServiceInformation(new ServiceInformation());
-                        if (rs.getString(15) != null && !rs.getString(15).trim().isEmpty()) {
+
 //                        Текущие показания приборов учёта коммунальных услуг - индивидульное потребление
+                        if (rs.getString(15) != null && !rs.getString(15).trim().isEmpty()) {
+
                             chargeInfo.getMunicipalService().getServiceInformation().
                                     setIndividualConsumptionCurrentValue(new BigDecimal(rs.getString(15)).setScale(4, BigDecimal.ROUND_DOWN));
                         }
@@ -157,7 +159,7 @@ public final class PaymentDocumentGradDAO {
                             } catch (NumberFormatException e) {
                                 answerProcessing.sendErrorToClient("Формирование ПД", "\"Формирование ПД\"", LOGGER,
                                         new PreGISException("Неверное значение указанно в процедуре \"WEB_INVOICE\", " +
-                                        "ГИС ЖКХ ожидает BigDecimal"));
+                                                "ГИС ЖКХ ожидает BigDecimal"));
                             }
                         }
 
@@ -165,7 +167,7 @@ public final class PaymentDocumentGradDAO {
 //                        Суммарный объём коммунальных услуг в доме - индивидульное потребление
                         if (rs.getBigDecimal(22) != null) {
                             chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalIndividualConsumption(
-                                rs.getBigDecimal(22).setScale(4, BigDecimal.ROUND_HALF_UP));
+                                    rs.getBigDecimal(22).setScale(4, BigDecimal.ROUND_HALF_UP));
                         }
 //                        Суммарный объём коммунальных услуг в доме - общедомовые нужды
                         if (rs.getBigDecimal(23) != null) {
@@ -251,9 +253,10 @@ public final class PaymentDocumentGradDAO {
 
                     } else if (referenceItem.getCodeParent().equals("1")) { // а если Дополнительная услуга
 //                    TODO
-                        chargeInfo = new PaymentDocumentType.ChargeInfo();
-//                    chargeInfo.setAdditionalService();
+//                        chargeInfo = new PaymentDocumentType.ChargeInfo();
+//                        chargeInfo.setAdditionalService(new PDServiceChargeType.AdditionalService());
                     }
+
                     if (chargeInfo != null) {
                         paymentDocument.getChargeInfo().add(chargeInfo);
                     }
@@ -299,6 +302,19 @@ public final class PaymentDocumentGradDAO {
     }
 
     public BigDecimal getBigDecimalTwo(BigDecimal value) {
+
+//        ROUND_DOWN: Отбрасывание разряда
+//        0.333  ->   0.33
+//       -0.333  ->  -0.33
+
+//        ROUND_HALF_UP: Округление вверх, если число после запятой >= .5
+//        0.5  ->  1.0
+//        0.4  ->  0.0
+
+//        ROUND_HALF_DOWN: Округление вверх, если число после запятой > .5
+//        0.5  ->  0.0
+//        0.6  ->  1.0
+
 //        MoneyType 2 знака после точки.
         value = value.setScale(2, BigDecimal.ROUND_DOWN);
 
@@ -307,8 +323,9 @@ public final class PaymentDocumentGradDAO {
 
     /**
      * Метод, получает все идентификаторы организаций из платежного документа.
-     * @param abonId идентификатор абонент в БД ГРАДа.
-     * @param calendar дата на которую нужно сформировать ПД.
+     *
+     * @param abonId         идентификатор абонент в БД ГРАДа.
+     * @param calendar       дата на которую нужно сформировать ПД.
      * @param connectionGrad подключение к БД ГРАД.
      * @return список идентификаторов организаци получателей денежных средств.
      * @throws SQLException
@@ -321,7 +338,7 @@ public final class PaymentDocumentGradDAO {
             ResultSet rs = statement.executeQuery("SELECT " +
                     "RSUPPLIER_ID " +      // 1  ид поставщика
                     "FROM EX_GIS_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
-                    (calendar.get(Calendar.YEAR) -1 )+ ", null,  null, null, null)"); // TODO delete -1
+                    (calendar.get(Calendar.YEAR) - 1) + ", null,  null, null, null)"); // TODO delete -1
             while (rs.next()) {
                 treeSet.add(rs.getInt(1));
             }

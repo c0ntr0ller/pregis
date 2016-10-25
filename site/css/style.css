@@ -329,6 +329,10 @@ body {
     transform: translateY(-50%);
     cursor: default;
 }
+#house-select {
+    display: none;
+    font-size: 15px;
+}
 /***BUTTON***/
 .button-state, #dont-work-button {
     left: 26%;

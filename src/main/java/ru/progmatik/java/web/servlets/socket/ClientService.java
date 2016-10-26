@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientService {
 
     private static final Logger LOGGER = Logger.getLogger(ClientService.class);
+    private static final String CLIENT_SHOW_MESSAGE = "::showMessage()";
     private final List<String> dataList = new ArrayList<>();
     private final ClientDialogWindowListener listener = new ClientDialogWindowListener();
     private Set<ClientWebSocket> webSockets;
@@ -52,11 +53,11 @@ public class ClientService {
             } else {
                 answerToClient += "\n";
             }
-            sendMessage(answerToClient);
+            action.getAnswerProcessing().sendMessageToClient(answerToClient);
         }
 
         if (action.isRunning()) {
-            sendMessage("Уже выполнятся другая операция!");
+            action.getAnswerProcessing().sendErrorToClientNotException("Уже выполнятся другая операция!");
         } else {
             switch (command) {
                 case "getOrgPPAGUID":
@@ -108,7 +109,7 @@ public class ClientService {
                     action.callExportOrgPeriodData();
                     break;
                 default:
-                    sendMessage("Неизвестная команда: " + command);
+                    action.getAnswerProcessing().sendErrorToClientNotException("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.
                     break;
             }
@@ -170,7 +171,6 @@ public class ClientService {
         timer = null;
         listener.sendAnswer(question);
         removeAllListener();
-
     }
 
     /**
@@ -184,7 +184,6 @@ public class ClientService {
      * Метод, закрывает окно с вопросом у клиента.
      */
     private void closeQuestionWindowClient() {
-        sendMessage("::closeModalWindow()");
+        action.getAnswerProcessing().closeQuestionWindowClient();
     }
-
 }

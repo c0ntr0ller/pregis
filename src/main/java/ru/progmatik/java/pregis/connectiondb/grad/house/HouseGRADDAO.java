@@ -31,6 +31,10 @@ public class HouseGRADDAO {
     private static final int HOUSE_ID_GRAD_MKD = 14; // ИД дома из БД ГРАД
     private static final int HOUSE_ID_GRAD_JD = 10; // ИД дома из БД ГРАД
 
+//    Временные листы, что бы не ходить 2 раза за одним и темже в БД
+    private ArrayList<String> tempMKD = new ArrayList<>();
+    private ArrayList<String> tempJD = new ArrayList<>();
+
     /**
      * Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС и ИД дома в БД ГРАД, затем добавляет его в Map.
      *
@@ -85,6 +89,7 @@ public class HouseGRADDAO {
 
         List<String> allListMKD = getAllHouseFromGrad(connectionGrad);
         ArrayList<String> listAllJD = getJdAllFiasFromGrad(connectionGrad);
+
         LinkedHashMap<String, Integer> mapAllHouseWithIdGis = new LinkedHashMap<String, Integer>();
 
 //        Получение данных из БД о МКД.
@@ -278,11 +283,40 @@ public class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private ArrayList<String> getAllHouseFromGrad(Connection connectionGrad) throws PreGISException, SQLException {
-
-        ArrayList<String> allHouseData = new ArrayList<>();
+    private ArrayList<String> getAllHouseFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
 
         String sqlRequest = "SELECT * FROM EX_GIS01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
+
+        return getHouseFromGrad(sqlRequest, tempMKD, connectionGrad);
+    }
+
+
+
+    /**
+     * Метод, получает все жилые дома содержащие из БД ГРАД.
+     *
+     * @return список жилых домов.
+     */
+    private ArrayList<String> getJdAllFiasFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
+
+        String sqlRequest = "SELECT * FROM EX_GIS_LH01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
+
+        return getHouseFromGrad(sqlRequest, tempJD, connectionGrad);
+    }
+
+    /**
+     * Метод, отправляет в БД Града запрос, получает список домов и возвращает его.
+     * @param sqlRequest SQL запрос.
+     * @param tempDataHouse временный список.
+     * @param connectionGrad подключение к БД Град.
+     * @return список домов.
+     * @throws SQLException
+     */
+    private ArrayList<String> getHouseFromGrad(final String sqlRequest, final ArrayList<String> tempDataHouse,
+                                               final Connection connectionGrad) throws SQLException {
+
+        ArrayList<String> allHouseData = new ArrayList<>();
+        tempDataHouse.clear();
 
         try (Statement statement = connectionGrad.createStatement();
              ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
@@ -290,33 +324,11 @@ public class HouseGRADDAO {
             while (resultSet.next()) {
                 if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
                     allHouseData.add(resultSet.getString(1));
+                    tempDataHouse.add(resultSet.getString(1));
                 }
             }
         }
         return allHouseData;
-    }
-
-    /**
-     * Метод, получает все жилые дома содержащие из БД ГРАД.
-     *
-     * @return список жилых домов.
-     */
-    private ArrayList<String> getJdAllFiasFromGrad(Connection connectionGrad) throws PreGISException, SQLException {
-
-        ArrayList<String> allJdData = new ArrayList<>();
-
-        String sqlRequest = "SELECT * FROM EX_GIS_LH01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
-
-        try (Statement statement = connectionGrad.createStatement();
-             ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
-
-            while (resultSet.next()) {
-                if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
-                    allJdData.add(resultSet.getString(1));
-                }
-            }
-        }
-        return allJdData;
     }
 
     /**
@@ -355,5 +367,21 @@ public class HouseGRADDAO {
         // возникнут ошибки на ссылки на индексы массива.
 
         return data.split(Pattern.quote("|"));
+    }
+
+    /**
+     * Метод, возвращает временный список содержащий информацию о МКД из процедуры "EX_GIS01".
+     * @return возвращает временный список содержащий информацию о МКД.
+     */
+    public ArrayList<String> getTempMKD() {
+        return tempMKD;
+    }
+
+    /**
+     * Метод, возвращает временный список содержащий информацию о ЖД из процедуры "EX_GIS_LH01".
+     * @return возвращает временный список содержащий информацию о ЖД.
+     */
+    public ArrayList<String> getTempJD() {
+        return tempJD;
     }
 }

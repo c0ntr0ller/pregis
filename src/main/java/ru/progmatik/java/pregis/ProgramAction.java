@@ -442,7 +442,7 @@ public class ProgramAction {
      * Если возникла ошибка вызвать и поставить откл. (false).
      */
     public void setStateRunOff() {
-        clientService.sendMessage("::setButtonState(false)");
+        answerProcessing.unlockButtons();
         this.stateRun = false;
         clientService.dropDataList();
     }
@@ -452,7 +452,7 @@ public class ProgramAction {
      * Устанавливает флаг в состояние выполняется (true).
      */
     private void setStateRunOn() {
-        clientService.sendMessage("::setButtonState(true)");
+        answerProcessing.lockButtons();
         this.stateRun = true;
     }
 
@@ -535,5 +535,7 @@ public class ProgramAction {
         }
     }
 
-
+    public AnswerProcessing getAnswerProcessing() {
+        return answerProcessing;
+    }
 }

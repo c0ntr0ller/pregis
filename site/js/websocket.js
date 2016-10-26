@@ -1,4 +1,5 @@
 var ws;
+var scrollSize = 0;
 
 $(document).ready(function () {
     getWebConnect();
@@ -14,34 +15,56 @@ function getWebConnect() {
 
         // console.log('Открыто соединение');
     };
-    var scrollSize = 0;
+
     ws.onmessage = function (event) {
-        var inMessage = event.data;
 
-        if (inMessage.indexOf('::setButtonState(false)') != -1) {
-            showButton();
-        } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
-            showState();
-        } else if (inMessage.indexOf('::setFailed()') != -1) {
-            setFailedLabelText();
-        } else if (inMessage.indexOf('::setOkLabelText()') != -1) {
-            setOkLabelText();
-        } else if (inMessage.indexOf('::clearLabelText') != -1) {
-            clearLabelText();
-        } else if (inMessage.indexOf('::showModalWindow()') != -1) {
-            showModalWindow(event.data.replace('::showModalWindow()', ''));
-        } else if (inMessage.indexOf('::closeModalWindow()') != -1) {
-            hideModalWindow();
-        } else {
-            $('.label-text > span').html(inMessage);
-            var $textarea = document.getElementById("messages");
-            $textarea.value = $textarea.value + inMessage + "\n";
+        var inMessage = JSON.parse(event.data);
 
-            if (scrollSize === 0 || $textarea.scrollHeight < ($textarea.scrollTop + 500 )) {
-                $textarea.scrollTop = $textarea.scrollHeight;
-                scrollSize = $textarea.scrollTop;
-            }
+        // console.log("event.data: " + event.data);
+
+        switch (inMessage.command) {
+            case '::setButtonState(false)':
+                showButton();
+                break;
+            case '::setButtonState(true)':
+                showState();
+                break;
+            case '::setFailed()':
+                setFailedLabelText();
+                break;
+            case '::setOkLabelText()':
+                setOkLabelText();
+                break;
+            case '::clearLabelText()':
+                clearLabelText();
+                break;
+            case '::showModalWindow()':
+                showModalWindow(inMessage.value);
+                break;
+            case '::closeModalWindow()':
+                hideModalWindow();
+                break;
+            default:
+                showMessage(inMessage.value);
         }
+
+        // if (inMessage.indexOf('::setButtonState(false)') != -1) {
+        //     showButton();
+        // } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
+        //     showState();
+        // } else if (inMessage.indexOf('::setFailed()') != -1) {
+        //     setFailedLabelText();
+        // } else if (inMessage.indexOf('::setOkLabelText()') != -1) {
+        //     setOkLabelText();
+        // } else if (inMessage.indexOf('::clearLabelText') != -1) {
+        //     clearLabelText();
+        // } else if (inMessage.indexOf('::showModalWindow()') != -1) {
+        //     showModalWindow(event.data.replace('::showModalWindow()', ''));
+        // } else if (inMessage.indexOf('::closeModalWindow()') != -1) {
+        //     hideModalWindow();
+        // } else {
+        //     showMessage();
+        // }
     };
     ws.onclose = function (event) {
         if (parseInt(event.code) === 1006 || parseInt(event.code) === 1008) {
@@ -79,7 +102,16 @@ function sendMessageWithParam(message, param) {
     };
     ws.send(JSON.stringify(msgJSON));
 };
+function showMessage(message) {
+    $('.label-text > span').html(message);
+    var $textarea = document.getElementById("messages");
+    $textarea.value = $textarea.value + message + "\n";
 
+    if (scrollSize === 0 || $textarea.scrollHeight < ($textarea.scrollTop + 500 )) {
+        $textarea.scrollTop = $textarea.scrollHeight;
+        scrollSize = $textarea.scrollTop;
+    }
+};
 function setFailedLabelText() {
     $('.label-text').attr("class", "label-text failed");
     $('.show-state .img').css("background-image", "url('images/error-64px.png')");
@@ -99,8 +131,16 @@ function showModalWindow(text) {
     }
     showLayoutHide();
 };
-function showHouseListModalWindow() {
-    
+function showHouseListModalWindow(arrayHouse) {
+
+    var selectBox = $('#house-select');
+
+    selectBox.append($("<option></option>").attr("value", -1).prop("selected").text("Выгрузить все"));
+
+    for (var i = 0; i < arrayHouse.length; i++) {
+        var item = JSON.parse(arrayHouse[i]);
+        selectBox.append($("<option></option>").attr("value", item.value).text(item.name));
+    }
 }
 function hideModalWindow() {
     $('#view-modal-window').fadeOut(300);

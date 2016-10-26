@@ -27,4 +27,13 @@ public class ObjectForJSON {
     public String getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "ObjectForJSON{" +
+                "command='" + command + '\'' +
+                ", id='" + id + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

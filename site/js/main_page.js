@@ -13,17 +13,46 @@ function getWebConnect() {
         // console.log('Открыто соединение');
     };
     ws.onmessage = function (event) {
-        var inMessage = event.data;
-        if (inMessage.indexOf('::setButtonState(false)') != -1) {
-            setButtonState(false);
-        } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
-            setButtonState(true);
-        } else if (inMessage.indexOf('::setFailed()') != -1 || inMessage.indexOf('::setOkLabelText()') != -1) {
-        } else {
-            var $textarea = document.getElementById("messages");
-            $textarea.value = $textarea.value + inMessage + "\n";
-            $textarea.scrollTop = $textarea.scrollHeight;
+
+        var inMessage = JSON.parse(event.data);
+
+        // console.log("event.data: " + event.data);
+
+        switch (inMessage.command) {
+            case '::setButtonState(false)':
+                setButtonState(false);
+                break;
+            case '::setButtonState(true)':
+                setButtonState(true);
+                break;
+            case '::setFailed()':
+                // setFailedLabelText();
+                break;
+            case '::setOkLabelText()':
+                // setOkLabelText();
+                break;
+            case '::clearLabelText()':
+                // clearLabelText();
+                break;
+            case '::showModalWindow()':
+                // showModalWindow(inMessage.value);
+                break;
+            case '::closeModalWindow()':
+                // hideModalWindow();
+                break;
+            default:
+                showMessage(inMessage.value);
         }
+
+        // var inMessage = event.data;
+        // if (inMessage.indexOf('::setButtonState(false)') != -1) {
+        //     setButtonState(false);
+        // } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
+        //     setButtonState(true);
+        // } else if (inMessage.indexOf('::setFailed()') != -1 || inMessage.indexOf('::setOkLabelText()') != -1) {
+        // } else {
+        //
+        // }
     };
     ws.onclose = function (event) {
         if (event.wasClean) {
@@ -42,6 +71,12 @@ function getWebConnect() {
         console.log("The following error occurred: " + evt.data);
     }
 };
+
+function showMessage(message) {
+    var $textarea = document.getElementById("messages");
+    $textarea.value = $textarea.value + message + "\n";
+    $textarea.scrollTop = $textarea.scrollHeight;
+}
 
 function sendMessage(message) {    
     setButtonState(true);

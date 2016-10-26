@@ -1,5 +1,7 @@
 package ru.progmatik.java.pregis;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
@@ -17,11 +19,10 @@ import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.UrlLoader;
 import ru.progmatik.java.pregis.other.utils.MeteringDevicesDBSearch;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 import ru.progmatik.java.web.servlets.socket.ClientService;
+import ru.progmatik.java.web.servlets.socket.ObjectForJSON;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,9 +33,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +49,32 @@ public class TestMain {
             "<S:Header><ISRequestHeader xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\"><Date>2016-03-08T23:21:56.517+06:00</Date><MessageGUID>7b824087-412b-4aa5-9b99-8afbd52bdb15</MessageGUID></ISRequestHeader></S:Header><S:Body><ns3:exportDataProviderRequest xmlns:ns3=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry-common/\" xmlns=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/\" xmlns:ns10=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi-common/\" xmlns:ns11=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/nsi/\" xmlns:ns12=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/device-metering/\" xmlns:ns13=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/organizations-registry/\" xmlns:ns14=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/licenses/\" xmlns:ns15=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/infrastructure/\" xmlns:ns16=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/fas/\" xmlns:ns2=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/inspection/\" xmlns:ns4=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns5=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/house-management/\" xmlns:ns6=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/services/\" xmlns:ns7=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/disclosure/\" xmlns:ns8=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/payment/\" xmlns:ns9=\"http://dom.gosuslugi.ru/schema/integration/8.6.0.4/bills/\" Id=\"signed-data-container\"></ns3:exportDataProviderRequest></S:Body></S:Envelope>";
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XMLStreamException, SQLException, JAXBException, ParseException, PreGISException, SOAPException {
+
+
+        ObjectForJSON json = new ObjectForJSON("getNsi", null, "NSI");
+        String stringJSON = testToJSON(json);
+        testFromJSON(stringJSON);
+
+        ArrayList<ValueJSON> list = new ArrayList<ValueJSON>();
+        list.add(new ValueJSON("1", "Дом 1"));
+        list.add(new ValueJSON("2", "Дом 2"));
+        list.add(new ValueJSON("3", "Дом 3"));
+
+        Gson gson = new Gson();
+
+//        Collection<ValueJSON> collection = list;
+        String collectionJSON = gson.toJson(list);
+        System.out.println(collectionJSON);
+
+        ObjectForJSON jsonList = new ObjectForJSON("getHouse", null, collectionJSON);
+        String stringListJSON = testToJSON(jsonList);
+        ObjectForJSON objectForJSONAnswer = testFromJSON(stringListJSON);
+
+
+        Type type = new TypeToken<Collection<ValueJSON>>() {}.getType();
+
+        ArrayList<ValueJSON> collectionAnswer = gson.fromJson(objectForJSONAnswer.getValue(), type);
+        collectionAnswer.forEach(System.out::println);
 
 
 //        System.out.println(OtherFormat.getCalendarForPaymentDocument());
@@ -290,6 +316,26 @@ public class TestMain {
 //        String mesout = org.apache.ws.security.util.XMLUtils.PrettyDocumentToString(doc);
 //        System.out.println(mesout);
 
+    }
+
+    private static String testToJSON(final ObjectForJSON objectForJSON) {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(objectForJSON);
+        System.out.println(json);
+
+        return json;
+    }
+
+    private static ObjectForJSON testFromJSON(String objectJSON) {
+
+        Gson gson = new Gson();
+        ObjectForJSON json = gson.fromJson(objectJSON, ObjectForJSON.class);
+//        String command = json.getCommand();
+//        String value = json.getValue();
+        System.out.println(json);
+
+        return json;
     }
 
 //    public static void findCopy() {
@@ -746,6 +792,32 @@ public class TestMain {
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+    }
+
+    static class ValueJSON {
+        private final String value;
+        private final String name;
+
+        public ValueJSON(String value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return "ValueJSON{" +
+                    "value='" + value + '\'' +
+                    ", name='" + name + '\'' +
+                    '}';
         }
     }
 }

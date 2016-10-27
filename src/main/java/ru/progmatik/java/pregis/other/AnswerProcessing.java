@@ -8,6 +8,9 @@ import ru.progmatik.java.pregis.connectiondb.localdb.message.SaveToBaseMessages;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 import ru.progmatik.java.web.servlets.socket.ObjectForJSON;
+import ru.progmatik.java.web.servlets.socket.ValueJSON;
+
+import java.util.ArrayList;
 
 /**
  * Класс, служит передатчиком информации клиетам, в лог файл, в БД.
@@ -201,4 +204,16 @@ public final class AnswerProcessing {
     public void lockButtons() {
         sendCommandToClient(CLIENT_SET_BUTTON_STATE_TRUE);
     }
+
+    /**
+     * Метод, выводит список домов, для выбора в UI пользователю.
+     * @param list список домов. value - ид дома в БД ГРАД, name - адрес дома для пользователя.
+     */
+    public void showHouseListModalWindow(ArrayList<ValueJSON> list) {
+        Gson gson = new Gson();
+        String listJSON = gson.toJson(list);
+        clientService.sendMessage(messageFormatter("::showHouseListModalWindow()", listJSON));
+    }
+
+
 }

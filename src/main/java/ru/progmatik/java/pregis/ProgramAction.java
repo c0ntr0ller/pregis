@@ -29,14 +29,13 @@ import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
+import ru.progmatik.java.web.servlets.socket.ValueJSON;
 
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -527,8 +526,21 @@ public class ProgramAction {
     public void getHouseAddedGisJkh() {
 //        На даработке
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+
             HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
             LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+            HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow();
+            ArrayList<ValueJSON> listHouseModalWindow = new ArrayList<>();
+
+            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
+                if (allHouseForListModalWindow.containsKey(entry.getValue())) {
+                    listHouseModalWindow.add(new ValueJSON(
+                            entry.getValue().toString(),
+                            allHouseForListModalWindow.get(entry.getValue())));
+                }
+            }
+
+            answerProcessing.showHouseListModalWindow(listHouseModalWindow);
 
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Получение домов добавленых в ГИС ЖКХ\" ", LOGGER, e);

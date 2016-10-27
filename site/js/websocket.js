@@ -1,5 +1,6 @@
 var ws;
 var scrollSize = 0;
+var tempCommandID = "";
 
 $(document).ready(function () {
     getWebConnect();
@@ -20,7 +21,7 @@ function getWebConnect() {
 
         var inMessage = JSON.parse(event.data);
 
-        // console.log("event.data: " + event.data);
+        console.log("event.data: " + event.data);
 
         switch (inMessage.command) {
             case '::setButtonState(false)':
@@ -43,6 +44,9 @@ function getWebConnect() {
                 break;
             case '::closeModalWindow()':
                 hideModalWindow();
+                break;
+            case '::showHouseListModalWindow()':
+                showHouseListModalWindow(inMessage.value);
                 break;
             default:
                 showMessage(inMessage.value);
@@ -100,6 +104,7 @@ function sendMessageWithParam(message, param) {
         command: message,
         value: valueForm
     };
+    console.log("Send : " + msgJSON); //    remove
     ws.send(JSON.stringify(msgJSON));
 };
 function showMessage(message) {
@@ -135,13 +140,29 @@ function showHouseListModalWindow(arrayHouse) {
 
     var selectBox = $('#house-select');
 
-    selectBox.append($("<option></option>").attr("value", -1).prop("selected").text("Выгрузить все"));
+    var arrayJSON = JSON.parse(arrayHouse);
 
-    for (var i = 0; i < arrayHouse.length; i++) {
-        var item = JSON.parse(arrayHouse[i]);
-        selectBox.append($("<option></option>").attr("value", item.value).text(item.name));
+    if (arrayJSON.length > 0 ) {
+        selectBox.append($("<option></option>").attr("value", -1).text("Выгрузить все"));
+        // selectBox.append($("<option></option>").attr("value", -1).prop("selected").text("Выгрузить все"));
+        console.log("Array size: " + arrayJSON.length);
+        console.log("Array : " + arrayJSON);
+
+        for (var i = 0; i < arrayJSON.length; i++) {
+            // var item = JSON.parse(arrayHouse[i]);
+            console.log("value: " + arrayJSON[i].value);
+            selectBox.append($("<option></option>").attr("value", arrayJSON[i].value).text(arrayJSON[i].name));
+        }
+    } else {
+        selectBox.append($("<option></option>").attr("value", -2).prop("selected").text("Нет данных для выгрузки"));
     }
-}
+    selectBox.fadeIn(50);
+    $('#view-modal-window').fadeIn(300);
+    if ($('.hide-layout').css('display') != 'none') {
+        $('.hide-layout').css("z-index", 1001);
+    }
+    showLayoutHide();
+};
 function hideModalWindow() {
     $('#view-modal-window').fadeOut(300);
     if ($('.hide-layout').css('z-index') === '1001') {
@@ -149,12 +170,31 @@ function hideModalWindow() {
     }
     hideLayoutHide();
 };
+function getHouseList(commandID) {
+    tempCommandID = commandID;
+    sendMessage("getHouseAddedGisJkh");
+};
 function answerNo() {
     hideModalWindow();
-    sendMessageWithParam("callQuestion", "false");
+
+    var selectBox = $('#house-select');
+    if (selectBox.css('display') != 'none') {
+        $('#house-select').empty();
+        selectBox.fadeOut(50);
+    } else {
+        sendMessageWithParam("callQuestion", "false");
+    }
 };
 function answerYes() {
     hideModalWindow();
-    sendMessageWithParam("callQuestion", "true");
+    var selectBox = $('#house-select');
+    if (selectBox.css('display') != 'none') {
+        console.log($('#house-select option:selected').attr("value"));
+        sendMessageWithParam(tempCommandID, $('#house-select option:selected').attr("value"));
+        $('#house-select').empty();
+        selectBox.fadeOut(50);
+    } else {
+        sendMessageWithParam("callQuestion", "true");
+    }
 };
 

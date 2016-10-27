@@ -30,8 +30,12 @@ public class HouseGRADDAO {
     private static final int HOUSE_FIAS = 1; // Код дома по ФИАС
     private static final int HOUSE_ID_GRAD_MKD = 14; // ИД дома из БД ГРАД
     private static final int HOUSE_ID_GRAD_JD = 10; // ИД дома из БД ГРАД
+    private static final int ADDRESS_GRAD_MKD = 16;
+    private static final int NUMBER_HOUSE_GRAD_MKD = 17;
+    private static final int ADDRESS_GRAD_JD = 12;
+    private static final int NUMBER_HOUSE_GRAD_JD = 13;
 
-//    Временные листы, что бы не ходить 2 раза за одним и темже в БД
+    //    Временные листы, что бы не ходить 2 раза за одним и темже в БД
     private ArrayList<String> tempMKD = new ArrayList<>();
     private ArrayList<String> tempJD = new ArrayList<>();
 
@@ -383,5 +387,27 @@ public class HouseGRADDAO {
      */
     public ArrayList<String> getTempJD() {
         return tempJD;
+    }
+
+    /**
+     * Метод, возвращает из темпа все полученные дома (МКД, ЖД), где ключ - ид дома в Граде, значение - адрес дома.
+     * Для отображения в UI список домов для выбора.
+     * Внимание, если до этого не разу не получены данные по МКД или ЖД, получите пустую Map.
+     */
+    public HashMap<Integer, String> getAllHouseForListModalWindow() {
+        
+        HashMap<Integer, String> mapAddress = new HashMap<>();
+        
+        for (String item : tempMKD) {
+            String[] allData = getAllData(item);
+            mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_MKD]),
+                    String.format("%s %s", allData[ADDRESS_GRAD_MKD], allData[NUMBER_HOUSE_GRAD_MKD]));
+        }
+        for (String item : tempJD) {
+            String[] allData = getAllData(item);
+            mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_JD]),
+                    String.format("%s %s", allData[ADDRESS_GRAD_JD], allData[NUMBER_HOUSE_GRAD_JD]));
+        }
+        return mapAddress;
     }
 }

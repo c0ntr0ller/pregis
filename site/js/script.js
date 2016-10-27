@@ -61,8 +61,10 @@ $(function () {
         //
         } else if (message === "exit") {
             exitRequest();
+        } else if ($(this).hasClass("getHouseList")) {
+            getHouseList(message);
         } else {
-            // console.log(message);
+            console.log(message);
             sendMessage(message);
         }
     });
@@ -128,4 +130,4 @@ function footerTop() {
 };
 function showButton() {
     $('.button-state').show();
-}
+};

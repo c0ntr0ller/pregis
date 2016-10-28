@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Класс, синхронизирует данные о ПУ.
  */
-public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable {
+public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllMeteringDeviceData.class);
     private final AnswerProcessing answerProcessing;
@@ -34,7 +34,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
     private int countUpdate = 0;
     private int errorState;
 
-    public UpdateAllMeteringDeviceData(AnswerProcessing answerProcessing) {
+    public UpdateAllMeteringDeviceData(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
@@ -51,7 +51,7 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
      * @param fias код дома по ФИАС.
      * @throws SQLException
      */
-    public void archiveAllDevices(String fias) throws SQLException, ParseException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
+    public void archiveAllDevices(final String fias) throws SQLException, ParseException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 //        Получаем выгруженные ПУ.
@@ -84,9 +84,9 @@ public class UpdateAllMeteringDeviceData implements ClientDialogWindowObservable
         errorState = 1;
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
-            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
-            ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
+            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+            final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());

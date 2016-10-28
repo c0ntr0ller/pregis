@@ -184,8 +184,8 @@ public final class ProgramAction {
     public void updateMeteringDevices() {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
-            UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
-            int state = updateAllMeteringDeviceData.updateMeteringDeviceData();
+            final UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
+            final int state = updateAllMeteringDeviceData.updateMeteringDeviceData();
             if (state == -1) {
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");

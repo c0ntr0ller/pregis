@@ -82,7 +82,7 @@ public class ClientService {
                     action.callExportAccountData(value);
                     break;
                 case "updateAccountData":
-//                    action.updateAccountData();
+                    action.updateAccountData(value);
                     break;
                 case "updateMeteringDevices":
                     action.updateMeteringDevices();

@@ -41,7 +41,7 @@ import java.util.*;
  * Класс будет обращаться ко всем объектам.
  * Created by andryha on 12.02.2016.
  */
-public class ProgramAction {
+public final class ProgramAction {
 
     private static final Logger LOGGER = Logger.getLogger(ProgramAction.class);
     private final ClientService clientService;
@@ -49,7 +49,7 @@ public class ProgramAction {
     private boolean stateRun;
 
 
-    public ProgramAction(ClientService clientService) {
+    public ProgramAction(final ClientService clientService) {
         this.clientService = clientService;
         this.answerProcessing = new AnswerProcessing(this.clientService);
         this.clientService.setProgramAction(this);
@@ -135,7 +135,7 @@ public class ProgramAction {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
-            ExportHouseData houseData = new ExportHouseData(answerProcessing);
+            final ExportHouseData houseData = new ExportHouseData(answerProcessing);
             houseData.updateAllHouseData();
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
@@ -147,14 +147,16 @@ public class ProgramAction {
     /**
      * Метод, синхронизирует данные о лицевых счетах ГИС ЖКХ и БД ГРАД.
      */
-    public void updateAccountData() {
+    public void updateAccountData(final String houseGradID) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
         try {
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Синхронизация лицевых счетов...");
-            UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
-            int state = updateAllAccountData.updateAllAccountData();
+
+            final UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
+            final int state = updateAllAccountData.updateAllAccountData(checkHouseGradId(houseGradID));
+
             answerProcessing.clearLabelForText();
             if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("");
@@ -549,5 +551,19 @@ public class ProgramAction {
 
     public AnswerProcessing getAnswerProcessing() {
         return answerProcessing;
+    }
+
+    /**
+     * Метод, проверяет значение, которое пришло от клиента при выборе дома для выгрузки.
+     * @param houseGradID идентификатор дома в БД Град, null или "-1".
+     * @return null или идентификатор дома
+     */
+    private Integer checkHouseGradId(final String houseGradID) {
+
+        if (houseGradID == null || houseGradID.equalsIgnoreCase("-1")) {
+            return null;
+        } else {
+            return Integer.parseInt(houseGradID);
+        }
     }
 }

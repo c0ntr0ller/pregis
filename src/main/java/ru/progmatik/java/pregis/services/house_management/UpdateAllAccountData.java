@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Класс, синхронизирует лицевые счета ГРАДа и ГИС ЖКХ.
  */
-public class UpdateAllAccountData implements ClientDialogWindowObservable {
+public final class UpdateAllAccountData implements ClientDialogWindowObservable {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllAccountData.class);
     private final AnswerProcessing answerProcessing;
@@ -46,21 +46,38 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
     /**
      * Метод, получает из БД список всех выгруженных домов в ГИС ЖКХ, получает по ФИАС данные о лицевых счетах дома из ГИС ЖКХ.
      * Получает из БД по ИД этого же дома информацию о счетах, производит проверку, при необходимости закрывает счет в ГИС ЖКХ или выгружает новый.
+     *
+     * @param houseGradId идентификатор дома в БД Град или null, если нужно обработать все дома.
      */
-    public int updateAllAccountData() throws SQLException, PreGISException, ParseException {
+    public int updateAllAccountData(final Integer houseGradId) throws SQLException, PreGISException, ParseException {
 
         errorState = 1;
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
-            HouseGRADDAO graddao = new HouseGRADDAO();
+            final HouseGRADDAO graddao = new HouseGRADDAO();
 
             LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh(connectionGRAD);
+            final LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
+
+            if (houseGradId != null) {
+                for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
+                    if (houseGradId.equals(entry.getValue())) {
+                        temp.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                if (temp.size() > 0) {
+                    houseAddedGisJkh = temp;
+                } else {
+                    houseAddedGisJkh = null;
+                }
+            }
+
             if (houseAddedGisJkh == null) {
                 throw new PreGISException("Не найден ни один дом готовый для выгрузки ГИС ЖКХ.");
             }
 
-            ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            final ExportAccountData accountData = new ExportAccountData(answerProcessing);
 
             for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
 
@@ -73,8 +90,8 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
                 answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue());
 
 
-                ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
-                LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
+                final ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
+                final LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
                 countAll += accountListFromGrad.size();
 
                 if (exportAccountResult == null) { // если не получили не однин лс.
@@ -110,7 +127,7 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * Метод, выводит пользователю информацию о количестве обработанных ЛС.
      * @param fias код дома по ФИАС.
      */
-    private void printReport(String fias) {
+    private void printReport(final String fias) {
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(String.format("По дому с кодом ФИАС: %s", fias));
@@ -144,9 +161,9 @@ public class UpdateAllAccountData implements ClientDialogWindowObservable {
      * @param houseId                идентификатор дома в БД ГРАД
      * @param connection             подключение к БД ГРАД.
      */
-    private void checkAndSendAccountData(List<ExportAccountResultType> accountsListFromGISJKH,
-                                         LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad,
-                                         Integer houseId, Connection connection) throws SQLException, PreGISException, ParseException {
+    private void checkAndSendAccountData(final List<ExportAccountResultType> accountsListFromGISJKH,
+                                         final LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad,
+                                         final Integer houseId, final Connection connection) throws SQLException, PreGISException, ParseException {
 
 //        Ключ - TransportGUID, значение - Account
         LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();

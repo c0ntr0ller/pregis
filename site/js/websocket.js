@@ -138,26 +138,28 @@ function showModalWindow(text) {
 };
 function showHouseListModalWindow(arrayHouse) {
 
+    $('#message-modal-window').text("");
+    $('#message-modal-window').append($("<select></select>").attr("id", 'house-select'));
+
     var selectBox = $('#house-select');
 
     var arrayJSON = JSON.parse(arrayHouse);
 
     if (arrayJSON.length > 0 ) {
         selectBox.append($("<option></option>").attr("value", -1).text("Выгрузить все"));
-        // selectBox.append($("<option></option>").attr("value", -1).prop("selected").text("Выгрузить все"));
         console.log("Array size: " + arrayJSON.length);
         console.log("Array : " + arrayJSON);
 
         for (var i = 0; i < arrayJSON.length; i++) {
-            // var item = JSON.parse(arrayHouse[i]);
             console.log("value: " + arrayJSON[i].value);
             selectBox.append($("<option></option>").attr("value", arrayJSON[i].value).text(arrayJSON[i].name));
         }
     } else {
         selectBox.append($("<option></option>").attr("value", -2).prop("selected").text("Нет данных для выгрузки"));
     }
-    selectBox.fadeIn(50);
+
     $('#view-modal-window').fadeIn(300);
+    selectBox.fadeIn(50);
     if ($('.hide-layout').css('display') != 'none') {
         $('.hide-layout').css("z-index", 1001);
     }

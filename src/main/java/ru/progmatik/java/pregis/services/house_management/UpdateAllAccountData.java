@@ -38,7 +38,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
     private int countAddedToGRAD;
     private int errorState;
 
-    public UpdateAllAccountData(AnswerProcessing answerProcessing) throws SQLException {
+    public UpdateAllAccountData(final AnswerProcessing answerProcessing) throws SQLException {
         this.answerProcessing = answerProcessing;
         accountGRADDAO = new AccountGRADDAO(answerProcessing);
     }
@@ -56,9 +56,9 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
             final HouseGRADDAO graddao = new HouseGRADDAO();
+            final LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
 
             LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh(connectionGRAD);
-            final LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
 
             if (houseGradId != null) {
                 for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
@@ -166,7 +166,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                          final Integer houseId, final Connection connection) throws SQLException, PreGISException, ParseException {
 
 //        Ключ - TransportGUID, значение - Account
-        LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();
+        final LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();
 
 
         if (accountsListFromGISJKH != null) {
@@ -175,7 +175,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
                 if (!isDuplicateAccountData(entry.getKey())) {
 
-                    String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
+                    final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
                             accountGRADDAO.getAbonentIdFromGrad(houseId, entry.getKey(), connection), connection);
 
                     if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
@@ -183,7 +183,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         if (!checkAccountDataIsAddedGrad(accountsListFromGISJKH, entry.getValue(),
                                 houseId, uniqueNumberFromDB, connection)) {
 
-                            String transportGUID = OtherFormat.getRandomGUID();
+                            final String transportGUID = OtherFormat.getRandomGUID();
                             entry.getValue().setTransportGUID(transportGUID);
 //                            entry.getValue().setAccountGUID(null);
                             accountDataMap.put(transportGUID, entry.getValue());
@@ -208,7 +208,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws PreGISException
      * @throws SQLException
      */
-    private void checkDuplicateAccountDataGisJkh(List<ExportAccountResultType> exportAccountResult) throws PreGISException, SQLException {
+    private void checkDuplicateAccountDataGisJkh(final List<ExportAccountResultType> exportAccountResult) throws PreGISException, SQLException {
 
         for (int i = 0; i < exportAccountResult.size(); i++) {
             for (int j = i + 1; j < exportAccountResult.size(); j++) {
@@ -229,7 +229,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @return true - если абонент найден в списке и выгружать его не стоит в ГИС ЖКХ,
      * false - абонент не найден в списке дубликатов ГИС ЖКХ.
      */
-    private boolean isDuplicateAccountData(String accountNumber) {
+    private boolean isDuplicateAccountData(final String accountNumber) {
 
         for (ImportAccountRequest.Account account : accountsForCloseList) {
             if (accountNumber.equalsIgnoreCase(account.getAccountNumber())) {
@@ -245,7 +245,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param account данные абонента.
      * @throws PreGISException возникнит ошибка, если не удастся загрузить справочник из ГИС ЖКХ.
      */
-    private void addAccountDataForClose(ExportAccountResultType account) throws SQLException, PreGISException {
+    private void addAccountDataForClose(final ExportAccountResultType account) throws SQLException, PreGISException {
 
         for (ImportAccountRequest.Account accountItem : accountsForCloseList) {
             if (account.getAccountGUID().equalsIgnoreCase(accountItem.getAccountGUID())) {
@@ -254,9 +254,9 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             }
         }
 
-        ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
+        final ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
 
-        ImportAccountRequest.Account accountClose = new ImportAccountRequest.Account();
+        final ImportAccountRequest.Account accountClose = new ImportAccountRequest.Account();
         accountClose.setAccountGUID(account.getAccountGUID());
         accountClose.setClosed(new ClosedAccountAttributesType());
         accountClose.getClosed().setCloseDate(OtherFormat.getDateNow());
@@ -288,9 +288,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param account                данные абонента полученные из БД ГРАДа.
      * @param houseId                ид дома в БД.
      */
-    private boolean checkAccountDataIsAddedGrad(List<ExportAccountResultType> accountsListFromGISJKH,
-                                                ImportAccountRequest.Account account,
-                                                Integer houseId, String uniqueNumberFromDB, Connection connection)
+    private boolean checkAccountDataIsAddedGrad(final List<ExportAccountResultType> accountsListFromGISJKH,
+                                                final ImportAccountRequest.Account account,
+                                                final Integer houseId,
+                                                final String uniqueNumberFromDB,
+                                                final Connection connection)
             throws ParseException, SQLException, PreGISException {
 
         for (ExportAccountResultType resultTypeAccount : accountsListFromGISJKH) { // полученные от ГИС ЖКХ записи перебераем
@@ -339,10 +341,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      * @throws ParseException
      */
-    private void sendAccountDataToGISJKH(LinkedHashMap<String, ImportAccountRequest.Account> accountDataFromGrad,
-                                         Integer houseId, Connection connection) throws PreGISException, SQLException, ParseException {
+    private void sendAccountDataToGISJKH(final LinkedHashMap<String, ImportAccountRequest.Account> accountDataFromGrad,
+                                         final Integer houseId,
+                                         final Connection connection) throws PreGISException, SQLException, ParseException {
 
-        ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
+        final ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Отправляем данные в ГИС ЖКХ...");
@@ -350,7 +353,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         ru.gosuslugi.dom.schema.integration.house_management.ImportResult result;
         int count = 0;
 
-        ArrayList<ImportAccountRequest.Account> accountsList = accountDataFromGrad.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toCollection(ArrayList::new));
+        final ArrayList<ImportAccountRequest.Account> accountsList = accountDataFromGrad.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toCollection(ArrayList::new));
 
 
         while (count < accountsList.size()) {
@@ -372,8 +375,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         countAdded++;
                         setAccountToBase(houseId,
                                 accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
-                                commonResult.getGUID(), //К сожалению ГИС ЖКХ хуйню полную шлет
-//                                null,
+                                commonResult.getGUID(),
                                 commonResult.getImportAccount().getUnifiedAccountNumber(),
                                 connection);
 
@@ -505,7 +507,10 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      * @throws PreGISException
      */
-    private LinkedHashMap<String, ImportAccountRequest.Account> getAccountsFromGrad(int houseId, Connection connectionGrad) throws ParseException, SQLException, PreGISException {
+    private LinkedHashMap<String, ImportAccountRequest.Account> getAccountsFromGrad(final int houseId,
+                                                                                    final Connection connectionGrad)
+            throws ParseException, SQLException, PreGISException {
+
         return accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad);
     }
 

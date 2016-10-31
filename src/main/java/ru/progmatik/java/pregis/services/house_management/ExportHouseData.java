@@ -189,7 +189,16 @@ public class ExportHouseData {
                     answerProcessing.sendMessageToClient("Жилой дом");
                     // TODO
 //                    Комнаты пока не обрабатываются ЖД
-//                    result.getExportHouseResult().getLivingHouse().getLivingRoom().get(0)
+                    answerProcessing.sendMessageToClient("");
+                    answerProcessing.sendMessageToClient("Актуальная версия сведений о доме: " +
+                            result.getExportHouseResult().getLivingHouse().getHouseGUID());
+                    for (ExportHouseResultType.LivingHouse.LivingRoom room : result.getExportHouseResult().getLivingHouse().getLivingRoom()) {
+                        // Добавляем в БД уникальный номер комнаты абонента
+                        gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), room.getRoomNumber(),
+                                residentialPremise.getPremisesGUID(), residentialPremise.getPremisesUniqueNumber(),
+                                room.getLivingRoomGUID(), room.getLivingRoomUniqueNumber(), connectionGrad);
+                    }
+
 
                 }
 //                answerProcessing.sendOkMessageToClient("");

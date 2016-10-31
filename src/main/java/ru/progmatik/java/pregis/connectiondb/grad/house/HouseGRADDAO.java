@@ -67,10 +67,10 @@ public class HouseGRADDAO {
      *
      * @return перечень всех жилых домов, ФИАС = ИД дома в БД ГРАД.
      */
-    public LinkedHashMap<String, Integer> getJDAllFias(Connection connectionGrad) throws SQLException, PreGISException {
+    public LinkedHashMap<String, Integer> getJDAllFias(final Connection connectionGrad) throws SQLException, PreGISException {
 
-        ArrayList<String> listAllData = getJdAllFiasFromGrad(connectionGrad);
-        LinkedHashMap<String, Integer> mapJd = new LinkedHashMap<>();
+        final ArrayList<String> listAllData = getJdAllFiasFromGrad(connectionGrad);
+        final LinkedHashMap<String, Integer> mapJd = new LinkedHashMap<>();
         if (listAllData.size() > 1) { // Если в листе вообще есть данные тогда
             for (String itemData : listAllData) {
                 if (getAllData(itemData)[HOUSE_FIAS] != null && !getAllData(itemData)[HOUSE_FIAS].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
@@ -89,12 +89,12 @@ public class HouseGRADDAO {
      *
      * @return пара ключ-значение ФИАС-ИД ГРАДа.
      */
-    public LinkedHashMap<String, Integer> getHouseAddedGisJkh(Connection connectionGrad) throws SQLException, PreGISException {
+    public LinkedHashMap<String, Integer> getHouseAddedGisJkh(final Connection connectionGrad) throws SQLException, PreGISException {
 
-        List<String> allListMKD = getAllHouseFromGrad(connectionGrad);
-        ArrayList<String> listAllJD = getJdAllFiasFromGrad(connectionGrad);
+        final ArrayList<String> allListMKD = getAllHouseFromGrad(connectionGrad);
+        final ArrayList<String> listAllJD = getJdAllFiasFromGrad(connectionGrad);
 
-        LinkedHashMap<String, Integer> mapAllHouseWithIdGis = new LinkedHashMap<String, Integer>();
+        final LinkedHashMap<String, Integer> mapAllHouseWithIdGis = new LinkedHashMap<String, Integer>();
 
 //        Получение данных из БД о МКД.
         for (String itemListHouse : allListMKD) {
@@ -124,7 +124,9 @@ public class HouseGRADDAO {
      * @param houseId           ИД дома в БД ГРАД.
      * @param houseUniqueNumber уникальный номер дома генерируемый ГИС ЖКХ.  @throws SQLException выкинет ошибку, если будут проблемы с БД.
      */
-    public void setHouseUniqueNumber(Integer houseId, String houseUniqueNumber, Connection connectionGrad) throws SQLException {
+    public void setHouseUniqueNumber(final Integer houseId,
+                                     final String houseUniqueNumber,
+                                     final Connection connectionGrad) throws SQLException {
 
 //        Integer idHouse = getHouseIdFromGrad(fias);
 
@@ -135,7 +137,7 @@ public class HouseGRADDAO {
         // уникальный идентификатор ГИС ЖКХ(:gis_id),
         // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
 //        System.err.println("houseID: " + houseId + " houseUniqueNumber: " + houseUniqueNumber);
-        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
+        final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
         try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
             cstmt.setInt(1, houseId);
             cstmt.setString(2, houseUniqueNumber);
@@ -162,11 +164,12 @@ public class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public void setApartmentUniqueNumber(Integer houseId, String apartmentNumber, String roomNumber,
-                                         String premisesGUID, String premisesUniqNum,
-                                         String livingRoomGUID, String roomUniqNumber, Connection connectionGrad) throws SQLException, PreGISException {
+    public void setApartmentUniqueNumber(final Integer houseId, final String apartmentNumber, final String roomNumber,
+                                         final String premisesGUID, final String premisesUniqNum,
+                                         final String livingRoomGUID, final String roomUniqNumber,
+                                         final Connection connectionGrad) throws SQLException, PreGISException {
 
-        Integer abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, connectionGrad);
+        final Integer abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, connectionGrad);
 
         if (abonentId != null) {
             // ИД дома(:building_id),
@@ -174,7 +177,7 @@ public class HouseGRADDAO {
             // ИД прибора учета(:meter_id),
             // уникальный идентификатор ГИС ЖКХ(:gis_id),
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL)}";
+            final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL)}";
             try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, premisesGUID);
@@ -197,15 +200,15 @@ public class HouseGRADDAO {
      * @param connectionGrad подключение к БД ГРАД.
      * @return ключ - abonId, значение - общая площадь помещения.
      */
-    public HashMap<Integer, String> getTotalSquare(int houseId, Connection connectionGrad) throws SQLException {
+    public HashMap<Integer, String> getTotalSquare(final int houseId, final Connection connectionGrad) throws SQLException {
 
-        HashMap<Integer, String> totalSquareMap = new HashMap<>();
+        final HashMap<Integer, String> totalSquareMap = new HashMap<>();
         try (CallableStatement cstmt = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS04(?)}")) {
             cstmt.setString(1, String.valueOf(houseId));
-            ResultSet resultSet = cstmt.executeQuery();
+            final ResultSet resultSet = cstmt.executeQuery();
 
             while (resultSet.next()) {
-                String[] data = OtherFormat.getAllDataFromString(resultSet.getString(1));
+                final String[] data = OtherFormat.getAllDataFromString(resultSet.getString(1));
                 totalSquareMap.put(Integer.parseInt(data[7]), data[4]);
             }
         }
@@ -222,13 +225,13 @@ public class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private Integer getAbonentIdFromGrad(Integer idHouse, String apartmentNumber, String roomNumber, Connection connectionGrad) throws SQLException, PreGISException {
+    private Integer getAbonentIdFromGrad(final Integer idHouse, final String apartmentNumber, final String roomNumber, Connection connectionGrad) throws SQLException, PreGISException {
 
         Integer abonentId = null;
 
-        ArrayList<String> listData = new ArrayList<>();
+        final ArrayList<String> listData = new ArrayList<>();
 
-        String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + idHouse + ")";
+        final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + idHouse + ")";
 
         try (Statement statement = connectionGrad.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
@@ -265,10 +268,10 @@ public class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private Integer getHouseIdFromGrad(String fias, Connection connectionGrad) throws SQLException, PreGISException {
+    private Integer getHouseIdFromGrad(final String fias, final Connection connectionGrad) throws SQLException, PreGISException {
 
-        LinkedHashMap<String, Integer> mapMkdData = getAllFIAS(connectionGrad);
-        LinkedHashMap<String, Integer> mapJdData = getJDAllFias(connectionGrad);
+        final LinkedHashMap<String, Integer> mapMkdData = getAllFIAS(connectionGrad);
+        final LinkedHashMap<String, Integer> mapJdData = getJDAllFias(connectionGrad);
 
         if (mapMkdData.containsKey(fias)) {
             return mapMkdData.get(fias);
@@ -289,7 +292,7 @@ public class HouseGRADDAO {
      */
     private ArrayList<String> getAllHouseFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
 
-        String sqlRequest = "SELECT * FROM EX_GIS01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
+        final String sqlRequest = "SELECT * FROM EX_GIS01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
 
         return getHouseFromGrad(sqlRequest, tempMKD, connectionGrad);
     }
@@ -303,7 +306,7 @@ public class HouseGRADDAO {
      */
     private ArrayList<String> getJdAllFiasFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
 
-        String sqlRequest = "SELECT * FROM EX_GIS_LH01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
+        final String sqlRequest = "SELECT * FROM EX_GIS_LH01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
 
         return getHouseFromGrad(sqlRequest, tempJD, connectionGrad);
     }
@@ -319,7 +322,7 @@ public class HouseGRADDAO {
     private ArrayList<String> getHouseFromGrad(final String sqlRequest, final ArrayList<String> tempDataHouse,
                                                final Connection connectionGrad) throws SQLException {
 
-        ArrayList<String> allHouseData = new ArrayList<>();
+        final ArrayList<String> allHouseData = new ArrayList<>();
         tempDataHouse.clear();
 
         try (Statement statement = connectionGrad.createStatement();
@@ -342,16 +345,16 @@ public class HouseGRADDAO {
      * @return true - у дома есть уникальный номер ГИС ЖКХ, false - дом не получил уникальный идентификатор ГИС ЖКХ.
      * @throws SQLException
      */
-    private boolean isAddedHouseInGisJkh(Integer houseId, Connection connectionGrad) throws SQLException {
+    private boolean isAddedHouseInGisJkh(final Integer houseId, final Connection connectionGrad) throws SQLException {
 
-        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+        final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
 
         try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, houseId);
             cstmt.setString(2, "HOUSEUNIQNUM");
-            ResultSet resultSet = cstmt.executeQuery();
+            final ResultSet resultSet = cstmt.executeQuery();
             resultSet.next();
-            String sqlResult = resultSet.getString(1);
+            final String sqlResult = resultSet.getString(1);
             if (sqlResult == null || sqlResult.isEmpty()) {
                 return false;
             }
@@ -396,15 +399,15 @@ public class HouseGRADDAO {
      */
     public HashMap<Integer, String> getAllHouseForListModalWindow() {
         
-        HashMap<Integer, String> mapAddress = new HashMap<>();
+        final HashMap<Integer, String> mapAddress = new HashMap<>();
         
         for (String item : tempMKD) {
-            String[] allData = getAllData(item);
+            final String[] allData = getAllData(item);
             mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_MKD]),
                     String.format("%s %s", allData[ADDRESS_GRAD_MKD], allData[NUMBER_HOUSE_GRAD_MKD]));
         }
         for (String item : tempJD) {
-            String[] allData = getAllData(item);
+            final String[] allData = getAllData(item);
             mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_JD]),
                     String.format("%s %s", allData[ADDRESS_GRAD_JD], allData[NUMBER_HOUSE_GRAD_JD]));
         }

@@ -9,13 +9,13 @@ import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClientService {
+public final class ClientService {
 
     private static final Logger LOGGER = Logger.getLogger(ClientService.class);
     private static final String CLIENT_SHOW_MESSAGE = "::showMessage()";
     private final List<String> dataList = new ArrayList<>();
     private final ClientDialogWindowListener listener = new ClientDialogWindowListener();
-    private Set<ClientWebSocket> webSockets;
+    private final Set<ClientWebSocket> webSockets;
     private ProgramAction action;
     private Timer timer;
 
@@ -23,7 +23,7 @@ public class ClientService {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
-    public void sendMessage(String data) {
+    public void sendMessage(final String data) {
 
         for (ClientWebSocket user : webSockets) {
             try {
@@ -35,16 +35,16 @@ public class ClientService {
         dataList.add(data);
     }
 
-    public void setProgramAction(ProgramAction action) {
+    public void setProgramAction(final ProgramAction action) {
         this.action = action;
     }
 
-    void callCommands(String requestFromClient) {
+    void callCommands(final String requestFromClient) {
 
-        Gson gson = new Gson();
-        ObjectForJSON json = gson.fromJson(requestFromClient, ObjectForJSON.class);
-        String command = json.getCommand();
-        String value = json.getValue();
+        final Gson gson = new Gson();
+        final ObjectForJSON json = gson.fromJson(requestFromClient, ObjectForJSON.class);
+        final String command = json.getCommand();
+        final String value = json.getValue();
 
         if (LOGGER.isDebugEnabled()) {
             String answerToClient = "\nПолучена команда: " + command;
@@ -85,7 +85,7 @@ public class ClientService {
                     action.updateAccountData(value);
                     break;
                 case "updateMeteringDevices":
-                    action.updateMeteringDevices();
+                    action.updateMeteringDevices(value);
                     break;
                 case "getExportMeteringHistory":
                     action.getExportMeteringDeviceHistory();
@@ -120,7 +120,7 @@ public class ClientService {
     /**
      * Метод, отправляет все сообщения находящиееся в списке.
      */
-    void sendListMessages(ClientWebSocket webSocket) {
+    void sendListMessages(final ClientWebSocket webSocket) {
 
         for (String data : dataList) {
             webSocket.sendString(data);
@@ -131,11 +131,11 @@ public class ClientService {
         dataList.clear();
     }
 
-    public void add(ClientWebSocket webSocket) {
+    public void add(final ClientWebSocket webSocket) {
         webSockets.add(webSocket);
     }
 
-    public void remove(ClientWebSocket webSocket) {
+    public void remove(final ClientWebSocket webSocket) {
         webSockets.remove(webSocket);
     }
 
@@ -145,7 +145,7 @@ public class ClientService {
      *
      * @param observable наблюдатель.
      */
-    public void addListener(ClientDialogWindowObservable observable) {
+    public void addListener(final ClientDialogWindowObservable observable) {
         if (timer == null) {
             timer = new Timer();
             listener.addListener(observable);
@@ -166,7 +166,7 @@ public class ClientService {
         }
     }
 
-    private void setQuestion(boolean question) {
+    private void setQuestion(final boolean question) {
         timer.cancel();
         timer = null;
         listener.sendAnswer(question);

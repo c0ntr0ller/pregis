@@ -181,11 +181,11 @@ public final class ProgramAction {
     /**
      * Метод, синхронизирует ПУ.
      */
-    public void updateMeteringDevices() {
+    public void updateMeteringDevices(final String houseGradID) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             final UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
-            final int state = updateAllMeteringDeviceData.updateMeteringDeviceData();
+            final int state = updateAllMeteringDeviceData.updateMeteringDeviceData(checkHouseGradId(houseGradID));
             if (state == -1) {
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
@@ -337,17 +337,25 @@ public final class ProgramAction {
 
     /**
      * Метод, экспорт сведений о лицевых счетах.
-     * Тестовый метод какой-то.
+     * Тестовый метод.
      */
-    public void callExportAccountData(String fias) {
+    public void callExportAccountData(final String fias) {
 
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("Запуск получения ЛС...");
-            ExportAccountData accountData = new ExportAccountData(answerProcessing);
-            ExportAccountResult exportAccountResult = accountData.callExportAccountData(fias);
-            answerProcessing.sendMessageToClient(String.format("Получено: %d ЛС", exportAccountResult.getAccounts().size()));
+
+            final ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            final ExportAccountResult exportAccountResult = accountData.callExportAccountData(fias);
+
+            if (exportAccountResult == null || exportAccountResult.getAccounts() == null) {
+                answerProcessing.sendMessageToClient("Возникла ошибка, ЛС не удалось получить.");
+            } else {
+                answerProcessing.sendMessageToClient(String.format("Получено: %d ЛС", exportAccountResult.getAccounts().size()));
+            }
+
             answerProcessing.sendMessageToClient("Получения ЛС завершено.");
+
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);
         }finally {
@@ -512,7 +520,7 @@ public final class ProgramAction {
      */
     public void callExportSupplyResourceContractData() {
 
-        ExportSupplyResourceContractData contractData = new ExportSupplyResourceContractData(answerProcessing);
+        final ExportSupplyResourceContractData contractData = new ExportSupplyResourceContractData(answerProcessing);
         try {
             contractData.callExportSupplyResourceContractData();
         } catch (SQLException e) {
@@ -526,13 +534,13 @@ public final class ProgramAction {
      * если есть, то добавляет его в список для обработки.
      */
     public void getHouseAddedGisJkh() {
-//        На даработке
+
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
-            HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
-            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
-            HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow();
-            ArrayList<ValueJSON> listHouseModalWindow = new ArrayList<>();
+            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
+            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+            final HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow();
+            final ArrayList<ValueJSON> listHouseModalWindow = new ArrayList<>();
 
             for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
                 if (allHouseForListModalWindow.containsKey(entry.getValue())) {
@@ -542,7 +550,13 @@ public final class ProgramAction {
                 }
             }
 
-            answerProcessing.showHouseListModalWindow(listHouseModalWindow);
+            if (listHouseModalWindow.size() > 0) {
+                answerProcessing.showHouseListModalWindow(listHouseModalWindow);
+            } else {
+                setStateRunOn();
+                answerProcessing.sendErrorToClientNotException("Не найдены объекты жилищного фонда.");
+                setStateRunOff();
+            }
 
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Получение домов добавленых в ГИС ЖКХ\" ", LOGGER, e);

@@ -93,7 +93,7 @@ public final class AnswerProcessing {
      * Метод, отправляет клиенту сообщение об успешном выполнении операции.
      * @param message сообщение.
      */
-    public void sendOkMessageToClient(String message) {
+    public void sendOkMessageToClient(final String message) {
         sendCommandToClient(CLIENT_SET_OK_LABEL_TEXT);
         sendMessageToClient(message);
     }
@@ -107,8 +107,8 @@ public final class AnswerProcessing {
      * @param errorMessage ошибка из тела сообщения.
      * @param logger лог для сохранения ошибок.
      */
-    public void sendToBaseAndAnotherError(String nameMethod, HeaderType headerRequest, HeaderType headerResponse,
-                                          ErrorMessageType errorMessage, Logger logger) {
+    public void sendToBaseAndAnotherError(final String nameMethod, final HeaderType headerRequest, final HeaderType headerResponse,
+                                          final ErrorMessageType errorMessage, final Logger logger) {
 
         saveToBase.setRequest(headerRequest, nameMethod);
 
@@ -134,7 +134,7 @@ public final class AnswerProcessing {
      * Т.е. это один метод, который будет отправлять полученное сообщение всем клиентом, которые указаны в этом методе.
      * @param message сообщение для отправки клиентам.
      */
-    public void sendMessageToClient(String message) {
+    public void sendMessageToClient(final String message) {
         sendMessage(message);
     }
 
@@ -142,7 +142,7 @@ public final class AnswerProcessing {
      * Метод, получает вопрос, который адресуется клиенту, если клиент ответил, то вернется true или false.
      * @param question сообщение.
      */
-    public void showQuestionToClient(String question, ClientDialogWindowObservable observable) {
+    public void showQuestionToClient(final String question, final ClientDialogWindowObservable observable) {
         clientService.addListener(observable);
         clientService.sendMessage(messageFormatter(CLIENT_SHOW_MODAL_WINDOW, question));
     }
@@ -186,7 +186,7 @@ public final class AnswerProcessing {
      */
     private String messageFormatter(final String command, final String value) {
 
-        Gson gson = new Gson();
+        final Gson gson = new Gson();
 
         return gson.toJson(new ObjectForJSON(command, null, value));
     }
@@ -209,9 +209,9 @@ public final class AnswerProcessing {
      * Метод, выводит список домов, для выбора в UI пользователю.
      * @param list список домов. value - ид дома в БД ГРАД, name - адрес дома для пользователя.
      */
-    public void showHouseListModalWindow(ArrayList<ValueJSON> list) {
-        Gson gson = new Gson();
-        String listJSON = gson.toJson(list);
+    public void showHouseListModalWindow(final ArrayList<ValueJSON> list) {
+        final Gson gson = new Gson();
+        final String listJSON = gson.toJson(list);
         clientService.sendMessage(messageFormatter("::showHouseListModalWindow()", listJSON));
     }
 

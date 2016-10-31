@@ -38,9 +38,9 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         this.answerProcessing = answerProcessing;
     }
 
-    public int updateMeteringDeviceData() throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
+    public int updateMeteringDeviceData(final Integer houseGradId) throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
-        return createMeteringDevice();
+        return createMeteringDevice(houseGradId);
 
     }
 
@@ -55,10 +55,10 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 //        Получаем выгруженные ПУ.
-            ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-            ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(fias);
+            final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+            final ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(fias);
 
-            LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
+            final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
 
             for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResult.getMeteringDevice()) {
                 if (resultType.getStatusRootDoc().equals("Active")) {
@@ -66,9 +66,9 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 }
             }
 
-            ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+            final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
-            MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
+            final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
             callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
         }
     }
@@ -79,22 +79,22 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * @throws SQLException
      * @throws PreGISException
      */
-    private int createMeteringDevice() throws SQLException, PreGISException, ParseException, FileNotFoundException, SOAPException, JAXBException {
+    private int createMeteringDevice(final Integer houseGradId) throws SQLException, PreGISException, ParseException, FileNotFoundException, SOAPException, JAXBException {
 
         errorState = 1;
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             final HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
-            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+            final LinkedHashMap<String, Integer> houseAddedGisJkh = getListHouse(houseGradId, houseGRADDAO.getHouseAddedGisJkh(connectionGRAD));
             final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
                 answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
-                MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
+                final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
                 java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD);
 
 //                Импортируем ранее загруженные ПУ
-                ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+                final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
                 ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
                 if (exportMeteringDeviceDataResult != null) {
                     meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
@@ -130,7 +130,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             }
             showInfo();
         }
-        int countRecreate = getCountMeteringDevicesForRecreate();
+        final int countRecreate = getCountMeteringDevicesForRecreate();
 //        System.out.println("countRecreate: " + countRecreate);
         if (countRecreate > 0) {
             answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " " + getDeviceTag(countRecreate) + " " +
@@ -214,11 +214,11 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * @throws SOAPException
      * @throws JAXBException
      */
-    private void setDevicesToArchiveAndCreate(ImportMeteringDeviceData importMeteringDeviceData, String fias,
-                                              MeteringDeviceGRADDAO meteringDeviceGRADDAO, Connection connectionGRAD)
+    private void setDevicesToArchiveAndCreate(final ImportMeteringDeviceData importMeteringDeviceData, final String fias,
+                                              final MeteringDeviceGRADDAO meteringDeviceGRADDAO, final Connection connectionGRAD)
             throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
-        MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap());
+        final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap());
         callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
         callImportMeteringDevices(importMeteringDeviceData, toArchive.getListForCreateDevices(), fias, meteringDeviceGRADDAO, connectionGRAD);
     }
@@ -236,10 +236,10 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * @throws SOAPException
      * @throws JAXBException
      */
-    private void callImportMeteringDevices(ImportMeteringDeviceData importMeteringDeviceData,
-                                           List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
-                                           String fias, IMeteringDevices deviceGRADDAO,
-                                           Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
+    private void callImportMeteringDevices(final ImportMeteringDeviceData importMeteringDeviceData,
+                                           final List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
+                                           final String fias, final IMeteringDevices deviceGRADDAO,
+                                           final Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
 
         if (devices.size() > 0) {
             int count = 0;
@@ -270,6 +270,23 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         }
     }
 
+    private LinkedHashMap<String, Integer> getListHouse(final Integer houseGradId,
+                                                        final LinkedHashMap<String, Integer> houseAddedGisJkh) {
+
+        final LinkedHashMap<String, Integer> tempMap = new LinkedHashMap<>();
+
+        if (houseGradId == null) {
+            return houseAddedGisJkh;
+        } else {
+            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
+                if (houseGradId.equals(entry.getValue())) {
+                    tempMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return tempMap;
+    }
+
     @Override
     public void go() {
         try {
@@ -285,7 +302,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         archiveDataList.clear();
     }
 
-    private String getDeviceTag(int size) {
+    private String getDeviceTag(final int size) {
 
         int value;
 
@@ -312,11 +329,14 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * Класс, для описания объекта.
      */
     private class ArchiveData {
-        private ImportMeteringDeviceData importMeteringDeviceData;
-        private String fias;
-        private MeteringDeviceGRADDAO meteringDeviceGRADDAO;
+        private final ImportMeteringDeviceData importMeteringDeviceData;
+        private final String fias;
+        private final MeteringDeviceGRADDAO meteringDeviceGRADDAO;
 
-        private ArchiveData(ImportMeteringDeviceData importMeteringDeviceData, String fias, MeteringDeviceGRADDAO meteringDeviceGRADDAO) {
+        private ArchiveData(final ImportMeteringDeviceData importMeteringDeviceData,
+                            final String fias,
+                            final MeteringDeviceGRADDAO meteringDeviceGRADDAO) {
+
             this.importMeteringDeviceData = importMeteringDeviceData;
             this.fias = fias;
             this.meteringDeviceGRADDAO = meteringDeviceGRADDAO;

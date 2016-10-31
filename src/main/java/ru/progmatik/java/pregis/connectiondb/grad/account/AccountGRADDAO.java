@@ -5,9 +5,7 @@ import ru.gosuslugi.dom.schema.integration.house_management.AccountIndType;
 import ru.gosuslugi.dom.schema.integration.house_management.AccountType;
 import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.gosuslugi.dom.schema.integration.individual_registry_base.ID;
-import ru.gosuslugi.dom.schema.integration.organizations_registry_base.RegOrgVersionType;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryRequest;
-import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
@@ -19,7 +17,6 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
@@ -185,13 +182,15 @@ public class AccountGRADDAO {
      * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
      * @throws SQLException   возможны ошибки БД.
      */
-    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountMapFromGrad(int houseID, Connection connection) throws ParseException, SQLException, PreGISException {
+    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountMapFromGrad(final int houseID,
+                                                                                     final Connection connection)
+            throws ParseException, SQLException, PreGISException {
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Формирую данные...");
-        ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
-        ArrayList<Rooms> roomsList = getRooms(houseID, connection);
-        ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
+        final ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
+        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
+        final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
 //        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
         LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
@@ -460,8 +459,8 @@ public class AccountGRADDAO {
      * @throws ParseException
      * @throws SQLException
      */
-    public Integer getAbonentIdFromGrad(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
-        ArrayList<Rooms> rooms = getRooms(houseId, connection);
+    public Integer getAbonentIdFromGrad(final Integer houseId, final String accountNumber, final Connection connection) throws ParseException, SQLException {
+        final ArrayList<Rooms> rooms = getRooms(houseId, connection);
         if (rooms != null)
             for (Rooms room : rooms) {
                 if (accountNumber.equals(room.getNumberLS())) {
@@ -480,19 +479,19 @@ public class AccountGRADDAO {
      * @throws ParseException
      * @throws SQLException
      */
-    public boolean addAccountForRemove(Integer houseId, String accountNumber, Connection connectionLocal,
-                                       Connection connectionGrad) throws ParseException, SQLException {
+    public boolean addAccountForRemove(final Integer houseId, final String accountNumber, final Connection connectionLocal,
+                                       final Connection connectionGrad) throws ParseException, SQLException {
 
         String fio = "";
 
 
-        ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId, connectionGrad);
+        final ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId, connectionGrad);
         if (basicInformation != null)
             for (BasicInformation information : basicInformation) {
                 if (accountNumber.equals(information.getNumberLS())) {
                     fio = information.getSurname() + " " + information.getName() + " " + information.getMiddleName();
-                    Integer abonId = getAbonentIdFromGrad(houseId, accountNumber, connectionGrad);
-                    java.sql.Date dateEnd = getAccountEndDate(abonId, connectionGrad);
+                    final Integer abonId = getAbonentIdFromGrad(houseId, accountNumber, connectionGrad);
+                    final java.sql.Date dateEnd = getAccountEndDate(abonId, connectionGrad);
                     setAccountForRemove(abonId, accountNumber, fio, dateEnd, connectionLocal);
                 }
             }
@@ -507,7 +506,9 @@ public class AccountGRADDAO {
      * @param fio           ФИО абонента.
      * @throws SQLException
      */
-    private void setAccountForRemove(Integer abonId, String accountNumber, String fio, java.sql.Date dateEnd, Connection connection) throws SQLException {
+    private void setAccountForRemove(final Integer abonId, final String accountNumber, final String fio,
+                                     final java.sql.Date dateEnd, final Connection connection) throws SQLException {
+
         if (!isAccountForRemove(accountNumber, connection)) {
             try (PreparedStatement ps = connection.prepareStatement("INSERT INTO ACCOUNT_FOR_REMOVE(ABONID, ABONLS, FIO, ENDDATE, CLOSED) VALUES(?, ?, ?, ?, ?)")) {
 
@@ -522,14 +523,14 @@ public class AccountGRADDAO {
         }
     }
 
-    private java.sql.Date getAccountEndDate(Integer abonId, Connection connection) throws SQLException {
+    private java.sql.Date getAccountEndDate(final Integer abonId, final Connection connection) throws SQLException {
 
-        String sqlRequest = "select edate from abonents where id = ? and is_active = 0";
+        final String sqlRequest = "select edate from abonents where id = ? and is_active = 0";
         java.sql.Date date = null;
 
         try (PreparedStatement statement = connection.prepareStatement(sqlRequest)) {
             statement.setInt(1, abonId);
-            ResultSet resultSet = statement.executeQuery();
+            final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 date = resultSet.getDate(1);
             }
@@ -546,7 +547,9 @@ public class AccountGRADDAO {
      * @param nsiCode       указанная причина из справочника.
      * @throws SQLException
      */
-    public void updateAccountForRemove(String accountNumber, java.sql.Date date, String nsiCode, Connection connection) throws SQLException {
+    public void updateAccountForRemove(final String accountNumber, final java.sql.Date date,
+                                       final String nsiCode, final Connection connection) throws SQLException {
+
         try (PreparedStatement ps = connection.prepareStatement("UPDATE ACCOUNT_FOR_REMOVE SET " +
                      "ENDDATE = ?, NSICODE = ?  WHERE ABONLS = ?")) {
 
@@ -564,9 +567,9 @@ public class AccountGRADDAO {
      * @return true - если абонент помечен, false - абонент не помечен на удаление.
      * @throws SQLException
      */
-    private boolean isAccountForRemove(String accountNumber, Connection connection) throws SQLException {
+    private boolean isAccountForRemove(final String accountNumber, final Connection connection) throws SQLException {
 
-        String sqlRequest = "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '" + accountNumber + "' AND CLOSED = TRUE";
+        final String sqlRequest = "SELECT ABONLS FROM ACCOUNT_FOR_REMOVE WHERE ABONLS = '" + accountNumber + "' AND CLOSED = TRUE";
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             return resultSet.next();
         }
@@ -579,7 +582,7 @@ public class AccountGRADDAO {
      * @param textForNumber - строка.
      * @return String - преобразованная строка в "0", если она пустая.
      */
-    private String checkZero(String textForNumber) {
+    private String checkZero(final String textForNumber) {
         if (textForNumber == null || textForNumber.isEmpty()) {
             return "0";
         } else
@@ -591,7 +594,7 @@ public class AccountGRADDAO {
      * @param account данные абонента.
      * @throws PreGISException возможна ошибка, если не будет найдена роль компании в файле "application.properties".
      */
-    public void setIsAccount(ImportAccountRequest.Account account) throws PreGISException {
+    public void setIsAccount(final ImportAccountRequest.Account account) throws PreGISException {
 
         if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
             account.setIsRSOAccount(true); // Если РСО

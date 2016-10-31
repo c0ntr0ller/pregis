@@ -19,7 +19,7 @@ import java.sql.SQLException;
 /**
  * Класс, передаёт данные о ПУ в ГИС ЖКХ.
  */
-public class ImportMeteringDeviceData {
+public final class ImportMeteringDeviceData {
 
     private static final Logger LOGGER = Logger.getLogger(ImportMeteringDeviceData.class);
     private static final String NAME_METHOD = "importMeteringDeviceData";
@@ -27,25 +27,26 @@ public class ImportMeteringDeviceData {
     private final HouseManagementPortsType port;
     private final AnswerProcessing answerProcessing;
 
-    public ImportMeteringDeviceData(AnswerProcessing answerProcessing) {
+    public ImportMeteringDeviceData(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
 
-        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
+        final HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
                 : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
 
         port = service.getHouseManagementPort();
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ImportResult callImportMeteringDeviceData(String fias, java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) throws SQLException {
+    public ImportResult callImportMeteringDeviceData(final String fias,
+                                                     final java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) throws SQLException {
 
-        Holder<ResultHeader> resultHolder = new Holder<>();
-        RequestHeader requestHeader = OtherFormat.getRequestHeader();
-        ImportResult result;
+        final Holder<ResultHeader> resultHolder = new Holder<>();
+        final RequestHeader requestHeader = OtherFormat.getRequestHeader();
+        final ImportResult result;
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-        ImportMeteringDeviceDataRequest request = new ImportMeteringDeviceDataRequest();
+        final ImportMeteringDeviceDataRequest request = new ImportMeteringDeviceDataRequest();
 
         request.setFIASHouseGuid(fias);
         request.getMeteringDevice().addAll(meteringDeviceList);
@@ -63,7 +64,7 @@ public class ImportMeteringDeviceData {
         return result;
     }
 
-    private ImportMeteringDeviceDataRequest getImportMeteringDeviceDataRequest(ImportMeteringDeviceDataRequest request) {
+    private ImportMeteringDeviceDataRequest getImportMeteringDeviceDataRequest(final ImportMeteringDeviceDataRequest request) {
 
         request.setId(OtherFormat.getId());
         request.setVersion(request.getVersion());

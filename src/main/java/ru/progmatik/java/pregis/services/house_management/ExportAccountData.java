@@ -27,12 +27,12 @@ public class ExportAccountData {
     private static final String NAME_METHOD = "exportAccountData";
 
     private final HouseManagementPortsType port;
-    private AnswerProcessing answerProcessing;
+    private final AnswerProcessing answerProcessing;
 
     /**
      * Конструктор, добавляет параметры для соединения.
      */
-    public ExportAccountData(AnswerProcessing answerProcessing) {
+    public ExportAccountData(final AnswerProcessing answerProcessing) {
 
         this.answerProcessing = answerProcessing;
 
@@ -43,12 +43,12 @@ public class ExportAccountData {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportAccountResult callExportAccountData(String homeFias) throws SQLException {
+    public ExportAccountResult callExportAccountData(final String homeFias) throws SQLException {
 
 //        Создание загаловков сообщений (запроса и ответа)
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-        RequestHeader requestHeader = OtherFormat.getRequestHeader();
-        Holder<ResultHeader> headerHolder = new Holder<>();
+        final RequestHeader requestHeader = OtherFormat.getRequestHeader();
+        final Holder<ResultHeader> headerHolder = new Holder<>();
 
         ExportAccountResult result;
 
@@ -68,9 +68,9 @@ public class ExportAccountData {
         return result;
     }
 
-    private ExportAccountRequest getExportAccountRequest(String homeFias) {
+    private ExportAccountRequest getExportAccountRequest(final String homeFias) {
 
-        ExportAccountRequest request = new ExportAccountRequest();
+        final ExportAccountRequest request = new ExportAccountRequest();
         request.setId(OtherFormat.getId());
         request.setFIASHouseGuid(homeFias);
         request.setVersion(request.getVersion());

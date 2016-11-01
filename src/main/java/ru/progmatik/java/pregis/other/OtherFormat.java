@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * Вспомогательный класс, для различных данных.
  */
-public class OtherFormat {
+public final class OtherFormat {
 
 //    public static final String USER_NAME = ResourceBundle.getBundle("application").getString("config.ws.user");
 //    public static final String PASSWORD = ResourceBundle.getBundle("application").getString("config.ws.password");
@@ -186,8 +186,8 @@ public class OtherFormat {
 
         data = data + "|-1-"; // Если последний параметр пустой, то он в массив не попадет,
         // возникнут ошибки на ссылки на индексы массива.
-        String[] array = data.split(Pattern.quote("|"));
-        String[] newArray = new String[array.length];
+        final String[] array = data.split(Pattern.quote("|"));
+        final String[] newArray = new String[array.length];
         for (int i = 0; i < array.length; i++) {
 
             if (array[i] != null && !array[i].trim().isEmpty()) {
@@ -195,5 +195,17 @@ public class OtherFormat {
             }
         }
         return newArray;
+    }
+
+    /**
+     * Метод, проверяет строку.
+     * @param checkString строка для проверки.
+     * @return null или строку.
+     */
+    public static String checkNotNullString(final String checkString) {
+        if (checkString == null || checkString.trim().isEmpty()) {
+            return null;
+        }
+        return checkString;
     }
 }

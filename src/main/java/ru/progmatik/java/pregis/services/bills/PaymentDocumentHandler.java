@@ -49,7 +49,7 @@ public class PaymentDocumentHandler {
 
         try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
 
-            HouseGRADDAO houseDAO = new HouseGRADDAO();
+            HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
             LinkedHashMap<String, Integer> houseMap = houseDAO.getHouseAddedGisJkh(connectionGrad);
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Формирую платежные документы...");

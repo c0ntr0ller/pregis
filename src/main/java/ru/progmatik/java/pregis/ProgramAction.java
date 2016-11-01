@@ -91,8 +91,7 @@ public final class ProgramAction {
                 answerProcessing.sendOkMessageToClient("Идентификатор зарегистрированной организации успешно получен!");
 
             } else {
-                answerProcessing.sendMessageToClient("::setFailed()");
-                answerProcessing.sendMessageToClient("Возникли ошибки, идентификатор зарегистрированной организации не получен!");
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки, идентификатор зарегистрированной организации не получен!");
             }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации\" ", LOGGER, e);
@@ -537,7 +536,7 @@ public final class ProgramAction {
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
-            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
+            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
             final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
             final HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow();
             final ArrayList<ValueJSON> listHouseModalWindow = new ArrayList<>();

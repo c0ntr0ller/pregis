@@ -11,11 +11,15 @@
  */
 package ru.progmatik.java.pregis.connectiondb.grad.house;
 
+import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * Класс, обращается в БД ГРАД, за данными о МКД.
  */
-public class HouseGRADDAO {
+public final class HouseGRADDAO {
 
     private static final int HOUSE_FIAS = 1; // Код дома по ФИАС
     private static final int HOUSE_ID_GRAD_MKD = 14; // ИД дома из БД ГРАД
@@ -35,9 +39,16 @@ public class HouseGRADDAO {
     private static final int ADDRESS_GRAD_JD = 12;
     private static final int NUMBER_HOUSE_GRAD_JD = 13;
 
-    //    Временные листы, что бы не ходить 2 раза за одним и темже в БД
-    private ArrayList<String> tempMKD = new ArrayList<>();
-    private ArrayList<String> tempJD = new ArrayList<>();
+    private final AnswerProcessing answerProcessing;
+
+    //    Временные листы, что бы не ходить 2 или более раза за одним и темже в БД
+    private final ArrayList<String> tempMKD = new ArrayList<>();
+    private final ArrayList<String> tempJD = new ArrayList<>();
+    private final HashMap<Integer, ArrayList<Rooms>> temMapRooms = new HashMap<>();
+
+    public HouseGRADDAO(final AnswerProcessing answerProcessing) {
+        this.answerProcessing = answerProcessing;
+    }
 
     /**
      * Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС и ИД дома в БД ГРАД, затем добавляет его в Map.
@@ -46,10 +57,10 @@ public class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public LinkedHashMap<String, Integer> getAllFIAS(Connection connectionGrad) throws SQLException, PreGISException {
+    public LinkedHashMap<String, Integer> getAllHouseFIAS(final Connection connectionGrad) throws SQLException, PreGISException {
 
-        List<String> allListHouseData = getAllHouseFromGrad(connectionGrad);
-        LinkedHashMap<String, Integer> mapFIAS = new LinkedHashMap<String, Integer>();
+        final List<String> allListHouseData = getAllHouseFromGrad(connectionGrad);
+        final LinkedHashMap<String, Integer> mapFIAS = new LinkedHashMap<String, Integer>();
 
         for (String itemListHouse : allListHouseData) {
             if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
@@ -167,7 +178,7 @@ public class HouseGRADDAO {
     public void setApartmentUniqueNumber(final Integer houseId, final String apartmentNumber, final String roomNumber,
                                          final String premisesGUID, final String premisesUniqNum,
                                          final String livingRoomGUID, final String roomUniqNumber,
-                                         final Connection connectionGrad) throws SQLException, PreGISException {
+                                         final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
         final Integer abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, connectionGrad);
 
@@ -225,39 +236,50 @@ public class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private Integer getAbonentIdFromGrad(final Integer idHouse, final String apartmentNumber, final String roomNumber, Connection connectionGrad) throws SQLException, PreGISException {
+    private Integer getAbonentIdFromGrad(final Integer idHouse, final String apartmentNumber,
+                                         final String roomNumber, final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
-        Integer abonentId = null;
-
-        final ArrayList<String> listData = new ArrayList<>();
-
-        final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + idHouse + ")";
-
-        try (Statement statement = connectionGrad.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
-            while (resultSet.next()) {
-
-                if (resultSet.getString(1) != null && apartmentNumber.equalsIgnoreCase(getAllData(resultSet.getString(1))[3])) {
-                    listData.add(resultSet.getString(1));
-                }
-            }
+        if (false == temMapRooms.containsKey(idHouse)) {
+//            Если IDEA выделила просто не обращай внимание, зачистую конструкция (!temMapRooms.containsKey(idHouse)),
+//            менее заметнее чем указанную выше, где явно должны получить false
+            final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
+            temMapRooms.clear();
+            temMapRooms.put(idHouse, accountGRADDAO.getRooms(idHouse, connectionGrad));
         }
 
-        if (listData.size() > 0) {
-            if (listData.size() == 1 && roomNumber == null) {
-                abonentId = Integer.valueOf(getAllData(listData.get(0))[7]);
-            } else if (listData.size() > 1) {
-                if (roomNumber != null) {
-                    for (String itemData : listData) {
-                        if (roomNumber.equalsIgnoreCase(getAllData(itemData)[4])) {
-                            abonentId = Integer.valueOf(getAllData(listData.get(0))[7]);
-                        }
-                    }
-                } else {
-                    throw new PreGISException("Не указана комната!\nИД абонента для помещения: " + apartmentNumber + " не найдена!");
-                }
-            }
+        final Integer abonentId = findAbonId(idHouse, apartmentNumber, roomNumber);
+
+        if (abonentId == null && roomNumber == null) {
+            throw new PreGISException(String.format("ИД абонента для помещения: %s не найден!", apartmentNumber));
+        } else if (abonentId == null) {
+            throw new PreGISException(String.format("ИД абонента для помещения: %s и комнаты: %s не найдены!", apartmentNumber, roomNumber));
         }
         return abonentId;
+    }
+
+    /**
+     * Метод, ищет в локальной Map идентификатор абонента.
+     * @param idHouse идентификатор дома в БД Град.
+     * @param apartmentNumber номер помещения в ГИС ЖКХ.
+     * @param roomNumber номер комнаты в ГИС ЖКХ.
+     * @return идентификатор абонента в БД Град.
+     */
+    private Integer findAbonId(final Integer idHouse,
+                               final String apartmentNumber,
+                               final String roomNumber) {
+
+        if (idHouse != null || apartmentNumber != null) {
+            for (Rooms room : temMapRooms.get(idHouse)) {
+                if (apartmentNumber.equalsIgnoreCase(room.getNumberRooms())) { // если нашли одинаковые помещения (квартиры)
+                    if (roomNumber == null && room.getNumberApartment() == null) { // если номер комнаты отсутствует
+                        return room.getAbonId();
+                    } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberApartment())){ // если номер комнаты совпадает.
+                        return room.getAbonId();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -270,7 +292,7 @@ public class HouseGRADDAO {
      */
     private Integer getHouseIdFromGrad(final String fias, final Connection connectionGrad) throws SQLException, PreGISException {
 
-        final LinkedHashMap<String, Integer> mapMkdData = getAllFIAS(connectionGrad);
+        final LinkedHashMap<String, Integer> mapMkdData = getAllHouseFIAS(connectionGrad);
         final LinkedHashMap<String, Integer> mapJdData = getJDAllFias(connectionGrad);
 
         if (mapMkdData.containsKey(fias)) {

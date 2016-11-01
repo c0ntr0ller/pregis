@@ -30,7 +30,7 @@ public final class AnswerProcessing {
     private final SaveToBaseMessages saveToBase;
     private final ClientService clientService;
 
-    public AnswerProcessing(ClientService clientService) {
+    public AnswerProcessing(final ClientService clientService) {
         saveToBase = new SaveToBaseMessages();
         this.clientService = clientService;
     }

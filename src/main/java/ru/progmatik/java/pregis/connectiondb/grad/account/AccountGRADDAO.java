@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  * Класс, обращается в БД ГРАД, за данными о лицевых счетах.
  */
-public class AccountGRADDAO {
+public final class AccountGRADDAO {
 
     private static final Logger LOGGER = Logger.getLogger(AccountGRADDAO.class);
 
@@ -70,7 +70,7 @@ public class AccountGRADDAO {
      * @param date дата для обработки.
      * @return дата в пригодном формате.
      */
-    private static XMLGregorianCalendar getCalendar(Date date) {
+    private static XMLGregorianCalendar getCalendar(final Date date) {
 
         return OtherFormat.getDateForXML(date);
     }
@@ -81,17 +81,17 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    private ArrayList<BasicInformation> getBasicInformation(int houseID, Connection connection) throws SQLException {
+    private ArrayList<BasicInformation> getBasicInformation(final int houseID, final Connection connection) throws SQLException {
 
-        String sqlRequest = "SELECT * FROM EX_GIS_LS1(" + houseID + ")";
+        final String sqlRequest = "SELECT * FROM EX_GIS_LS1(" + houseID + ")";
         ArrayList<BasicInformation> listBasic = new ArrayList<>();
 
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
 
-                BasicInformation bi = new BasicInformation();
+                final BasicInformation bi = new BasicInformation();
 
-                String[] arrayData = getAllData(resultSet.getString(1));
+                final String[] arrayData = getAllData(resultSet.getString(1));
 
                 try {
                     bi.setNumberLS(arrayData[0]);
@@ -136,10 +136,10 @@ public class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    public ArrayList<Rooms> getRooms(int houseID, Connection connection) throws ParseException, SQLException {
+    public ArrayList<Rooms> getRooms(final int houseID, final Connection connection) throws ParseException, SQLException {
 
-        String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
-        ArrayList<Rooms> listRooms = new ArrayList();
+        final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
+        final ArrayList<Rooms> listRooms = new ArrayList();
 
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
@@ -147,10 +147,10 @@ public class AccountGRADDAO {
 //                Бывают попадаются null
                 if (resultSet.getString(1) == null) continue;
 
-                Rooms rooms = new Rooms();
+                final Rooms rooms = new Rooms();
 
                 try {
-                    String[] arrayData = getAllData(resultSet.getString(1));
+                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(1));
 
                     rooms.setNumberLS(arrayData[0]);
                     rooms.setAddress(arrayData[1]);
@@ -588,6 +588,8 @@ public class AccountGRADDAO {
         } else
             return textForNumber;
     }
+
+
 
     /**
      * Метод, задаёт абоненту тип компании (УО, РСО, РКЦ и т.д.)

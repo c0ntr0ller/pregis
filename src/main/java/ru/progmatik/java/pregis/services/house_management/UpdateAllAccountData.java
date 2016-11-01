@@ -55,7 +55,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
-            final HouseGRADDAO graddao = new HouseGRADDAO();
+            final HouseGRADDAO graddao = new HouseGRADDAO(answerProcessing);
             final LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
 
             LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh(connectionGRAD);

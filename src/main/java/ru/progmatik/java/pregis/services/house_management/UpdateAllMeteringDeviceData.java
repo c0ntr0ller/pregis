@@ -84,7 +84,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         errorState = 1;
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
+            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
             final LinkedHashMap<String, Integer> houseAddedGisJkh = getListHouse(houseGradId, houseGRADDAO.getHouseAddedGisJkh(connectionGRAD));
             final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 

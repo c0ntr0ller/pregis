@@ -55,8 +55,8 @@ public class UpdateMeteringDeviceValues {
         errorStatus = 1;
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            HouseGRADDAO houseGRADDAO = new HouseGRADDAO();
-            LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
+            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
+            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
             for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
                 tempMeteringDevicesValue = new HashMap<>();
                 updateMeteringDeviceValues(entry.getKey(), entry.getValue(), connectionGRAD);

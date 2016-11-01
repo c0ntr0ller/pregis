@@ -20,6 +20,7 @@ import ru.progmatik.java.pregis.other.UrlLoader;
 import javax.xml.ws.Holder;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,14 +66,15 @@ public class ExportHouseData {
      * @throws PreGISException ошибки обработанные приложением.
      * @throws SQLException    ошибки связанные с базой данных.
      */
-    public void updateAllHouseData() throws PreGISException, SQLException {
+    public void updateAllHouseData() throws PreGISException, SQLException, ParseException {
 
         try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
-            final HouseGRADDAO gradDao = new HouseGRADDAO();
+            final HouseGRADDAO gradDao = new HouseGRADDAO(answerProcessing);
 //        Обработка МКД
-            final LinkedHashMap<String, Integer> fiasMap = gradDao.getAllFIAS(connectionGrad); // Берем из процедуры все дома, которые содержат ФИАС
-            if (fiasMap != null) {
-                for (Map.Entry<String, Integer> entry : fiasMap.entrySet()) {
+            final LinkedHashMap<String, Integer> mapMKD = gradDao.getAllHouseFIAS(connectionGrad); // Берем из процедуры все дома, которые содержат ФИАС
+
+            if (mapMKD != null) {
+                for (Map.Entry<String, Integer> entry : mapMKD.entrySet()) {
                     getHouseData(entry, gradDao, connectionGrad);
                 }
             }
@@ -107,7 +109,7 @@ public class ExportHouseData {
      * @throws SQLException возможны ошибки при работе с БД.
      */
     private void getHouseData(final String fias, final Integer houseId, final HouseGRADDAO gradDao,
-                              final Connection connectionGrad) throws SQLException {
+                              final Connection connectionGrad) throws SQLException, ParseException {
 
         final ExportHouseResult result;
 
@@ -115,6 +117,7 @@ public class ExportHouseData {
             result = callExportHouseData(fias);
 
             if (result != null && result.getErrorMessage() == null) { // Если нет ошибок
+
                 answerProcessing.sendMessageToClient("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
                 gradDao.setHouseUniqueNumber(houseId, result.getExportHouseResult().getHouseUniqueNumber(), connectionGrad);
 
@@ -247,7 +250,7 @@ public class ExportHouseData {
      */
     private void getHouseData(final Map.Entry<String, Integer> entry,
                               final HouseGRADDAO gradDao,
-                              final Connection connectionGrad) throws SQLException {
+                              final Connection connectionGrad) throws SQLException, ParseException {
 
         answerProcessing.clearLabelForText();
         answerProcessing.sendMessageToClient("");

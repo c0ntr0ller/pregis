@@ -42,9 +42,9 @@ public final class OtherFormat {
      * @param newDate новая дата.
      * @return сформированная дата.
      */
-    public static XMLGregorianCalendar getDateForXML(java.util.Date newDate) {
+    public static XMLGregorianCalendar getDateForXML(final java.util.Date newDate) {
 
-        GregorianCalendar c = new GregorianCalendar();
+        final GregorianCalendar c = new GregorianCalendar();
         c.setTime(newDate);
         XMLGregorianCalendar date = null;
 
@@ -64,11 +64,11 @@ public final class OtherFormat {
      */
     public static Calendar getCalendarForPaymentDocument() {
 
-        Calendar calendar = new GregorianCalendar();
+        final Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date()); // включить после испытаний.
         calendar.set(Calendar.MONTH, (calendar.get(Calendar.MONTH) -1) % 11);
 //        У месяца отсчет от 0, в нашем случае, нужен предыдущий месяц, так и оставлю.
-//        TODO
+
 //        Удалить после испытаний
 //        calendar.set(Calendar.MONTH, Calendar.JUNE);
 //        calendar.set(Calendar.YEAR, 2016);
@@ -112,7 +112,7 @@ public final class OtherFormat {
      */
     public static HeaderType getISRequestHeader() {
 
-        HeaderType isRequestHeader = new HeaderType();
+        final HeaderType isRequestHeader = new HeaderType();
         isRequestHeader.setDate(getDateNow());
         isRequestHeader.setMessageGUID(getRandomGUID());
 
@@ -125,7 +125,7 @@ public final class OtherFormat {
      */
     public static RequestHeader getRequestHeader() throws SQLException {
 
-        RequestHeader requestHeader = new RequestHeader();
+        final RequestHeader requestHeader = new RequestHeader();
 //        замена SenderID на orgPPAGUID.
 //        requestHeader.setSenderID(BaseOrganization.getSenderID());
         requestHeader.setOrgPPAGUID(getOrgPPAGUID());
@@ -141,16 +141,9 @@ public final class OtherFormat {
      * @param service - объект класса, для подключения, наследник "Service"
      * @param port - объект которому назначаются параметры для соединения с сервисом ГИС ЖКХ.
      */
-    public static void setPortSettings(Service service, Object port) {
+    public static void setPortSettings(final Service service, final Object port) {
 
-     //   String url = service.getWSDLDocumentLocation().toString();
-
-//        if (ResourcesUtil.instance().getStunnelHost() != null &&
-//                !"localhost:8088".equalsIgnoreCase(ResourcesUtil.instance().getStunnelHost())) {
-//            url = url.replace("localhost:8088", ResourcesUtil.instance().getStunnelHost());
-//        }
-
-        BindingProvider provider = (BindingProvider) port;
+        final BindingProvider provider = (BindingProvider) port;
         provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, OtherFormat.USER_NAME);
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
@@ -160,10 +153,10 @@ public final class OtherFormat {
     /**
      * Метод, получает orgPPAGUID - идентификатор зарегистрированной организации.
      * @return orgPPAGUID.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
     public static String getOrgPPAGUID() throws SQLException {
-        OrganizationDAO dao = new OrganizationDAO();
+        final OrganizationDAO dao = new OrganizationDAO();
         return dao.getOrgPPAGUID();
     }
 
@@ -172,7 +165,7 @@ public final class OtherFormat {
      * @param text текст.
      * @return String MD5 сумма текста.
      */
-    public static String getMD5(String text) {
+    public static String getMD5(final String text) {
         return DigestUtils.md5Hex(text);
     }
 

@@ -37,11 +37,19 @@ public class PaymentDocumentHandler {
     private int addedGisJkhCount;
     private int count = -1;
 
-    public PaymentDocumentHandler(AnswerProcessing answerProcessing) {
+    public PaymentDocumentHandler(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
-    public void compilePaymentDocument() throws SQLException, PreGISException, ParseException {
+    /**
+     * Метод, формирует платежный документ, получает список ПД из ГИС ЖКХ, проводит проверку что ПД ещё не выгружен,
+     * выгружает в ГИС ЖКХ.
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
+     * @throws PreGISException могут появится ошибка, если в файле параметров не указана ИД организации в Граде.
+     * @throws ParseException могут возникнуть ошибки, если у абонента указана не верно площадь или идентификатор в Граде.
+     * @param houseGradID идентификатор дома в БД Град.
+     */
+    public void compilePaymentDocument(final Integer houseGradID) throws SQLException, PreGISException, ParseException {
 
         errorState = 1;
         allCount = 0;
@@ -49,8 +57,8 @@ public class PaymentDocumentHandler {
 
         try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
 
-            HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
-            LinkedHashMap<String, Integer> houseMap = houseDAO.getHouseAddedGisJkh(connectionGrad);
+            final HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
+            final LinkedHashMap<String, Integer> houseMap = houseDAO.getListHouse(houseGradID, connectionGrad);
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Формирую платежные документы...");
 
@@ -58,14 +66,14 @@ public class PaymentDocumentHandler {
             for (Map.Entry<String, Integer> entry : houseMap.entrySet()) {
 
 //              Банковские реквизиты
-                PaymentInformationGradDAO dao = new PaymentInformationGradDAO();
-                HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationIdsMap =
+                final PaymentInformationGradDAO dao = new PaymentInformationGradDAO();
+                final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationIdsMap =
                         dao.getAllOrganizationsPaymentInformation(ConnectionBaseGRAD.instance().getConnection());
 
-                HousePaymentPeriodHandler periodHandler = new HousePaymentPeriodHandler(answerProcessing);
-                Calendar paymentPeriod = periodHandler.getHousePaymentPeriod(entry.getKey());
+                final HousePaymentPeriodHandler periodHandler = new HousePaymentPeriodHandler(answerProcessing);
+                final Calendar paymentPeriod = periodHandler.getHousePaymentPeriod(entry.getKey());
 
-                HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap =
+                final HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap =
                         generatePaymentDocument(entry.getValue(), paymentPeriod, paymentInformationIdsMap, connectionGrad);
 
                 paymentInformationMap = new HashMap<>();

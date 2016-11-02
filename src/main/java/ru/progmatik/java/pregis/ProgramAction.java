@@ -65,14 +65,14 @@ public final class ProgramAction {
         answerProcessing.sendMessageToClient("Получение идентификатора зарегистрированной организации...");
 
         try {
-            ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
+            final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
 
-            ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
+            final ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
 
             if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() == null) {
 
 
-                OrganizationDataSet dataSet = new OrganizationDataSet(
+                final OrganizationDataSet dataSet = new OrganizationDataSet(
                         exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getFullName(),
                         exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getShortName(),
                         exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getOGRN(),
@@ -84,7 +84,7 @@ public final class ProgramAction {
                         ResourcesUtil.instance().getCompanyGradId(), // Идентификатор в БД ГРАД
                         exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getOrgVersionGUID()); // Примечание
 
-                OrganizationDAO organizationDAO = new OrganizationDAO();
+                final OrganizationDAO organizationDAO = new OrganizationDAO();
                 organizationDAO.addOrganization(dataSet);
 
                 answerProcessing.sendOkMessageToClient("");
@@ -112,7 +112,7 @@ public final class ProgramAction {
             setStateRunOn();
             answerProcessing.sendMessageToClient("Запуск получения Справочников...");
             answerProcessing.sendMessageToClient("");
-            UpdateReference updateReference = new UpdateReference(answerProcessing);
+            final UpdateReference updateReference = new UpdateReference(answerProcessing);
             updateReference.updateAllDataProviderNsiItem();
 //            setStateRunOff();
 //        ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(clientService, answerProcessing);
@@ -211,10 +211,10 @@ public final class ProgramAction {
 
         answerProcessing.sendMessageToClient("Запуск архивации ПУ...");
 
-        UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
+        final UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
         try {
             updateAllMeteringDeviceData.archiveAllDevices("b58c5da4-8d62-438f-b11e-d28103220952");
-            int state = updateAllMeteringDeviceData.getErrorState();
+            final int state = updateAllMeteringDeviceData.getErrorState();
             if (state == -1) {
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Архивация ПУ\" прервана!");
@@ -236,13 +236,13 @@ public final class ProgramAction {
      * Метод, получает массив, разделенный запятой с ид ПУ В БД ГРАД, добавляет ПУ в архив с указанной причиной "Ошибка".
      * @param lineMeterId ид ПУ в БД ГРАД, разделенные запятой.
      */
-    public void setMeteringDevicesToArchive(Integer houseId, String lineMeterId) {
+    public void setMeteringDevicesToArchive(final Integer houseId, final String lineMeterId) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
         try {
             answerProcessing.sendMessageToClient("Архивирование ПУ...");
-            ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
-            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(answerProcessing, houseId);
+            final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+            final MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(answerProcessing, houseId);
             
         } catch (SQLException | ParseException | PreGISException e) {
             answerProcessing.sendErrorToClient("Архивирование ПУ: ", "\"Архивирование ПУ\"", LOGGER, e);
@@ -254,12 +254,12 @@ public final class ProgramAction {
     /**
      * Метод, по коду дома по ФИАС получает показания ПУ.
      */
-    public void getExportMeteringDeviceHistory() {
+    public void getExportMeteringDeviceHistory(final String houseGradID) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
-        UpdateMeteringDeviceValues deviceValues = null;
+        final UpdateMeteringDeviceValues deviceValues;
         try {
             deviceValues = new UpdateMeteringDeviceValues(answerProcessing);
-            int state = deviceValues.updateAllMeteringDeviceValues();
+            final int state = deviceValues.updateAllMeteringDeviceValues(checkHouseGradId(houseGradID));
             if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");
             } else if (state == 0) {
@@ -290,7 +290,7 @@ public final class ProgramAction {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
 //            Если будет нужно, переделать как у всех что бы сыпал лог клиенту.
-            ExportNsiList nsiList = new ExportNsiList();
+            final ExportNsiList nsiList = new ExportNsiList();
             nsiList.callExportNsiList(NsiListGroupEnum.NSI);
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getNsiList: ", "\"Экспорта списков справочников\" ", LOGGER, e);
@@ -307,11 +307,11 @@ public final class ProgramAction {
      * Позволяет получить записи конкретного справочника, а также только те записи справочника,
      * которые изменились после временной метки ModifiedAfter.
      */
-    public void callExportNsiItem(String codeNsiItem) {
+    public void callExportNsiItem(final String codeNsiItem) {
 
         setStateRunOn();
-        try {
-            int code = Integer.valueOf(codeNsiItem);
+        try {  // такая проверка, что указали точно число.
+            final int code = Integer.valueOf(codeNsiItem);
         } catch (NumberFormatException ext) {
             if (codeNsiItem.isEmpty()) {
                 answerProcessing.sendMessageToClient("Не указан код справочника: " +
@@ -324,7 +324,7 @@ public final class ProgramAction {
             return;
         }
         try {
-            ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
+            final ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
             nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportNsiItem(): ", "\"Экспорта данных справочника\" ", LOGGER, e);
@@ -365,14 +365,14 @@ public final class ProgramAction {
     /**
      * Метод, импорт сведений о платежных документах.
      */
-    public void callImportPaymentDocumentData() {
+    public void callImportPaymentDocumentData(final String houseGradID) {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежных документов...");
-            PaymentDocumentHandler handler = new PaymentDocumentHandler(answerProcessing);
-            handler.compilePaymentDocument();
+            final PaymentDocumentHandler handler = new PaymentDocumentHandler(answerProcessing);
+            handler.compilePaymentDocument(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         } finally {
@@ -388,20 +388,20 @@ public final class ProgramAction {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("Запуск получения ПД...");
-            ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
-            List<String> list = new ArrayList<>();
+            final ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
+            final List<String> list = new ArrayList<>();
             list.add("210870201");
             list.add("210887401");
             list.add("210889101");
             list.add("210915701");
             list.add("212866301 ");
 
-            ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
-            List<String> listServiceID = new ArrayList<>();
+            final ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
+            final List<String> listServiceID = new ArrayList<>();
 
             try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
 
-                ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
+                final ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
                 for (ReferenceItemDataSet item : allItems) {
                     listServiceID.add(item.getGuid());
                 }
@@ -421,7 +421,7 @@ public final class ProgramAction {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("Получение расчетного периода...");
-            ExportOrgPeriodData periodData = new ExportOrgPeriodData(answerProcessing);
+            final ExportOrgPeriodData periodData = new ExportOrgPeriodData(answerProcessing);
             periodData.getOrgPeriodData();
             answerProcessing.sendMessageToClient("Расчетный период получен.");
         } catch (SQLException | PreGISException e) {

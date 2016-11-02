@@ -88,13 +88,13 @@ public final class ClientService {
                     action.updateMeteringDevices(value);
                     break;
                 case "getExportMeteringHistory":
-                    action.getExportMeteringDeviceHistory();
+                    action.getExportMeteringDeviceHistory(value);
                     break;
                 case "deleteAllMeteringDevicesInHouse":
                     action.deleteAllMeteringDevicesInHouse();
                     break;
                 case "callImportPaymentDocumentData":
-                    action.callImportPaymentDocumentData();
+                    action.callImportPaymentDocumentData(value);
                     break;
                 case "callQuestion":
                     setQuestion(Boolean.valueOf(value));

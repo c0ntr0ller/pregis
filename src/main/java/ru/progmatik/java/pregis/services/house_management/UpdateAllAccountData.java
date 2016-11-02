@@ -56,26 +56,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
             final HouseGRADDAO graddao = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
 
-            LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getHouseAddedGisJkh(connectionGRAD);
-
-            if (houseGradId != null) {
-                for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
-                    if (houseGradId.equals(entry.getValue())) {
-                        temp.put(entry.getKey(), entry.getValue());
-                    }
-                }
-                if (temp.size() > 0) {
-                    houseAddedGisJkh = temp;
-                } else {
-                    houseAddedGisJkh = null;
-                }
-            }
-
-            if (houseAddedGisJkh == null) {
-                throw new PreGISException("Не найден ни один дом готовый для выгрузки ГИС ЖКХ.");
-            }
+            final LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getListHouse(houseGradId, connectionGRAD);
 
             final ExportAccountData accountData = new ExportAccountData(answerProcessing);
 
@@ -297,34 +279,36 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
         for (ExportAccountResultType resultTypeAccount : accountsListFromGISJKH) { // полученные от ГИС ЖКХ записи перебераем
 
-            if (account.getAccountNumber().equalsIgnoreCase(resultTypeAccount.getAccountNumber())) { // если в БД есть элемент, добавляем идентификаторы в БД
+            if (resultTypeAccount.getClosed() == null) {
+                if (account.getAccountNumber().equalsIgnoreCase(resultTypeAccount.getAccountNumber())) { // если в БД есть элемент, добавляем идентификаторы в БД
 
 //                Проверка откл.
-                System.err.println("GRAD: " + account.getAccountGUID());
-                System.err.println("GIS: " + resultTypeAccount.getAccountGUID());
+                    System.err.println("GRAD: " + account.getAccountGUID());
+                    System.err.println("GIS: " + resultTypeAccount.getAccountGUID());
 
 //                String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
 //                        accountGRADDAO.getAbonentIdFromGrad(houseId, account.getAccountNumber(), connection), connection);
 
-                if (uniqueNumberFromDB != null &&
-                        uniqueNumberFromDB.equalsIgnoreCase(resultTypeAccount.getUnifiedAccountNumber())) { // Если есть уникальный идентификатор, сравниваем м ним
+                    if (uniqueNumberFromDB != null &&
+                            uniqueNumberFromDB.equalsIgnoreCase(resultTypeAccount.getUnifiedAccountNumber())) { // Если есть уникальный идентификатор, сравниваем м ним
 //
 //                    Всё просто, если есть уникальный идентификатор, то заносим AccountGUID
-                    if (account.getAccountGUID() == null ||
-                            !account.getAccountGUID().equalsIgnoreCase(resultTypeAccount.getAccountGUID())) {
+                        if (account.getAccountGUID() == null ||
+                                !account.getAccountGUID().equalsIgnoreCase(resultTypeAccount.getAccountGUID())) {
 
-                        setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), null, connection);
+                            setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), null, connection);
 //                        после 9.0.1.4 переименовали
 
-                        return true;
+                            return true;
 //                    accountListFromGrad.remove(resultTypeAccount.getAccountNumber()); // удалим найденные счета из списка
 //                    }
 //                } else { // если нет записи в БД, значит счет закрыт надо закрыть в ГИС ЖКХ, для этого добавим в таблицу для удаления потом закроем все не найденные счита в БД.
 //                    removeAccount(houseId, resultTypeAccount.getAccountNumber(), connection);
+                        }
+                    } else { // Если нет уникального идентификатора, заносим всё на честное слово
+                        setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getUnifiedAccountNumber(), connection);
+                        return true;
                     }
-                } else { // Если нет уникального идентификатора, заносим всё на честное слово
-                    setAccountToBase(houseId, resultTypeAccount.getAccountNumber(), resultTypeAccount.getAccountGUID(), resultTypeAccount.getUnifiedAccountNumber(), connection);
-                    return true;
                 }
             }
         }

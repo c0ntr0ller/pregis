@@ -5,7 +5,7 @@ import javax.xml.ws.WebFault;
 @WebFault
 public class PreGISException extends Exception {
 
-    public PreGISException(String errorMessage) {
+    public PreGISException(final String errorMessage) {
         super(errorMessage);
     }
 }

@@ -20,10 +20,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -224,6 +221,37 @@ public final class HouseGRADDAO {
             }
         }
         return totalSquareMap;
+    }
+
+    /**
+     * Метод, получает идентификатор дома в Граде, по нему находит дом добавлены в ГИС ЖКХ, для последующего обмена.
+     * @param houseGradId идентификатор дома в Граде
+     * @param connectionGrad подключение к БД Град
+     * @return ключ - код дома по ФИАС, значение - идентификатор дома в Граде.
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
+     * @throws PreGISException могут появится ошибка если в файле параметров не указана ИД организации в Граде.
+     */
+    public LinkedHashMap<String, Integer> getListHouse(final Integer houseGradId,
+                                                        final Connection connectionGrad) throws SQLException, PreGISException {
+
+        final LinkedHashMap<String, Integer> tempMap = new LinkedHashMap<>();
+        final LinkedHashMap<String, Integer> houseAddedGisJkh = getHouseAddedGisJkh(connectionGrad);
+
+        if (houseGradId == null) {
+            return houseAddedGisJkh;
+        } else if (houseAddedGisJkh != null){
+            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
+                if (houseGradId.equals(entry.getValue())) {
+                    tempMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        if (houseAddedGisJkh == null) {
+            throw new PreGISException("Не найден ни один дом готовый для выгрузки в ГИС ЖКХ.");
+        }
+
+        return tempMap;
     }
 
     /**

@@ -9,11 +9,11 @@ import java.util.Calendar;
  * Класс, обрабатывает периоды отправки платежных документов.
  * Если предыдущий период открыт, он закроется и откроется новый по определенному дому.
  */
-public class HousePaymentPeriodHandler {
+public final class HousePaymentPeriodHandler {
 
     private final AnswerProcessing answerProcessing;
 
-    public HousePaymentPeriodHandler(AnswerProcessing answerProcessing) {
+    public HousePaymentPeriodHandler(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
@@ -21,7 +21,7 @@ public class HousePaymentPeriodHandler {
      * Метод, проверяет открыт предыдущий период, если открыт закроет и откроет новый.
      * @param fias код дома по ФИАС.
      */
-    public Calendar getHousePaymentPeriod(String fias) {
+    public Calendar getHousePaymentPeriod(final String fias) {
 //        Пока заглушка сервис не работает
         return OtherFormat.getCalendarForPaymentDocument();
     }

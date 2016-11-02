@@ -64,7 +64,7 @@ $(function () {
         } else if ($(this).hasClass("getHouseList")) {
             getHouseList(message);
         } else {
-            console.log(message);
+            // console.log(message);
             sendMessage(message);
         }
     });

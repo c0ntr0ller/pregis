@@ -85,7 +85,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> houseAddedGisJkh = getListHouse(houseGradId, houseGRADDAO.getHouseAddedGisJkh(connectionGRAD));
+            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getListHouse(houseGradId, connectionGRAD);
             final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
@@ -268,23 +268,6 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 }
             }
         }
-    }
-
-    private LinkedHashMap<String, Integer> getListHouse(final Integer houseGradId,
-                                                        final LinkedHashMap<String, Integer> houseAddedGisJkh) {
-
-        final LinkedHashMap<String, Integer> tempMap = new LinkedHashMap<>();
-
-        if (houseGradId == null) {
-            return houseAddedGisJkh;
-        } else {
-            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
-                if (houseGradId.equals(entry.getValue())) {
-                    tempMap.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        return tempMap;
     }
 
     @Override

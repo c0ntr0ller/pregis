@@ -21,7 +21,7 @@ function getWebConnect() {
 
         var inMessage = JSON.parse(event.data);
 
-        console.log("event.data: " + event.data);
+        // console.log("event.data: " + event.data);
 
         switch (inMessage.command) {
             case '::setButtonState(false)':
@@ -51,24 +51,6 @@ function getWebConnect() {
             default:
                 showMessage(inMessage.value);
         }
-
-        // if (inMessage.indexOf('::setButtonState(false)') != -1) {
-        //     showButton();
-        // } else if (inMessage.indexOf('::setButtonState(true)') != -1) {
-        //     showState();
-        // } else if (inMessage.indexOf('::setFailed()') != -1) {
-        //     setFailedLabelText();
-        // } else if (inMessage.indexOf('::setOkLabelText()') != -1) {
-        //     setOkLabelText();
-        // } else if (inMessage.indexOf('::clearLabelText') != -1) {
-        //     clearLabelText();
-        // } else if (inMessage.indexOf('::showModalWindow()') != -1) {
-        //     showModalWindow(event.data.replace('::showModalWindow()', ''));
-        // } else if (inMessage.indexOf('::closeModalWindow()') != -1) {
-        //     hideModalWindow();
-        // } else {
-        //     showMessage();
-        // }
     };
     ws.onclose = function (event) {
         if (parseInt(event.code) === 1006 || parseInt(event.code) === 1008) {
@@ -104,7 +86,7 @@ function sendMessageWithParam(message, param) {
         command: message,
         value: valueForm
     };
-    console.log("Send : " + msgJSON); //    remove
+    // console.log("Send : " + msgJSON);
     ws.send(JSON.stringify(msgJSON));
 };
 function showMessage(message) {
@@ -147,11 +129,9 @@ function showHouseListModalWindow(arrayHouse) {
 
     if (arrayJSON.length > 0 ) {
         selectBox.append($("<option></option>").attr("value", -1).text("Выгрузить все"));
-        console.log("Array size: " + arrayJSON.length);
-        console.log("Array : " + arrayJSON);
 
         for (var i = 0; i < arrayJSON.length; i++) {
-            console.log("value: " + arrayJSON[i].value);
+            // console.log("value: " + arrayJSON[i].value);
             selectBox.append($("<option></option>").attr("value", arrayJSON[i].value).text(arrayJSON[i].name));
         }
     } else {
@@ -182,7 +162,7 @@ function answerNo() {
     var selectBox = $('#house-select');
     if (selectBox.css('display') != 'none') {
         $('#house-select').empty();
-        selectBox.fadeOut(50);
+        selectBox.fadeOut(300);
     } else {
         sendMessageWithParam("callQuestion", "false");
     }
@@ -190,11 +170,11 @@ function answerNo() {
 function answerYes() {
     hideModalWindow();
     var selectBox = $('#house-select');
-    if (selectBox.css('display') != 'none') {
-        console.log($('#house-select option:selected').attr("value"));
+    if (selectBox.length > 0 && selectBox.css('display') != 'none') {
+        // console.log($('#house-select option:selected').attr("value"));
         sendMessageWithParam(tempCommandID, $('#house-select option:selected').attr("value"));
         $('#house-select').empty();
-        selectBox.fadeOut(50);
+        selectBox.fadeOut(300);
     } else {
         sendMessageWithParam("callQuestion", "true");
     }

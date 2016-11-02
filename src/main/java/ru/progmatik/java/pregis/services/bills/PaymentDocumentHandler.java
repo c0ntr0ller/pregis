@@ -91,23 +91,25 @@ public class PaymentDocumentHandler {
     }
 
     private HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> generatePaymentDocument(
-            Integer houseId, Calendar paymentPeriod, HashMap<Integer,
-            ImportPaymentDocumentRequest.PaymentInformation> paymentInformationIdsMap,
-            Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+            final Integer houseId,
+            final Calendar paymentPeriod,
+            final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationIdsMap,
+            final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
-        PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
+        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
 
-        HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentMap = new HashMap<>();
+        final HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentMap = new HashMap<>();
 
-        AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
+        final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
 
-        ArrayList<Rooms> rooms = accountGRADDAO.getRooms(houseId, connectionGrad);
-        LinkedHashMap<String, ImportAccountRequest.Account> accountMapFromGrad =
+        final ArrayList<Rooms> rooms = accountGRADDAO.getRooms(houseId, connectionGrad);
+
+        final LinkedHashMap<String, ImportAccountRequest.Account> accountMapFromGrad =
                 accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad);
 
         for (Rooms room : rooms) {
 
-            TreeSet<Integer> organizationIds = getOrganizationIds(pdGradDao, room.getAbonId(), paymentPeriod, connectionGrad);
+            final TreeSet<Integer> organizationIds = getOrganizationIds(pdGradDao, room.getAbonId(), paymentPeriod, connectionGrad);
 //            System.out.println("Organization ID: " + organizationIds);
 
             for (Integer organizationId : organizationIds) {
@@ -135,7 +137,7 @@ public class PaymentDocumentHandler {
                         organizationId,
                         paymentPeriod, paymentDocument, connectionGrad);
 
-                PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
+                final PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
                         Integer.valueOf(paymentDocument.getPaymentDocumentNumber()), paymentPeriod.get(Calendar.MONTH),
                         paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getAbonId(),
                         room.getNumberLS(), paymentDocument.getAccountGuid());
@@ -180,8 +182,8 @@ public class PaymentDocumentHandler {
      * @throws SQLException
      * @throws PreGISException
      */
-    private void sendDocumentToGisJkh(HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap,
-                                      Calendar paymentPeriod) throws SQLException, PreGISException {
+    private void sendDocumentToGisJkh(final HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap,
+                                      final Calendar paymentPeriod) throws SQLException, PreGISException {
 
 
         PaymentDocumentRegistryDAO registryDAO = new PaymentDocumentRegistryDAO();
@@ -317,7 +319,8 @@ public class PaymentDocumentHandler {
      * @return true - если документ найден в БД и его не нужно выгружать,
      * false - документы не похоже, можно выгружать в ГИС ЖКХ.
      */
-    private boolean checkAddedDocument(PaymentDocumentRegistryDataSet out, PaymentDocumentRegistryDataSet in) {
+    private boolean checkAddedDocument(final PaymentDocumentRegistryDataSet out,
+                                       final PaymentDocumentRegistryDataSet in) {
 
         return (out.getMonth() == in.getMonth()) && (out.getYear() == in.getYear()) &&
                 out.getSumma().equals(in.getSumma()) && (out.getAbonId() == in.getAbonId()) &&

@@ -46,7 +46,7 @@ public class PaymentDocumentRegistryDAO {
 
     /**
      * Конструктор, проверяет, если таблицы нет, создаёт.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
     public PaymentDocumentRegistryDAO() throws SQLException {
 
@@ -58,11 +58,9 @@ public class PaymentDocumentRegistryDAO {
     /**
      * Метод, получает все записи с таблицы "PD_REGISTRY".
      * @return список всех записей из таблицы "PD_REGISTRY".
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
     public ArrayList<PaymentDocumentRegistryDataSet> getAllPaymentDocumentRecording() throws SQLException {
-
-        ArrayList<PaymentDocumentRegistryDataSet> paymentList = new ArrayList<>();
 
         try (Statement st = ConnectionDB.instance().getConnectionDB().createStatement();
              ResultSet rs = st.executeQuery("SELECT * FROM " + TABLE_NAME_PD_REGISTRY)) {
@@ -75,7 +73,7 @@ public class PaymentDocumentRegistryDAO {
      * Метод, получает все записи за указанный месяц.
      * @param month месяц за который нужно выгрузить ПД.
      * @return список записей за указанный месяц.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
     public ArrayList<PaymentDocumentRegistryDataSet> getMonthPaymentDocumentRecording(Integer month) throws SQLException {
 
@@ -93,11 +91,11 @@ public class PaymentDocumentRegistryDAO {
      * Метод, получает ResultSet и по нему создаёт список объектов полученных из БД.
      * @param rs полученный результат из таблицы "PD_REGISTRY".
      * @return список объектов полученных из таблицы "PD_REGISTRY".
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    private ArrayList<PaymentDocumentRegistryDataSet> getPaymentDocumentRecordingFromResultSet(ResultSet rs) throws SQLException {
+    private ArrayList<PaymentDocumentRegistryDataSet> getPaymentDocumentRecordingFromResultSet(final ResultSet rs) throws SQLException {
 
-        ArrayList<PaymentDocumentRegistryDataSet> paymentList = new ArrayList<>();
+        final ArrayList<PaymentDocumentRegistryDataSet> paymentList = new ArrayList<>();
 
         while (rs.next()) {
             paymentList.add(new PaymentDocumentRegistryDataSet(
@@ -120,9 +118,9 @@ public class PaymentDocumentRegistryDAO {
     /**
      * Метод, добавляет запись в таблицу "PD_REGISTRY".
      * @param registryItem объект для добавления в таблицу.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    public void addPaymentDocumentRegistryItem(PaymentDocumentRegistryDataSet registryItem) throws SQLException {
+    public void addPaymentDocumentRegistryItem(final PaymentDocumentRegistryDataSet registryItem) throws SQLException {
 
         try (PreparedStatement st = ConnectionDB.instance().getConnectionDB().prepareStatement(
                 "INSERT INTO \"PUBLIC\".PD_REGISTRY" +
@@ -146,9 +144,9 @@ public class PaymentDocumentRegistryDAO {
      * Метод, по идентификатору записи в таблице определяет, находится ли она в архиве.
      * @param id идентификатор записи в таблице.
      * @return true - запись в архиве, false - запись в архиве не найдена.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    public boolean isArchivePaymentDocument(int id) throws SQLException {
+    public boolean isArchivePaymentDocument(final int id) throws SQLException {
 
         try (PreparedStatement ps = ConnectionDB.instance().getConnectionDB().prepareStatement(
                 "SELECT ARCHIVE FROM PD_REGISTRY WHERE ID = ? AND ARCHIVE IS NOT NULL")) {

@@ -296,7 +296,7 @@ public final class HouseGRADDAO {
                                final String apartmentNumber,
                                final String roomNumber) {
 
-        if (idHouse != null || apartmentNumber != null) {
+        if (idHouse != null && temMapRooms.containsKey(idHouse) && apartmentNumber != null) {
             for (Rooms room : temMapRooms.get(idHouse)) {
                 if (apartmentNumber.equalsIgnoreCase(room.getNumberRooms())) { // если нашли одинаковые помещения (квартиры)
                     if (roomNumber == null && room.getNumberApartment() == null) { // если номер комнаты отсутствует
@@ -367,7 +367,7 @@ public final class HouseGRADDAO {
      * @param tempDataHouse временный список.
      * @param connectionGrad подключение к БД Град.
      * @return список домов.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
     private ArrayList<String> getHouseFromGrad(final String sqlRequest, final ArrayList<String> tempDataHouse,
                                                final Connection connectionGrad) throws SQLException {
@@ -393,7 +393,7 @@ public final class HouseGRADDAO {
      *
      * @param houseId ИД дома в БД ГРАДа.
      * @return true - у дома есть уникальный номер ГИС ЖКХ, false - дом не получил уникальный идентификатор ГИС ЖКХ.
-     * @throws SQLException
+     * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
     private boolean isAddedHouseInGisJkh(final Integer houseId, final Connection connectionGrad) throws SQLException {
 

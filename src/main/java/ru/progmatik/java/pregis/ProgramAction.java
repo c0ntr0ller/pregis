@@ -353,7 +353,7 @@ public final class ProgramAction {
                 answerProcessing.sendMessageToClient(String.format("Получено: %d ЛС", exportAccountResult.getAccounts().size()));
             }
 
-            answerProcessing.sendMessageToClient("Получения ЛС завершено.");
+            answerProcessing.sendMessageToClient("Получение ЛС завершено.");
 
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportAccountData(): ", "", LOGGER, e);
@@ -408,7 +408,7 @@ public final class ProgramAction {
             }
 
             paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
-            answerProcessing.sendMessageToClient("Получения ПД завершено.");
+            answerProcessing.sendMessageToClient("Получение ПД завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
         }finally {

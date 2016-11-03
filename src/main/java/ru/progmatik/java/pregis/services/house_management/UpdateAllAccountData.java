@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public final class UpdateAllAccountData implements ClientDialogWindowObservable {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllAccountData.class);
+    private static final int ACCOUNT_COUNTER_FOR_REQUEST = 5;
     private final AnswerProcessing answerProcessing;
     private final AccountGRADDAO accountGRADDAO;
     private final ArrayList<ImportAccountRequest.Account> accountsForCloseList = new ArrayList<>();
@@ -170,6 +171,22 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //                            entry.getValue().setAccountGUID(null);
                             accountDataMap.put(transportGUID, entry.getValue());
                         }
+                    }
+                }
+            }
+        } else {
+            for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
+                if (!isDuplicateAccountData(entry.getKey())) {
+
+                    final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
+                            accountGRADDAO.getAbonentIdFromGrad(houseId, entry.getKey(), connection), connection);
+
+                    if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
+
+                            final String transportGUID = OtherFormat.getRandomGUID();
+                            entry.getValue().setTransportGUID(transportGUID);
+//                            entry.getValue().setAccountGUID(null);
+                            accountDataMap.put(transportGUID, entry.getValue());
                     }
                 }
             }
@@ -344,11 +361,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
             answerProcessing.clearLabelForText();
 
-            if (count + 20 > accountsList.size()) {
+            if (count + ACCOUNT_COUNTER_FOR_REQUEST > accountsList.size()) {
                 result = sendAccountToGis.callImportAccountData(accountsList.subList(count, accountsList.size()));
-                count += 20;
+                count += ACCOUNT_COUNTER_FOR_REQUEST;
             } else {
-                result = sendAccountToGis.callImportAccountData(accountsList.subList(count, count += 20));
+                result = sendAccountToGis.callImportAccountData(accountsList.subList(count, count += ACCOUNT_COUNTER_FOR_REQUEST));
             }
 
             if (result != null && result.getCommonResult() != null) {

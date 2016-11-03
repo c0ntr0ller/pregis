@@ -228,14 +228,19 @@ public final class AccountGRADDAO {
 //                    Сведения о платильщике
                     account.setPayerInfo(new AccountType.PayerInfo());
 //                    if (basicInformation.getOgrnOrOgrnip() == 0) {
-                    account.getPayerInfo().setInd(new AccountIndType());
-                    account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
-                    account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
-                    account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
-//                        account.getPayerInfo().getInd().setSex(); // не указан
-//                        account.getPayerInfo().getInd().setDateOfBirth(); // не указан
-                    if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
-                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
+                    if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()) {
+
+                        account.getPayerInfo().setInd(new AccountIndType());
+                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+                        if (basicInformation.getName() != null) {
+                            account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+                        }
+                        if (basicInformation.getMiddleName() != null) {
+                            account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
+                        }
+                        if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
+                            account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
+                        }
                     }
 
                     if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {

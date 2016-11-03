@@ -1,10 +1,6 @@
 package ru.progmatik.java.pregis.connectiondb;
 
 import org.junit.Test;
-import ru.progmatik.java.pregis.connectiondb.localdb.users.UsersDAO;
-import ru.progmatik.java.web.accounts.UserProfile;
-
-import java.util.List;
 
 /**
  * Проверка, добавления учетных записей.
@@ -12,11 +8,11 @@ import java.util.List;
 public class UsersDAOTest {
     @Test
     public void getUsers() throws Exception {
-        UsersDAO dao = new UsersDAO();
-        List<UserProfile> users = dao.getUsers();
-        for (UserProfile user : users) {
-            System.out.println(user.toString());
-        }
+//        UsersDAO dao = new UsersDAO();
+//        List<UserProfile> users = dao.getUsers();
+//        for (UserProfile user : users) {
+//            System.out.println(user.toString());
+//        }
 
     }
 

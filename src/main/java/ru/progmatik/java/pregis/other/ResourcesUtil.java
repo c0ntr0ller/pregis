@@ -156,6 +156,27 @@ public class ResourcesUtil {
         return properties.getProperty("config.server.stunnel.address");
     }
 
+    public long getTimeOut() throws PreGISException {
+        try{
+        return Long.valueOf(properties.getProperty("config.gis.timeout"));
+        } catch (NumberFormatException e) {
+            LOGGER.error("ResourcesUtil: Указано неверное число миллисекунд задержки в файле параметров \"settings\\application.properties\".\n" +
+                    "Значение должно содержать только цифры.");
+            throw new PreGISException("ResourcesUtil: Указано неверное число миллисекунд задержки опроса сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
+                    "Значение должно содержать только цифры.");
+        }
+    }
+
+    public long getMaxRequestCount() throws PreGISException {
+        try{
+            return Long.valueOf(properties.getProperty("config.gis.maxrequestcount"));
+        } catch (NumberFormatException e) {
+            LOGGER.error("ResourcesUtil: Указано неверное максимальное кол-во опросов сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
+                    "Значение должно содержать только цифры.");
+            throw new PreGISException("ResourcesUtil: Указано неверное максимальное кол-во опросов сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
+                    "Значение должно содержать только цифры.");
+        }
+    }
     /**
      * Метод, создаёт папку, если она не создана.
      * @param folderName имя папки.

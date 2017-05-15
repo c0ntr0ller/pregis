@@ -12,6 +12,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.ws.Holder;
+import java.net.URL;
 
 /**
  * Класс для запроса "экспорт сведений об организациях" ("hcs-organizations-registry-service").
@@ -27,11 +28,19 @@ public class ExportOrgRegistry {
     public ExportOrgRegistry(AnswerProcessing answerProcessing) {
 
         this.answerProcessing = answerProcessing;
-
-        RegOrgService service = UrlLoader.instance().getUrlMap().get("orgRegistryCommon") == null ? new RegOrgService()
-                : new RegOrgService(UrlLoader.instance().getUrlMap().get("orgRegistryCommon"));
-
+        RegOrgService service;
+        if (UrlLoader.instance().getUrlMap().get("orgRegistryCommon") == null){
+            service = new RegOrgService();
+        }
+        else {
+//            answerProcessing.sendMessageToClient("!----------");
+            URL urlLoader = UrlLoader.instance().getUrlMap().get("orgRegistryCommon");
+//            answerProcessing.sendMessageToClient(urlLoader.toString());
+//            answerProcessing.sendMessageToClient("!----------");
+            service = new RegOrgService(urlLoader);
+        }
         port = service.getRegOrgPort();
+
         OtherFormat.setPortSettings(service, port);
     }
 

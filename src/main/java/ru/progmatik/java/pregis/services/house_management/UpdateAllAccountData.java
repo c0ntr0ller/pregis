@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
+import ru.gosuslugi.dom.schema.integration.individual_registry_base.ID;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
@@ -66,12 +67,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                 clearCounts();
 
-                answerProcessing.clearLabelForText();
-                answerProcessing.sendMessageToClient("");
-                answerProcessing.sendMessageToClient("Обрабатываю дом...");
-                answerProcessing.sendMessageToClient("Код дома по ФИАС: " + itemHouse.getKey());
-                answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue());
-
+                if (answerProcessing != null) {
+                    answerProcessing.clearLabelForText();
+                    answerProcessing.sendMessageToClient("");
+                    answerProcessing.sendMessageToClient("Обрабатываю дом...");
+                    answerProcessing.sendMessageToClient("Код дома по ФИАС: " + itemHouse.getKey());
+                    answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue());
+                }
 
                 final ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
                 final LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
@@ -96,7 +98,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 printReport(itemHouse.getKey());
             }
         }
-
+        // TODO: Разобраться как закрывать лицевые, работает ли это
         if (accountsForCloseList.size() > 0) {
             setErrorState(0);
             answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +
@@ -111,14 +113,15 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param fias код дома по ФИАС.
      */
     private void printReport(final String fias) {
-
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient(String.format("По дому с кодом ФИАС: %s", fias));
-        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
-        answerProcessing.sendMessageToClient("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
-        answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
-        answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
-        answerProcessing.sendMessageToClient("Идентификаторов добавлено в ГРАД: " + countAddedToGRAD);
+        if(answerProcessing != null) {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient(String.format("По дому с кодом ФИАС: %s", fias));
+            answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
+            answerProcessing.sendMessageToClient("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
+            answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
+            answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
+            answerProcessing.sendMessageToClient("Идентификаторов добавлено в ГРАД: " + countAddedToGRAD);
+        }
         LOGGER.debug("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
         LOGGER.debug("Обработано записей - " + countAll);
         LOGGER.debug("Лицевых счетов помечено на удаление: " + countRemove + ", Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
@@ -151,18 +154,26 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //        Ключ - TransportGUID, значение - Account
         final LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();
 
-
+// TODO: проверить как заносятся закрытые ЛС
         if (accountsListFromGISJKH != null) {
+            // сначала находим дубликаты только в ГИС с одинаковым ЛС
             checkDuplicateAccountDataGisJkh(accountsListFromGISJKH);
 
+            checkIncorrectAccountGisJkh(accountsListFromGISJKH, accountListFromGrad);
+
+            // бежим по ЛС из Града
             for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
+                // если еще не входит в список на закрытие
                 if (!isDuplicateAccountData(entry.getKey())) {
 
+                    // получаем ACCOUNTUNIQNUM абонента (блин, а сразу его из entry получить не судьба?)
                     final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
                             accountGRADDAO.getAbonentIdFromGrad(houseId, entry.getKey(), connection), connection);
 
+                    // если в Граде у абонента ACCOUNTUNIQNUM пустой и ACCOUNTGUID тоже пустой
                     if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
 
+                        // проверяем и впытаемся занести его ACCOUNTGUID в БД. если не занесли
                         if (!checkAccountDataIsAddedGrad(accountsListFromGISJKH, entry.getValue(),
                                 houseId, uniqueNumberFromDB, connection)) {
 
@@ -208,14 +219,30 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      */
     private void checkDuplicateAccountDataGisJkh(final List<ExportAccountResultType> exportAccountResult) throws PreGISException, SQLException {
-
         for (int i = 0; i < exportAccountResult.size(); i++) {
             for (int j = i + 1; j < exportAccountResult.size(); j++) {
-                if (exportAccountResult.get(i).getAccountNumber().equalsIgnoreCase(exportAccountResult.get(j).getAccountNumber()) &&
+                String ar1 = exportAccountResult.get(i).getAccountNumber();
+                String ar2 = exportAccountResult.get(j).getAccountNumber();
+                if (ar1 != null && ar2 != null && ar1.equalsIgnoreCase(ar2) &&
                         (exportAccountResult.get(i).getClosed() == null && exportAccountResult.get(j).getClosed() == null)) {
-                    addAccountDataForClose(exportAccountResult.get(i));
-                    addAccountDataForClose(exportAccountResult.get(j));
+                    addAccountDataForClose(exportAccountResult.get(i), "Изменение реквизитов лицевого счета");
+                    addAccountDataForClose(exportAccountResult.get(j), "Изменение реквизитов лицевого счета");
                 }
+            }
+        }
+    }
+
+    /**
+     * Бежим по списку из ГИС ЖКХ и по ЛС ищем абонента в списке Граде. Если не нашли - ставим на удаление, занесен в ГИС ошибочно
+     * @param exportAccountResult
+     * @throws PreGISException
+     * @throws SQLException
+     */
+    private void checkIncorrectAccountGisJkh(final List<ExportAccountResultType> exportAccountResult,
+                                             LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad) throws PreGISException, SQLException {
+        for (ExportAccountResultType acc: exportAccountResult) {
+            if(accountListFromGrad.get(acc.getAccountNumber()) == null && acc.getClosed() == null){
+                addAccountDataForClose(acc, "Ошибка ввода");
             }
         }
     }
@@ -244,7 +271,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param account данные абонента.
      * @throws PreGISException возникнит ошибка, если не удастся загрузить справочник из ГИС ЖКХ.
      */
-    private void addAccountDataForClose(final ExportAccountResultType account) throws SQLException, PreGISException {
+    private void addAccountDataForClose(final ExportAccountResultType account, final String nameElement) throws SQLException, PreGISException {
 
         for (ImportAccountRequest.Account accountItem : accountsForCloseList) {
             if (account.getAccountGUID().equalsIgnoreCase(accountItem.getAccountGUID())) {
@@ -252,19 +279,19 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 return;
             }
         }
-
+// "Изменение реквизитов лицевого счета"
         final ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
 
         final ImportAccountRequest.Account accountClose = new ImportAccountRequest.Account();
         accountClose.setAccountGUID(account.getAccountGUID());
         accountClose.setClosed(new ClosedAccountAttributesType());
         accountClose.getClosed().setCloseDate(OtherFormat.getDateNow());
-        accountClose.getClosed().setCloseReason(referenceNSI.getNsiRef("22", "Изменение реквизитов лицевого счета"));
+        accountClose.getClosed().setCloseReason(referenceNSI.getNsiRef("22", nameElement));
         accountClose.getClosed().setDescription("Данные признаны неверными.");
         accountClose.setCreationDate(account.getCreationDate());
         accountClose.setAccountNumber(account.getAccountNumber());
-        accountClose.getAccommodation().addAll(account.getAccommodation());
-        accountClose.setPayerInfo(account.getPayerInfo());
+        accountClose.getAccommodation().addAll(convertAccommodation(account.getAccommodation()));
+        accountClose.setPayerInfo(convertPayer(account.getPayerInfo()));
         accountClose.setTransportGUID(OtherFormat.getRandomGUID());
         accountClose.setTotalSquare(account.getTotalSquare());
 //        accountClose.setResidentialSquare(account.getResidentialSquare());
@@ -276,6 +303,62 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 account.getAccountNumber()));
 
         accountsForCloseList.add(accountClose);
+    }
+
+    /**
+     * Метод конвертирует из типа AccountExportType.PayerInfo в AccountType.PayerInfo из-за идиотизма программеров
+     * @param sPayer - входящий AccountExportType.PayerInfo
+     * @return - результат конвертации
+     */
+    private AccountType.PayerInfo convertPayer(AccountExportType.PayerInfo sPayer){
+        if(sPayer == null) return null;
+
+        AccountType.PayerInfo rPayer = new AccountType.PayerInfo();
+        AccountIndType rInd = new AccountIndType();
+        ID rID = new ID();
+        
+        AccountIndExportType sInd = sPayer.getInd();
+        AccountIndExportType.ID sID = null;
+        
+        if (sInd != null) {
+            sID = sPayer.getInd().getID();
+            if(sID != null) {
+                rID.setIssueDate(sID.getIssueDate());
+                rID.setNumber(sID.getNumber());
+                rID.setSeries(sID.getSeries());
+                rID.setType(sID.getType());
+                rInd.setID(rID);
+            }
+            rInd.setDateOfBirth(sInd.getDateOfBirth());
+            rInd.setSex(sInd.getSex());
+            rInd.setSNILS(sInd.getSNILS());
+            rInd.setFirstName(sInd.getFirstName());
+            rInd.setPatronymic(sInd.getPatronymic());
+            rInd.setSurname(sInd.getSurname());
+            rPayer.setInd(rInd);
+        }
+        rPayer.setIsRenter(sPayer.isIsRenter());
+        rPayer.setOrg(sPayer.getOrg());
+        return rPayer;
+    }
+
+    /**
+     * Метод конвертирует из типа List<AccountExportType.Accommodation> в List<AccountType.Accommodation> из-за идиотизма программеров
+     * @param sAccList - входящий список типа List<AccountExportType.Accommodation>
+     * @return - результат конвертации
+     */
+    private List<AccountType.Accommodation> convertAccommodation(List<AccountExportType.Accommodation> sAccList){
+        List<AccountType.Accommodation> rAccList = new ArrayList<>();
+        for (AccountExportType.Accommodation sAcc: sAccList
+                ) {
+            AccountType.Accommodation rAcc = new AccountType.Accommodation();
+            rAcc.setFIASHouseGuid(sAcc.getFIASHouseGuid());
+            rAcc.setLivingRoomGUID(sAcc.getLivingRoomGUID());
+            rAcc.setPremisesGUID(sAcc.getPremisesGUID());
+            rAcc.setSharePercent(sAcc.getSharePercent());
+            rAccList.add(rAcc);
+        }
+        return rAccList;
     }
 
     /**

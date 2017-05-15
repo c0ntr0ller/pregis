@@ -15,7 +15,6 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.bills.ExportOrgPeriodData;
 import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.PaymentDocumentHandler;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
@@ -65,9 +64,11 @@ public final class ProgramAction {
         answerProcessing.sendMessageToClient("Получение идентификатора зарегистрированной организации...");
 
         try {
+            // answerProcessing.sendMessageToClient("!------ 1");
             final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
 
             final ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
+
 
             if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() == null) {
 
@@ -205,15 +206,15 @@ public final class ProgramAction {
     /**
      * Метод, архивирует (удалит) все приборы учёта
      */
-    public void deleteAllMeteringDevicesInHouse() {
+    public void deleteAllMeteringDevicesInHouse(final String houseFias) {
 
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
-        answerProcessing.sendMessageToClient("Запуск архивации ПУ...");
+        answerProcessing.sendMessageToClient("Запуск архивации ПУ. ФИАС " + houseFias);
 
         final UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
         try {
-            updateAllMeteringDeviceData.archiveAllDevices("b58c5da4-8d62-438f-b11e-d28103220952");
+            updateAllMeteringDeviceData.archiveAllDevices(houseFias);
             final int state = updateAllMeteringDeviceData.getErrorState();
             if (state == -1) {
                 answerProcessing.sendMessageToClient("");
@@ -416,20 +417,20 @@ public final class ProgramAction {
         }
     }
 
-    public void callExportOrgPeriodData() {
-
-        setStateRunOn();
-        try {
-            answerProcessing.sendMessageToClient("Получение расчетного периода...");
-            final ExportOrgPeriodData periodData = new ExportOrgPeriodData(answerProcessing);
-            periodData.getOrgPeriodData();
-            answerProcessing.sendMessageToClient("Расчетный период получен.");
-        } catch (SQLException | PreGISException e) {
-            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
-        } finally {
-            setStateRunOff();
-        }
-    }
+//    public void callExportOrgPeriodData() {
+//
+//        setStateRunOn();
+//        try {
+//            answerProcessing.sendMessageToClient("Получение расчетного периода...");
+//            final ExportOrgPeriodData periodData = new ExportOrgPeriodData(answerProcessing);
+//            periodData.getOrgPeriodData();
+//            answerProcessing.sendMessageToClient("Расчетный период получен.");
+//        } catch (SQLException | PreGISException e) {
+//            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+//        } finally {
+//            setStateRunOff();
+//        }
+//    }
 
     /**
      * Метод, возвращает состояние выполнения какого либо метода.

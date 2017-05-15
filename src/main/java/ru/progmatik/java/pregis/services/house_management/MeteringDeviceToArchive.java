@@ -106,7 +106,7 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 
                 if (result.getError() == null || result.getError().size() == 0) {
-                    setMeteringDevices(result.getImportMeteringDevice().getMeteringDeviceVersionGUID(),
+                    setMeteringDevices(result.getImportMeteringDevice().getMeteringDeviceGUID(),
                             result.getTransportGUID(), connectionGrad);
                 } else {
                     showErrorMeteringDevices(result.getTransportGUID(), result.getError().get(0).getErrorCode(),

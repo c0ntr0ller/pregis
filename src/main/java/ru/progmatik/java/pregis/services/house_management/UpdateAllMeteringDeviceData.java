@@ -56,11 +56,11 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 //        Получаем выгруженные ПУ.
             final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-            final ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(fias);
+            List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(fias);
 
             final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
 
-            for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResult.getMeteringDevice()) {
+            for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
                 if (resultType.getStatusRootDoc().equals("Active")) {
                     deviceForArchive.put(resultType.getMeteringDeviceVersionGUID(), null);
                 }
@@ -89,15 +89,16 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
             for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
-                answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());
+                if (answerProcessing!= null ) {answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());}
                 final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
+
                 java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD);
 
 //                Импортируем ранее загруженные ПУ
                 final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-                ExportMeteringDeviceDataResult exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
-                if (exportMeteringDeviceDataResult != null) {
-                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
+                List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                if (exportMeteringDeviceDataResultList != null) {
+                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
                     devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD); // если добавились новые идентификаторы, нужно исключить их
                 }
 
@@ -106,10 +107,10 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 callImportMeteringDevices(importMeteringDeviceData, devices, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
 
 //                Повторно загружаем для занесения MeteringDeviceRootGUID.
-                exportMeteringDeviceDataResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
-                if (exportMeteringDeviceDataResult != null) {
-                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResult, connectionGRAD);
-                    for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResult.getMeteringDevice()) {
+                exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                if (exportMeteringDeviceDataResultList != null) {
+                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
+                    for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResultList) {
                         if (device.getStatusRootDoc().equalsIgnoreCase("Active")) {
 //                            только активные устройства
                             countAllGisJkh++;
@@ -244,7 +245,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         if (devices.size() > 0) {
             int count = 0;
             while (count < devices.size()) {
-                answerProcessing.sendMessageToClient("::clearLabelText");
+                // answerProcessing.sendMessageToClient("::clearLabelText");
                 ImportResult importResult;
                 if (count + 20 > devices.size()) {
                     importResult = importMeteringDeviceData.callImportMeteringDeviceData(fias, devices.subList(count, devices.size()));
@@ -258,7 +259,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                     for (ImportResult.CommonResult result : importResult.getCommonResult()) {
                         answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
                         answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
-                        answerProcessing.sendMessageToClient("MeteringDeviceVersionGUID: " + result.getImportMeteringDevice().getMeteringDeviceVersionGUID());
+                        answerProcessing.sendMessageToClient("meteringDeviceGUID: " + result.getImportMeteringDevice().getMeteringDeviceGUID());
                         answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
                         answerProcessing.sendMessageToClient("");
                     }

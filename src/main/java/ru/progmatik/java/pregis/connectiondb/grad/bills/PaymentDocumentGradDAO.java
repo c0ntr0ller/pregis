@@ -54,7 +54,7 @@ public final class PaymentDocumentGradDAO {
 //        Процедура принимает: ид абонента, расчетный период (месяц), расчетный период (год),
 //        1 – подавлять вывод нулевых строк, ид жилищной организации, ид поставщика.
         try (Statement statement = connectionGrad.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT " +
+            ResultSet rs = statement.executeQuery("SELECT " + //TODO: изменить запрос на правильный
                     "RSUPPLIER_ID, " +      // 1  ид поставщика
                     "RGROUP, " +            // 2  группа услуг
                     "RSUPERGROUP_CODE, " +  // 3  код суперуслуги

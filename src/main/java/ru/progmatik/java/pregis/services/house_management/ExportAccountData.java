@@ -46,26 +46,37 @@ public class ExportAccountData {
     public ExportAccountResult callExportAccountData(final String homeFias) throws SQLException {
 
 //        Создание загаловков сообщений (запроса и ответа)
-        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        if (answerProcessing != null) {
+            answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
+        }
         final RequestHeader requestHeader = OtherFormat.getRequestHeader();
         final Holder<ResultHeader> headerHolder = new Holder<>();
 
         ExportAccountResult result;
 
+        result = null;
         try {
-            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.exportAccountData(getExportAccountRequest(homeFias), requestHeader, headerHolder);
-            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            if (answerProcessing != null) {
+                answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
+                result = port.exportAccountData(getExportAccountRequest(homeFias), requestHeader, headerHolder);
+                answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            }
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+            if (answerProcessing != null) {
+                answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+            }
             return null;
         }
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
+        if (answerProcessing != null) {
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
 //        if (result.getErrorMessage() != null) return null; // Если возникли ошибки.
-        if (result.getErrorMessage() != null && !result.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) return null; // Если возникли ошибки.
+            if (result.getErrorMessage() != null && !result.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012"))
+                return null; // Если возникли ошибки.
 
-        return result;
+            return result;
+        }
+        else return null;
     }
 
     private ExportAccountRequest getExportAccountRequest(final String homeFias) {

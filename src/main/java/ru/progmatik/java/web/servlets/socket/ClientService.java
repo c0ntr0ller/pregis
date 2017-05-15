@@ -91,7 +91,7 @@ public final class ClientService {
                     action.getExportMeteringDeviceHistory(value);
                     break;
                 case "deleteAllMeteringDevicesInHouse":
-                    action.deleteAllMeteringDevicesInHouse();
+                    action.deleteAllMeteringDevicesInHouse(value);
                     break;
                 case "callImportPaymentDocumentData":
                     action.callImportPaymentDocumentData(value);
@@ -105,9 +105,9 @@ public final class ClientService {
                 case "getHouseAddedGisJkh":
                     action.getHouseAddedGisJkh();
                     break;
-                case "getOrgPeriodData":
-                    action.callExportOrgPeriodData();
-                    break;
+//                case "getOrgPeriodData":
+//                    action.callExportOrgPeriodData();
+//                    break;
                 default:
                     action.getAnswerProcessing().sendErrorToClientNotException("Неизвестная команда: " + command);
                     action.setStateRunOff(); // Откл. бл. кнопки.

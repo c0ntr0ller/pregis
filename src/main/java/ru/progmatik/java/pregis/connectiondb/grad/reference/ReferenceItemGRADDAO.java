@@ -3,6 +3,8 @@ package ru.progmatik.java.pregis.connectiondb.grad.reference;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
+import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,10 +18,16 @@ public class ReferenceItemGRADDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ReferenceItemGRADDAO.class);
     private final ReferenceNSIDAO nsidao;
+    private Integer org_id;
 
     public ReferenceItemGRADDAO() throws SQLException {
 //        Будем работать с встроеной базаой через её классы
         nsidao = new ReferenceNSIDAO();
+        try {
+            org_id = ResourcesUtil.instance().getCompanyGradId();
+        } catch (PreGISException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -31,11 +39,11 @@ public class ReferenceItemGRADDAO {
 
         ReferenceItemDataSet dataSet = null;
         try (Statement statement = connectionGrad.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH WHERE ID='" + id + "'")) {
+             ResultSet resultSet = statement.executeQuery("SELECT id,name,code,uiid,group_name,code_parent,org_id FROM SERVICES_GIS_JKH WHERE ID='" + id + "'")) {
 
             resultSet.next();
-            dataSet = new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                    resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6));
+            dataSet = new ReferenceItemDataSet(resultSet.getInt("id"), resultSet.getString("name"),
+                    resultSet.getString("code"), resultSet.getString("uiid"), resultSet.getString("group_name"), resultSet.getString("code_parent"));
         } catch (SQLException e) {
             LOGGER.error(e);
             e.printStackTrace();
@@ -53,11 +61,11 @@ public class ReferenceItemGRADDAO {
 
         ArrayList<ReferenceItemDataSet> dataList = new ArrayList<>();
         try (Statement statement = connectionGrad.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH WHERE CODE_PARENT='" + codeParent + "'")) {
+             ResultSet resultSet = statement.executeQuery("SELECT id,name,code,uiid,group_name,code_parent,org_id FROM SERVICES_GIS_JKH WHERE CODE_PARENT='" + codeParent + "'")) {
 
             while (resultSet.next()) {
-                dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+                dataList.add(new ReferenceItemDataSet(resultSet.getInt("id"), resultSet.getString("name"),
+                        resultSet.getString("code"), resultSet.getString("uiid"), resultSet.getString("group_name"), resultSet.getString("code_parent")));
             }
         } catch (SQLException e) {
             LOGGER.error(e);
@@ -70,11 +78,14 @@ public class ReferenceItemGRADDAO {
 
         Map<String, ReferenceItemDataSet> dataList = new HashMap<String, ReferenceItemDataSet>();
         try (Statement statement = connectionGrad.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH WHERE CODE_PARENT=" + codeParent)) {
+             ResultSet resultSet = statement.executeQuery("SELECT id,name,code,uiid,group_name,code_parent,org_id FROM SERVICES_GIS_JKH " +
+                     " WHERE CODE_PARENT=" + codeParent +
+                     " and org_id = " + org_id)) {
 
             while (resultSet.next()) {
-                dataList.put(resultSet.getString(3), new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+                dataList.put(resultSet.getString("code"),
+                        new ReferenceItemDataSet(resultSet.getInt("id"), resultSet.getString("name"),
+                        resultSet.getString("code"), resultSet.getString("uiid"), resultSet.getString("group_name"), resultSet.getString("code_parent")));
             }
         } catch (SQLException e) {
             LOGGER.error(e);
@@ -92,11 +103,12 @@ public class ReferenceItemGRADDAO {
 
         ArrayList<ReferenceItemDataSet> dataList = new ArrayList<>();
         try (Statement statement = connectionGrad.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM SERVICES_GIS_JKH")) {
+             ResultSet resultSet = statement.executeQuery("SELECT id,name,code,uiid,group_name,code_parent,org_id FROM SERVICES_GIS_JKH" +
+             " where org_id = " + org_id)) {
 
             while (resultSet.next()) {
-                dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+                dataList.add(new ReferenceItemDataSet(resultSet.getInt("id"), resultSet.getString("name"),
+                        resultSet.getString("code"), resultSet.getString("uiid"), resultSet.getString("group_name"), resultSet.getString("code_parent")));
             }
         } catch (SQLException e) {
             LOGGER.error(e);
@@ -112,13 +124,14 @@ public class ReferenceItemGRADDAO {
      */
     public void addItem(ReferenceItemDataSet dataSet, Connection connectionGrad) {
         try (PreparedStatement ps = connectionGrad.prepareStatement(
-                "INSERT INTO SERVICES_GIS_JKH(NAME, CODE, UIID, GROUP_NAME, CODE_PARENT) VALUES(?, ? ,? ,?, ?)")){
+                "INSERT INTO SERVICES_GIS_JKH(NAME, CODE, UIID, GROUP_NAME, CODE_PARENT, ORG_ID) VALUES(?, ? ,? ,?, ?, ?)")){
             if (dataSet.getId() == null) { // проверяем если у элемента нет id, т.е. его нет в базе, то добавляем
                 ps.setString(1, dataSet.getName());
                 ps.setString(2, dataSet.getCode());
                 ps.setString(3, dataSet.getGuid());
                 ps.setString(4, dataSet.getGroupName());
                 ps.setInt(5, Integer.parseInt(dataSet.getCodeParent()));
+                ps.setInt(6, org_id);
                 ps.executeUpdate();
                 LOGGER.info("Добавлеен элемент в справочник: ID = " + dataSet.getId() + " Name: " + dataSet.getName() +
                         " Code: " + dataSet.getCode() + " GUID: " + dataSet.getGuid() + " GROUP_NAME: " + dataSet.getGroupName());

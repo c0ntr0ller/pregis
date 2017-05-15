@@ -27,6 +27,7 @@ package ru.progmatik.java.pregis.services.nsi;
  */
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.nsi.ExportNsiPagingItemResult;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementNsiRefFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementStringFieldType;
@@ -43,6 +44,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.nsi.service.ExportDataProviderNsiItem;
+import ru.progmatik.java.pregis.services.nsi.service.ExportDataProviderNsiPagingItem;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -141,22 +143,31 @@ public class UpdateReference {
 
 //        try {
 //        ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO();
-
-        final ExportDataProviderNsiItem dataProviderNsiItem = new ExportDataProviderNsiItem(answerProcessing);
-        final ExportNsiItemResult resultNsi = dataProviderNsiItem.callExportDataProviderNsiItem(codeNsi);
+        List<NsiElementType> nsiElements = null;
+        if (codeNsi.equals("59")) {
+            // final ExportDataProviderNsiPagingItem dataProviderNsiItem = ;
+            final ExportNsiPagingItemResult exportNsiPagingItemResult = (new ExportDataProviderNsiPagingItem(answerProcessing)).callExportDataProviderNsiItem(codeNsi);
+            if (exportNsiPagingItemResult != null)
+                nsiElements = exportNsiPagingItemResult.getNsiItem().getNsiElement();
+        }else{
+            // final ExportDataProviderNsiItem dataProviderNsiItem = ;
+            final ExportNsiItemResult exportNsiItemResult = (new ExportDataProviderNsiItem(answerProcessing)).callExportDataProviderNsiItem(codeNsi);
+            if (exportNsiItemResult != null)
+                nsiElements = exportNsiItemResult.getNsiItem().getNsiElement();
+        }
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Получаю справочники из БД с кодом: " + codeNsi);
 
         final Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent(codeNsi, connectionGrad);
 
-        if (mapNsiWithCodeNsi == null || resultNsi == null) {
+        if (mapNsiWithCodeNsi == null || nsiElements == null) {
 //                answerProcessing.sendMessageToClient("Возникли ошибки, справочники не обновлены!");
             return false;
 
         } else {
 
-            checkElementInBase(resultNsi, mapNsiWithCodeNsi);
+            checkElementInBase(nsiElements, mapNsiWithCodeNsi);
 
             if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
 
@@ -230,15 +241,19 @@ public class UpdateReference {
     /**
      * Метод, ищет в справочнике соответствие.
      *
-     * @param result     полученный объект от ГИС ЖКХ.
+     * @param nsiElements     полученный список элементов от ГИС ЖКХ.
      * @param mapDataSet содержатся записи справочника в БД.
      */
-    private void checkElementInBase(final ExportNsiItemResult result, final Map<String, ReferenceItemDataSet> mapDataSet) {
+    private void checkElementInBase(final List<NsiElementType> nsiElements, final Map<String, ReferenceItemDataSet> mapDataSet) {
 
-        final List<NsiElementType> nsiElements = result.getNsiItem().getNsiElement();
+//        final  = result.getNsiItem().getNsiElement();
         for (NsiElementType nsiElement : nsiElements) {
             if (nsiElement.isIsActual()) {
+//                if (mapDataSet.get(nsiElement.getCode()).getGuid() == null){
+//                    answerProcessing.sendMessageToClient("mapDataSet.get(nsiElement.getCode()).getGuid()");
+//                }
                 if (!mapDataSet.containsKey(nsiElement.getCode()) ||
+                        (mapDataSet.get(nsiElement.getCode()).getGuid() == null)||
                         !mapDataSet.get(nsiElement.getCode()).getGuid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
                     listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
                 }

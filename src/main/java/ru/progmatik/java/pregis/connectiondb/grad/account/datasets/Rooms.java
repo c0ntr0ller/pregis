@@ -233,4 +233,18 @@ public class Rooms {
     public void setCompany(boolean company) {
         isCompany = company;
     }
+
+    @Override
+    public String toString() {
+        return "Rooms{" +
+                "numberLS='" + numberLS + '\'' +
+                ", address='" + address + '\'' +
+                ", fias='" + fias + '\'' +
+                ", numberRooms='" + numberRooms + '\'' +
+                ", numberApartment='" + numberApartment + '\'' +
+                ", idSpaceGISJKH='" + idSpaceGISJKH + '\'' +
+                ", sharePay=" + sharePay +
+                ", abonId=" + abonId +
+                '}';
+    }
 }

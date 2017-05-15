@@ -94,31 +94,31 @@ public final class AccountGRADDAO {
                 final String[] arrayData = getAllData(resultSet.getString(1));
 
                 try {
-                    bi.setNumberLS(arrayData[0]);
-                    bi.setTypeLS(arrayData[1]);
-                    bi.setEmployer(AnswerYesOrNo.getAnswer(arrayData[2]));
-                    bi.setSurname(arrayData[3]);
-                    bi.setName(arrayData[4]);
-                    bi.setMiddleName(arrayData[5]);
-                    bi.setSnils(arrayData[6].replaceAll("-", "").replaceAll(" ", ""));
-                    bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[7]));
-                    bi.setNumberDocumentIdentity(arrayData[8]);
-                    bi.setSeriesDocumentIdentity(arrayData[9]);
-                    if (arrayData[10] != null)
-                        if (!arrayData[10].isEmpty()) {
+                    bi.setNumberLS(arrayData[1]);
+                    bi.setTypeLS(arrayData[3]);
+                    bi.setEmployer(AnswerYesOrNo.getAnswer(arrayData[4]));
+                    bi.setSurname(arrayData[5]);
+                    bi.setName(arrayData[6]);
+                    bi.setMiddleName(arrayData[7]);
+                    bi.setSnils(arrayData[8].replaceAll("-", "").replaceAll(" ", ""));
+                    bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[9]));
+                    bi.setNumberDocumentIdentity(arrayData[10]);
+                    bi.setSeriesDocumentIdentity(arrayData[11]);
+                    if (arrayData[12] != null)
+                        if (!arrayData[12].isEmpty()) {
                             try {
-                                bi.setDateDocumentIdentity(dateFromSQL.parse(arrayData[10]));
+                                bi.setDateDocumentIdentity(dateFromSQL.parse(arrayData[12]));
                             } catch (ParseException e) {
                                 LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                                 e.printStackTrace();
                             }
                         }
-                    bi.setOgrnOrOgrnip(Long.valueOf(checkZero(arrayData[11])));
-                    bi.setKpp(Integer.valueOf(checkZero(arrayData[12])));
-                    bi.setTotalArea(Double.valueOf(checkZero(arrayData[13])));
-                    bi.setLivingSpace(Double.valueOf(checkZero(arrayData[14])));
-                    bi.setHeadtedArea(Double.valueOf(checkZero(arrayData[15])));
-                    bi.setAmountLiving(Integer.valueOf(checkZero(arrayData[16])));
+                    bi.setOgrnOrOgrnip(Long.valueOf(checkZero(arrayData[13])));
+                    bi.setKpp(Integer.valueOf(checkZero(arrayData[14])));
+                    bi.setTotalArea(Double.valueOf(checkZero(arrayData[16])));
+                    bi.setLivingSpace(Double.valueOf(checkZero(arrayData[17])));
+                    bi.setHeadtedArea(Double.valueOf(checkZero(arrayData[18])));
+                    bi.setAmountLiving(Integer.valueOf(checkZero(arrayData[19])));
 
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
@@ -127,6 +127,7 @@ public final class AccountGRADDAO {
             }
         }
         if (listBasic.size() == 0) return null; // если нет ЛС возвращаем null.
+//DEBUG        answerProcessing.sendInformationToClientAndLog("SELECT * FROM EX_GIS_LS1 returns " + listBasic.size() + " records", LOGGER);
         return listBasic;
     }
 
@@ -152,14 +153,14 @@ public final class AccountGRADDAO {
                 try {
                     final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(1));
 
-                    rooms.setNumberLS(arrayData[0]);
-                    rooms.setAddress(arrayData[1]);
-                    rooms.setFias(arrayData[2]);
-                    rooms.setNumberRooms(arrayData[3]);
-                    rooms.setNumberApartment(arrayData[4]);
-                    rooms.setIdSpaceGISJKH(arrayData[5]);
-                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[6])));
-                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[7])));
+                    rooms.setNumberLS(arrayData[1]);
+                    rooms.setAddress(arrayData[2]);
+                    rooms.setFias(arrayData[3]);
+                    rooms.setNumberRooms(arrayData[5]);
+                    rooms.setNumberApartment(arrayData[6]);
+                    rooms.setIdSpaceGISJKH(arrayData[10]);
+                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
 //                    rooms.setAccountGUID(arrayData[8]); // Саша должен добавить
 //                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
 
@@ -169,11 +170,55 @@ public final class AccountGRADDAO {
                 listRooms.add(rooms);
             }
         }
-        if (listRooms.size() == 0) return null; // если нет ЛС возвращаем null.
-
+        if (listRooms.size() == 0) {
+            answerProcessing.sendMessageToClient("Запрос " + sqlRequest + " не вернул записей");
+            return null; // если нет ЛС возвращаем null.
+        }
         return listRooms;
     }
+    /**
+     * Метод, формирует мапу с абонентами, ключ - лицевой счет.
+     *
+     * @param houseID - ИД адрес дома.
+     * @param connection - соединение с БД
+     */
+    public LinkedHashMap<String, Rooms> getRoomsMaps(final int houseID, final Connection connection) throws ParseException, SQLException {
 
+        final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
+        final LinkedHashMap<String, Rooms> listRooms = new LinkedHashMap<>();
+
+        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
+            while (resultSet.next()) {
+
+//                Бывают попадаются null
+                if (resultSet.getString(1) == null) continue;
+
+                final Rooms rooms = new Rooms();
+
+                try {
+                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(1));
+
+                    rooms.setNumberLS(arrayData[1]);
+                    rooms.setAddress(arrayData[2]);
+                    rooms.setFias(arrayData[3]);
+                    rooms.setNumberRooms(arrayData[4]);
+                    rooms.setNumberApartment(arrayData[5]);
+                    rooms.setIdSpaceGISJKH(arrayData[6]);
+                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
+//                    rooms.setAccountGUID(arrayData[9]); // Саша должен добавить
+//                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
+                    listRooms.put(arrayData[1], rooms);
+                } catch (NumberFormatException e) {
+                    LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
+                }
+
+            }
+        }
+        if (listRooms.size() == 0) return null; // если нет ЛС возвращаем null.
+//DEBUG        answerProcessing.sendInformationToClientAndLog("SELECT * FROM EX_GIS_LS2 returns " + listRooms.size() + " records", LOGGER);
+        return listRooms;
+    }
     /**
      * Метод, формирует Map ЛС из БД ГРАД.
      * Ключ - ЛС, значение - класс Account пригодный для импорта ЛС в ГИС ЖКХ.
@@ -186,10 +231,11 @@ public final class AccountGRADDAO {
                                                                                      final Connection connection)
             throws ParseException, SQLException, PreGISException {
 
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Формирую данные...");
+        if(answerProcessing != null) {answerProcessing.sendMessageToClient("");}
+        if(answerProcessing != null) {answerProcessing.sendMessageToClient("Формирую данные...");}
         final ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
-        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
+        final LinkedHashMap<String, Rooms> roomsList = getRoomsMaps(houseID, connection);
+//        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
         final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
 //        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
@@ -201,90 +247,105 @@ public final class AccountGRADDAO {
 
         for (BasicInformation basicInformation : basicInformationList) {
             int count = 0;
-            for (int i = 0; i < roomsList.size(); i++) {
+            // for (int i = 0; i < roomsList.size(); i++) {
 
 //                Формируем объект пригодный для импорта в ГИС ЖКХ.
 //                По необходимости в дальнейшем нужно присвоить перед отправкой:
 //                - если новый счет указать TransportGUID, удалить если есть AccountGUID.
 //                - если счет к закрытию указать AccountGUID и isClosed.
-                if (basicInformation.getNumberLS().equals(roomsList.get(i).getNumberLS())) {
-                    ImportAccountRequest.Account account = new ImportAccountRequest.Account();
+
+            Rooms fRoom = roomsList.get(basicInformation.getNumberLS());
+            String premisesGUID = null;
+            String livingRoomGUID = null;
+            if (fRoom != null) {
+                    // заранее получаем premisesGUID и livingRoomGUID, если не заданы - вообще не добавляем объект, потому что вызовет ошибку
+                premisesGUID = getBuildingIdentifiersFromBase(fRoom.getAbonId(), "PREMISESGUID", connection);
+                livingRoomGUID = getBuildingIdentifiersFromBase(fRoom.getAbonId(), "LIVINGROOMGUID", connection);
+
+                if (premisesGUID == null && livingRoomGUID == null) {
+                    answerProcessing.sendInformationToClientAndLog("Для абонента ГРАД ИД "
+                            + basicInformation.getNumberLS() + " не найдено идентификатора помещения или комнаты", LOGGER);
+                }
+            }
+            if (fRoom != null && !(premisesGUID == null && livingRoomGUID == null)) {
+// debug                    answerProcessing.sendMessageToClient(basicInformation.getNumberLS() + " found!");
+                ImportAccountRequest.Account account = new ImportAccountRequest.Account();
 //                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно? добавил при отправки нового счета
-                    account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
-                    account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()).setScale(2, BigDecimal.ROUND_DOWN));
-                    account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()).setScale(2, BigDecimal.ROUND_DOWN));
-                    if (basicInformation.getHeadtedArea() > 0.0) {
-                        account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()).setScale(2, BigDecimal.ROUND_DOWN));
-                    }
+                account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
+                account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()).setScale(2, BigDecimal.ROUND_DOWN));
+                if (basicInformation.getHeadtedArea() > 0.0) {
+                    account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                }
 //                    account.setClosed(); // проверить, если в ГИС ЖКХ есть, а в БД ГРАД нет, то установить в ExportAccountData.
-                    AccountType.Accommodation accommodation = new AccountType.Accommodation();
-                    accommodation.setPremisesGUID(getBuildingIdentifiersFromBase(roomsList.get(i).getAbonId(), "PREMISESGUID", connection));
+                AccountType.Accommodation accommodation = new AccountType.Accommodation();
+                accommodation.setPremisesGUID(premisesGUID);
 //                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias()); // Выдаё ошибку, по описанию можно выбирать.
-                    accommodation.setLivingRoomGUID(getBuildingIdentifiersFromBase(roomsList.get(i).getAbonId(), "LIVINGROOMGUID", connection)); // Идентификатор комнаты
-                    accommodation.setSharePercent(new BigDecimal(roomsList.get(i).getSharePay()).setScale(0, BigDecimal.ROUND_DOWN));
-                    account.getAccommodation().add(accommodation);
+                accommodation.setLivingRoomGUID(livingRoomGUID); // Идентификатор комнаты
+                accommodation.setSharePercent(new BigDecimal(fRoom.getSharePay()).setScale(0, BigDecimal.ROUND_DOWN));
+                account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
 //                    Сведения о платильщике
-                    account.setPayerInfo(new AccountType.PayerInfo());
+                account.setPayerInfo(new AccountType.PayerInfo());
 //                    if (basicInformation.getOgrnOrOgrnip() == 0) {
-                    if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()) {
+                if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()) {
 
-                        account.getPayerInfo().setInd(new AccountIndType());
-                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
-                        if (basicInformation.getName() != null) {
-                            account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
-                        }
-                        if (basicInformation.getMiddleName() != null) {
-                            account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
-                        }
-                        if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
-                            account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
+                    account.getPayerInfo().setInd(new AccountIndType());
+                    account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+                    if (basicInformation.getName() != null) {
+                        account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+                    }
+                    if (basicInformation.getMiddleName() != null) {
+                        account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
+                    }
+                    if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
+                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
+                    }
+                }
+
+                if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
+                    if (basicInformation.getTypeDocument() != null) {
+                        account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
+                        account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                        account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                        account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                        if (basicInformation.getDateDocumentIdentity() != null) {
+                            account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
                         }
                     }
 
-                    if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
-                        if (basicInformation.getTypeDocument() != null) {
-                            account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
-                            account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
-                            account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
-                            account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                            if (basicInformation.getDateDocumentIdentity() != null) {
-                                account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
-                            }
-                        }
-
-                    } else {
+                } else {
 //                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
-                        if (basicInformation.getOgrnOrOgrnip() > 0) {
-                            ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
+                    if (basicInformation.getOgrnOrOgrnip() > 0) {
+                        ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
 
-                            if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
-                                criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-                            } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
-                                criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-                            }
+                        if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
+                            criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                        } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
+                            criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                        }
 //                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
 //                            account.getPayerInfo().setOrg(new RegOrgVersionType());
 //                            account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
-                        }
                     }
-
-                    if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
-                        account.getPayerInfo().setIsRenter(true); // выдаёт ошибку если указать false
-                    }
-
-                    account.setAccountNumber(basicInformation.getNumberLS());
-                    account.setAccountGUID(getAccountGUIDFromBase(roomsList.get(i).getAbonId(), connection));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
-                    setIsAccount(account);
-                    account.setCreationDate(OtherFormat.getDateNow());
-
-                    mapAccount.put(basicInformation.getNumberLS(), account);
-
-                    count++;
-                    roomsList.remove(i);
-                    i--;
                 }
+
+                if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
+                    account.getPayerInfo().setIsRenter(true); // выдаёт ошибку если указать false
+                }
+
+                account.setAccountNumber(basicInformation.getNumberLS());
+                account.setAccountGUID(getAccountGUIDFromBase(fRoom.getAbonId(), connection));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                setIsAccount(account);
+                account.setCreationDate(OtherFormat.getDateNow());
+
+                mapAccount.put(basicInformation.getNumberLS(), account);
+
+                count++;
+//                    roomsList.remove(i);
+                // i--;
+//                }
             }
             if (count == 1) {
                 continue;
@@ -314,7 +375,7 @@ public final class AccountGRADDAO {
 
             } else if (count >= 2) {
                 answerProcessing.sendInformationToClientAndLog("Для счета - "
-                        + basicInformation.getNumberLS() + ", найдено более одного соответствия в базе данных.", LOGGER);
+                        + basicInformation.getNumberLS() + " найдено более одного соответствия в базе данных.", LOGGER);
             }
         }
         return mapAccount;
@@ -375,6 +436,10 @@ public final class AccountGRADDAO {
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
             String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
             try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) {
+                answerProcessing.sendMessageToClient(String.format("abonentId: %s:\n" +
+                                "accountGUID: %s\n" +
+                                "accountUniqueNumber: %s.",
+                        abonentId, accountGUID, accountUniqueNumber));
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, accountGUID);
                 cstmt.setString(3, accountUniqueNumber);

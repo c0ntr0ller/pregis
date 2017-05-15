@@ -279,12 +279,12 @@ public final class UpdateMeteringDeviceValues {
 
             if (resultType.getElectricDeviceValue() != null) { // если ПУ по электричеству
 
-                ElectricMeteringValueKindType.ControlValue tempControlValue = null;
-                ElectricMeteringValueKindType.CurrentValue tempCurrentValue = null;
+                ExportElectricMeteringValueKindType.ControlValue tempControlValue = null;
+                ExportElectricMeteringValueKindType.CurrentValue tempCurrentValue = null;
 
                 if (resultType.getElectricDeviceValue().getValues().getControlValue() != null) { // если есть контрольные показания
 
-                    for (ElectricMeteringValueKindType.ControlValue controlValue :
+                    for (ExportElectricMeteringValueKindType.ControlValue controlValue :
                             resultType.getElectricDeviceValue().getValues().getControlValue()) {
 
                         if (tempControlValue == null) tempControlValue = controlValue;
@@ -299,7 +299,7 @@ public final class UpdateMeteringDeviceValues {
                 } // if
                 if (resultType.getElectricDeviceValue().getValues().getCurrentValue() != null) { // если есть текущее показания
 
-                    for (ElectricMeteringValueKindType.CurrentValue currentValue :
+                    for (ExportElectricMeteringValueKindType.CurrentValue currentValue :
                             resultType.getElectricDeviceValue().getValues().getCurrentValue()) {
 
                         if (tempCurrentValue == null) tempCurrentValue = currentValue;
@@ -338,12 +338,12 @@ public final class UpdateMeteringDeviceValues {
                 }
             } else if (resultType.getOneRateDeviceValue() != null) { // если однотарифный ПУ
 
-                OneRateMeteringValueKindType.ControlValue tempControlValueOneRate = null;
-                OneRateMeteringValueKindType.CurrentValue tempCurrentValueOneRate = null;
+                ExportOneRateMeteringValueKindType.ControlValue tempControlValueOneRate = null;
+                ExportOneRateMeteringValueKindType.CurrentValue tempCurrentValueOneRate = null;
 
                 if (resultType.getOneRateDeviceValue().getValues().getControlValue() != null) { // если есть контрольные показания
 
-                    for (OneRateMeteringValueKindType.ControlValue controlValueOneRate :
+                    for (ExportOneRateMeteringValueKindType.ControlValue controlValueOneRate :
                             resultType.getOneRateDeviceValue().getValues().getControlValue()) {
 
                         if (tempControlValueOneRate == null) {
@@ -360,7 +360,7 @@ public final class UpdateMeteringDeviceValues {
 
                 if (resultType.getOneRateDeviceValue().getValues().getCurrentValue() != null) { // если есть текущее показания
 
-                    for (OneRateMeteringValueKindType.CurrentValue currentValueOneRate :
+                    for (ExportOneRateMeteringValueKindType.CurrentValue currentValueOneRate :
                             resultType.getOneRateDeviceValue().getValues().getCurrentValue()) {
 
                         if (tempCurrentValueOneRate == null) {

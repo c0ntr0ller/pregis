@@ -59,8 +59,8 @@ public class PaymentDocumentHandler {
 
             final HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
             final LinkedHashMap<String, Integer> houseMap = houseDAO.getListHouse(houseGradID, connectionGrad);
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendMessageToClient("Формирую платежные документы...");
+            if (answerProcessing != null) { answerProcessing.sendMessageToClient(""); }
+            if (answerProcessing != null) { answerProcessing.sendMessageToClient("Формирую платежные документы...");}
 
 //            Список домов в ГИС ЖКХ
             for (Map.Entry<String, Integer> entry : houseMap.entrySet()) {

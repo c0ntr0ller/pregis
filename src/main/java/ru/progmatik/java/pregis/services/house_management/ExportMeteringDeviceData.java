@@ -5,12 +5,8 @@ import ru.gosuslugi.dom.schema.integration.base.AckRequest;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResult;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementServiceAsync;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -62,9 +58,9 @@ public class ExportMeteringDeviceData {
             ackRequest = port.exportMeteringDeviceData(getExportMeteringDeviceDataRequest(fias), requestHeader, headerHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
 
-            AsyncRequestResult asyncRequestResult = new AsyncRequestResult(ackRequest, answerProcessing, port);
+            HouseManagementAsyncRequestResult houseManagementAsyncRequestResult = new HouseManagementAsyncRequestResult(ackRequest, answerProcessing, port);
 
-            stateResult = (GetStateResult)asyncRequestResult.getRequestResult();
+            stateResult = (GetStateResult) houseManagementAsyncRequestResult.getRequestResult();
             if (stateResult != null)
                 result = stateResult.getExportMeteringDeviceDataResult();
         } catch (ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault fault) {

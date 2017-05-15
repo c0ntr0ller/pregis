@@ -1,10 +1,7 @@
 package ru.progmatik.java.pregis.services.house_management;
 
-import com.sun.deploy.util.Waiter;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.*;
-import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.*;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.*;
@@ -15,9 +12,9 @@ import java.sql.SQLException;
 /**
  * Created by Администратор on 11.05.2017.
  */
-public class AsyncRequestResult {
+public class HouseManagementAsyncRequestResult {
     private final AckRequest ackRequest;
-    private static final Logger LOGGER = Logger.getLogger(AsyncRequestResult.class);
+    private static final Logger LOGGER = Logger.getLogger(HouseManagementAsyncRequestResult.class);
     private static final String NAME_METHOD = "getRequestResultDeviceMetering";
 
     private final HouseManagementPortsTypeAsync port;
@@ -25,16 +22,11 @@ public class AsyncRequestResult {
     private long timeOut;
     private long maxRequestCount;
 
-    public AsyncRequestResult(AckRequest ackRequest, AnswerProcessing answerProcessing, HouseManagementPortsTypeAsync port) {
+    public HouseManagementAsyncRequestResult(AckRequest ackRequest, AnswerProcessing answerProcessing, HouseManagementPortsTypeAsync port) {
         this.ackRequest = ackRequest;
         this.answerProcessing = answerProcessing;
         this.port = port;
 
-//        HouseManagementServiceAsync service = UrlLoader.instance().getUrlMap().get("homeManagementAsync") == null ? new HouseManagementServiceAsync()
-//                : new HouseManagementServiceAsync(UrlLoader.instance().getUrlMap().get("homeManagementAsync"));
-//
-//        port = service.getHouseManagementPortAsync();
-//        OtherFormat.setPortSettings(service, port);
         try {
             timeOut = ResourcesUtil.instance().getTimeOut();
         } catch (PreGISException e) {

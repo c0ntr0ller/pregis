@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.BaseAsyncResponseType;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.device_metering.*;
@@ -73,7 +74,7 @@ public final class UpdateMeteringDeviceValues {
     private void updateMeteringDeviceValues(final String fias, final int houseId, final Connection connectionGrad)
             throws SQLException, ParseException, PreGISException {
 
-        final ExportMeteringDeviceHistoryResult result = getExportMeteringDeviceHistory(fias);
+        final GetStateResult result = getExportMeteringDeviceHistory(fias);
 
         if (result == null) { // Если в ответ получили ничего
             answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
@@ -237,7 +238,7 @@ public final class UpdateMeteringDeviceValues {
      * @return статус состояния, 1 - всё прошло успешно, 0 - возникли ошибки, но метод выполнен, -1 - возникли ошибки метод прерван.
      * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    private ExportMeteringDeviceHistoryResult getExportMeteringDeviceHistory(final String fias) throws SQLException {
+    private GetStateResult getExportMeteringDeviceHistory(final String fias) throws SQLException {
 
         final ReferenceNSIDAO nsidao = new ReferenceNSIDAO();
         final ArrayList<ReferenceItemDataSet> allItems = nsidao.getAllItemsCodeParent("27");
@@ -272,7 +273,7 @@ public final class UpdateMeteringDeviceValues {
      *
      * @param result полученный из ГИС ЖКХ ответ.
      */
-    private void parseMeteringDeviceValuesFromGISJKH(final ExportMeteringDeviceHistoryResult result) throws SQLException, PreGISException {
+    private void parseMeteringDeviceValuesFromGISJKH(final GetStateResult result) throws SQLException, PreGISException {
 
         for (ExportMeteringDeviceHistoryResultType resultType : result.getExportMeteringDeviceHistoryResult()) {
             final String rootGUID = resultType.getMeteringDeviceRootGUID();

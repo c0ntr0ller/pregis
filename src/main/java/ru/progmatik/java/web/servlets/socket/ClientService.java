@@ -57,7 +57,7 @@ public final class ClientService {
         }
 
         if (action.isRunning()) {
-            action.getAnswerProcessing().sendErrorToClientNotException("Уже выполнятся другая операция!");
+            action.getAnswerProcessing().sendErrorToClientNotException("Уже выполняется другая операция!");
         } else {
             switch (command) {
                 case "getOrgPPAGUID":

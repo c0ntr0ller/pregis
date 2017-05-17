@@ -1,14 +1,13 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
+import ru.gosuslugi.dom.schema.integration.base.*;
 import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryRequest;
 import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryResult;
-import ru.gosuslugi.dom.schema.integration.device_metering_service.DeviceMeteringPortTypes;
-import ru.gosuslugi.dom.schema.integration.device_metering_service.DeviceMeteringService;
-import ru.gosuslugi.dom.schema.integration.device_metering_service.Fault;
+import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringPortTypesAsync;
+import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringServiceAsync;
+import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -25,8 +24,8 @@ public final class ExportMeteringDeviceHistory {
     private static final Logger LOGGER = Logger.getLogger(ExportMeteringDeviceHistory.class);
     private static final String NAME_METHOD = "exportMeteringDeviceHistory";
 
-    private final DeviceMeteringService service;
-    private final DeviceMeteringPortTypes port;
+    private final DeviceMeteringServiceAsync service;
+    private final DeviceMeteringPortTypesAsync port;
     private final AnswerProcessing answerProcessing;
 
     /**
@@ -37,9 +36,9 @@ public final class ExportMeteringDeviceHistory {
     public ExportMeteringDeviceHistory(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
 
-        service = UrlLoader.instance().getUrlMap().get("deviceMetering") == null ? new DeviceMeteringService()
-                : new DeviceMeteringService(UrlLoader.instance().getUrlMap().get("deviceMetering"));
-        port = service.getDeviceMeteringPort();
+        service = UrlLoader.instance().getUrlMap().get("deviceMeteringAsync") == null ? new DeviceMeteringServiceAsync()
+                : new DeviceMeteringServiceAsync(UrlLoader.instance().getUrlMap().get("deviceMeteringAsync"));
+        port = service.getDeviceMeteringPortAsync();
         OtherFormat.setPortSettings(service, port);
     }
 
@@ -49,7 +48,7 @@ public final class ExportMeteringDeviceHistory {
      * @return ответ от ГИС ЖКХ
      * @throws SQLException
      */
-    public ExportMeteringDeviceHistoryResult getExportMeteringHistoryResultByFIAS(String fias) throws SQLException {
+    public GetStateResult getExportMeteringHistoryResultByFIAS(String fias) throws SQLException {
 
         ExportMeteringDeviceHistoryRequest request = new ExportMeteringDeviceHistoryRequest();
         request.setFIASHouseGuid(fias); // b58c5da4-8d62-438f-b11e-d28103220952
@@ -65,7 +64,7 @@ public final class ExportMeteringDeviceHistory {
      * @return ответ от ГИС ЖКХ
      * @throws SQLException
      */
-    public ExportMeteringDeviceHistoryResult getExportMeteringHistoryResult(ExportMeteringDeviceHistoryRequest request) throws SQLException {
+    public GetStateResult getExportMeteringHistoryResult(ExportMeteringDeviceHistoryRequest request) throws SQLException {
 
 //        ExportMeteringDeviceHistoryRequest request = new ExportMeteringDeviceHistoryRequest();
 //        request.setFIASHouseGuid(fias); // b58c5da4-8d62-438f-b11e-d28103220952
@@ -83,26 +82,35 @@ public final class ExportMeteringDeviceHistory {
      * @return ответ ГИС ЖКХ на запрос "exportMeteringDeviceHistory".
      * @throws SQLException
      */
-    private ExportMeteringDeviceHistoryResult callExportMeteringDeviceHistory(ExportMeteringDeviceHistoryRequest request) throws SQLException {
+    private GetStateResult callExportMeteringDeviceHistory(ExportMeteringDeviceHistoryRequest request) throws SQLException {
 
         answerProcessing.sendMessageToClient("::clearLabelText");
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
+        ResultHeader resultHeader = null;
         Holder<ResultHeader> headerHolder = new Holder<>();
+        ErrorMessageType resultErrorMessage = null;
 
-        ExportMeteringDeviceHistoryResult result;
+        DeviceMeteringAsyncGetResult deviceMeteringAsyncGetResult = null;
+        GetStateResult result = null;
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.exportMeteringDeviceHistory(setSignIdExportMeteringHistoryRequest(request), requestHeader, headerHolder);
+            AckRequest ackRequest = port.exportMeteringDeviceHistory(setSignIdExportMeteringHistoryRequest(request), requestHeader, headerHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            if (ackRequest != null) {
+                deviceMeteringAsyncGetResult = new DeviceMeteringAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
+                result = deviceMeteringAsyncGetResult.getRequestResult();
+            }
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
-//        if (result.getErrorMessage() != null) return null;
+        if (result != null) resultErrorMessage = result.getErrorMessage();
+        if (deviceMeteringAsyncGetResult != null) resultHeader = deviceMeteringAsyncGetResult.getHeaderHolder().value;
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
+        if (resultErrorMessage != null) return null;
         return result;
     }
 

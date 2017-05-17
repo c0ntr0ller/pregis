@@ -12,18 +12,29 @@ import java.sql.SQLException;
 /**
  * Created by Администратор on 11.05.2017.
  */
-public class HouseManagementAsyncRequestResult {
+public class HouseManagementAsyncGetResult {
     private final AckRequest ackRequest;
-    private static final Logger LOGGER = Logger.getLogger(HouseManagementAsyncRequestResult.class);
-    private static final String NAME_METHOD = "getRequestResultDeviceMetering";
+    private static final Logger LOGGER = Logger.getLogger(HouseManagementAsyncGetResult.class);
+    private final String NAME_METHOD;
 
     private final HouseManagementPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
+
+    public Holder<ResultHeader> getHeaderHolder() {
+        return headerHolder;
+    }
+
+    public void setHeaderHolder(Holder<ResultHeader> headerHolder) {
+        this.headerHolder = headerHolder;
+    }
+
+    private Holder<ResultHeader> headerHolder = new Holder<>();
     private long timeOut;
     private long maxRequestCount;
 
-    public HouseManagementAsyncRequestResult(AckRequest ackRequest, AnswerProcessing answerProcessing, HouseManagementPortsTypeAsync port) {
+    public HouseManagementAsyncGetResult(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, HouseManagementPortsTypeAsync port) {
         this.ackRequest = ackRequest;
+        NAME_METHOD = name_method;
         this.answerProcessing = answerProcessing;
         this.port = port;
 
@@ -42,7 +53,6 @@ public class HouseManagementAsyncRequestResult {
 
     public BaseAsyncResponseType getRequestResult() throws SQLException {
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
-        Holder<ResultHeader> headerHolder = new Holder<>();
 
         GetStateRequest getStateRequest = new GetStateRequest();
         getStateRequest.setMessageGUID(ackRequest.getAck().getMessageGUID());

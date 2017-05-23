@@ -676,7 +676,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                             }
                         }
                     }
-                } else if (basicCharacteristics.getResidentialPremiseDevice() != null) { // жилые помещения, одно помещение и может быть несколько л.счетов.
+                } else if (basicCharacteristics.getResidentialPremiseDevice() != null && device.getResidentialPremiseDevice() != null) { // жилые помещения, одно помещение и может быть несколько л.счетов.
 
                     if (basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().contains(device.getResidentialPremiseDevice().getAccountGUID().get(0)) &&
                             basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getResidentialPremiseDevice().getPremiseGUID())) {
@@ -693,10 +693,10 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                             }
                         }
                     }
-                } else if (basicCharacteristics.getNonResidentialPremiseDevice() != null) { // не жилые помещения
+                } else if (basicCharacteristics.getNonResidentialPremiseDevice() != null && device.getNonResidentialPremiseDevice() != null) { // не жилые помещения
 
                     if (basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().contains(device.getNonResidentialPremiseDevice().getAccountGUID().get(0)) &&
-                            basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getNonResidentialPremiseDevice().getPremiseGUID())) {
+                            basicCharacteristics.getNonResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getNonResidentialPremiseDevice().getPremiseGUID())) {
 
                         if (setMeteringDeviceToBase(abonId, meterId, houseId,
                                 basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().get(0),
@@ -709,7 +709,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                             answerProcessing.sendMessageToClient("");
                         }
                     }
-                } else if (basicCharacteristics.getCollectiveApartmentDevice() != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
+                } else if (basicCharacteristics.getCollectiveApartmentDevice() != null && device.getCollectiveApartmentDevice() != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
 
                     if (basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().contains(device.getCollectiveApartmentDevice().getAccountGUID().get(0)) &&
                             basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID().equalsIgnoreCase(device.getCollectiveApartmentDevice().getPremiseGUID())) {
@@ -1061,7 +1061,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 }
             } else if (basic.getNonResidentialPremiseDevice() != null) { // не жилые помещения
                 premiseGUID = basic.getNonResidentialPremiseDevice().getPremiseGUID();
-                for (String itemAccountGUID : basic.getResidentialPremiseDevice().getAccountGUID()) {
+                for (String itemAccountGUID : basic.getNonResidentialPremiseDevice().getAccountGUID()) {
                     state = setMeteringDeviceToBase(abonId, meterId, houseId, itemAccountGUID, premiseGUID, null, meteringDeviceNumber,
                             meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, true, connectionGRAD);
                 }
@@ -1125,14 +1125,22 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @throws SQLException
      */
     private void setArchivingReasonToLocalBaseByRootGUID(Integer nsiCodeElement, ExportMeteringDeviceDataResultType resultType) throws SQLException {
-
+        String accountGUID;
+        String premeseGUID;
+        if (resultType.getBasicChatacteristicts().getResidentialPremiseDevice() != null){
+            accountGUID = resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getAccountGUID().get(0);
+            premeseGUID = resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getPremiseGUID();
+        }else{
+            accountGUID = resultType.getBasicChatacteristicts().getNonResidentialPremiseDevice().getAccountGUID().get(0);
+            premeseGUID = resultType.getBasicChatacteristicts().getNonResidentialPremiseDevice().getPremiseGUID();
+        }
         if (!devicesDataLocalDBDAO.setArchivingReasonToLocalBaseByRootGUID(nsiCodeElement, resultType.getMeteringDeviceRootGUID())) {
             devicesDataLocalDBDAO.setMeteringDeviceToLocalBase(
                     -1,
                     -1,
                     houseId,
-                    resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getAccountGUID().get(0),
-                    resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getPremiseGUID(),
+                    accountGUID,
+                    premeseGUID,
                     null,
                     resultType.getBasicChatacteristicts().getMeteringDeviceNumber(),
                     null,

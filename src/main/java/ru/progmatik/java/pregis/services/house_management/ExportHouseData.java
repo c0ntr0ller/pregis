@@ -1,14 +1,14 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseRequest;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResultType;
-import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration.house_management.*;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementServiceAsync;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -36,7 +36,7 @@ public class ExportHouseData {
     private static final Logger LOGGER = Logger.getLogger(ExportHouseData.class);
     private static final String NAME_METHOD = "exportHouseData";
 
-    private final HouseManagementPortsType port;
+    private final HouseManagementPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
     // Статус ошибок:
@@ -52,10 +52,10 @@ public class ExportHouseData {
 
         this.answerProcessing = answerProcessing;
 
-        final HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
-                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+        final HouseManagementServiceAsync service = UrlLoader.instance().getUrlMap().get("homeManagementAsync") == null ? new HouseManagementServiceAsync()
+                : new HouseManagementServiceAsync(UrlLoader.instance().getUrlMap().get("homeManagementAsync"));
 
-        port = service.getHouseManagementPort();
+        port = service.getHouseManagementPortAsync();
         OtherFormat.setPortSettings(service, port);
 
         errorStatus = 1;
@@ -111,7 +111,7 @@ public class ExportHouseData {
     private void getHouseData(final String fias, final Integer houseId, final HouseGRADDAO gradDao,
                               final Connection connectionGrad) throws SQLException, ParseException {
 
-        final ExportHouseResult result;
+        final GetStateResult result;
 
         try {
             result = callExportHouseData(fias);
@@ -218,27 +218,42 @@ public class ExportHouseData {
         }
     }
 
-    private ExportHouseResult callExportHouseData(final String fias) throws SQLException {
+    private GetStateResult callExportHouseData(final String fias) throws SQLException {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         final Holder<ResultHeader> resultHolder = new Holder<>();
 
         final RequestHeader headerRequest = OtherFormat.getRequestHeader();
 
-        ExportHouseResult result = null;
+        RequestHeader requestHeader = OtherFormat.getRequestHeader();
+        ResultHeader resultHeader = null;
+        Holder<ResultHeader> headerHolder = new Holder<>();
+        ErrorMessageType resultErrorMessage = null;
+
+        GetStateResult result = null;
+        HouseManagementAsyncGetResult houseManagementAsyncGetResult = null;
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
+            AckRequest ackRequest = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
             answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
 
+            if (ackRequest != null) {
+                houseManagementAsyncGetResult = new HouseManagementAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
 
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHolder.value,
-                    result.getErrorMessage(), LOGGER);
+                result = (GetStateResult) houseManagementAsyncGetResult.getRequestResult();
+
+                if (result != null) {
+                    resultHeader = houseManagementAsyncGetResult.getHeaderHolder().value;
+                    resultErrorMessage = result.getErrorMessage();
+                }
+            }
+
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
             setErrorStatus(-1);
         }
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHeader ,resultErrorMessage, LOGGER);
         return result;
     }
 

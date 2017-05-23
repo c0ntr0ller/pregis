@@ -7,7 +7,7 @@ import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest
 import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
 import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
-import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.progmatik.java.pregis.other.*;
 
 import javax.xml.ws.Holder;
@@ -36,11 +36,11 @@ public class ImportAccountData {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ru.gosuslugi.dom.schema.integration.house_management.ImportResult callImportAccountData(List<ImportAccountRequest.Account> accounts) throws SQLException {
+    public ImportResult callImportAccountData(List<ImportAccountRequest.Account> accounts) throws SQLException {
         return sendImportAccountData(getImportAccountRequest(accounts));
     }
 
-    private ru.gosuslugi.dom.schema.integration.house_management.ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
+    private ImportResult sendImportAccountData(ImportAccountRequest request) throws SQLException {
 
         answerProcessing.clearLabelForText();
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
@@ -49,7 +49,7 @@ public class ImportAccountData {
 
         RequestHeader headerRequest = OtherFormat.getRequestHeader();
 
-        ru.gosuslugi.dom.schema.integration.house_management.ImportResult result;
+        ImportResult result;
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             result = port.importAccountData(request, headerRequest, resultHolder);

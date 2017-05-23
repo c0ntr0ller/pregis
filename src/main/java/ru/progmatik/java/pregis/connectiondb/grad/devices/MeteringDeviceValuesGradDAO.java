@@ -70,14 +70,14 @@ public final class MeteringDeviceValuesGradDAO {
             while (rs.next()) {
                 String[] allData = OtherFormat.getAllDataFromString(rs.getString(1));
                 if (allData[0] != null && !allData[0].isEmpty()) {
-                    meteringDeviceValuesMap.put(allData[0],
+                    meteringDeviceValuesMap.put(allData[1],
                             new MeteringDeviceValuesObject(
-                                    allData[0],
-                                    new BigDecimal(allData[2]),
-                                    allData[3] != null ? new BigDecimal(allData[3]) : null,
+                                    allData[1],
+                                    new BigDecimal(allData[3]),
                                     allData[4] != null ? new BigDecimal(allData[4]) : null,
-                                    dateFromSQL.parse(allData[5]),
-                                    referenceNSI.getNsiRef("2", allData[1])));
+                                    allData[5] != null ? new BigDecimal(allData[5]) : null,
+                                    dateFromSQL.parse(allData[6]),
+                                    referenceNSI.getNsiRef("2", allData[2])));
                 }
             }
             rs.close();

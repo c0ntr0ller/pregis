@@ -20,6 +20,10 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -51,7 +55,7 @@ public final class UpdateMeteringDeviceValues {
         addedValueToGrad = 0;
     }
 
-    public int updateAllMeteringDeviceValues(final Integer houseGradID) throws SQLException, PreGISException, ParseException {
+    public int updateAllMeteringDeviceValues(final Integer houseGradID) throws SQLException, PreGISException, ParseException, DatatypeConfigurationException {
 
         errorStatus = 1;
 
@@ -72,7 +76,7 @@ public final class UpdateMeteringDeviceValues {
      * Если ГИС ЖКХ вернул ошибку или ничего, обработка прекращается.
      */
     private void updateMeteringDeviceValues(final String fias, final int houseId, final Connection connectionGrad)
-            throws SQLException, ParseException, PreGISException {
+            throws SQLException, ParseException, PreGISException, DatatypeConfigurationException {
 
         final GetStateResult result = getExportMeteringDeviceHistory(fias);
 
@@ -112,66 +116,71 @@ public final class UpdateMeteringDeviceValues {
     private void compareMeteringDevicesValue(final String fias,
                                              final HashMap<String, MeteringDeviceValuesObject> meteringDevicesValuesFromGrad,
                                              final HashMap<String, MeteringDeviceValuesObject> meteringDevicesValueFromGISJKH,
-                                             final Connection connectionGrad) throws SQLException {
+                                             final Connection connectionGrad) throws SQLException, DatatypeConfigurationException {
 
         final ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
         request.setFIASHouseGuid(fias);
 
         for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
+            if (entry.getKey() != null) {
 
-            if (!devicesDataLocalDBDAO.isArchivingDeviceByRootGUID(entry.getKey())) {
+                if (!devicesDataLocalDBDAO.isArchivingDeviceByRootGUID(entry.getKey())) {
 
-                final MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
+                    final MeteringDeviceValuesObject valuesObject = meteringDevicesValueFromGISJKH.get(entry.getKey());
 
-                final ImportMeteringDeviceValuesRequest.MeteringDevicesValues devicesValues =
-                        new ImportMeteringDeviceValuesRequest.MeteringDevicesValues();
+                    final ImportMeteringDeviceValuesRequest.MeteringDevicesValues devicesValues =
+                            new ImportMeteringDeviceValuesRequest.MeteringDevicesValues();
 
-                if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
+                    if (valuesObject == null || valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) < 0) { // если в ГИС ЖКХ не найдены показания ПУ или показания меньше, добавляем из ГРАДа в ГИС ЖКХ.
 
-                    devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
+                        devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
 
-                    if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
+                        if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
 
-                        final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
-                                new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
+                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
+                                    new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
 
-                        final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
-                                = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
+                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
+                                    = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
 
-                        currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                        currentValue.setMeteringValueT1(entry.getValue().getMeteringValue());
-                        currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
-                        currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
+                            currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                            currentValue.setMeteringValueT1(entry.getValue().getMeteringValue());
+                            currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
+                            currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
+                            currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
+                            electricDeviceValue.getCurrentValue().add(currentValue);
+                            devicesValues.setElectricDeviceValue(electricDeviceValue);
 
-                        electricDeviceValue.getCurrentValue().add(currentValue);
-                        devicesValues.setElectricDeviceValue(electricDeviceValue);
+                        } else { // остальные ПУ
 
-                    } else { // остальные ПУ
+                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
+                                    new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
 
-                        final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
-                                new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
+                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
+                                    = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
 
-                        final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
-                                = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
+                            currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                            currentValue.setMeteringValue(entry.getValue().getMeteringValue());
+                            currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
+                            currentValue.setMunicipalResource(entry.getValue().getNsiRef());
 
-                        currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                        currentValue.setMeteringValue(entry.getValue().getMeteringValue());
-                        currentValue.setMunicipalResource(entry.getValue().getNsiRef());
+                            deviceValue.getCurrentValue().add(currentValue);
+                            devicesValues.setOneRateDeviceValue(deviceValue);
+                        }
 
-                        deviceValue.getCurrentValue().add(currentValue);
-                        devicesValues.setOneRateDeviceValue(deviceValue);
+                        request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
+                        addedValueToGISJKH++;
+
+                    } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
+
+                        setMeteringDeviceValue(valuesObject, connectionGrad);
+                        addedValueToGrad++;
                     }
-
-                    request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
-                    addedValueToGISJKH++;
-
-                } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
-
-                    setMeteringDeviceValue(valuesObject, connectionGrad);
-                    addedValueToGrad++;
+                } else {
+                    LOGGER.info("ПУ не удаётся обновить, возможно он архивирован: " + entry.getValue());
                 }
-            } else {
-                LOGGER.info("ПУ не удаётся обновить, возможно, оно архивировано: " + entry.getValue());
+            } else{
+                LOGGER.info("для ПУ не задан RootGUID, возможно он пропущен при синхронизации ПУ дома: " + entry.getValue().getNsiRef().getName());
             }
         }
 

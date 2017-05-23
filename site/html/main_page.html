@@ -8,7 +8,7 @@
 <body>
 <h1>Сервис обмена информации с ГИС ЖКХ</h1>
 <div>
-    <form name="mainform" accept-charset="utf-8">
+<!--    <form name="mainform" accept-charset="utf-8">
         <button id="callSenderID" type="button" onclick="sendMessage('getSenderID');" ${buttonState}>Получить SenderID</button>
         <br><br>
         <br><br>
@@ -45,24 +45,29 @@
         <label>Укажите код дома по ФИАС: <input id="getExportAccountData" class="textValue" type="text"></label><button id="sendExportAccountData" type="button" onclick="sendMessage('getExportAccountData');" ${buttonState}>Получить ЛС</button>
         <br><br>
     </form>
+	-->
     <form name="updateMeteringDeviceData" accept-charset="utf-8">
         <br>
         <h2>Работа с ПУ:</h2>
-        <button id="sendExportMeteringDevice" type="button" onclick="sendMessage('updateMeteringDevices');" ${buttonState}>Получение ПУ</button>
+        <!-- <button id="sendExportMeteringDevice" type="button" onclick="sendMessage('updateMeteringDevices');" ${buttonState}>Получение ПУ</button>
         <br>
+		-->
         <div id="meteringDevicesToArchive" class="forAjax" style="border: 1px solid; margin: 20px; padding: 20px; background: #c0c0c0">
 <!--            <label>Идентификатор дома ГРАДа: <input class="textId" type="number"></label> -->
             <label>ФИАС дома для архивации ПУ:</label>
             <br>
             <input id="deleteAllMeteringDevicesInHouse" class="textValue" type="text">
-            <br>
             <button id="deleteMeteringDevices" type="button" onclick="sendMessage('deleteAllMeteringDevicesInHouse', $('.deleteAllMeteringDevicesInHouse').val());" ${buttonState}>Архивировать ПУ</button>
         </div>
+<!--		
         <div id="exportMeteringDeviceHistory">
+-->		
             <!--<input type="text" id="getExportMeteringHistoryResultByFIAS" placeholder="ФИАС дома"/>-->
-            <button type="button" ${buttonState} onclick="sendMessage('getExportMeteringHistory');">Получить показания ПУ</button>
+<!--            <button type="button" ${buttonState} onclick="sendMessage('getExportMeteringHistory');">Получить показания ПУ</button>
         </div>
+-->		
     </form>
+<!--
     <form name="paymentDocumentData" accept-charset="utf-8">
         <br>
         <h2>Работа с платежным документом:</h2>
@@ -70,9 +75,10 @@
         <button id="sendExportPaymentDocumentData" type="button" onclick="sendMessage('getExportPaymentDocumentData');" ${buttonState}>Получение ПД</button>
         <br><br>
     </form>
+-->	
 </div>
 <div id="showStatus">
-    <h1>Состояние сервиса</h1>
+    <h2>Состояние сервиса</h2>
     <h3>лог выполнения:</h3>
     <textarea id="messages" rows="20" cols="50" readonly="readonly"></textarea>
 </div>

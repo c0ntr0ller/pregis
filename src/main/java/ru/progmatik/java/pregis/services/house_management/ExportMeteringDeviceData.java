@@ -43,7 +43,7 @@ public class ExportMeteringDeviceData {
     /**
      * Метод, получает данные о ПУ из ГИС ЖКХ.
      */
-    public List<ExportMeteringDeviceDataResultType> callExportMeteringDeviceData(String fias) throws SQLException {
+    public GetStateResult callExportMeteringDeviceData(String fias) throws SQLException {
 
         answerProcessing.sendMessageToClient("::clearLabelText");
         answerProcessing.sendMessageToClient("");
@@ -53,8 +53,7 @@ public class ExportMeteringDeviceData {
         Holder<ResultHeader> headerHolder = new Holder<>();
         ErrorMessageType resultErrorMessage = null;
 
-        GetStateResult stateResult = null;
-        List<ExportMeteringDeviceDataResultType> result = null;
+        GetStateResult result = null;
         HouseManagementAsyncGetResult houseManagementAsyncGetResult = null;
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
@@ -64,12 +63,11 @@ public class ExportMeteringDeviceData {
             if (ackRequest != null) {
                 houseManagementAsyncGetResult = new HouseManagementAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
 
-                stateResult = (GetStateResult) houseManagementAsyncGetResult.getRequestResult();
+                result = (GetStateResult) houseManagementAsyncGetResult.getRequestResult();
 
-                if (stateResult != null) {
-                    result = stateResult.getExportMeteringDeviceDataResult();
+                if (result != null) {
                     resultHeader = houseManagementAsyncGetResult.getHeaderHolder().value;
-                    resultErrorMessage = stateResult.getErrorMessage();
+                    resultErrorMessage = result.getErrorMessage();
                 }
             }
         } catch (ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault fault) {
@@ -78,7 +76,7 @@ public class ExportMeteringDeviceData {
         }
 
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
-        if (stateResult != null && stateResult.getErrorMessage() != null) return null;
+        if (result != null && result.getErrorMessage() != null) return null;
         return result;
     }
 

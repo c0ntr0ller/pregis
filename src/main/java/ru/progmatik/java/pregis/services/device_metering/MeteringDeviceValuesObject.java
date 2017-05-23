@@ -2,8 +2,10 @@ package ru.progmatik.java.pregis.services.device_metering;
 
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 
+import javax.xml.datatype.DatatypeFactory;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Класс, описывает объект для манипуляции данных между сервисом ГИС ЖКХ и ГРАДом.
@@ -15,6 +17,7 @@ public final class MeteringDeviceValuesObject {
     private final BigDecimal meteringValueTwo; // Показания по тарифу 2
     private final BigDecimal meteringValueThree; // Показания по тарифу 3
     private final Date meteringDate;
+    private final GregorianCalendar meteringGregorianDate = new GregorianCalendar();
     private final NsiRef nsiRef;
 
     public MeteringDeviceValuesObject(String meteringDeviceRootGUID,
@@ -24,11 +27,16 @@ public final class MeteringDeviceValuesObject {
                                       Date meteringDate,
                                       NsiRef nsiRef) {
         this.meteringDeviceRootGUID = meteringDeviceRootGUID;
-        this.meteringValue = meteringValue.setScale(4, BigDecimal.ROUND_DOWN);
-        this.meteringValueTwo = meteringValueTwo != null ? meteringValueTwo.setScale(4, BigDecimal.ROUND_DOWN) : null;
-        this.meteringValueThree = meteringValueThree != null ? meteringValueThree.setScale(4, BigDecimal.ROUND_DOWN) : null;
+        this.meteringValue = meteringValue.setScale(7, BigDecimal.ROUND_DOWN);
+        this.meteringValueTwo = meteringValueTwo != null ? meteringValueTwo.setScale(7, BigDecimal.ROUND_DOWN) : null;
+        this.meteringValueThree = meteringValueThree != null ? meteringValueThree.setScale(7, BigDecimal.ROUND_DOWN) : null;
         this.meteringDate = meteringDate;
         this.nsiRef = nsiRef;
+        this.meteringGregorianDate.setTime(meteringDate);
+    }
+
+    public GregorianCalendar getMeteringGregorianDate() {
+        return meteringGregorianDate;
     }
 
     public MeteringDeviceValuesObject(String meteringDeviceRootGUID,
@@ -36,10 +44,11 @@ public final class MeteringDeviceValuesObject {
                                       Date meteringDate,
                                       NsiRef nsiRef) {
         this.meteringDeviceRootGUID = meteringDeviceRootGUID;
-        this.meteringValue = meteringValue.setScale(4, BigDecimal.ROUND_DOWN);
+        this.meteringValue = meteringValue.setScale(7, BigDecimal.ROUND_DOWN);
         this.meteringValueTwo = null;
         this.meteringValueThree = null;
         this.meteringDate = meteringDate;
+        this.meteringGregorianDate.setTime(meteringDate);
         this.nsiRef = nsiRef;
     }
 

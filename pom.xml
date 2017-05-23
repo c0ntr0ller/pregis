@@ -207,7 +207,7 @@
             <artifactId>giswsdl</artifactId>
             <version>${ru.progmatik.java.giswsdl.version}</version>
             <!--<scope>system</scope>-->
-            <systemPath>${project.basedir}/lib/giswsdl-3.10.jar</systemPath>
+            <!-- <systemPath>${project.basedir}/lib/giswsdl-3.10.jar</systemPath> -->
             <!--<type>jar</type>-->
         </dependency>
 

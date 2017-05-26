@@ -168,7 +168,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                     // получаем ACCOUNTUNIQNUM абонента (блин, а сразу его из entry получить не судьба?)
                     final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
-                            accountGRADDAO.getAbonentIdFromGrad(houseId, entry.getKey(), connection), connection);
+                            accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection), connection);
 
                     // если в Граде у абонента ACCOUNTUNIQNUM пустой и ACCOUNTGUID тоже пустой
                     if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
@@ -190,7 +190,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 if (!isDuplicateAccountData(entry.getKey())) {
 
                     final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
-                            accountGRADDAO.getAbonentIdFromGrad(houseId, entry.getKey(), connection), connection);
+                            accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection), connection);
 
                     if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
 
@@ -595,7 +595,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                                                                     final Connection connectionGrad)
             throws ParseException, SQLException, PreGISException {
 
-        return accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad);
+        return accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad, null);
     }
 
     @Override

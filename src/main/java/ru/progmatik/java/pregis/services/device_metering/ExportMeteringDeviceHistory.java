@@ -98,11 +98,13 @@ public final class ExportMeteringDeviceHistory {
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             AckRequest ackRequest = port.exportMeteringDeviceHistory(setSignIdExportMeteringHistoryRequest(request), requestHeader, headerHolder);
-            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
+
             if (ackRequest != null) {
                 deviceMeteringAsyncGetResult = new DeviceMeteringAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
                 result = deviceMeteringAsyncGetResult.getRequestResult();
             }
+
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;

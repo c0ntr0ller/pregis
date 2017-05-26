@@ -43,7 +43,7 @@ class NameMethodDAO {
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importHouseOMSData', 'Импорт данных дома для полномочия ОМС'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportAccountData', 'Получить перечень лицевых счетов. ВИ_ИЛС_РЛС.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importAccountData', 'Передать данные лицевых счетов. ВИ_ИЛС_СЗЛС.'); " +
-            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportMeteringDeviceData', 'Получить перечень. ПУ.'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportMeteringDeviceData', 'Получить перечень ПУ.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importMeteringDeviceData', 'Передать данные ПУ'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportMeteringDeviceHistory', 'Получить историю показаний ПУ.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importMeteringDeviceValues', 'Передать показания ПУ.'); " +

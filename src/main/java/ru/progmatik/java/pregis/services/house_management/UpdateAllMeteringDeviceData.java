@@ -58,18 +58,20 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
             List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(fias).getExportMeteringDeviceDataResult();
 
-            final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
+            if (exportMeteringDeviceDataResultList.size() > 0) {
+                final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
 
-            for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
-                if (resultType.getStatusRootDoc().equals("Active")) {
-                    deviceForArchive.put(resultType.getMeteringDeviceVersionGUID(), null);
+                for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
+                    if (resultType.getStatusRootDoc().equals("Active")) {
+                        deviceForArchive.put(resultType.getMeteringDeviceVersionGUID(), null);
+                    }
                 }
+
+                final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+
+                final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
+                callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
             }
-
-            final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
-
-            final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
-            callImportMeteringDevices(importMeteringDeviceData, toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
         }
     }
 

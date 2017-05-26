@@ -8,6 +8,7 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataRequest;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementServiceAsync;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -58,7 +59,7 @@ public class ExportMeteringDeviceData {
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             AckRequest ackRequest = port.exportMeteringDeviceData(getExportMeteringDeviceDataRequest(fias), requestHeader, headerHolder);
-            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
             if (ackRequest != null) {
                 houseManagementAsyncGetResult = new HouseManagementAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
@@ -69,8 +70,12 @@ public class ExportMeteringDeviceData {
                     resultHeader = houseManagementAsyncGetResult.getHeaderHolder().value;
                     resultErrorMessage = result.getErrorMessage();
                 }
+                else{
+                    resultErrorMessage.setErrorCode("ПреГИС");
+                    resultErrorMessage.setDescription("Запрос не вернул данных");
+                }
             }
-        } catch (ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault fault) {
+        } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }

@@ -2,10 +2,7 @@ package ru.progmatik.java.pregis.services.nsi.common.service;
 
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemRequest;
-import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult;
-import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiListRequest;
-import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiListResult;
+import ru.gosuslugi.dom.schema.integration.nsi_common.*;
 import ru.gosuslugi.dom.schema.integration.nsi_common_service.Fault;
 import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiPortsType;
 import ru.gosuslugi.dom.schema.integration.nsi_common_service.NsiService;
@@ -32,6 +29,11 @@ public class NsiPortsTypeImpl implements NsiPortsType {
     public ExportNsiItemResult exportNsiItem(ExportNsiItemRequest exportNsiItemRequest, HeaderType header, Holder<ResultHeader> header0) throws Fault {
 
         return getPort().exportNsiItem(exportNsiItemRequest, header, header0);
+    }
+
+    @Override
+    public ExportNsiPagingItemResult exportNsiPagingItem(ExportNsiPagingItemRequest exportNsiPagingItemRequest, HeaderType headerType, Holder<ResultHeader> holder) throws Fault {
+        return null;
     }
 
     private NsiPortsType getPort() {

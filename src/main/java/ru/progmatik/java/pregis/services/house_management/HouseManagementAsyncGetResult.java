@@ -3,6 +3,7 @@ package ru.progmatik.java.pregis.services.house_management;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.*;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.*;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.*;
 
@@ -67,15 +68,20 @@ public class HouseManagementAsyncGetResult {
                 break;
             }
             try {
-                answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
+                answerProcessing.sendMessageToClient(TextForLog.ASK_ASYNC_REQUEST + i + " из " + maxRequestCount);
                 result = port.getState(getStateRequest, requestHeader, headerHolder);
-                answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
-            } catch (ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault fault) {
+            } catch (Fault fault) {
                 answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             }
 
-            if (result != null && (result.getRequestState() == 3)) {
-                break;
+            if (result != null){
+                if (result.getRequestState() == 3) {
+                    answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+                    break;
+                }else{
+                    if (result.getRequestState() == 1) answerProcessing.sendMessageToClient(TextForLog.ASYNС_REQUEST_RECIVED);
+                    if (result.getRequestState() == 2) answerProcessing.sendMessageToClient(TextForLog.ASYNС_REQUEST_PROCEED);
+                }
             }
         }
         return result;

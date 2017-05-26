@@ -6,6 +6,11 @@ import java.util.Date;
  * Класс, содержит даные листа "Основные сведения".
  */
 public class BasicInformation {
+    /**
+     * ИД абонента в системе Град
+     * ОН НЕ ВЫГРУЖАЕТСЯ!
+     */
+    private int gradID;
 
     /**
      * Номер ЛС (иной идентификатор потребителя).
@@ -461,4 +466,21 @@ public class BasicInformation {
     public void setAmountLiving(int amountLiving) {
         this.amountLiving = amountLiving;
     }
+
+    /**
+     * Получить ИД абонента в системе Град
+     * @return идентификатор
+     */
+    public int getGradID() {
+        return gradID;
+    }
+
+    /**
+     * Задать ИД абонента в системе Град
+     * @param gradID - идентификатор
+     */
+    public void setGradID(int gradID) {
+        this.gradID = gradID;
+    }
+
 }

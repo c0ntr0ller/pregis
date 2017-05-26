@@ -94,6 +94,7 @@ public final class AccountGRADDAO {
                 final String[] arrayData = getAllData(resultSet.getString(1));
 
                 try {
+                    bi.setGradID(Integer.valueOf(arrayData[0]));
                     bi.setNumberLS(arrayData[1]);
                     bi.setTypeLS(arrayData[3]);
                     bi.setEmployer(AnswerYesOrNo.getAnswer(arrayData[4]));
@@ -137,6 +138,7 @@ public final class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
+    @Deprecated
     public ArrayList<Rooms> getRooms(final int houseID, final Connection connection) throws ParseException, SQLException {
 
         final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
@@ -228,13 +230,16 @@ public final class AccountGRADDAO {
      * @throws SQLException   возможны ошибки БД.
      */
     public LinkedHashMap<String, ImportAccountRequest.Account> getAccountMapFromGrad(final int houseID,
-                                                                                     final Connection connection)
+                                                                                     final Connection connection,
+                                                                                     LinkedHashMap<String, Rooms> roomsList)
             throws ParseException, SQLException, PreGISException {
 
         if(answerProcessing != null) {answerProcessing.sendMessageToClient("");}
         if(answerProcessing != null) {answerProcessing.sendMessageToClient("Формирую данные...");}
         final ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
-        final LinkedHashMap<String, Rooms> roomsList = getRoomsMaps(houseID, connection);
+        if (roomsList == null) {
+            roomsList = getRoomsMaps(houseID, connection);
+        }
 //        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
         final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
 //        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
@@ -259,8 +264,8 @@ public final class AccountGRADDAO {
             String livingRoomGUID = null;
             if (fRoom != null) {
                     // заранее получаем premisesGUID и livingRoomGUID, если не заданы - вообще не добавляем объект, потому что вызовет ошибку
-                premisesGUID = getBuildingIdentifiersFromBase(fRoom.getAbonId(), "PREMISESGUID", connection);
-                livingRoomGUID = getBuildingIdentifiersFromBase(fRoom.getAbonId(), "LIVINGROOMGUID", connection);
+                premisesGUID = getBuildingIdentifiersFromBase(basicInformation.getGradID(), "PREMISESGUID", connection);
+                livingRoomGUID = getBuildingIdentifiersFromBase(basicInformation.getGradID(), "LIVINGROOMGUID", connection);
 
                 if (premisesGUID == null && livingRoomGUID == null) {
                     answerProcessing.sendInformationToClientAndLog("Для абонента ГРАД ИД "
@@ -426,7 +431,7 @@ public final class AccountGRADDAO {
     public boolean setAccountGuidAndUniqueNumber(Integer houseId, String accountNumber,
                                               String accountGUID, String accountUniqueNumber, Connection connection) throws SQLException, PreGISException, ParseException {
 
-        Integer abonentId = getAbonentIdFromGrad(houseId, accountNumber, connection);
+        Integer abonentId = getAbonentIdFromGrad(accountNumber, connection);
 
         if (abonentId != null) {
             // ИД дома(:building_id),
@@ -515,7 +520,7 @@ public final class AccountGRADDAO {
         String accountGUID = getAccountGUIDFromBase(abonId, connection);
         if (accountGUID == null) {
             throw new PreGISArgumentNotFoundFromBaseException("В БД ГРАДа не найден \"AccountGUID\", " +
-                    "для абоента с ид в БД ГРАД " + abonId + ".");
+                    "для абонента с ид в БД ГРАД " + abonId + ".");
         }
         return accountGUID;
     }
@@ -523,21 +528,23 @@ public final class AccountGRADDAO {
     /**
      * Метод, находит в БД ГРАД ид абонента.
      *
-     * @param houseId       ид дома в БД ГРАД.
      * @param accountNumber номер ЛС.
      * @return ид абонента в БД ГРАД.
      * @throws ParseException
      * @throws SQLException
      */
-    public Integer getAbonentIdFromGrad(final Integer houseId, final String accountNumber, final Connection connection) throws ParseException, SQLException {
-        final ArrayList<Rooms> rooms = getRooms(houseId, connection);
-        if (rooms != null)
-            for (Rooms room : rooms) {
-                if (accountNumber.equals(room.getNumberLS())) {
-                    return room.getAbonId();
-                }
-            }
-        return null;
+    public Integer getAbonentIdFromGrad(final String accountNumber, final Connection connection) throws ParseException, SQLException {
+        Integer sqlResult;
+        String sqlRequest = "select a.id from abonents a where a.g_licschet = ?";
+
+        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
+            cstmt.setString(1, accountNumber);
+            ResultSet resultSet = cstmt.executeQuery();
+            resultSet.next();
+            sqlResult = resultSet.getInt(1);
+            resultSet.close();
+        }
+        return sqlResult;
     }
 
     /**
@@ -560,7 +567,7 @@ public final class AccountGRADDAO {
             for (BasicInformation information : basicInformation) {
                 if (accountNumber.equals(information.getNumberLS())) {
                     fio = information.getSurname() + " " + information.getName() + " " + information.getMiddleName();
-                    final Integer abonId = getAbonentIdFromGrad(houseId, accountNumber, connectionGrad);
+                    final Integer abonId = getAbonentIdFromGrad(accountNumber, connectionGrad);
                     final java.sql.Date dateEnd = getAccountEndDate(abonId, connectionGrad);
                     setAccountForRemove(abonId, accountNumber, fio, dateEnd, connectionLocal);
                 }

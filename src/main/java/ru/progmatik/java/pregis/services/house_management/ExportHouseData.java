@@ -228,7 +228,7 @@ public class ExportHouseData {
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         ResultHeader resultHeader = null;
         Holder<ResultHeader> headerHolder = new Holder<>();
-        ErrorMessageType resultErrorMessage = null;
+        ErrorMessageType resultErrorMessage = new ErrorMessageType();
 
         GetStateResult result = null;
         HouseManagementAsyncGetResult houseManagementAsyncGetResult = null;
@@ -236,7 +236,7 @@ public class ExportHouseData {
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             AckRequest ackRequest = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
-            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
             if (ackRequest != null) {
                 houseManagementAsyncGetResult = new HouseManagementAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
@@ -247,12 +247,17 @@ public class ExportHouseData {
                     resultHeader = houseManagementAsyncGetResult.getHeaderHolder().value;
                     resultErrorMessage = result.getErrorMessage();
                 }
+                else{
+                    resultErrorMessage.setErrorCode("ПреГИС");
+                    resultErrorMessage.setDescription("Запрос не вернул данных");
+                }
             }
 
         } catch (Fault fault) {
             answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
             setErrorStatus(-1);
         }
+
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHeader ,resultErrorMessage, LOGGER);
         return result;
     }

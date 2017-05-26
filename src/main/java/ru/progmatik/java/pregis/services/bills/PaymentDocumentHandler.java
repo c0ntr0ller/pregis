@@ -10,6 +10,7 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDAO;
@@ -82,7 +83,7 @@ public class PaymentDocumentHandler {
                     paymentInformationMap.put(integerPaymentInformationEntry.getValue().getTransportGUID(), integerPaymentInformationEntry.getValue());
                 }
 
-                answerProcessing.clearLabelForText();
+                if (answerProcessing != null) {answerProcessing.clearLabelForText();}
                 allCount += paymentDocumentMap.size();
                 sendDocumentToGisJkh(paymentDocumentMap, paymentPeriod);
             }
@@ -102,50 +103,52 @@ public class PaymentDocumentHandler {
 
         final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
 
-        final ArrayList<Rooms> rooms = accountGRADDAO.getRooms(houseId, connectionGrad);
+        final LinkedHashMap<String, Rooms> rooms = accountGRADDAO.getRoomsMaps(houseId, connectionGrad);
 
         final LinkedHashMap<String, ImportAccountRequest.Account> accountMapFromGrad =
-                accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad);
+                accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad, rooms);
 
-        for (Rooms room : rooms) {
+        if (rooms != null) {
+            for (Map.Entry<String, Rooms> room : rooms.entrySet()) {
 
-            final TreeSet<Integer> organizationIds = getOrganizationIds(pdGradDao, room.getAbonId(), paymentPeriod, connectionGrad);
+                final TreeSet<Integer> organizationIds = getOrganizationIds(pdGradDao, room.getValue().getAbonId(), paymentPeriod, connectionGrad);
 //            System.out.println("Organization ID: " + organizationIds);
 
-            for (Integer organizationId : organizationIds) {
+                for (Integer organizationId : organizationIds) {
 
 //                    Создадим платежный документ
-                ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
+                    ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
 //                    Идентификатор лицевого счета
-                paymentDocument.setAccountGuid(accountGRADDAO.getAccountGUIDFromBase(room.getAbonId(), connectionGrad));
+                    paymentDocument.setAccountGuid(accountGRADDAO.getAccountGUIDFromBase(room.getValue().getAbonId(), connectionGrad));
 //                    Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
-                paymentDocument.setPaymentDocumentNumber(String.format("%010d", getPaymentDocumentNumber()));
+                    paymentDocument.setPaymentDocumentNumber(String.format("%010d", getPaymentDocumentNumber()));
 //                    Общая площадь для ЛС
-                paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
-                paymentDocument.getAddressInfo().setTotalSquare(accountMapFromGrad.get(room.getNumberLS()).getTotalSquare());
-                paymentDocument.getAddressInfo().setResidentialSquare(accountMapFromGrad.get(room.getNumberLS()).getResidentialSquare());
-                if (accountMapFromGrad.get(room.getNumberLS()).getHeatedArea() != null) {
-                    paymentDocument.getAddressInfo().setHeatedArea(accountMapFromGrad.get(room.getNumberLS()).getHeatedArea());
-                }
-                if (accountMapFromGrad.get(room.getNumberLS()).getLivingPersonsNumber() != 0) {
-                    paymentDocument.getAddressInfo().setLivingPersonsNumber(accountMapFromGrad.get(room.getNumberLS()).getLivingPersonsNumber());
-                }
-                paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
+                    paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
+                    paymentDocument.getAddressInfo().setTotalSquare(accountMapFromGrad.get(room.getValue().getNumberLS()).getTotalSquare());
+                    paymentDocument.getAddressInfo().setResidentialSquare(accountMapFromGrad.get(room.getValue().getNumberLS()).getResidentialSquare());
+                    if (accountMapFromGrad.get(room.getValue().getNumberLS()).getHeatedArea() != null) {
+                        paymentDocument.getAddressInfo().setHeatedArea(accountMapFromGrad.get(room.getValue().getNumberLS()).getHeatedArea());
+                    }
+                    if (accountMapFromGrad.get(room.getValue().getNumberLS()).getLivingPersonsNumber() != 0) {
+                        paymentDocument.getAddressInfo().setLivingPersonsNumber(accountMapFromGrad.get(room.getValue().getNumberLS()).getLivingPersonsNumber());
+                    }
+                    paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
 //                    Начисление по услуге
-                paymentDocument = pdGradDao.getPaymentDocument(
-                        room.getAbonId(),
-                        organizationId,
-                        paymentPeriod, paymentDocument, connectionGrad);
+                    paymentDocument = pdGradDao.getPaymentDocument(
+                            room.getValue().getAbonId(),
+                            organizationId,
+                            paymentPeriod, paymentDocument, connectionGrad);
 
-                final PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
-                        Integer.valueOf(paymentDocument.getPaymentDocumentNumber()), paymentPeriod.get(Calendar.MONTH),
-                        paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getAbonId(),
-                        room.getNumberLS(), paymentDocument.getAccountGuid());
+                    final PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
+                            Integer.valueOf(paymentDocument.getPaymentDocumentNumber()), paymentPeriod.get(Calendar.MONTH),
+                            paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getValue().getAbonId(),
+                            room.getValue().getNumberLS(), paymentDocument.getAccountGuid());
 
-                //            Ссылка на платежные реквизиты
-                paymentDocument.setPaymentInformationKey(paymentInformationIdsMap.get(organizationId).getTransportGUID());
+                    //            Ссылка на платежные реквизиты
+                    paymentDocument.setPaymentInformationKey(paymentInformationIdsMap.get(organizationId).getTransportGUID());
 
-                paymentMap.put(paymentDocument, registryDataSet);
+                    paymentMap.put(paymentDocument, registryDataSet);
+                }
             }
         }
         return paymentMap;
@@ -186,10 +189,10 @@ public class PaymentDocumentHandler {
                                       final Calendar paymentPeriod) throws SQLException, PreGISException {
 
 
-        PaymentDocumentRegistryDAO registryDAO = new PaymentDocumentRegistryDAO();
+        PaymentDocumentRegistryGradDAO registryGradDAO = new PaymentDocumentRegistryGradDAO(answerProcessing);
 
 //        Записи из БД, для сравнения выгружен или нет.
-        ArrayList<PaymentDocumentRegistryDataSet> allPaymentDocumentRecording = registryDAO.getAllPaymentDocumentRecording();
+        ArrayList<PaymentDocumentRegistryDataSet> allPaymentDocumentRecording = registryGradDAO.getAllPaymentDocumentRecording(ConnectionBaseGRAD.instance().getConnection());
 
         ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList = new ArrayList<>();
         ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList = new ArrayList<>();
@@ -211,7 +214,7 @@ public class PaymentDocumentHandler {
 
             if ((paymentDocumentList.size() % 10) == 0) { // отправляет по 10 документов
                 sendPaymentDocumentsList(paymentDocumentList, paymentDocumentMap, paymentInformationList,
-                        paymentPeriod, registryDAO);
+                        paymentPeriod, registryGradDAO);
                 paymentDocumentList.clear();
                 paymentInformationList.clear();
             }
@@ -219,7 +222,7 @@ public class PaymentDocumentHandler {
 
         if (paymentDocumentList.size() > 0) { // отправляет оставшиеся документы
             sendPaymentDocumentsList(paymentDocumentList, paymentDocumentMap, paymentInformationList,
-                    paymentPeriod, registryDAO);
+                    paymentPeriod, registryGradDAO);
             paymentDocumentList.clear();
             paymentInformationList.clear();
         } else {
@@ -234,11 +237,11 @@ public class PaymentDocumentHandler {
      * @param paymentDocumentMap связка, ключ - документ для ГИС ЖКХ, значение - объект для базы данных.
      * @param paymentInformationList список компаний приема платежей.
      * @param paymentPeriod период за который формирутеся ПД.
-     * @param registryDAO записывает данные в БД.
+     * @param registryGradDAO записывает данные в БД.
      * @throws SQLException
      * @throws PreGISException
      */
-    private void sendPaymentDocumentsList(ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList, HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap, ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList, Calendar paymentPeriod, PaymentDocumentRegistryDAO registryDAO) throws SQLException, PreGISException {
+    private void sendPaymentDocumentsList(ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList, HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap, ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList, Calendar paymentPeriod, PaymentDocumentRegistryGradDAO registryGradDAO) throws SQLException, PreGISException {
 
         ImportResult result = sendPaymentDocuments(paymentDocumentList, paymentInformationList, paymentPeriod.get(Calendar.MONTH),
                 (short) paymentPeriod.get(Calendar.YEAR));
@@ -253,7 +256,7 @@ public class PaymentDocumentHandler {
                             resultType.getError().get(0).getDescription());
                 } else {
 //                        added to DB
-                    setResultFromGisJkh(paymentDocumentMap, resultType, registryDAO);
+                    setResultFromGisJkh(paymentDocumentMap, resultType, registryGradDAO);
                 }
             }
         } else if (result == null) {
@@ -270,14 +273,14 @@ public class PaymentDocumentHandler {
      * @throws SQLException
      */
     private void setResultFromGisJkh(HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap,
-                                     CommonResultType resultType, PaymentDocumentRegistryDAO registryDAO) throws SQLException {
+                                     CommonResultType resultType, PaymentDocumentRegistryGradDAO registryDAO) throws SQLException {
 
         for (Map.Entry<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> entry : paymentDocumentMap.entrySet()) {
 
             if (entry.getKey().getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
                 entry.getValue().setGuid(resultType.getGUID());
                 entry.getValue().setUniqueNumber(resultType.getUniqueNumber());
-                registryDAO.addPaymentDocumentRegistryItem(entry.getValue());
+                registryDAO.addPaymentDocumentRegistryItem(entry.getValue(), ConnectionBaseGRAD.instance().getConnection());
                 addedGisJkhCount++;
 
                 answerProcessing.sendMessageToClient("");
@@ -303,12 +306,10 @@ public class PaymentDocumentHandler {
                                               List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
                                               int month, short year) throws SQLException, PreGISException {
 
-        ImportPaymentDocumentData importPaymentDocumentData = new ImportPaymentDocumentData(answerProcessing);
-        ImportResult result = importPaymentDocumentData.sendPaymentDocument(paymentDocumentList,
+        return new ImportPaymentDocumentData(answerProcessing).sendPaymentDocument(paymentDocumentList,
                 paymentInformationList,
                 month,
                 year);
-        return result;
     }
 
     /**
@@ -385,8 +386,8 @@ public class PaymentDocumentHandler {
      */
     private int getPaymentDocumentNumber() throws SQLException {
         if (count == -1) {
-            PaymentDocumentRegistryDAO paymentDAO = new PaymentDocumentRegistryDAO();
-            count = paymentDAO.getPaymentDocumentLastNumber();
+            PaymentDocumentRegistryGradDAO paymentGradDAO = new PaymentDocumentRegistryGradDAO(answerProcessing);
+            count = paymentGradDAO.getPaymentDocumentLastNumber(ConnectionBaseGRAD.instance().getConnection());
         } else {
             count++;
         }

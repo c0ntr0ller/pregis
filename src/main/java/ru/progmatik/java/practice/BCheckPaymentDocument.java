@@ -12,6 +12,6 @@ import java.text.ParseException;
 public class BCheckPaymentDocument {
     public static void main(String[] args) throws ParseException, SQLException, PreGISException {
         PaymentDocumentHandler pdh = new PaymentDocumentHandler(null);
-        pdh.compilePaymentDocument(33);
+        pdh.paymentDocumentImport(21);
     }
 }

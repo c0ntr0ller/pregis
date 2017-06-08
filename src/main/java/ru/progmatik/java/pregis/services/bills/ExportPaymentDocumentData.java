@@ -38,8 +38,8 @@ public class ExportPaymentDocumentData {
     public ExportPaymentDocumentData(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
 
-        service = UrlLoader.instance().getUrlMap().get("bills") == null ? new BillsService()
-                : new BillsService(UrlLoader.instance().getUrlMap().get("bills"));
+        service = UrlLoader.instance().getUrlMap().get("billsAsync") == null ? new BillsService()
+                : new BillsService(UrlLoader.instance().getUrlMap().get("billsAsync"));
         port = service.getBillsPort();
         OtherFormat.setPortSettings(service, port);
     }

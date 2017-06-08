@@ -373,7 +373,7 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежных документов...");
             final PaymentDocumentHandler handler = new PaymentDocumentHandler(answerProcessing);
-            handler.compilePaymentDocument(checkHouseGradId(houseGradID));
+            handler.paymentDocumentImport(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         } finally {

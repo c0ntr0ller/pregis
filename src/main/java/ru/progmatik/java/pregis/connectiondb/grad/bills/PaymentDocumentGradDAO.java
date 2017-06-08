@@ -2,23 +2,27 @@ package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.bills.*;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
+import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice01;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice02;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.sql.*;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Класс, получает из БД ГРАДа информацию о платежном документе.
@@ -27,278 +31,410 @@ public final class PaymentDocumentGradDAO {
 
     private static final Logger LOGGER = Logger.getLogger(PaymentDocumentGradDAO.class);
     private final AnswerProcessing answerProcessing;
-
+    private int month;
+    private short year;
     private int stateError;
+
+    public int getMonth() {
+        return month;
+    }
+
+    public short getYear() {
+        return year;
+    }
 
     public PaymentDocumentGradDAO(AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
     /**
-     * Метод, отправляет в БД Града запрос, формирует платежный документ.
-     *
-     * @param abonId          идентификатор абонент в БД ГРАДа
-     * @param gradId          идентификатор компании в БД ГРАД.
-     * @param calendar        дата на которую нужно сформировать ПД.
-     * @param paymentDocument документ.
-     * @param connectionGrad  подключение к БД ГРАД.
-     * @throws SQLException
+     * Метод запрашивает из Града месяц и год закрытого периода
+     * метод временный, потом будем спрашивать у пользователя
      */
-    public ImportPaymentDocumentRequest.PaymentDocument getPaymentDocument(int abonId, Integer gradId, Calendar calendar,
-                                                                           ImportPaymentDocumentRequest.PaymentDocument paymentDocument,
-                                                                           Connection connectionGrad) throws SQLException {
-
-        ReferenceItemGRADDAO referenceItemGRADDAO = new ReferenceItemGRADDAO();
-        ArrayList<ReferenceItemDataSet> referenceItemGRADDAOAllItems = referenceItemGRADDAO.getAllItems(connectionGrad);
-
-//        Процедура принимает: ид абонента, расчетный период (месяц), расчетный период (год),
-//        1 – подавлять вывод нулевых строк, ид жилищной организации, ид поставщика.
+    public void getGradClosedPeriod(Connection connectionGrad) throws SQLException {
         try (Statement statement = connectionGrad.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT " + //TODO: изменить запрос на правильный
-                    "RSUPPLIER_ID, " +      // 1  ид поставщика
-                    "RGROUP, " +            // 2  группа услуг
-                    "RSUPERGROUP_CODE, " +  // 3  код суперуслуги
-                    "RUNIT, " +             // 4  ед. измерения услуги
-                    "RAMOUNT_PERSONAL, " +  // 5  индивидуальное потребление
-                    "RAMOUNT_SHARED, " +    // 6  потребление МОП/ОДН
-                    "RTARIFF, " +           // 7  тариф
-                    "RCHARGE_PERSONAL, " +  // 8  сумма начисления за индивидуальное потребление
-                    "RCHARGE_SHARED, " +    // 9  сумма начисления за потребление МОП/ОДН
-                    "RREPAYS_PERSONAL, " +  // 10 перерасчеты по индивидуальному потреблению
-                    "RREPAYS_SHARED, " +    // 11 перерасчеты по потреблению МОП/ОДН
-                    "RCHARGE, " +           // 12 итоговая сумма начислений
-                    "RNORM_PERSONAL, " +    // 13 норматив потребления на индивидуальные нужды
-                    "RNORM_SHARED, " +      // 14 норматив потребления на общедомовые нужды
-                    "RMETERS_PERSONAL, " +  // 15 текущие показания ИПУ
-                    "RPAYS_ADVANCE, " +     // 16 платежи в расчетном периоде (аванс)
-                    "RDEBT_IN, " +          // 17 задолженность на начало расчетного периода
-                    "RDEBT_OUT, " +         // 18 задолженность на конец расчетного периода
-                    "RREASON, " +           // 19 Основания перерасчётов
-                    "RSUM, " +              // 20 Сумма перерасчётов
-                    "RMETERS_SHARED, " +    // Текущие показания приборов учета коммунальных услуг. Общедомовые (ОДПУ). Раздел 4.
-                    "RSUMM_AMOUNT_PERSONAL, " + // Суммарный объем коммунальных услуг в доме. В помещениях дома. Раздел 4.
-                    "RSUMM_AMOUNT_SHARED " + // Суммарный объем коммунальных услуг в доме. На ощедомовые нужды. Раздел 4.
-                    "FROM EX_GIS_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
-                    (calendar.get(Calendar.YEAR) - 1) + ", null,  null, " + gradId + ", null)"); // TODO удалить -1
+
+            ResultSet rs = statement.executeQuery("select first(1) extract(month from t.closedate), extract(year from t.closedate) from T_PERIODCLOSE t");
+            if(rs.next()&& rs.getInt(1) > 0 && rs.getInt(2) > 0) {
+                this.month = rs.getInt(1);
+                this.year = rs.getShort(2);
+            }else{
+                Date date = new Date(System.currentTimeMillis());
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                this.month = cal.get(Calendar.MONTH);
+                this.year = (short) cal.get(Calendar.YEAR);
+            }
+        }
+    }
+
+    /**
+     * Метод, отправляет в БД Града запрос, формирующий платежные документы по дому в БД.
+     *
+     * @param houseGradID          идентификатор дома в БД ГРАДа
+     * @param connectionGrad  подключение к БД ГРАД.
+     */
+
+    public boolean GeneratePaymentDocuments(Integer houseGradID, Connection connectionGrad){
+        try {
+            CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(null, null, null, ?, null)");
+            callableStatement.setInt(1, houseGradID);
+            callableStatement.execute();
+        }catch(SQLException e){
+            answerProcessing.sendInformationToClientAndLog("Не удалось сгенерировать ЕПД по дому " +  houseGradID, LOGGER);
+            return false;
+        }
+        return true;
+    }
+
+    public HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> getPaymentInformationMap(final Integer houseGradID,
+                                                                                                      final int month,
+                                                                                                      final int year,
+                                                                                                      final Connection connectionGrad)
+            throws SQLException, PreGISException {
+
+        HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = new HashMap<>();
+
+        try (Statement statement = connectionGrad.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT RPAYEE_ID, RBANK_ACCOUNT, RBIK FROM EX_GIS_INVOCE03(" + month + "," + year + "," + houseGradID + ")");
 
             while (rs.next()) {
+                if (rs.getString("RBANK_ACCOUNT") != null && rs.getString("RBIK") != null) {
 
-//                TODO создать платежный документ
-                ReferenceItemDataSet referenceItem = getReferenceItemDataSet(rs.getString(2), rs.getString(3), referenceItemGRADDAOAllItems);
-                if (referenceItem == null) {
-                    setStateError(0);
-                    answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу \"" +
-                            rs.getString(2) + "\" в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
-                } else if (referenceItem.getName() == null) {
-                    setStateError(0);
-                    answerProcessing.sendInformationToClientAndLog("Не удалось найти услугу " +
-                            "без имени в справочнике \"SERVICES_GIS_JKH\".", LOGGER);
-                } else {
+                    ImportPaymentDocumentRequest.PaymentInformation paymentInformation = new ImportPaymentDocumentRequest.PaymentInformation();
+                    paymentInformation.setTransportGUID(OtherFormat.getRandomGUID());
+                    paymentInformation.setOperatingAccountNumber(rs.getString("RBANK_ACCOUNT"));
+                    paymentInformation.setBankBIK(rs.getString("RBIK"));
 
-                    PaymentDocumentType.ChargeInfo chargeInfo = null;
-                    if (referenceItem.getCodeParent().equals("51")) { // если Коммунальная услуга
+                    paymentInformationMap.put(rs.getInt("RPAYEE_ID"), paymentInformation);
+                }
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }
+        if (paymentInformationMap.size() < 1) {
+            throw new PreGISException("Не удалось получить реквизиты из процедуры \"EX_GIS_ORG_LIST\".");
+        }
+        return paymentInformationMap;
+    }
+
+    public HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> getPaymentDocumentMap(
+            final int houseGradID,
+            final int month,
+            final int year,
+            final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap,
+            final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+
+        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap = new HashMap<>();
+
+        // получаем заголовки платежных документов по абонентам
+        HashMap<String, Invoice01> accountsMapGrad = getAccountMap(houseGradID, month, year, connectionGrad);
+
+        // если нечего посылать - возвращаем пусто
+        if (accountsMapGrad == null || accountsMapGrad.size() == 0){
+            return null;
+        }
+
+        // получаем начисления абонентов
+        HashMap<String, ArrayList<Invoice02>> chargesMapGrad = getChargesMap(houseGradID, month, year, connectionGrad);
+
+        // если нечего посылать - возвращаем пусто
+        if (chargesMapGrad == null || chargesMapGrad.size() == 0){
+            return null;
+        }
+
+        // бежим по мапе заголовков платежных документов из Града
+        for (Map.Entry<String, Invoice01> accountGrad: accountsMapGrad.entrySet()) {
+            // выделяем начисления данного ЛС
+            ArrayList<Invoice02> accountCharges = chargesMapGrad.get(accountGrad.getValue().getPd_no());
+            // если начислений нет - не отсылаем этот адрес, переходим к другому
+            if (accountCharges == null || accountCharges.size() == 0) continue;
+
+            // GUID абонента проверяем
+            if(accountGrad.getValue().getAccountguid() == null || accountGrad.getValue().getAccountguid().equals("")){
+                if(answerProcessing != null) answerProcessing.sendInformationToClientAndLog("Не указан Accountguid у ЕПД с номером " + accountGrad.getValue().getPd_no(), LOGGER);
+                continue;
+            }
+
+            //Создадим платежный документ
+            ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
+            // GUID абонента
+            paymentDocument.setAccountGuid(accountGrad.getValue().getAccountguid());
+            //Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
+            paymentDocument.setPaymentDocumentNumber(accountGrad.getValue().getPd_no());
+//            paymentDocument.setPaymentDocumentNumber(String.format("%010d", accountGrad.getValue().getPd_no()));
+
+            // создаем Адресные сведения
+            paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
+            // Количество проживающих
+            paymentDocument.getAddressInfo().setLivingPersonsNumber(accountGrad.getValue().getTencount());
+            // Жилая площадь
+            paymentDocument.getAddressInfo().setResidentialSquare(accountGrad.getValue().getSq_live());
+            // Отапливаемая площадь
+            paymentDocument.getAddressInfo().setHeatedArea(accountGrad.getValue().getSq_heat());
+            // Общая площадь для ЛС
+            paymentDocument.getAddressInfo().setTotalSquare(accountGrad.getValue().getSq_total());
+
+            // заносим начисления
+            for (Invoice02 invoce02: accountCharges) {
+                PaymentDocumentType.ChargeInfo chargeInfo = new PaymentDocumentType.ChargeInfo();
+                if (invoce02.getCode_parent().equals("51")) { // если Коммунальная услуга
 //                    TODO
-                        chargeInfo = new PaymentDocumentType.ChargeInfo();
-                        chargeInfo.setMunicipalService(new PDServiceChargeType.MunicipalService());
+                    chargeInfo.setMunicipalService(new PDServiceChargeType.MunicipalService());
 
 //                    Код услуги (жилищной, коммунальной или дополнительной)
-                        chargeInfo.getMunicipalService().setServiceType(new NsiRef());
-                        chargeInfo.getMunicipalService().getServiceType().setName(referenceItem.getName());
-                        chargeInfo.getMunicipalService().getServiceType().setCode(referenceItem.getCode());
-                        chargeInfo.getMunicipalService().getServiceType().setGUID(referenceItem.getGuid());
+                    chargeInfo.getMunicipalService().setServiceType(new NsiRef());
+                    chargeInfo.getMunicipalService().getServiceType().setName(invoce02.getGis_service());
+                    chargeInfo.getMunicipalService().getServiceType().setCode(invoce02.getCode());
+                    chargeInfo.getMunicipalService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
 //                    Тариф
-                        chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(rs.getBigDecimal(7)));
+                    chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
 
 //                    Итого к оплате за расчетный период, руб.
-                        chargeInfo.getMunicipalService().setTotalPayable(getBigDecimalTwo(rs.getBigDecimal(12)));
+                    chargeInfo.getMunicipalService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
 
 //                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
-                        chargeInfo.getMunicipalService().setAccountingPeriodTotal(
-                                getBigDecimalTwo(rs.getBigDecimal(12)).subtract(
-                                        getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
-                                        getBigDecimalTwo(rs.getBigDecimal(10))));
+                    chargeInfo.getMunicipalService().setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
 
 //                        Порядок расчетов ??? TODO
-                        chargeInfo.getMunicipalService().setCalcExplanation("Иное");
+//                    chargeInfo.getMunicipalService().setCalcExplanation("Иное");
 
+                    // перерасчеты
+                    if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
+                            !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
                         chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeType());
 //                        Перерасчеты, корректировки (руб)
-                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(rs.getBigDecimal(10)));
-//                          Льготы, субсидии, скидки (руб) - отсутствует в ГРАДе
-//                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyDiscount();
+                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+//                          Льготы, субсидии, скидки (руб)
+                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
+                    }
 
 //                        Рассрочка. Раздел 6. Иваненко Дмитрий сказал, что у наших клиентов нет таких.
 //                        chargeInfo.getMunicipalService().setPiecemealPayment(new PiecemealPayment());
 
 //                        Перерасчеты. Раздел 5.
-                        if (rs.getBigDecimal(20) != null && rs.getString(19) != null) {
-                            chargeInfo.getMunicipalService().setPaymentRecalculation(new PDServiceChargeType.MunicipalService.PaymentRecalculation());
+                    if (invoce02.getRepays_sum() != null && !invoce02.getRepays_sum().equals(new BigDecimal(0))) {
+                        chargeInfo.getMunicipalService().setPaymentRecalculation(new PDServiceChargeType.MunicipalService.PaymentRecalculation());
 //                            Основания перерасчётов
-                            chargeInfo.getMunicipalService().getPaymentRecalculation().setRecalculationReason(rs.getString(19));
+                        chargeInfo.getMunicipalService().getPaymentRecalculation().setRecalculationReason(invoce02.getRepays_text());
 //                            Сумма
-                            chargeInfo.getMunicipalService().getPaymentRecalculation().setSum(getBigDecimalTwo(rs.getBigDecimal(20)));
-                        }
+                        chargeInfo.getMunicipalService().getPaymentRecalculation().setSum(getBigDecimalTwo(invoce02.getRepays_sum()));
+                    }
 
 //                        Норматив потребления коммунальной услуги
-                        chargeInfo.getMunicipalService().setServiceInformation(new ServiceInformation());
+                    chargeInfo.getMunicipalService().setServiceInformation(new ServiceInformation());
 
 //                        Текущие показания приборов учёта коммунальных услуг - индивидульное потребление
-                        if (rs.getString(15) != null && !rs.getString(15).trim().isEmpty()) {
+//                    TODO пока не заносим показания ПУ - у нас возвращается строка с показаниями приборов, а у этих идиотов только одно число можно ставить
+/*
+                    if (rs.getString(15) != null && !rs.getString(15).trim().isEmpty()) {
 
+                        chargeInfo.getMunicipalService().getServiceInformation().
+                                setIndividualConsumptionCurrentValue(new BigDecimal(rs.getString(15)).setScale(4, BigDecimal.ROUND_DOWN));
+                    }
+
+                        Текущие показания приборов учёта коммунальных услуг - общедомовые нужды
+
+                    if (rs.getString(21) != null) {
+                        try {
                             chargeInfo.getMunicipalService().getServiceInformation().
-                                    setIndividualConsumptionCurrentValue(new BigDecimal(rs.getString(15)).setScale(4, BigDecimal.ROUND_DOWN));
+                                    setHouseOverallNeedsCurrentValue(new BigDecimal(rs.getString(21)));
+                        } catch (NumberFormatException e) {
+                            answerProcessing.sendErrorToClient("Формирование ПД", "\"Формирование ПД\"", LOGGER,
+                                    new PreGISException("Неверное значение указанно в процедуре \"WEB_INVOICE\", " +
+                                            "ГИС ЖКХ ожидает BigDecimal"));
                         }
-
-//                        Текущие показания приборов учёта коммунальных услуг - общедомовые нужды
-//                        TODO Иваненко должен дать.
-                        if (rs.getString(21) != null) {
-                            try {
-                                chargeInfo.getMunicipalService().getServiceInformation().
-                                        setHouseOverallNeedsCurrentValue(new BigDecimal(rs.getString(21)));
-                            } catch (NumberFormatException e) {
-                                answerProcessing.sendErrorToClient("Формирование ПД", "\"Формирование ПД\"", LOGGER,
-                                        new PreGISException("Неверное значение указанно в процедуре \"WEB_INVOICE\", " +
-                                                "ГИС ЖКХ ожидает BigDecimal"));
-                            }
-                        }
+                    }
 
 
 //                        Суммарный объём коммунальных услуг в доме - индивидульное потребление
-                        if (rs.getBigDecimal(22) != null) {
-                            chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalIndividualConsumption(
-                                    rs.getBigDecimal(22).setScale(4, BigDecimal.ROUND_HALF_UP));
-                        }
+//                     TODO пока не делаем весь кусок. Они не обязательные, потом доделаем
+                    if (rs.getBigDecimal(22) != null) {
+                        chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalIndividualConsumption(
+                                rs.getBigDecimal(22).setScale(4, BigDecimal.ROUND_HALF_UP));
+                    }
 //                        Суммарный объём коммунальных услуг в доме - общедомовые нужды
-                        if (rs.getBigDecimal(23) != null) {
-                            chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalHouseOverallNeeds(
-                                    rs.getBigDecimal(23).setScale(4, BigDecimal.ROUND_HALF_UP));
-                        }
+                    if (rs.getBigDecimal(23) != null) {
+                        chargeInfo.getMunicipalService().getServiceInformation().setHouseTotalHouseOverallNeeds(
+                                rs.getBigDecimal(23).setScale(4, BigDecimal.ROUND_HALF_UP));
+                    }
 
 //                        Норматив потребления коммунальных услуг - общедомовые нужды
-                        chargeInfo.getMunicipalService().getServiceInformation().
-                                setHouseOverallNeedsNorm(rs.getBigDecimal(14).setScale(4, BigDecimal.ROUND_DOWN));
+                    chargeInfo.getMunicipalService().getServiceInformation().
+                            setHouseOverallNeedsNorm(rs.getBigDecimal(14).setScale(4, BigDecimal.ROUND_DOWN));
 
 //                        Норматив потребления коммунальных услуг - индивидульное потребление
-                        chargeInfo.getMunicipalService().getServiceInformation().
-                                setIndividualConsumptionNorm(rs.getBigDecimal(13).setScale(4, BigDecimal.ROUND_DOWN));
+
+                    chargeInfo.getMunicipalService().getServiceInformation().
+                            setIndividualConsumptionNorm(rs.getBigDecimal(13).setScale(4, BigDecimal.ROUND_DOWN));
 
 //                        Объем услуг - индивидульное потребление и(или) общедомовые нужды
-                        chargeInfo.getMunicipalService().setConsumption(new PDServiceChargeType.MunicipalService.Consumption());
+                    chargeInfo.getMunicipalService().setConsumption(new PDServiceChargeType.MunicipalService.Consumption());
 
-                        if (rs.getBigDecimal(5) != null) {
+                    if (rs.getBigDecimal(5) != null) {
 
-                            PDServiceChargeType.MunicipalService.Consumption.Volume volumeIndividual = new PDServiceChargeType.MunicipalService.Consumption.Volume();
+                        PDServiceChargeType.MunicipalService.Consumption.Volume volumeIndividual = new PDServiceChargeType.MunicipalService.Consumption.Volume();
 //                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
-                            volumeIndividual.setType("I");
+                        volumeIndividual.setType("I");
 //                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
 //                            volumeIndividual.setDeterminingMethod();
-                            volumeIndividual.setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
-                            chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeIndividual);
+                        volumeIndividual.setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
+                        chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeIndividual);
 
-                        } else if (rs.getBigDecimal(6) != null) {
+                    } else if (rs.getBigDecimal(6) != null) {
 
-                            PDServiceChargeType.MunicipalService.Consumption.Volume volumeOverall = new PDServiceChargeType.MunicipalService.Consumption.Volume();
+                        PDServiceChargeType.MunicipalService.Consumption.Volume volumeOverall = new PDServiceChargeType.MunicipalService.Consumption.Volume();
 //                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
-                            volumeOverall.setType("O");
+                        volumeOverall.setType("O");
 //                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
 //                            volumeIndividual.setDeterminingMethod();
-                            volumeOverall.setValue(rs.getBigDecimal(6).setScale(3, BigDecimal.ROUND_DOWN));
-                            chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeOverall);
-                        }
+                        volumeOverall.setValue(rs.getBigDecimal(6).setScale(3, BigDecimal.ROUND_DOWN));
+                        chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeOverall);
+                    }
 
 //                        К оплате за индивидуальное потребление коммунальной услуги, руб.
-                        chargeInfo.getMunicipalService().setMunicipalServiceIndividualConsumptionPayable(getBigDecimalTwo(rs.getBigDecimal(8)));
+                    chargeInfo.getMunicipalService().setMunicipalServiceIndividualConsumptionPayable(getBigDecimalTwo(rs.getBigDecimal(8)));
 //                        К оплате за общедомовое потребление коммунальной услуги, руб.
-                        chargeInfo.getMunicipalService().setMunicipalServiceCommunalConsumptionPayable(getBigDecimalTwo(rs.getBigDecimal(9)));
+                    chargeInfo.getMunicipalService().setMunicipalServiceCommunalConsumptionPayable(getBigDecimalTwo(rs.getBigDecimal(9)));
+*/
 
-                    } else if (referenceItem.getCodeParent().equals("50")) { // если Жилищная услуга
+                } else if (invoce02.getCode_parent().equals("50")) { // если Жилищная услуга
 
-                        chargeInfo = new PaymentDocumentType.ChargeInfo();
-                        chargeInfo.setHousingService(new PDServiceChargeType.HousingService());
+                    chargeInfo.setHousingService(new PDServiceChargeType.HousingService());
 //                    Код услуги (жилищной, коммунальной или дополнительной)
-                        chargeInfo.getHousingService().setServiceType(new NsiRef());
-                        chargeInfo.getHousingService().getServiceType().setName(referenceItem.getName());
-                        chargeInfo.getHousingService().getServiceType().setCode(referenceItem.getCode());
-                        chargeInfo.getHousingService().getServiceType().setGUID(referenceItem.getGuid());
+                    chargeInfo.getHousingService().setServiceType(new NsiRef());
+                    chargeInfo.getHousingService().getServiceType().setName(invoce02.getGis_service());
+                    chargeInfo.getHousingService().getServiceType().setCode(invoce02.getCode());
+                    chargeInfo.getHousingService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
 //                    Тариф
-                        chargeInfo.getHousingService().setRate(getBigDecimalTwo(rs.getBigDecimal(7)));
+                    chargeInfo.getHousingService().setRate(getBigDecimalTwo(invoce02.getTariff()));
 
 //                    Итого к оплате за расчетный период, руб.
-                        chargeInfo.getHousingService().setTotalPayable(getBigDecimalTwo(rs.getBigDecimal(12)));
+                    chargeInfo.getHousingService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
 
 //                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
-                        chargeInfo.getHousingService().setAccountingPeriodTotal(
-                                getBigDecimalTwo(rs.getBigDecimal(12)).subtract(
-                                        getBigDecimalTwo(rs.getBigDecimal(11))).subtract(
-                                        getBigDecimalTwo(rs.getBigDecimal(10))));
+                    chargeInfo.getHousingService().setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
 
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
-                        chargeInfo.getHousingService().setCalcExplanation("Иное");
+//                    chargeInfo.getHousingService().setCalcExplanation("Иное");
 
-//                    Перерасчеты, корректировки
+                    // перерасчеты
+                    if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
+                            !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
                         chargeInfo.getHousingService().setServiceCharge(new ServiceChargeType());
-//                    Перерасчеты, корректировки (руб)
-                        chargeInfo.getHousingService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(rs.getBigDecimal(10)));
-//                    Льготы, субсидии, скидки (руб) - отсутствует в ГРАДе
-//                    chargeInfo.getHousingService().getServiceCharge().setMoneyDiscount();
+//                        Перерасчеты, корректировки (руб)
+                        chargeInfo.getHousingService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+//                          Льготы, субсидии, скидки (руб)
+                        chargeInfo.getHousingService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
+                    }
 
+/*
 //                    Объем услуг - индивидульное потребление и(или) общедомовые нужды
-                        chargeInfo.getHousingService().setConsumption(new PDServiceChargeType.HousingService.Consumption());
+                    chargeInfo.getHousingService().setConsumption(new PDServiceChargeType.HousingService.Consumption());
 //                    Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление
-                        chargeInfo.getHousingService().getConsumption().setVolume(new PDServiceChargeType.HousingService.Consumption.Volume());
-                        chargeInfo.getHousingService().getConsumption().getVolume().setType("I");
-                        chargeInfo.getHousingService().getConsumption().getVolume().setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
+                    chargeInfo.getHousingService().getConsumption().setVolume(new PDServiceChargeType.HousingService.Consumption.Volume());
+                    chargeInfo.getHousingService().getConsumption().getVolume().setType("I");
+                    chargeInfo.getHousingService().getConsumption().getVolume().setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
+*/
 
-                    } else if (referenceItem.getCodeParent().equals("1")) { // а если Дополнительная услуга
-//                    TODO
-//                        chargeInfo = new PaymentDocumentType.ChargeInfo();
-//                        chargeInfo.setAdditionalService(new PDServiceChargeType.AdditionalService());
+                } else if (invoce02.getCode_parent().equals("1")) { // а если Дополнительная услуга
+
+                    chargeInfo.setAdditionalService(new PDServiceChargeType.AdditionalService());
+//                    Код услуги (жилищной, коммунальной или дополнительной)
+                    chargeInfo.getAdditionalService().setServiceType(new NsiRef());
+                    chargeInfo.getAdditionalService().getServiceType().setName(invoce02.getGis_service());
+                    chargeInfo.getAdditionalService().getServiceType().setCode(invoce02.getCode());
+                    chargeInfo.getAdditionalService().getServiceType().setGUID(invoce02.getGis_service_uiid());
+
+//                    Тариф
+                    chargeInfo.getAdditionalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+
+//                    Итого к оплате за расчетный период, руб.
+                    chargeInfo.getAdditionalService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
+
+//                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
+                    chargeInfo.getAdditionalService().setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
+
+//                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
+//                    chargeInfo.getAdditionalService().setCalcExplanation("Иное");
+
+                    // перерасчеты
+                    if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
+                            !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
+                        chargeInfo.getAdditionalService().setServiceCharge(new ServiceChargeType());
+//                        Перерасчеты, корректировки (руб)
+                        chargeInfo.getAdditionalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+//                          Льготы, субсидии, скидки (руб)
+                        chargeInfo.getAdditionalService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
                     }
-
-                    if (chargeInfo != null) {
-                        paymentDocument.getChargeInfo().add(chargeInfo);
-                    }
-
+                }
+                if (chargeInfo != null) {
+                    paymentDocument.getChargeInfo().add(chargeInfo);
+                }
+/*              TODO пока не заполняем
 //                    Аванс на начало расчетного периода, руб.
-                    if (paymentDocument.getAdvanceBllingPeriod() != null) {
-                        paymentDocument.setAdvanceBllingPeriod(paymentDocument.getAdvanceBllingPeriod().add(getBigDecimalTwo(rs.getBigDecimal(16))));
-                    } else {
-                        paymentDocument.setAdvanceBllingPeriod(getBigDecimalTwo(rs.getBigDecimal(16)));
-                    }
+                if (paymentDocument.getAdvanceBllingPeriod() != null) {
+                    paymentDocument.setAdvanceBllingPeriod(paymentDocument.getAdvanceBllingPeriod().add(getBigDecimalTwo(rs.getBigDecimal(16))));
+                } else {
+                    paymentDocument.setAdvanceBllingPeriod(getBigDecimalTwo(rs.getBigDecimal(16)));
+                }
 
 //                    Задолженность за предыдущие периоды, руб
-                    if (paymentDocument.getDebtPreviousPeriods() != null) {
-                        paymentDocument.setDebtPreviousPeriods(paymentDocument.getDebtPreviousPeriods().add(getBigDecimalTwo(rs.getBigDecimal(17))));
-                    } else {
-                        paymentDocument.setDebtPreviousPeriods(getBigDecimalTwo(rs.getBigDecimal(17)));
-                    }
+                if (paymentDocument.getDebtPreviousPeriods() != null) {
+                    paymentDocument.setDebtPreviousPeriods(paymentDocument.getDebtPreviousPeriods().add(getBigDecimalTwo(rs.getBigDecimal(17))));
+                } else {
+                    paymentDocument.setDebtPreviousPeriods(getBigDecimalTwo(rs.getBigDecimal(17)));
+                }
 
 //                    Сумма к оплате с учетом рассрочки платежа и процентов за рассрочку, руб
-                    if (paymentDocument.getTotalPiecemealPaymentSum() != null) {
-                        paymentDocument.setTotalPiecemealPaymentSum(paymentDocument.getTotalPiecemealPaymentSum().add(getBigDecimalTwo(rs.getBigDecimal(18))));
-                    } else {
-                        paymentDocument.setTotalPiecemealPaymentSum(getBigDecimalTwo(rs.getBigDecimal(18)));
-                    }
+                if (paymentDocument.getTotalPiecemealPaymentSum() != null) {
+                    paymentDocument.setTotalPiecemealPaymentSum(paymentDocument.getTotalPiecemealPaymentSum().add(getBigDecimalTwo(rs.getBigDecimal(18))));
+                } else {
+                    paymentDocument.setTotalPiecemealPaymentSum(getBigDecimalTwo(rs.getBigDecimal(18)));
+                }*/
 
-                }
+                //            Ссылка на платежные реквизиты
+                paymentDocument.setPaymentInformationKey(paymentInformationMap.get(invoce02.getPayee_id()).getTransportGUID());
             }
-            rs.close();
+            // закончили заносить начисления
+
+            // на оплату
+            paymentDocument.setExpose(true);
+            // Транспортный GUID
+            paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
+
+            paymentDocumentMap.put(paymentDocument.getPaymentDocumentNumber(), paymentDocument);
         }
-        if (paymentDocument.getDebtPreviousPeriods() != null) {
-            if (paymentDocument.getDebtPreviousPeriods().compareTo(BigDecimal.valueOf(0.0)) < 0) {
-                paymentDocument.setDebtPreviousPeriods(new BigDecimal(0.0));
+
+        return paymentDocumentMap;
+    }
+
+    public ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> getWithdrawPaymentDocument(
+            final Integer houseGradID,
+            final int month,
+            final int year,
+            final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+
+        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
+
+        try (Statement statement = connectionGrad.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT RPAYMENTDOCUMENTID FROM EX_GIS_INVOCE_WITHDRAW(" +
+                    month + ", " +
+                    year + ", " +
+                    "null, " +
+                    houseGradID + ", null)");
+
+            while (rs.next()) {
+                ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
+                withdrawPaymentDocument.setPaymentDocumentID(rs.getString("RPAYMENTDOCUMENTID"));
+                withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
+                paymentDocumentWithdrawArray.add(withdrawPaymentDocument);
             }
         }
-        if (paymentDocument.getTotalPiecemealPaymentSum() != null &&
-                paymentDocument.getTotalPiecemealPaymentSum().compareTo(BigDecimal.valueOf(0.0)) < 0) {
-            paymentDocument.setTotalPiecemealPaymentSum(new BigDecimal(0.0));
-        }
-
-        paymentDocument.setExpose(true);
-
-        return paymentDocument;
+        return paymentDocumentWithdrawArray;
     }
 
     public BigDecimal getBigDecimalTwo(BigDecimal value) {
@@ -316,35 +452,10 @@ public final class PaymentDocumentGradDAO {
 //        0.6  ->  1.0
 
 //        MoneyType 2 знака после точки.
-        value = value.setScale(2, BigDecimal.ROUND_DOWN);
-
-        return value;
-    }
-
-    /**
-     * Метод, получает все идентификаторы организаций из платежного документа.
-     *
-     * @param abonId         идентификатор абонент в БД ГРАДа.
-     * @param calendar       дата на которую нужно сформировать ПД.
-     * @param connectionGrad подключение к БД ГРАД.
-     * @return список идентификаторов организаци получателей денежных средств.
-     * @throws SQLException
-     */
-    public TreeSet<Integer> getOrganizationIdsFromPaymentsDocument(Integer abonId, Calendar calendar, Connection connectionGrad) throws SQLException {
-
-        TreeSet<Integer> treeSet = new TreeSet<>();
-
-        try (Statement statement = connectionGrad.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT " +
-                    "RSUPPLIER_ID " +      // 1  ид поставщика
-                    "FROM EX_GIS_INVOICE(" + abonId + ", " + calendar.get(Calendar.MONTH) + ", " +
-                    (calendar.get(Calendar.YEAR) - 1) + ", null,  null, null, null)"); // TODO delete -1
-            while (rs.next()) {
-                treeSet.add(rs.getInt(1));
-            }
-            rs.close();
+        if (value != null) {
+            value = value.setScale(2, BigDecimal.ROUND_DOWN);
         }
-        return treeSet;
+        return value;
     }
 
     /**
@@ -418,6 +529,163 @@ public final class PaymentDocumentGradDAO {
         }
         return map;
     }
+
+    /**
+     * Метод получает данные первого листа ЕПД в виде HashMap
+     * @param houseGradID - ИД дома в Град
+     * @param month - месяц
+     * @param year - год
+     * @param connectionGrad - соединение с Град
+     * @return - map  с ключом - номер ЕПД
+     * @throws SQLException
+     */
+    private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID,
+                                             final int month,
+                                             final int year,
+                                             final Connection connectionGrad) throws SQLException {
+        Statement accountStatement = connectionGrad.createStatement();
+        String sqlQuery = "select raccountguid, " +
+                "rpd_type, " +
+                "rpd_no, " +
+                "rsq_total, " +
+                "rsq_live, " +
+                "rsq_heat, " +
+                "rtencount, " +
+                "rdebt, " +
+                "ravans, " +
+                "rpays_advance, " +
+                "rbik, " +
+                "rbank_account " +
+                "from ex_gis_invoce01(" + month + ", " +
+                year + ", " +
+                "null, " +
+                houseGradID + ", null)";
+        ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
+
+        HashMap<String, Invoice01> accountsMap = new HashMap<>();
+
+        while(accountsResultSet.next()){
+            Invoice01 invoce01 = new Invoice01();
+            invoce01.setAccountguid(accountsResultSet.getString("raccountguid"));
+            invoce01.setPd_type(accountsResultSet.getString("rpd_type"));
+            invoce01.setPd_no(accountsResultSet.getString("rpd_no"));
+            invoce01.setSq_total(accountsResultSet.getBigDecimal("rsq_total"));
+            invoce01.setSq_live(accountsResultSet.getBigDecimal("rsq_live"));
+            invoce01.setSq_heat(accountsResultSet.getBigDecimal("rsq_heat"));
+            invoce01.setTencount(accountsResultSet.getByte("rtencount"));
+            invoce01.setDebt(accountsResultSet.getDouble("rdebt"));
+            invoce01.setAvans(accountsResultSet.getDouble("ravans"));
+            invoce01.setPays_advance(accountsResultSet.getDouble("rpays_advance"));
+            invoce01.setBik(accountsResultSet.getString("rbik"));
+            invoce01.setBank_account(accountsResultSet.getString("rbank_account"));
+
+            accountsMap.put(invoce01.getPd_no(), invoce01);
+        }
+
+        return  accountsMap;
+    }
+
+    private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID,
+                                                     final int month,
+                                                     final int year,
+                                                     final Connection connectionGrad) throws SQLException {
+        Statement chargesStatement = connectionGrad.createStatement();
+        ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
+                "rgis_service, " +
+                "ripu, " +
+                "ramount_personal, " +
+                "rodn_pu, " +
+                "ramount_shared, " +
+                "rtariff, " +
+                "rrepays, " +
+                "rexempts, " +
+                "rcharge_legend, " +
+                "rnorm_personal, " +
+                "rnorm_shared, " +
+                "rmeters_personal, " +
+                "rmeters_shared, " +
+                "rsumm_amount_personal, " +
+                "rsumm_amount_shared, " +
+                "rrepays_text, " +
+                "rrepays_sum, " +
+                "rrassroch_current, " +
+                "rrassroch_other, " +
+                "rrassroch_percentsum, " +
+                "rrassroch_percent, " +
+                "rforpay, " +
+                "rgis_service_uiid," +
+                "rgis_service_code," +
+                "rgis_service_code_parent," +
+                "rcharge_total," +
+                "rpayee_id " +
+                "from ex_gis_invoce02(" + month + ", " +
+                year + ", " +
+                "null, " +
+                houseGradID + ", null)");
+
+        HashMap<String, ArrayList<Invoice02>> chargesMap = new HashMap<>();
+        
+        while (charges.next()){
+            Invoice02 invoice02 = new Invoice02();
+            invoice02.setPd_no(charges.getString("rpd_no"));
+            invoice02.setGis_service_uiid(charges.getString("rgis_service_uiid"));
+            invoice02.setIpu(charges.getString("ripu"));
+            invoice02.setAmount_personal(charges.getDouble("ramount_personal"));
+            invoice02.setOdn_pu(charges.getString("rodn_pu"));
+            invoice02.setAmount_shared(charges.getDouble("ramount_shared"));
+            invoice02.setTariff(charges.getBigDecimal("rtariff"));
+            invoice02.setRepays(charges.getBigDecimal("rrepays"));
+            invoice02.setExempts(charges.getBigDecimal("rexempts"));
+            invoice02.setCharge_legend(charges.getString("rcharge_legend"));
+            invoice02.setNorm_personal(charges.getDouble("rnorm_personal"));
+            invoice02.setNorm_shared(charges.getDouble("rnorm_shared"));
+            invoice02.setMeters_personal(charges.getString("rmeters_personal"));
+            invoice02.setMeters_shared(charges.getString("rmeters_shared"));
+            invoice02.setSumm_amount_personal(charges.getDouble("rsumm_amount_personal"));
+            invoice02.setSumm_amount_shared(charges.getDouble("rsumm_amount_shared"));
+            invoice02.setRepays_text(charges.getString("rrepays_text"));
+            invoice02.setRepays_sum(charges.getBigDecimal("rrepays_sum"));
+            invoice02.setRassroch_current(charges.getDouble("rrassroch_current"));
+            invoice02.setRassroch_other(charges.getDouble("rrassroch_other"));
+            invoice02.setRassroch_percentsum(charges.getDouble("rrassroch_percentsum"));
+            invoice02.setRassroch_percent(charges.getDouble("rrassroch_percent"));
+            invoice02.setForpay(charges.getBigDecimal("rforpay"));
+            invoice02.setCode(charges.getString("rgis_service_code"));
+            invoice02.setCode_parent(charges.getString("rgis_service_code_parent"));
+            invoice02.setCharge_total(charges.getBigDecimal("rcharge_total"));
+            invoice02.setPayee_id(charges.getInt("rpayee_id"));
+
+            ArrayList<Invoice02> invoceList = chargesMap.get(invoice02.getPd_no());
+
+            if(invoceList == null){
+                invoceList = new ArrayList<Invoice02>();
+                chargesMap.put(invoice02.getPd_no(), invoceList);
+            }
+            invoceList.add(invoice02);
+        }
+
+        return chargesMap;
+    }
+
+    /**
+     * Метод устанавливает
+     * @param paymentDocumentNumber - номер ЕПД в Град
+     * @param paymentDocumentGUID - присвоенный ГИС идентификатор
+     * @param connectionGrad - соединение
+     */
+    public void addPaymentDocumentRegistryItem(final String paymentDocumentNumber,
+                                               final String paymentDocumentGUID,
+                                               final Connection connectionGrad){
+        try {
+            CallableStatement callableStatement = connectionGrad.prepareCall("update EX_GIS_INVOCES set RPD_GIS_NO = ? where RPD_NO = ?;");
+            callableStatement.setString(1, paymentDocumentGUID);
+            callableStatement.setString(2, paymentDocumentNumber);
+            callableStatement.execute();
+        }catch(SQLException e){
+            answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber, LOGGER);
+        }
+    }
+
 
     /**
      * Метод, возвращает статус ошибки.

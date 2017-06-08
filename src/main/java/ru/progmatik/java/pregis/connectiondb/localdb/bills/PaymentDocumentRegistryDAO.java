@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.localdb.bills;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryDataSet;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Класс, работает с таблицей "PD_REGISTRY".
+ * НЕ ИСПОЛЬЗУЕТСЯ! Все переведено на БД Град
  */
 public class PaymentDocumentRegistryDAO {
 

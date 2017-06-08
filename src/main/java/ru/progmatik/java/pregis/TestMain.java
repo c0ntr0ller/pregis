@@ -361,6 +361,7 @@ public class TestMain {
 //            e.printStackTrace();
 //        }
 //    }
+/*
 
     private static void showPaymentDocument() throws SQLException {
 
@@ -402,6 +403,7 @@ public class TestMain {
         }
     }
 
+*/
 
     private static void getMeteringDevicesAbonIdByMeteringDeviceNumber() {
 

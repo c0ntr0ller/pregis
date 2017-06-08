@@ -3,22 +3,15 @@ package ru.progmatik.java.pregis.services.bills;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.base.ImportResult;
+import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
-import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryGradDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDataSet;
+import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,261 +25,150 @@ public class PaymentDocumentHandler {
 
     private static final Logger LOGGER = Logger.getLogger(PaymentDocumentHandler.class);
     private final AnswerProcessing answerProcessing;
-    private HashMap<String, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap;
-    private int errorState;
-    private int allCount;
+    private int errorStatus;
     private int addedGisJkhCount;
-    private int count = -1;
+    private int allCount;
 
     public PaymentDocumentHandler(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
     }
 
     /**
-     * Метод, формирует платежный документ, получает список ПД из ГИС ЖКХ, проводит проверку что ПД ещё не выгружен,
+     * Метод получает список домов из Град и для каждого вызывает метод sendPaymentDocumentsHouse
      * выгружает в ГИС ЖКХ.
      * @throws SQLException могут возникнуть ошибки во время работы с БД.
      * @throws PreGISException могут появится ошибка, если в файле параметров не указана ИД организации в Граде.
      * @throws ParseException могут возникнуть ошибки, если у абонента указана не верно площадь или идентификатор в Граде.
      * @param houseGradID идентификатор дома в БД Град.
      */
-    public void compilePaymentDocument(final Integer houseGradID) throws SQLException, PreGISException, ParseException {
+    public void paymentDocumentImport(final Integer houseGradID) throws SQLException, PreGISException, ParseException {
 
-        errorState = 1;
-        allCount = 0;
-        addedGisJkhCount = 0;
 
-        try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
-
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            if (answerProcessing != null) { answerProcessing.sendMessageToClient("Формирую список домов...");}
             final HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> houseMap = houseDAO.getListHouse(houseGradID, connectionGrad);
+            final LinkedHashMap<String, Integer> houseMap = houseDAO.getListHouse(houseGradID, connectionGRAD);
             if (answerProcessing != null) { answerProcessing.sendMessageToClient(""); }
-            if (answerProcessing != null) { answerProcessing.sendMessageToClient("Формирую платежные документы...");}
-
-//            Список домов в ГИС ЖКХ
-            for (Map.Entry<String, Integer> entry : houseMap.entrySet()) {
-
-//              Банковские реквизиты
-                final PaymentInformationGradDAO dao = new PaymentInformationGradDAO();
-                final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationIdsMap =
-                        dao.getAllOrganizationsPaymentInformation(ConnectionBaseGRAD.instance().getConnection());
-
-                final HousePaymentPeriodHandler periodHandler = new HousePaymentPeriodHandler(answerProcessing);
-                final Calendar paymentPeriod = periodHandler.getHousePaymentPeriod(entry.getKey());
-
-                final HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap =
-                        generatePaymentDocument(entry.getValue(), paymentPeriod, paymentInformationIdsMap, connectionGrad);
-
-                paymentInformationMap = new HashMap<>();
-
-                for (Map.Entry<Integer, ImportPaymentDocumentRequest.PaymentInformation> integerPaymentInformationEntry : paymentInformationIdsMap.entrySet()) {
-                    paymentInformationMap.put(integerPaymentInformationEntry.getValue().getTransportGUID(), integerPaymentInformationEntry.getValue());
-                }
-
-                if (answerProcessing != null) {answerProcessing.clearLabelForText();}
-                allCount += paymentDocumentMap.size();
-                sendDocumentToGisJkh(paymentDocumentMap, paymentPeriod);
+//          Бежим по списку домов
+            for (Map.Entry<String, Integer> houseEntry : houseMap.entrySet()) {
+                sendPaymentDocumentsHouse(houseEntry.getKey(), houseEntry.getValue(), connectionGRAD);
             }
         }
-        showEnd();
     }
 
-    private HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> generatePaymentDocument(
-            final Integer houseId,
-            final Calendar paymentPeriod,
-            final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationIdsMap,
-            final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+    /**
+     * Метод для заданного дома получает информацию по документам из ГРАД, формирует importPaymentDocumentDataRequest,
+     * отсылает его, получает результат и заносит идентификаторы в Град
+     * @param fias
+     * @param houseGradId
+     * @param connectionGrad
+     * @throws SQLException
+     */
+    public void sendPaymentDocumentsHouse(final String fias, final int houseGradId, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
         final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
 
-        final HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentMap = new HashMap<>();
+           // получаем закрытый период
+        pdGradDao.getGradClosedPeriod(connectionGrad);
+        int month = pdGradDao.getMonth();
+        short year = pdGradDao.getYear();
 
-        final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
+        if (answerProcessing != null) { answerProcessing.sendMessageToClient("Обработка дома ФИАС: " + fias);}
 
-        final LinkedHashMap<String, Rooms> rooms = accountGRADDAO.getRoomsMaps(houseId, connectionGrad);
+        if (answerProcessing != null) { answerProcessing.sendMessageToClient("Формирую платежные документы для дома: " + fias);}
+        // Генерация документов на стороне БД. Если успешно - создаем списки документов
 
-        final LinkedHashMap<String, ImportAccountRequest.Account> accountMapFromGrad =
-                accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad, rooms);
-
-        if (rooms != null) {
-            for (Map.Entry<String, Rooms> room : rooms.entrySet()) {
-
-                final TreeSet<Integer> organizationIds = getOrganizationIds(pdGradDao, room.getValue().getAbonId(), paymentPeriod, connectionGrad);
-//            System.out.println("Organization ID: " + organizationIds);
-
-                for (Integer organizationId : organizationIds) {
-
-//                    Создадим платежный документ
-                    ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
-//                    Идентификатор лицевого счета
-                    paymentDocument.setAccountGuid(accountGRADDAO.getAccountGUIDFromBase(room.getValue().getAbonId(), connectionGrad));
-//                    Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
-                    paymentDocument.setPaymentDocumentNumber(String.format("%010d", getPaymentDocumentNumber()));
-//                    Общая площадь для ЛС
-                    paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
-                    paymentDocument.getAddressInfo().setTotalSquare(accountMapFromGrad.get(room.getValue().getNumberLS()).getTotalSquare());
-                    paymentDocument.getAddressInfo().setResidentialSquare(accountMapFromGrad.get(room.getValue().getNumberLS()).getResidentialSquare());
-                    if (accountMapFromGrad.get(room.getValue().getNumberLS()).getHeatedArea() != null) {
-                        paymentDocument.getAddressInfo().setHeatedArea(accountMapFromGrad.get(room.getValue().getNumberLS()).getHeatedArea());
-                    }
-                    if (accountMapFromGrad.get(room.getValue().getNumberLS()).getLivingPersonsNumber() != 0) {
-                        paymentDocument.getAddressInfo().setLivingPersonsNumber(accountMapFromGrad.get(room.getValue().getNumberLS()).getLivingPersonsNumber());
-                    }
-                    paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
-//                    Начисление по услуге
-                    paymentDocument = pdGradDao.getPaymentDocument(
-                            room.getValue().getAbonId(),
-                            organizationId,
-                            paymentPeriod, paymentDocument, connectionGrad);
-
-                    final PaymentDocumentRegistryDataSet registryDataSet = new PaymentDocumentRegistryDataSet(
-                            Integer.valueOf(paymentDocument.getPaymentDocumentNumber()), paymentPeriod.get(Calendar.MONTH),
-                            paymentPeriod.get(Calendar.YEAR), paymentDocument.getTotalPiecemealPaymentSum(), room.getValue().getAbonId(),
-                            room.getValue().getNumberLS(), paymentDocument.getAccountGuid());
-
-                    //            Ссылка на платежные реквизиты
-                    paymentDocument.setPaymentInformationKey(paymentInformationIdsMap.get(organizationId).getTransportGUID());
-
-                    paymentMap.put(paymentDocument, registryDataSet);
-                }
-            }
+        /*if (!pdGradDao.GeneratePaymentDocuments(houseGradId, connectionGrad)) {
+            if (answerProcessing != null) { answerProcessing.sendMessageToClient("Не удалось сформировать платежные документы для дома: " + fias);}
         }
-        return paymentMap;
+        */
+        // создаем список платежных реквизитов получателей
+        final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =
+                pdGradDao.getPaymentInformationMap(houseGradId, month, year, connectionGrad);
+
+        // создаем список новых платежных документов по данным БД
+        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap =
+                pdGradDao.getPaymentDocumentMap(houseGradId, month, year, paymentInformationMap, connectionGrad);
+        if (paymentDocumentMap != null) {
+            allCount = paymentDocumentMap.size();
+        }
+
+        // создаем список документов на отзыв по данным БД
+        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray =
+                pdGradDao.getWithdrawPaymentDocument(houseGradId, month, year, connectionGrad);
+
+        if (answerProcessing != null) {answerProcessing.clearLabelForText();}
+
+        if ((paymentDocumentMap == null || paymentDocumentMap.size() == 0) && (paymentDocumentWithdrawArray == null || paymentDocumentWithdrawArray.size() == 0)){
+            if (answerProcessing != null) {
+                answerProcessing.sendMessageToClient("Отсутствуют платежные документы для дома: " + fias);
+            }
+            return;
+        }
+        // формируем запрос
+        final ImportPaymentDocumentRequest importPaymentDocumentRequest = new ImportPaymentDocumentRequest();
+        importPaymentDocumentRequest.setMonth(month);
+        importPaymentDocumentRequest.setYear(year);
+        importPaymentDocumentRequest.getPaymentInformation().addAll(new ArrayList<>(paymentInformationMap.values()));
+        if(paymentDocumentMap != null)
+            importPaymentDocumentRequest.getPaymentDocument().addAll(new ArrayList<>(paymentDocumentMap.values()));
+        if(paymentDocumentWithdrawArray != null && paymentDocumentWithdrawArray.size() > 0)
+            importPaymentDocumentRequest.getWithdrawPaymentDocument().addAll(paymentDocumentWithdrawArray);
+
+        // отсылаем результат в процедуру, которая вышлет данные и обработает ответ
+        sendDocumentsToGisJkh(importPaymentDocumentRequest);
+        showEnd();
     }
 
     /**
-     * Метод, получает идентификаторы компаний, которые указаны получателями денежных средств для ПД.
+     * Метод отсылает данные в ГИС ЖКХ, получает ответ и обрабатывает его
      *
-     * @param gradDAO        объект для работы с БД.
-     * @param abonId         идентификатор абонента в БД ГРАД.
-     * @param calendar       дата.
-     * @param connectionGrad подключение к БД.
-     * @return список идентификаторов организаций присутствующих в платежном документе.
+     * @param request - данные
      * @throws SQLException
      * @throws PreGISException
      */
-    private TreeSet<Integer> getOrganizationIds(PaymentDocumentGradDAO gradDAO, Integer abonId, Calendar calendar,
-                                                Connection connectionGrad) throws SQLException, PreGISException {
+    private void sendDocumentsToGisJkh(final ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
 
-        if (ResourcesUtil.instance().getCompanyGradIdForPaymentDocument() == null) {
-            return gradDAO.getOrganizationIdsFromPaymentsDocument(abonId, calendar, connectionGrad);
-        } else {
-            TreeSet<Integer> treeSet = new TreeSet<>();
-            treeSet.add(ResourcesUtil.instance().getCompanyGradIdForPaymentDocument());
-            return treeSet;
-        }
-    }
+        GetStateResult result = new ImportPaymentDocumentData(answerProcessing).sendPaymentDocument(request);
 
-    /**
-     * Метод, отправляет данные в ГИС ЖКХ, получает ответ и обрабатывает его.
-     *
-     * @param paymentDocumentMap связка, ключ - документ для ГИС ЖКХ, значение - объект для базы данных.
-     * @param paymentPeriod      период за который формирутеся ПД.
-     * @throws SQLException
-     * @throws PreGISException
-     */
-    private void sendDocumentToGisJkh(final HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap,
-                                      final Calendar paymentPeriod) throws SQLException, PreGISException {
-
-
-        PaymentDocumentRegistryGradDAO registryGradDAO = new PaymentDocumentRegistryGradDAO(answerProcessing);
-
-//        Записи из БД, для сравнения выгружен или нет.
-        ArrayList<PaymentDocumentRegistryDataSet> allPaymentDocumentRecording = registryGradDAO.getAllPaymentDocumentRecording(ConnectionBaseGRAD.instance().getConnection());
-
-        ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList = new ArrayList<>();
-        ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList = new ArrayList<>();
-
-        outer:
-        for (Map.Entry<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> entry :
-                paymentDocumentMap.entrySet()) {
-
-//            Проверка, выгружен ли уже документ, если найдет его выгруженным вернется к новой записи
-            for (PaymentDocumentRegistryDataSet dataSet : allPaymentDocumentRecording) {
-                if (checkAddedDocument(entry.getValue(), dataSet)) continue outer;
-            }
-
-            if (!isAddedInformation(paymentInformationList, entry.getKey().getPaymentInformationKey())) {
-                paymentInformationList.add(paymentInformationMap.get(entry.getKey().getPaymentInformationKey()));
-            }
-
-            paymentDocumentList.add(entry.getKey());
-
-            if ((paymentDocumentList.size() % 10) == 0) { // отправляет по 10 документов
-                sendPaymentDocumentsList(paymentDocumentList, paymentDocumentMap, paymentInformationList,
-                        paymentPeriod, registryGradDAO);
-                paymentDocumentList.clear();
-                paymentInformationList.clear();
-            }
-        }
-
-        if (paymentDocumentList.size() > 0) { // отправляет оставшиеся документы
-            sendPaymentDocumentsList(paymentDocumentList, paymentDocumentMap, paymentInformationList,
-                    paymentPeriod, registryGradDAO);
-            paymentDocumentList.clear();
-            paymentInformationList.clear();
-        } else {
-            answerProcessing.sendMessageToClient("Не найдены документы для выгрузки.");
-        }
-    }
-
-    /**
-     * Метод, дробит список листов на порции, если в одном щапросе возникнит ош
-     *
-     * @param paymentDocumentList список документов для отправки в ГИС ЖКХ.
-     * @param paymentDocumentMap связка, ключ - документ для ГИС ЖКХ, значение - объект для базы данных.
-     * @param paymentInformationList список компаний приема платежей.
-     * @param paymentPeriod период за который формирутеся ПД.
-     * @param registryGradDAO записывает данные в БД.
-     * @throws SQLException
-     * @throws PreGISException
-     */
-    private void sendPaymentDocumentsList(ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList, HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap, ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList, Calendar paymentPeriod, PaymentDocumentRegistryGradDAO registryGradDAO) throws SQLException, PreGISException {
-
-        ImportResult result = sendPaymentDocuments(paymentDocumentList, paymentInformationList, paymentPeriod.get(Calendar.MONTH),
-                (short) paymentPeriod.get(Calendar.YEAR));
-
-        if (result != null && result.getCommonResult() != null) {
-            for (CommonResultType resultType : result.getCommonResult()) {
+        if (result != null && result.getImportResult() != null) {
+            for (CommonResultType resultType : result.getImportResult()) {
 
                 if (resultType.getError() != null && resultType.getError().size() > 0) {
 
-                    showErrorMeteringDevices(resultType.getTransportGUID(),
+                    showErrorPaymentDocument(resultType.getTransportGUID(),
                             resultType.getError().get(0).getErrorCode(),
                             resultType.getError().get(0).getDescription());
                 } else {
 //                        added to DB
-                    setResultFromGisJkh(paymentDocumentMap, resultType, registryGradDAO);
+                    setResultFromGisJkh(request.getPaymentDocument(), resultType);
                 }
             }
         } else if (result == null) {
-            setErrorState(-1);
+            setErrorStatus(-1);
         }
     }
 
     /**
      * Метод, находит в ответе нужную запись и добавляет её в БД для истории.
      *
-     * @param paymentDocumentMap связка, ключ - документ для ГИС ЖКХ, значение - объект для базы данных.
+     * @param paymentDocuments массив документов, отосланный в ГИС ЖКХ
      * @param resultType         ответ от ГИС ЖКХ.
-     * @param registryDAO        записывает данные в БД.
      * @throws SQLException
      */
-    private void setResultFromGisJkh(HashMap<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> paymentDocumentMap,
-                                     CommonResultType resultType, PaymentDocumentRegistryGradDAO registryDAO) throws SQLException {
+    private void setResultFromGisJkh(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocuments, CommonResultType resultType) throws SQLException {
 
-        for (Map.Entry<ImportPaymentDocumentRequest.PaymentDocument, PaymentDocumentRegistryDataSet> entry : paymentDocumentMap.entrySet()) {
-
-            if (entry.getKey().getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
-                entry.getValue().setGuid(resultType.getGUID());
-                entry.getValue().setUniqueNumber(resultType.getUniqueNumber());
-                registryDAO.addPaymentDocumentRegistryItem(entry.getValue(), ConnectionBaseGRAD.instance().getConnection());
-                addedGisJkhCount++;
-
-                answerProcessing.sendMessageToClient("");
-                answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());
-                answerProcessing.sendMessageToClient("UniqueNumber: " + resultType.getUniqueNumber());
-                answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
+        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
+        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+            for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
+                if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
+                    pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType.getGUID(), ConnectionBaseGRAD.instance().getConnection());
+                    addedGisJkhCount++;
+                    answerProcessing.sendMessageToClient("");
+                    answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());
+                    answerProcessing.sendMessageToClient("UniqueNumber: " + resultType.getUniqueNumber());
+                    answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
+                }
             }
         }
     }
@@ -302,7 +184,7 @@ public class PaymentDocumentHandler {
      * @throws SQLException
      * @throws PreGISException
      */
-    private ImportResult sendPaymentDocuments(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,
+/*    private ImportResult sendPaymentDocuments(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,
                                               List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
                                               int month, short year) throws SQLException, PreGISException {
 
@@ -310,7 +192,7 @@ public class PaymentDocumentHandler {
                 paymentInformationList,
                 month,
                 year);
-    }
+    }*/
 
     /**
      * Метод, проверяет, являются платежные документы копиями.
@@ -328,36 +210,19 @@ public class PaymentDocumentHandler {
                 out.getAccountGuid().equals(in.getAccountGuid()) && !in.isArchive();
     }
 
-    /**
-     * Метод, формирует и выводит пользователю информацию об ошибках, которые возвращает ГИС ЖКХ.
-     *
-     * @param transportGUID транспортный идентификатор.
-     * @param errorCode     код ошибки.
-     * @param description   описание ошибки.
-     */
-    private void showErrorMeteringDevices(String transportGUID, String errorCode, String description) {
-
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("TransportGUID: " + transportGUID);
-        answerProcessing.sendMessageToClient("Код ошибки: " + errorCode);
-        answerProcessing.sendMessageToClient("Описание ошибки: " + description);
-
-        setErrorState(0);
-    }
-
     private void showEnd() {
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Всего обработано записей: " + allCount);
         answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + addedGisJkhCount);
 
-        if (errorState == -1) {
+        if (errorStatus == -1) {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Выгрузка ПД\" прервана!");
-        } else if (errorState == 0) {
+        } else if (errorStatus == 0) {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendErrorToClientNotException("Операция: \"Выгрузка ПД\" завершилась с ошибками!");
-        } else if (errorState == 1) {
+        } else if (errorStatus == 1) {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendOkMessageToClient("\"Выгрузка ПД\" успешно выполнено.");
         }
@@ -369,38 +234,53 @@ public class PaymentDocumentHandler {
      * @param paymentInformationKey ключ платежных реквизитов.
      * @return true - если в списке найден идентификатор платежных реквизитов, false - если в списке не найдены реквизиты.
      */
-    private boolean isAddedInformation(ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList, String paymentInformationKey) {
-
-        for (ImportPaymentDocumentRequest.PaymentInformation information : paymentInformationList) {
-            if (information.getTransportGUID().equalsIgnoreCase(paymentInformationKey)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean isAddedInformation(ArrayList<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList, String paymentInformationKey) {
+//
+//        for (ImportPaymentDocumentRequest.PaymentInformation information : paymentInformationList) {
+//            if (information.getTransportGUID().equalsIgnoreCase(paymentInformationKey)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Метод, получает из БД последний номер и выдаёт при каждом запросе следующий номер.
      *
      * @return номер документа.
      */
-    private int getPaymentDocumentNumber() throws SQLException {
-        if (count == -1) {
-            PaymentDocumentRegistryGradDAO paymentGradDAO = new PaymentDocumentRegistryGradDAO(answerProcessing);
-            count = paymentGradDAO.getPaymentDocumentLastNumber(ConnectionBaseGRAD.instance().getConnection());
-        } else {
-            count++;
-        }
-        return count;
+//    private int getPaymentDocumentNumber() throws SQLException {
+//        if (lastDocumentNumber == -1) {
+//            PaymentDocumentRegistryGradDAO paymentGradDAO = new PaymentDocumentRegistryGradDAO(answerProcessing);
+//            lastDocumentNumber = paymentGradDAO.getPaymentDocumentLastNumber(ConnectionBaseGRAD.instance().getConnection());
+//        } else {
+//            lastDocumentNumber++;
+//        }
+//        return lastDocumentNumber;
+//    }
+
+    public int getErrorStatus() {
+        return errorStatus;
     }
 
-    public int getErrorState() {
-        return errorState;
-    }
-
-    private void setErrorState(int errorState) {
-        if (errorState < this.errorState) {
-            this.errorState = errorState;
+    private void setErrorStatus(int errorStatus) {
+        if (errorStatus < this.errorStatus) {
+            this.errorStatus = errorStatus;
         }
     }
+    /**
+     * Метод, формирует и выводит пользователю информацию об ошибках, которые возвращает ГИС ЖКХ.
+     *
+     * @param transportGUID транспортный идентификатор.
+     * @param errorCode     код ошибки.
+     * @param description   описание ошибки.
+     */
+    private void showErrorPaymentDocument(final String transportGUID, final String errorCode, final String description) {
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("TransportGUID: " + transportGUID);
+        answerProcessing.sendMessageToClient("Код ошибки: " + errorCode);
+        answerProcessing.sendMessageToClient("Описание ошибки: " + description);
+        setErrorStatus(0);
+    }
+
 }

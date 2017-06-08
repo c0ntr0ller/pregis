@@ -1,12 +1,9 @@
 package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import org.apache.log4j.Logger;
-import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.bills.PaymentDocumentRegistryDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
 
 import java.sql.*;
 import java.util.ArrayList;

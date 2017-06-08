@@ -17,7 +17,7 @@ import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
 /**
- * Класс, формирует запрос и получает ответ от сервиса ГИС ЖКХ по SOAP протаколу.
+ * Класс, формирует запрос и получает ответ от сервиса ГИС ЖКХ по SOAP протоколу. Запрос псевдо-синхронный, на самом деле в асинхронном режиме по циклу дергает результат
  */
 public final class ExportMeteringDeviceHistory {
 
@@ -40,22 +40,6 @@ public final class ExportMeteringDeviceHistory {
                 : new DeviceMeteringServiceAsync(UrlLoader.instance().getUrlMap().get("deviceMeteringAsync"));
         port = service.getDeviceMeteringPortAsync();
         OtherFormat.setPortSettings(service, port);
-    }
-
-    /**
-     * Метод, по указанному коду дома по ФИАС, формирует запрос, отправляет в ГИС ЖКХ, возвращает ответ на запрос.
-     * @param fias код дома по ФИАС
-     * @return ответ от ГИС ЖКХ
-     * @throws SQLException
-     */
-    public GetStateResult getExportMeteringHistoryResultByFIAS(String fias) throws SQLException {
-
-        ExportMeteringDeviceHistoryRequest request = new ExportMeteringDeviceHistoryRequest();
-        request.setFIASHouseGuid(fias); // b58c5da4-8d62-438f-b11e-d28103220952
-//        request.getMeteringDeviceRootGUID().add("867812e9-3304-4c80-b0ba-821fba775469");
-//        request.getMeteringDeviceRootGUID().add("0966d718-a5af-4770-a82b-0239f99b0214");
-
-        return getExportMeteringHistoryResult(request);
     }
 
     /**

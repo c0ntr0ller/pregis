@@ -1,28 +1,32 @@
-package ru.progmatik.java.pregis.services.device_metering;
+package ru.progmatik.java.pregis.services.bills;
 
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
-import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringPortTypesAsync;
-import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.bills_service_async.BillsPortsTypeAsync;
+import ru.gosuslugi.dom.schema.integration.bills_service_async.Fault;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
+
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
 /**
- * Класс-получатель результата асинхронного запроса к ГИС ЖКХ по SOAP из класса ExportMeteringDeviceHistory
- * Created by Администратор on 16.05.2017.
+ * Класс-получатель результатов асинхронного обращения к БД в псевдо-синхронном режиме из класса ImportPaymentDocumentData
+ * Created by Администратор on 07.06.2017.
  */
-public class DeviceMeteringAsyncGetResult {
+public class BillsAsyncGetResult {
     private final AckRequest ackRequest;
-    private static final Logger LOGGER = Logger.getLogger(DeviceMeteringAsyncGetResult.class);
+    private static final Logger LOGGER = Logger.getLogger(BillsAsyncGetResult.class);
     private final String NAME_METHOD;
 
-    private final DeviceMeteringPortTypesAsync port;
+    private final BillsPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
     public Holder<ResultHeader> getHeaderHolder() {
@@ -37,11 +41,11 @@ public class DeviceMeteringAsyncGetResult {
     private long timeOut;
     private long maxRequestCount;
 
-    public DeviceMeteringAsyncGetResult(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, DeviceMeteringPortTypesAsync port) {
+    public BillsAsyncGetResult(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, BillsPortsTypeAsync port) {
         this.ackRequest = ackRequest;
         NAME_METHOD = name_method;
-        this.answerProcessing = answerProcessing;
         this.port = port;
+        this.answerProcessing = answerProcessing;
 
         try {
             timeOut = ResourcesUtil.instance().getTimeOut();
@@ -72,22 +76,22 @@ public class DeviceMeteringAsyncGetResult {
                 break;
             }
             try {
-                answerProcessing.sendMessageToClient(TextForLog.ASK_ASYNC_REQUEST + i + " из " + maxRequestCount);
+                if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.ASK_ASYNC_REQUEST + i + " из " + maxRequestCount);
                 result = port.getState(getStateRequest, requestHeader, headerHolder);
             } catch (Fault fault) {
-                answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+                if(answerProcessing != null) answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             }
 
             if (result != null){
                 if (result.getRequestState() == 3) {
-                    answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+                    if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
                     break;
                 }else{
-                    if (result.getRequestState() == 1) answerProcessing.sendMessageToClient(TextForLog.ASYNС_REQUEST_RECIVED);
-                    if (result.getRequestState() == 2) answerProcessing.sendMessageToClient(TextForLog.ASYNС_REQUEST_PROCEED);
+                    if (result.getRequestState() == 1) if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.ASYNС_REQUEST_RECIVED);
+                    if (result.getRequestState() == 2) if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.ASYNС_REQUEST_PROCEED);
                 }
             }
         }
         return result;
-    }    
+    }
 }

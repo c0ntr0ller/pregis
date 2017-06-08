@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.localdb.bills;
+package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import java.math.BigDecimal;
 

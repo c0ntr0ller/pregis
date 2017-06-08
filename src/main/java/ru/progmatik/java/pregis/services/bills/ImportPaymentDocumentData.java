@@ -1,24 +1,19 @@
 package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.ImportResult;
-import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.bills.PDServiceChargeType;
-import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
-import ru.gosuslugi.dom.schema.integration.bills.ServiceChargeType;
-import ru.gosuslugi.dom.schema.integration.bills_service.BillsPortsType;
-import ru.gosuslugi.dom.schema.integration.bills_service.BillsService;
-import ru.gosuslugi.dom.schema.integration.bills_service.Fault;
+import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.bills.*;
+import ru.gosuslugi.dom.schema.integration.bills_service_async.BillsPortsTypeAsync;
+import ru.gosuslugi.dom.schema.integration.bills_service_async.BillsServiceAsync;
+import ru.gosuslugi.dom.schema.integration.bills_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
-import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentInformationGradDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.pregis.other.UrlLoader;
+import ru.progmatik.java.pregis.services.device_metering.DeviceMeteringAsyncGetResult;
 
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
@@ -40,8 +35,8 @@ public class ImportPaymentDocumentData {
 
     private static final String NAME_METHOD = "importPaymentDocumentData";
 
-    private final BillsService service;
-    private final BillsPortsType port;
+    private final BillsServiceAsync service;
+    private final BillsPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
 
@@ -52,65 +47,57 @@ public class ImportPaymentDocumentData {
 
         this.answerProcessing = answerProcessing;
 
-        service = UrlLoader.instance().getUrlMap().get("bills") == null ? new BillsService()
-                : new BillsService(UrlLoader.instance().getUrlMap().get("bills"));
-        port = service.getBillsPort();
+        service = UrlLoader.instance().getUrlMap().get("billsAsync") == null ? new BillsServiceAsync()
+                : new BillsServiceAsync(UrlLoader.instance().getUrlMap().get("billsAsync"));
+        port = service.getBillsPortAsync();
         OtherFormat.setPortSettings(service, port);
     }
 
-    ImportResult sendPaymentDocument(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,
-                                     List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
-                                     int month, short year) throws SQLException, PreGISException {
+    GetStateResult sendPaymentDocument(ImportPaymentDocumentRequest request) throws PreGISException, SQLException {
 
-        return callImportPaymentDocumentData(getImportPaymentDocumentRequest(paymentDocumentList, paymentInformationList, month, year));
+        return callImportPaymentDocumentData(request);
     }
 
     /**
      * Метод, импорт сведений о платежных документах в ГИС ЖКХ.
      */
-    private ImportResult callImportPaymentDocumentData(ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
+    private GetStateResult callImportPaymentDocumentData(ImportPaymentDocumentRequest request) throws PreGISException, SQLException {
 
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-//        Создание загаловков сообщений (запроса и ответа)
+        if(answerProcessing != null) answerProcessing.sendMessageToClient("");
+        if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
+        ResultHeader resultHeader = null;
         Holder<ResultHeader> headerHolder = new Holder<>();
+        ErrorMessageType resultErrorMessage = null;
 
-        ImportResult result;
+        BillsAsyncGetResult billsAsyncGetResult = null;
+        GetStateResult result = null;
 
         try {
-            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            result = port.importPaymentDocumentData(request, requestHeader, headerHolder);
-            answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
+            AckRequest ackRequest = port.importPaymentDocumentData(setSignIdImportPaymentDocumentRequest(request), requestHeader, headerHolder);
+            if(answerProcessing != null) answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
-//            Если есть ошибка вывидет пользователю
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value,
-                    result.getErrorMessage(), LOGGER);
+            if (ackRequest != null) {
+                billsAsyncGetResult = new BillsAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
+                result = billsAsyncGetResult.getRequestResult();
+            }
+
         } catch (Fault fault) {
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+            if(answerProcessing != null) answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }
+        if (result != null) resultErrorMessage = result.getErrorMessage();
 
-        if (result.getErrorMessage() != null) return null;
+        if (billsAsyncGetResult != null) resultHeader = billsAsyncGetResult.getHeaderHolder().value;
+
+        if(answerProcessing != null) answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
+
+        if (resultErrorMessage != null) return null;
+
         return result;
     }
 
-    private ImportPaymentDocumentRequest getImportPaymentDocumentRequest(
-            List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentList,
-            List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
-            int month, short year) throws SQLException, PreGISException {
-
-        ImportPaymentDocumentRequest request = new ImportPaymentDocumentRequest();
-        request.setId(OtherFormat.getId());
-        request.setVersion(request.getVersion());
-
-        request.setMonth(month);
-        request.setYear(year);
-        request.getPaymentDocument().addAll(paymentDocumentList); // Платежные документы
-        request.getPaymentInformation().addAll(paymentInformationList); // Банковские реквизиты
-
-        return request;
-    }
 
     private void getImportPaymentDocumentRequest() throws SQLException, PreGISException {
         //        Просто проба платежного документа
@@ -122,19 +109,19 @@ public class ImportPaymentDocumentData {
 
 //        Банковские реквизиты
         PaymentInformationGradDAO dao = new PaymentInformationGradDAO();
-        ImportPaymentDocumentRequest.PaymentInformation paymentInformation = dao.getPaymentInformation(ConnectionBaseGRAD.instance().getConnection());
+//        ImportPaymentDocumentRequest.PaymentInformation paymentInformation = dao.getPaymentInformationMap(ConnectionBaseGRAD.instance().getConnection());
 //        ImportPaymentDocumentRequest.PaymentInformation paymentInformation = new ImportPaymentDocumentRequest.PaymentInformation();
 //        paymentInformation.setTransportGUID(OtherFormat.getRandomGUID());
 //        paymentInformation.setBankBIK("045004725");
 //        paymentInformation.setOperatingAccountNumber("40702810232000000061");
 //        paymentDocument.setPaymentInformation(new PaymentInformationType());
-//        paymentDocument.getPaymentInformation().setRecipientINN("5404465096"); //ИНН получателя платежа
-//        paymentDocument.getPaymentInformation().setRecipientKPP("540201001"); //КПП получателя платежа
-//        paymentDocument.getPaymentInformation().setBankName("Филиал ОАО \"УралСиб\" в г.Новосибирск"); //Наименование банка получателя платежа
-//        paymentDocument.getPaymentInformation().setPaymentRecipient("ООО \"ЦУЖФ\""); //Наименование получателя
-//        paymentDocument.getPaymentInformation().setBankBIK("045004725");  //БИК банка получателя
-//        paymentDocument.getPaymentInformation().setOperatingAccountNumber("40702810232000000061");  //Номер расчетного счета
-//        paymentDocument.getPaymentInformation().setCorrespondentBankAccount("30101810400000000725");  //Корр. счет банка получателя
+//        paymentDocument.getPaymentInformationMap().setRecipientINN("5404465096"); //ИНН получателя платежа
+//        paymentDocument.getPaymentInformationMap().setRecipientKPP("540201001"); //КПП получателя платежа
+//        paymentDocument.getPaymentInformationMap().setBankName("Филиал ОАО \"УралСиб\" в г.Новосибирск"); //Наименование банка получателя платежа
+//        paymentDocument.getPaymentInformationMap().setPaymentRecipient("ООО \"ЦУЖФ\""); //Наименование получателя
+//        paymentDocument.getPaymentInformationMap().setBankBIK("045004725");  //БИК банка получателя
+//        paymentDocument.getPaymentInformationMap().setOperatingAccountNumber("40702810232000000061");  //Номер расчетного счета
+//        paymentDocument.getPaymentInformationMap().setCorrespondentBankAccount("30101810400000000725");  //Корр. счет банка получателя
 
 //        Адресные сведения
         paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
@@ -175,4 +162,18 @@ public class ImportPaymentDocumentData {
 
 //        sendPaymentDocument(paymentDocument, paymentInformation, 5, (short) 2016);
     }
+
+    /**
+     * Метод, добавляет идентификатор для дальнейшего подписания.
+     *
+     * @param request подготовленный запрос.
+     * @return запрос с указанным идентификатором для цифровой подписи.
+     */
+    private ImportPaymentDocumentRequest setSignIdImportPaymentDocumentRequest(ImportPaymentDocumentRequest request) {
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
+        return request;
+    }
+
 }

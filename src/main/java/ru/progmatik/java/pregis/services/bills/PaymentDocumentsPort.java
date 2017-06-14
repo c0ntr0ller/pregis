@@ -29,7 +29,7 @@ import java.util.List;
  * Другие комбинации признаков и идентификаторов платежного документа не допускается.
  * Операция возвращает в UniqueNumber идентификатор платежного документа.
  */
-public class ImportPaymentDocumentData {
+public class PaymentDocumentsPort {
 
     private static final Logger LOGGER = Logger.getLogger(ExportPaymentDocumentData.class);
 
@@ -43,7 +43,7 @@ public class ImportPaymentDocumentData {
     /**
      * Конструктор, добавляет параметры для соединения.
      */
-    public ImportPaymentDocumentData(AnswerProcessing answerProcessing) {
+    public PaymentDocumentsPort(AnswerProcessing answerProcessing) {
 
         this.answerProcessing = answerProcessing;
 

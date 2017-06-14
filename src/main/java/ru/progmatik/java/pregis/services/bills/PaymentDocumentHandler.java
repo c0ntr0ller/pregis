@@ -2,12 +2,10 @@ package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
-import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -129,7 +127,7 @@ public class PaymentDocumentHandler {
      */
     private void sendDocumentsToGisJkh(final ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
 
-        GetStateResult result = new ImportPaymentDocumentData(answerProcessing).sendPaymentDocument(request);
+        GetStateResult result = new PaymentDocumentsPort(answerProcessing).sendPaymentDocument(request);
 
         if (result != null && result.getImportResult() != null) {
             for (CommonResultType resultType : result.getImportResult()) {
@@ -162,7 +160,7 @@ public class PaymentDocumentHandler {
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
                 if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
-                    pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType.getGUID(), ConnectionBaseGRAD.instance().getConnection());
+                    pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType.getGUID(), connectionGRAD);
                     addedGisJkhCount++;
                     answerProcessing.sendMessageToClient("");
                     answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());
@@ -188,7 +186,7 @@ public class PaymentDocumentHandler {
                                               List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
                                               int month, short year) throws SQLException, PreGISException {
 
-        return new ImportPaymentDocumentData(answerProcessing).sendPaymentDocument(paymentDocumentList,
+        return new PaymentDocumentsPort(answerProcessing).sendPaymentDocument(paymentDocumentList,
                 paymentInformationList,
                 month,
                 year);

@@ -677,10 +677,7 @@ public final class PaymentDocumentGradDAO {
                                                final String paymentDocumentGUID,
                                                final Connection connectionGrad){
         try {
-            CallableStatement callableStatement = connectionGrad.prepareCall("update EX_GIS_INVOCES set RPD_GIS_NO = ? where RPD_NO = ?;");
-            callableStatement.setString(1, paymentDocumentGUID);
-            callableStatement.setString(2, paymentDocumentNumber);
-            callableStatement.execute();
+            connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = '" + paymentDocumentNumber + "'");
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber, LOGGER);
         }

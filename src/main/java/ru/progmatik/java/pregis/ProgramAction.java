@@ -417,6 +417,42 @@ public final class ProgramAction {
         }
     }
 
+    /**
+     * Метод, экспорт сведений о платежных документах.
+     */
+    public void callWithdrawPaymentDocumentData() {
+
+        setStateRunOn();
+        try {
+            answerProcessing.sendMessageToClient("Запуск отзыва ПД...");
+            final ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
+            final List<String> list = new ArrayList<>();
+            list.add("210870201");
+            list.add("210887401");
+            list.add("210889101");
+            list.add("210915701");
+            list.add("212866301 ");
+
+            final ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
+            final List<String> listServiceID = new ArrayList<>();
+
+            try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
+
+                final ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
+                for (ReferenceItemDataSet item : allItems) {
+                    listServiceID.add(item.getGuid());
+                }
+            }
+
+            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
+            answerProcessing.sendMessageToClient("Получение ПД завершено.");
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
+        }finally {
+            setStateRunOff(); // взводим флаг в состояние откл.
+        }
+    }
+
 //    public void callExportOrgPeriodData() {
 //
 //        setStateRunOn();

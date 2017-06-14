@@ -18,7 +18,7 @@ import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
 /**
- * Класс-получатель результатов асинхронного обращения к БД в псевдо-синхронном режиме из класса ImportPaymentDocumentData
+ * Класс-получатель результатов асинхронного обращения к БД в псевдо-синхронном режиме из класса PaymentDocumentsPort
  * Created by Администратор on 07.06.2017.
  */
 public class BillsAsyncGetResult {

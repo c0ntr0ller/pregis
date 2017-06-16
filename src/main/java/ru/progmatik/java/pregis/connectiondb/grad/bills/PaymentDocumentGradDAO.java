@@ -1,5 +1,6 @@
 package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
+import com.google.inject.internal.Nullable;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.bills.*;
 import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
@@ -34,6 +35,7 @@ public final class PaymentDocumentGradDAO {
     private int month;
     private short year;
     private int stateError;
+    private Connection connectionGrad;
 
     public int getMonth() {
         return month;
@@ -43,15 +45,17 @@ public final class PaymentDocumentGradDAO {
         return year;
     }
 
-    public PaymentDocumentGradDAO(AnswerProcessing answerProcessing) {
+    public PaymentDocumentGradDAO(AnswerProcessing answerProcessing, Connection connectionGrad) throws SQLException {
         this.answerProcessing = answerProcessing;
+        this.connectionGrad = connectionGrad;
+        getGradClosedPeriod();
     }
 
     /**
      * Метод запрашивает из Града месяц и год закрытого периода
      * метод временный, потом будем спрашивать у пользователя
      */
-    public void getGradClosedPeriod(Connection connectionGrad) throws SQLException {
+    private void getGradClosedPeriod() throws SQLException {
         try (Statement statement = connectionGrad.createStatement()) {
 
             ResultSet rs = statement.executeQuery("select first(1) extract(month from t.closedate), extract(year from t.closedate) from T_PERIODCLOSE t");
@@ -72,10 +76,9 @@ public final class PaymentDocumentGradDAO {
      * Метод, отправляет в БД Града запрос, формирующий платежные документы по дому в БД.
      *
      * @param houseGradID          идентификатор дома в БД ГРАДа
-     * @param connectionGrad  подключение к БД ГРАД.
      */
 
-    public boolean GeneratePaymentDocuments(Integer houseGradID, Connection connectionGrad){
+    public boolean GeneratePaymentDocuments(final Integer houseGradID){
         try {
             CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(null, null, null, ?, null)");
             callableStatement.setInt(1, houseGradID);
@@ -87,10 +90,7 @@ public final class PaymentDocumentGradDAO {
         return true;
     }
 
-    public HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> getPaymentInformationMap(final Integer houseGradID,
-                                                                                                      final int month,
-                                                                                                      final int year,
-                                                                                                      final Connection connectionGrad)
+    public HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> getPaymentInformationMap(final Integer houseGradID)
             throws SQLException, PreGISException {
 
         HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = new HashMap<>();
@@ -119,17 +119,23 @@ public final class PaymentDocumentGradDAO {
         return paymentInformationMap;
     }
 
+    /**
+     * Метод формирует мапу документов на оплату из Град
+     * @param houseGradID - ИД дома в Граде
+     * @param paymentInformationMap - мапа с платежными реквизитами
+     * @return
+     * @throws SQLException
+     * @throws PreGISException
+     * @throws ParseException
+     */
     public HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> getPaymentDocumentMap(
             final int houseGradID,
-            final int month,
-            final int year,
-            final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap,
-            final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+            @Nullable final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap) throws SQLException, PreGISException, ParseException {
 
         final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap = new HashMap<>();
 
         // получаем заголовки платежных документов по абонентам
-        HashMap<String, Invoice01> accountsMapGrad = getAccountMap(houseGradID, month, year, connectionGrad);
+        HashMap<String, Invoice01> accountsMapGrad = getAccountMap(houseGradID);
 
         // если нечего посылать - возвращаем пусто
         if (accountsMapGrad == null || accountsMapGrad.size() == 0){
@@ -137,7 +143,7 @@ public final class PaymentDocumentGradDAO {
         }
 
         // получаем начисления абонентов
-        HashMap<String, ArrayList<Invoice02>> chargesMapGrad = getChargesMap(houseGradID, month, year, connectionGrad);
+        HashMap<String, ArrayList<Invoice02>> chargesMapGrad = getChargesMap(houseGradID);
 
         // если нечего посылать - возвращаем пусто
         if (chargesMapGrad == null || chargesMapGrad.size() == 0){
@@ -397,7 +403,8 @@ public final class PaymentDocumentGradDAO {
                 }*/
 
                 //            Ссылка на платежные реквизиты
-                paymentDocument.setPaymentInformationKey(paymentInformationMap.get(invoce02.getPayee_id()).getTransportGUID());
+                if(paymentInformationMap != null)
+                    paymentDocument.setPaymentInformationKey(paymentInformationMap.get(invoce02.getPayee_id()).getTransportGUID());
             }
             // закончили заносить начисления
 
@@ -412,11 +419,8 @@ public final class PaymentDocumentGradDAO {
         return paymentDocumentMap;
     }
 
-    public ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> getWithdrawPaymentDocument(
-            final Integer houseGradID,
-            final int month,
-            final int year,
-            final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+    public ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> getWithdrawPaymentDocument(final Integer houseGradID)
+            throws SQLException, PreGISException, ParseException {
 
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
 
@@ -533,16 +537,10 @@ public final class PaymentDocumentGradDAO {
     /**
      * Метод получает данные первого листа ЕПД в виде HashMap
      * @param houseGradID - ИД дома в Град
-     * @param month - месяц
-     * @param year - год
-     * @param connectionGrad - соединение с Град
      * @return - map  с ключом - номер ЕПД
      * @throws SQLException
      */
-    private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID,
-                                             final int month,
-                                             final int year,
-                                             final Connection connectionGrad) throws SQLException {
+    private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID) throws SQLException {
         Statement accountStatement = connectionGrad.createStatement();
         String sqlQuery = "select raccountguid, " +
                 "rpd_type, " +
@@ -585,10 +583,7 @@ public final class PaymentDocumentGradDAO {
         return  accountsMap;
     }
 
-    private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID,
-                                                     final int month,
-                                                     final int year,
-                                                     final Connection connectionGrad) throws SQLException {
+    private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID) throws SQLException {
         Statement chargesStatement = connectionGrad.createStatement();
         ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
                 "rgis_service, " +
@@ -671,11 +666,9 @@ public final class PaymentDocumentGradDAO {
      * Метод устанавливает
      * @param paymentDocumentNumber - номер ЕПД в Град
      * @param paymentDocumentGUID - присвоенный ГИС идентификатор
-     * @param connectionGrad - соединение
      */
     public void addPaymentDocumentRegistryItem(final String paymentDocumentNumber,
-                                               final String paymentDocumentGUID,
-                                               final Connection connectionGrad){
+                                               final String paymentDocumentGUID){
         try {
             connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = '" + paymentDocumentNumber + "'");
         }catch(SQLException e){

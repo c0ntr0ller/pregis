@@ -2,17 +2,24 @@ package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
+import ru.gosuslugi.dom.schema.integration.bills.ExportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.ExportPaymentDocumentResultType;
 import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResultType;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.*;
 
@@ -28,7 +35,12 @@ public class PaymentDocumentHandler {
     private int allCount;
 
     public PaymentDocumentHandler(final AnswerProcessing answerProcessing) {
-        this.answerProcessing = answerProcessing;
+
+        if(answerProcessing != null) {
+            this.answerProcessing = answerProcessing;
+        }else{
+            this.answerProcessing = new AnswerProcessing();
+        }
     }
 
     /**
@@ -43,10 +55,10 @@ public class PaymentDocumentHandler {
 
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            if (answerProcessing != null) { answerProcessing.sendMessageToClient("Формирую список домов...");}
+            answerProcessing.sendMessageToClient("Формирую список домов...");
             final HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
             final LinkedHashMap<String, Integer> houseMap = houseDAO.getListHouse(houseGradID, connectionGRAD);
-            if (answerProcessing != null) { answerProcessing.sendMessageToClient(""); }
+            answerProcessing.sendMessageToClient("");
 //          Бежим по списку домов
             for (Map.Entry<String, Integer> houseEntry : houseMap.entrySet()) {
                 sendPaymentDocumentsHouse(houseEntry.getKey(), houseEntry.getValue(), connectionGRAD);
@@ -64,70 +76,135 @@ public class PaymentDocumentHandler {
      */
     public void sendPaymentDocumentsHouse(final String fias, final int houseGradId, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
-        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
+        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing, connectionGrad);
 
-           // получаем закрытый период
-        pdGradDao.getGradClosedPeriod(connectionGrad);
-        int month = pdGradDao.getMonth();
-        short year = pdGradDao.getYear();
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Обработка дома ФИАС: " + fias);
 
-        if (answerProcessing != null) { answerProcessing.sendMessageToClient("Обработка дома ФИАС: " + fias);}
+        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> sincWithDrawList = sinchronizeDocuments(fias, houseGradId, pdGradDao);
 
-        if (answerProcessing != null) { answerProcessing.sendMessageToClient("Формирую платежные документы для дома: " + fias);}
-        // Генерация документов на стороне БД. Если успешно - создаем списки документов
+        if(!generateNewDocuments(houseGradId, pdGradDao)) return;
 
-        /*if (!pdGradDao.GeneratePaymentDocuments(houseGradId, connectionGrad)) {
-            if (answerProcessing != null) { answerProcessing.sendMessageToClient("Не удалось сформировать платежные документы для дома: " + fias);}
-        }
-        */
-        // создаем список платежных реквизитов получателей
-        final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =
-                pdGradDao.getPaymentInformationMap(houseGradId, month, year, connectionGrad);
-
-        // создаем список новых платежных документов по данным БД
-        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap =
-                pdGradDao.getPaymentDocumentMap(houseGradId, month, year, paymentInformationMap, connectionGrad);
-        if (paymentDocumentMap != null) {
-            allCount = paymentDocumentMap.size();
-        }
-
-        // создаем список документов на отзыв по данным БД
-        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray =
-                pdGradDao.getWithdrawPaymentDocument(houseGradId, month, year, connectionGrad);
-
-        if (answerProcessing != null) {answerProcessing.clearLabelForText();}
-
-        if ((paymentDocumentMap == null || paymentDocumentMap.size() == 0) && (paymentDocumentWithdrawArray == null || paymentDocumentWithdrawArray.size() == 0)){
-            if (answerProcessing != null) {
-                answerProcessing.sendMessageToClient("Отсутствуют платежные документы для дома: " + fias);
-            }
-            return;
-        }
         // формируем запрос
-        final ImportPaymentDocumentRequest importPaymentDocumentRequest = new ImportPaymentDocumentRequest();
-        importPaymentDocumentRequest.setMonth(month);
-        importPaymentDocumentRequest.setYear(year);
-        importPaymentDocumentRequest.getPaymentInformation().addAll(new ArrayList<>(paymentInformationMap.values()));
-        if(paymentDocumentMap != null)
-            importPaymentDocumentRequest.getPaymentDocument().addAll(new ArrayList<>(paymentDocumentMap.values()));
-        if(paymentDocumentWithdrawArray != null && paymentDocumentWithdrawArray.size() > 0)
-            importPaymentDocumentRequest.getWithdrawPaymentDocument().addAll(paymentDocumentWithdrawArray);
+        final ImportPaymentDocumentRequest importPaymentDocumentRequest = compileImportDocumentRequest(houseGradId, pdGradDao);
 
-        // отсылаем результат в процедуру, которая вышлет данные и обработает ответ
-        sendDocumentsToGisJkh(importPaymentDocumentRequest);
+        if (importPaymentDocumentRequest != null) {
+            // если есть документы на закрытие после синхорнизации - добавляем их
+            if (sincWithDrawList.size() > 0) {
+                importPaymentDocumentRequest.getWithdrawPaymentDocument().addAll(sincWithDrawList);
+            }
+            // отсылаем результат в процедуру, которая вышлет данные в ГИС и обработает ответ
+            sendDocumentsToGisJkh(importPaymentDocumentRequest, pdGradDao);
+        }
         showEnd();
     }
 
     /**
-     * Метод отсылает данные в ГИС ЖКХ, получает ответ и обрабатывает его
+     * Метод собирает запрос на занесение данных в ГИС из переданных массивов
+     * @return подготовленный к отправке запрос
+     */
+    private ImportPaymentDocumentRequest compileImportDocumentRequest(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
+
+        answerProcessing.sendMessageToClient("Создается список платежных реквизитов получателей по дому");
+        final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =
+                pdGradDao.getPaymentInformationMap(houseGradId);
+
+        answerProcessing.sendMessageToClient("Создается список новых платежных документов");
+        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap =
+                pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
+        if (paymentDocumentMap != null) {
+            allCount = paymentDocumentMap.size();
+        }
+
+        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
+        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> withdrawPaymentDocuments =
+                pdGradDao.getWithdrawPaymentDocument(houseGradId);
+
+        answerProcessing.clearLabelForText();
+
+        // формируем запрос
+        if ((paymentDocumentMap == null || paymentDocumentMap.size() == 0) && (withdrawPaymentDocuments == null || withdrawPaymentDocuments.size() == 0)){
+            answerProcessing.sendMessageToClient("Отсутствуют платежные документы!");
+            return null;
+        }
+        final ImportPaymentDocumentRequest importPaymentDocumentRequest = new ImportPaymentDocumentRequest();
+        importPaymentDocumentRequest.setMonth(pdGradDao.getMonth());
+        importPaymentDocumentRequest.setYear(pdGradDao.getYear());
+        importPaymentDocumentRequest.getPaymentInformation().addAll(paymentInformationMap.values());
+        if (paymentDocumentMap != null && paymentDocumentMap.size() > 0)
+            importPaymentDocumentRequest.getPaymentDocument().addAll(paymentDocumentMap.values());
+        if (withdrawPaymentDocuments != null && withdrawPaymentDocuments.size() > 0)
+            importPaymentDocumentRequest.getWithdrawPaymentDocument().addAll(withdrawPaymentDocuments);
+
+        return importPaymentDocumentRequest;
+    }
+
+    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> sinchronizeDocuments(final String fias, final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
+
+        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
+
+        answerProcessing.sendMessageToClient("Синхронизируются имеющиеся платежные документы с ГИС ЖКХ");
+        // запрашиваем текущие документы по дому из Град
+        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad =
+                pdGradDao.getPaymentDocumentMap(houseGradId, null);
+
+        // запрашиваем документы из Гис
+        final List<ExportPaymentDocumentResultType> paymentDocumentGisList = getPaymentDocumentsFromGIS(fias, pdGradDao.getMonth(), pdGradDao.getYear());
+        // сравниваем и делаем поправки в Град
+
+        // все, которые есть в ГИС, но отсутствуют в Град - добавляем в список на закрытие
+        for (ExportPaymentDocumentResultType paymentDocumentGis:paymentDocumentGisList) {
+            if(paymentDocumentMapGrad == null
+                    || !paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
+                    || !paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID().equals(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID()) ){
+                ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
+                withdrawPaymentDocument.setPaymentDocumentID(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID());
+                withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
+                paymentDocumentWithdrawArray.add(withdrawPaymentDocument);
+            }
+        }
+
+        return paymentDocumentWithdrawArray;
+    }
+
+
+    private List<ExportPaymentDocumentResultType> getPaymentDocumentsFromGIS(final String fias, final int month, final short year) throws SQLException, PreGISException {
+        // формируем запрос в ГИС и получаем абонентов
+        List<ExportAccountResultType> accountList = new ExportAccountData(answerProcessing).callExportAccountData(fias).getExportAccountResult();
+
+        // по абонентам формируем запрос на платежные документы
+        ExportPaymentDocumentRequest exportPaymentDocumentRequest = new ExportPaymentDocumentRequest();
+        exportPaymentDocumentRequest.setFIASHouseGuid(fias);
+        exportPaymentDocumentRequest.setMonth(month);
+        exportPaymentDocumentRequest.setYear(year);
+
+        for (ExportAccountResultType account: accountList) {
+            exportPaymentDocumentRequest.getAccountNumber().add(account.getAccountNumber());
+        }
+
+        return new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(null, exportPaymentDocumentRequest).getExportPaymentDocResult();
+    }
+
+    private boolean generateNewDocuments(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) {
+        answerProcessing.sendMessageToClient("Формируются платежные документы по дому");
+        // Генерация документов на стороне БД. Если успешно - создаем списки документов
+        boolean result = pdGradDao.GeneratePaymentDocuments(houseGradId);
+        if (!result) {
+            answerProcessing.sendMessageToClient("Не удалось сформировать платежные документы");
+        }
+        return result;
+    }
+    /**
+     * Метод отсылает запросы на импорт/экспорт в ГИС ЖКХ, получает ответ и обрабатывает его
      *
      * @param request - данные
+     * @param pdGradDao - класс обмена с БД ГРАДа
      * @throws SQLException
      * @throws PreGISException
      */
-    private void sendDocumentsToGisJkh(final ImportPaymentDocumentRequest request) throws SQLException, PreGISException {
+    private void sendDocumentsToGisJkh(final ImportPaymentDocumentRequest request, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException {
 
-        GetStateResult result = new PaymentDocumentsPort(answerProcessing).sendPaymentDocument(request);
+        GetStateResult result = new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(request, null);
 
         if (result != null && result.getImportResult() != null) {
             for (CommonResultType resultType : result.getImportResult()) {
@@ -139,7 +216,7 @@ public class PaymentDocumentHandler {
                             resultType.getError().get(0).getDescription());
                 } else {
 //                        added to DB
-                    setResultFromGisJkh(request.getPaymentDocument(), resultType);
+                    setResultFromGisJkh(request.getPaymentDocument(), resultType, pdGradDao);
                 }
             }
         } else if (result == null) {
@@ -152,21 +229,18 @@ public class PaymentDocumentHandler {
      *
      * @param paymentDocuments массив документов, отосланный в ГИС ЖКХ
      * @param resultType         ответ от ГИС ЖКХ.
+     * @param pdGradDao - класс обмена с БД ГРАДа
      * @throws SQLException
      */
-    private void setResultFromGisJkh(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocuments, CommonResultType resultType) throws SQLException {
-
-        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
-        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
-                if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
-                    pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType.getGUID(), connectionGRAD);
-                    addedGisJkhCount++;
-                    answerProcessing.sendMessageToClient("");
-                    answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());
-                    answerProcessing.sendMessageToClient("UniqueNumber: " + resultType.getUniqueNumber());
-                    answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
-                }
+    private void setResultFromGisJkh(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocuments, CommonResultType resultType, final PaymentDocumentGradDAO pdGradDao) throws SQLException {
+        for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
+            if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
+                pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType.getGUID());
+                addedGisJkhCount++;
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());
+                answerProcessing.sendMessageToClient("UniqueNumber: " + resultType.getUniqueNumber());
+                answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
             }
         }
     }
@@ -186,7 +260,7 @@ public class PaymentDocumentHandler {
                                               List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
                                               int month, short year) throws SQLException, PreGISException {
 
-        return new PaymentDocumentsPort(answerProcessing).sendPaymentDocument(paymentDocumentList,
+        return new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(paymentDocumentList,
                 paymentInformationList,
                 month,
                 year);

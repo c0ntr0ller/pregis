@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResult;
+import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
@@ -346,12 +347,12 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("Запуск получения ЛС...");
 
             final ExportAccountData accountData = new ExportAccountData(answerProcessing);
-            final ExportAccountResult exportAccountResult = accountData.callExportAccountData(fias);
+            final GetStateResult stateResult = accountData.callExportAccountData(fias);
 
-            if (exportAccountResult == null || exportAccountResult.getAccounts() == null) {
+            if (stateResult == null || stateResult.getExportAccountResult() == null) {
                 answerProcessing.sendMessageToClient("Возникла ошибка, ЛС не удалось получить.");
             } else {
-                answerProcessing.sendMessageToClient(String.format("Получено: %d ЛС", exportAccountResult.getAccounts().size()));
+                answerProcessing.sendMessageToClient(String.format("Получено: %d ЛС", stateResult.getExportAccountResult().size()));
             }
 
             answerProcessing.sendMessageToClient("Получение ЛС завершено.");

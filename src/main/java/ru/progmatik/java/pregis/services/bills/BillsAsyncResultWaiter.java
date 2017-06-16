@@ -21,9 +21,9 @@ import java.sql.SQLException;
  * Класс-получатель результатов асинхронного обращения к БД в псевдо-синхронном режиме из класса PaymentDocumentsPort
  * Created by Администратор on 07.06.2017.
  */
-public class BillsAsyncGetResult {
+public class BillsAsyncResultWaiter {
     private final AckRequest ackRequest;
-    private static final Logger LOGGER = Logger.getLogger(BillsAsyncGetResult.class);
+    private static final Logger LOGGER = Logger.getLogger(BillsAsyncResultWaiter.class);
     private final String NAME_METHOD;
 
     private final BillsPortsTypeAsync port;
@@ -41,7 +41,7 @@ public class BillsAsyncGetResult {
     private long timeOut;
     private long maxRequestCount;
 
-    public BillsAsyncGetResult(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, BillsPortsTypeAsync port) {
+    public BillsAsyncResultWaiter(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, BillsPortsTypeAsync port) {
         this.ackRequest = ackRequest;
         NAME_METHOD = name_method;
         this.port = port;

@@ -45,7 +45,7 @@ public class BekDebugClass {
 
 //        final UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(null);
 //        final int state = updateAllMeteringDeviceData.updateMeteringDeviceData(21);
-        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(null);
-        pdGradDao.addPaymentDocumentRegistryItem("1767", "20ВС786289-01-7031", ConnectionBaseGRAD.instance().getConnection());
+//        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(null);
+//        pdGradDao.addPaymentDocumentRegistryItem("1767", "20ВС786289-01-7031", ConnectionBaseGRAD.instance().getConnection());
     }
 }

@@ -75,16 +75,16 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue());
                 }
 
-                final ExportAccountResult exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
+                final GetStateResult stateResult = accountData.callExportAccountData(itemHouse.getKey());
                 final LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
                 countAll += accountListFromGrad.size();
 
-                if (exportAccountResult == null) { // если не получили не однин лс.
+                if (stateResult == null || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
                     errorState = 0;
-                } else if (exportAccountResult.getErrorMessage() != null && exportAccountResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
+                } else if (stateResult.getErrorMessage() != null && stateResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
                     checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
                 } else {
-                    countAllGisJkh += exportAccountResult.getAccounts().size();
+                    countAllGisJkh += stateResult.getExportAccountResult().size();
 //                    List<ExportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
 ////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.
 //                    while (countAllGisJkh % 50 == 0) {
@@ -92,13 +92,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //                        countAllGisJkh += exportAccountResult.getAccounts().size();
 //                        accountsListFromGISJKH.addAll(exportAccountResult.getAccounts());
 //                    }
-                    checkAndSendAccountData(exportAccountResult.getAccounts(), accountListFromGrad, itemHouse.getValue(), connectionGRAD);
+                    checkAndSendAccountData(stateResult.getExportAccountResult(), accountListFromGrad, itemHouse.getValue(), connectionGRAD);
 
                 }
                 printReport(itemHouse.getKey());
             }
         }
-        // TODO: Разобраться как закрывать лицевые, работает ли это
+        // лицевые еа закрытие обрабатываются после ответа пользователя в go()
         if (accountsForCloseList.size() > 0) {
             setErrorState(0);
             answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +

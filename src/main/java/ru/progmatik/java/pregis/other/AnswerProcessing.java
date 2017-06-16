@@ -35,6 +35,11 @@ public final class AnswerProcessing {
         this.clientService = clientService;
     }
 
+    public AnswerProcessing() {
+        saveToBase = new SaveToBaseMessages();
+        this.clientService = null;
+    }
+
     /**
      * Метод, обрабатывает ошибки, полученные от сервера ГИС ЖКХ.
      * @param nameMethod имя метода для логирования.
@@ -143,8 +148,8 @@ public final class AnswerProcessing {
      * @param question сообщение.
      */
     public void showQuestionToClient(final String question, final ClientDialogWindowObservable observable) {
-        clientService.addListener(observable);
-        clientService.sendMessage(messageFormatter(CLIENT_SHOW_MODAL_WINDOW, question));
+        if(clientService != null) clientService.addListener(observable);
+        if(clientService != null) clientService.sendMessage(messageFormatter(CLIENT_SHOW_MODAL_WINDOW, question));
     }
 
     /**
@@ -167,7 +172,7 @@ public final class AnswerProcessing {
      * @param message сообщение для клиента.
      */
     private void sendMessage(final String message) {
-        clientService.sendMessage(messageFormatter(CLIENT_SHOW_MESSAGE, message));
+        if(clientService != null) clientService.sendMessage(messageFormatter(CLIENT_SHOW_MESSAGE, message));
     }
 
     /**
@@ -175,7 +180,7 @@ public final class AnswerProcessing {
      * @param command команда для UI.
      */
     private void sendCommandToClient(final String command) {
-        clientService.sendMessage(messageFormatter(command, null));
+        if(clientService != null) clientService.sendMessage(messageFormatter(command, null));
     }
 
     /**
@@ -212,7 +217,7 @@ public final class AnswerProcessing {
     public void showHouseListModalWindow(final ArrayList<ValueJSON> list) {
         final Gson gson = new Gson();
         final String listJSON = gson.toJson(list);
-        clientService.sendMessage(messageFormatter("::showHouseListModalWindow()", listJSON));
+        if(clientService != null) clientService.sendMessage(messageFormatter("::showHouseListModalWindow()", listJSON));
     }
 
 

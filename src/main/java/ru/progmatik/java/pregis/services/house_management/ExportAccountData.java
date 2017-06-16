@@ -1,13 +1,15 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountRequest;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResult;
-import ru.gosuslugi.dom.schema.integration.house_management_service.Fault;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementPortsType;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
+import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementServiceAsync;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -24,9 +26,9 @@ public class ExportAccountData {
 
     private static final Logger LOGGER = Logger.getLogger(ExportAccountData.class);
 
-    private static final String NAME_METHOD = "exportAccountData";
+    private static final String NAME_METHOD = "exportAccountDataAsync";
 
-    private final HouseManagementPortsType port;
+    private final HouseManagementPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
     /**
@@ -34,49 +36,62 @@ public class ExportAccountData {
      */
     public ExportAccountData(final AnswerProcessing answerProcessing) {
 
-        this.answerProcessing = answerProcessing;
+        if(answerProcessing != null) {
+            this.answerProcessing = answerProcessing;
+        }else{
+            this.answerProcessing = new AnswerProcessing();
+        }
 
-        HouseManagementService service = UrlLoader.instance().getUrlMap().get("homeManagement") == null ? new HouseManagementService()
-                : new HouseManagementService(UrlLoader.instance().getUrlMap().get("homeManagement"));
+        HouseManagementServiceAsync service = UrlLoader.instance().getUrlMap().get("homeManagementAsync") == null ? new HouseManagementServiceAsync()
+                : new HouseManagementServiceAsync(UrlLoader.instance().getUrlMap().get("homeManagementAsync"));
 
-        port = service.getHouseManagementPort();
+        port = service.getHouseManagementPortAsync();
         OtherFormat.setPortSettings(service, port);
     }
 
-    public ExportAccountResult callExportAccountData(final String homeFias) throws SQLException {
+    public GetStateResult callExportAccountData(final String homeFias) throws SQLException {
 
-//        Создание загаловков сообщений (запроса и ответа)
-        if (answerProcessing != null) {
-            answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-        }
+//        Создание заголовков сообщений (запроса и ответа)
+        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
+
         final RequestHeader requestHeader = OtherFormat.getRequestHeader();
         final Holder<ResultHeader> headerHolder = new Holder<>();
+        ResultHeader resultHeader = null;
+        ErrorMessageType resultErrorMessage = null;
 
-        ExportAccountResult result;
+        answerProcessing.sendMessageToClient("");
+
+        AccountAsyncResultWaiter accountAsyncResultWaiter = null;
+        GetStateResult result;
 
         result = null;
         try {
-            if (answerProcessing != null) {
-                answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-                result = port.exportAccountData(getExportAccountRequest(homeFias), requestHeader, headerHolder);
-                answerProcessing.sendMessageToClient(TextForLog.RECEIVED_RESPONSE + NAME_METHOD);
+            AckRequest ackRequest = null;
+            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
+            ackRequest = port.exportAccountData(getExportAccountRequest(homeFias), requestHeader, headerHolder);
+
+            if (ackRequest != null) {
+                accountAsyncResultWaiter = new AccountAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
+                result = accountAsyncResultWaiter.getRequestResult();
             }
+
         } catch (Fault fault) {
 //            Сохраняем ошибку в базу данных
-            if (answerProcessing != null) {
-                answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
-            }
+            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
             return null;
         }
-        if (answerProcessing != null) {
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
-//        if (result.getErrorMessage() != null) return null; // Если возникли ошибки.
-            if (result.getErrorMessage() != null && !result.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012"))
-                return null; // Если возникли ошибки.
 
-            return result;
+        if (result != null) resultErrorMessage = result.getErrorMessage();
+
+        if (accountAsyncResultWaiter != null) resultHeader = accountAsyncResultWaiter.getHeaderHolder().value;
+
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
+
+        if (resultErrorMessage != null) {
+            result = null;
         }
-        else return null;
+
+        return result;
     }
 
     private ExportAccountRequest getExportAccountRequest(final String homeFias) {

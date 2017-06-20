@@ -26,7 +26,7 @@ public class ExportAccountData {
 
     private static final Logger LOGGER = Logger.getLogger(ExportAccountData.class);
 
-    private static final String NAME_METHOD = "exportAccountDataAsync";
+    private static final String NAME_METHOD = "exportAccountData";
 
     private final HouseManagementPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
@@ -68,7 +68,8 @@ public class ExportAccountData {
         try {
             AckRequest ackRequest = null;
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            ackRequest = port.exportAccountData(getExportAccountRequest(homeFias), requestHeader, headerHolder);
+            ExportAccountRequest exportAccountRequest = getExportAccountRequest(homeFias);
+            ackRequest = port.exportAccountData(exportAccountRequest, requestHeader, headerHolder);
 
             if (ackRequest != null) {
                 accountAsyncResultWaiter = new AccountAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);

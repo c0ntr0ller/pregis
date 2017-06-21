@@ -159,7 +159,10 @@ public final class PaymentDocumentGradDAO {
 
             // GUID абонента проверяем
             if(accountGrad.getValue().getAccountguid() == null || accountGrad.getValue().getAccountguid().equals("")){
-                if(answerProcessing != null) answerProcessing.sendInformationToClientAndLog("Не указан Accountguid у ЕПД с номером " + accountGrad.getValue().getPd_no(), LOGGER);
+                if(answerProcessing != null) {
+                    answerProcessing.sendInformationToClientAndLog("Не указан Accountguid у ЕПД с номером " + accountGrad.getValue().getPd_no(), LOGGER);
+                    answerProcessing.clearLabelForText();
+                }
                 continue;
             }
 
@@ -670,7 +673,7 @@ public final class PaymentDocumentGradDAO {
     public void addPaymentDocumentRegistryItem(final String paymentDocumentNumber,
                                                final String paymentDocumentGUID){
         try {
-            connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = '" + paymentDocumentNumber + "'");
+            connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = " + paymentDocumentNumber);
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber, LOGGER);
         }

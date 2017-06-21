@@ -1,8 +1,11 @@
 package ru.progmatik.java.practice;
 
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.services.bills.PaymentDocumentHandler;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 
@@ -11,7 +14,9 @@ import java.text.ParseException;
  */
 public class BCheckPaymentDocument {
     public static void main(String[] args) throws ParseException, SQLException, PreGISException {
-        PaymentDocumentHandler pdh = new PaymentDocumentHandler(null);
-        pdh.paymentDocumentImport(21);
+//        PaymentDocumentHandler pdh = new PaymentDocumentHandler(null);
+//        pdh.paymentDocumentImport(21);
+        PaymentDocumentGradDAO gradDAO = new PaymentDocumentGradDAO(null, ConnectionBaseGRAD.instance().getConnection());
+        gradDAO.addPaymentDocumentRegistryItem("3486", "7331f8e3-b184-4b8e-8396-a2c46079617d");
     }
 }

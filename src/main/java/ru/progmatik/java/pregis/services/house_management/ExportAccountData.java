@@ -66,11 +66,14 @@ public class ExportAccountData {
 
         result = null;
         try {
-            AckRequest ackRequest = null;
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             ExportAccountRequest exportAccountRequest = getExportAccountRequest(homeFias);
-            ackRequest = port.exportAccountData(exportAccountRequest, requestHeader, headerHolder);
+            AckRequest ackRequest = port.exportAccountData(exportAccountRequest, requestHeader, headerHolder);
 
+            // сохраняем запрос
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, null, null, LOGGER);
+
+            // ждем результат в асинхронном режиме
             if (ackRequest != null) {
                 accountAsyncResultWaiter = new AccountAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
                 result = accountAsyncResultWaiter.getRequestResult();
@@ -86,7 +89,7 @@ public class ExportAccountData {
 
         if (accountAsyncResultWaiter != null) resultHeader = accountAsyncResultWaiter.getHeaderHolder().value;
 
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
 
         if (resultErrorMessage != null) {
             result = null;

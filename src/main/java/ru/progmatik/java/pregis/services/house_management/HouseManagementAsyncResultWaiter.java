@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.*;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -13,9 +14,9 @@ import java.sql.SQLException;
 /**
  * Created by Администратор on 11.05.2017.
  */
-public class HouseManagementAsyncGetResult {
+public class HouseManagementAsyncResultWaiter {
     private final AckRequest ackRequest;
-    private static final Logger LOGGER = Logger.getLogger(HouseManagementAsyncGetResult.class);
+    private static final Logger LOGGER = Logger.getLogger(HouseManagementAsyncResultWaiter.class);
     private final String NAME_METHOD;
 
     private final HouseManagementPortsTypeAsync port;
@@ -33,7 +34,7 @@ public class HouseManagementAsyncGetResult {
     private long timeOut;
     private long maxRequestCount;
 
-    public HouseManagementAsyncGetResult(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, HouseManagementPortsTypeAsync port) {
+    public HouseManagementAsyncResultWaiter(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, HouseManagementPortsTypeAsync port) {
         this.ackRequest = ackRequest;
         NAME_METHOD = name_method;
         this.answerProcessing = answerProcessing;
@@ -52,13 +53,13 @@ public class HouseManagementAsyncGetResult {
         }
     }
 
-    public BaseAsyncResponseType getRequestResult() throws SQLException {
+    public GetStateResult getRequestResult() throws SQLException {
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
 
         GetStateRequest getStateRequest = new GetStateRequest();
         getStateRequest.setMessageGUID(ackRequest.getAck().getMessageGUID());
 
-        BaseAsyncResponseType result = null;
+        GetStateResult result = null;
 
         for (int i = 0; i < maxRequestCount; i++) {
             try {

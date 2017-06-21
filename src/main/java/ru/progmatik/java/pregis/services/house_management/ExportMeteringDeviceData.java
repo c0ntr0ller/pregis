@@ -6,7 +6,6 @@ import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
@@ -18,7 +17,6 @@ import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Класс, получить перечень ПУ.
@@ -55,19 +53,22 @@ public class ExportMeteringDeviceData {
         ErrorMessageType resultErrorMessage = null;
 
         GetStateResult result = null;
-        HouseManagementAsyncGetResult houseManagementAsyncGetResult = null;
+        HouseManagementAsyncResultWaiter houseManagementAsyncResultWaiter = null;
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             AckRequest ackRequest = port.exportMeteringDeviceData(getExportMeteringDeviceDataRequest(fias), requestHeader, headerHolder);
             answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
-            if (ackRequest != null) {
-                houseManagementAsyncGetResult = new HouseManagementAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
+            // сохраняем запрос
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, null, null, LOGGER);
 
-                result = (GetStateResult) houseManagementAsyncGetResult.getRequestResult();
+            if (ackRequest != null) {
+                houseManagementAsyncResultWaiter = new HouseManagementAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
+
+                result = houseManagementAsyncResultWaiter.getRequestResult();
 
                 if (result != null) {
-                    resultHeader = houseManagementAsyncGetResult.getHeaderHolder().value;
+                    resultHeader = houseManagementAsyncResultWaiter.getHeaderHolder().value;
                     resultErrorMessage = result.getErrorMessage();
                 }
                 else{
@@ -80,7 +81,7 @@ public class ExportMeteringDeviceData {
             return null;
         }
 
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
         if (result != null && result.getErrorMessage() != null) return null;
         return result;
     }

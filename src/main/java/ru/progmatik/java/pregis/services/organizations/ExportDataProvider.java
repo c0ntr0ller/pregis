@@ -1,9 +1,8 @@
-package ru.progmatik.java.pregis.services.organizations.common.service;
+package ru.progmatik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.house_management_service.HouseManagementService;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderResult;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service.Fault;

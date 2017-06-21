@@ -1,7 +1,6 @@
 package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResult;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
@@ -26,7 +25,7 @@ import ru.progmatik.java.pregis.services.nsi.UpdateReference;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
-import ru.progmatik.java.pregis.services.organizations.common.service.ExportOrgRegistry;
+import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
 import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 import ru.progmatik.java.web.servlets.socket.ValueJSON;

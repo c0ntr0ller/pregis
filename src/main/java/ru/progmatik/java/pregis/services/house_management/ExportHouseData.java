@@ -231,20 +231,23 @@ public class ExportHouseData {
         ErrorMessageType resultErrorMessage = new ErrorMessageType();
 
         GetStateResult result = null;
-        HouseManagementAsyncGetResult houseManagementAsyncGetResult = null;
+        HouseManagementAsyncResultWaiter houseManagementAsyncResultWaiter = null;
 
         try {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             AckRequest ackRequest = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
             answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
-            if (ackRequest != null) {
-                houseManagementAsyncGetResult = new HouseManagementAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, null,null, LOGGER);
 
-                result = (GetStateResult) houseManagementAsyncGetResult.getRequestResult();
+            // ждем данные
+            if (ackRequest != null) {
+                houseManagementAsyncResultWaiter = new HouseManagementAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
+
+                result = houseManagementAsyncResultWaiter.getRequestResult();
 
                 if (result != null) {
-                    resultHeader = houseManagementAsyncGetResult.getHeaderHolder().value;
+                    resultHeader = houseManagementAsyncResultWaiter.getHeaderHolder().value;
                     resultErrorMessage = result.getErrorMessage();
                 }
                 else{
@@ -258,7 +261,7 @@ public class ExportHouseData {
             setErrorStatus(-1);
         }
 
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, resultHeader ,resultErrorMessage, LOGGER);
+        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader ,resultErrorMessage, LOGGER);
         return result;
     }
 

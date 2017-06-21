@@ -104,7 +104,7 @@ public final class AnswerProcessing {
     }
 
     /**
-     * Метод, сохраняет полученное сообщение от сервера в базу данных и если содержаться в самом теле сообщения ошибка,
+     * Метод сохраняет полученное сообщение от сервера в базу данных и если содержаться в самом теле сообщения ошибка,
      * будет выведена пользователю.
      * @param nameMethod имя метода.
      * @param headerRequest заголовок исходящего сообщения.
@@ -115,9 +115,9 @@ public final class AnswerProcessing {
     public void sendToBaseAndAnotherError(final String nameMethod, final HeaderType headerRequest, final HeaderType headerResponse,
                                           final ErrorMessageType errorMessage, final Logger logger) {
 
-        saveToBase.setRequest(headerRequest, nameMethod);
+        if(headerRequest != null) saveToBase.setRequest(headerRequest, nameMethod);
 
-        saveToBase.setResult(headerResponse, nameMethod, errorMessage);
+        if(headerResponse != null) saveToBase.setResult(headerResponse, nameMethod, errorMessage);
 
         if (errorMessage != null) {
             sendMessageToClient("");

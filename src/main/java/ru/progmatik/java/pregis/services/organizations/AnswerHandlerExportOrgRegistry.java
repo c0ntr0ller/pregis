@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.services.organizations.common.service;
+package ru.progmatik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;

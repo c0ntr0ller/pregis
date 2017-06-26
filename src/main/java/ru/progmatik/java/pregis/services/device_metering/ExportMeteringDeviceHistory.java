@@ -3,7 +3,6 @@ package ru.progmatik.java.pregis.services.device_metering;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.*;
 import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryRequest;
-import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryResult;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringPortTypesAsync;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringServiceAsync;
@@ -76,7 +75,7 @@ public final class ExportMeteringDeviceHistory {
         Holder<ResultHeader> headerHolder = new Holder<>();
         ErrorMessageType resultErrorMessage = null;
 
-        DeviceMeteringAsyncGetResult deviceMeteringAsyncGetResult = null;
+        DeviceMeteringAsyncResultWaiter deviceMeteringAsyncResultWaiter = null;
         GetStateResult result = null;
 
         try {
@@ -85,8 +84,8 @@ public final class ExportMeteringDeviceHistory {
             answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
             if (ackRequest != null) {
-                deviceMeteringAsyncGetResult = new DeviceMeteringAsyncGetResult(ackRequest, NAME_METHOD, answerProcessing, port);
-                result = deviceMeteringAsyncGetResult.getRequestResult();
+                deviceMeteringAsyncResultWaiter = new DeviceMeteringAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
+                result = deviceMeteringAsyncResultWaiter.getRequestResult();
             }
 
         } catch (Fault fault) {
@@ -94,7 +93,7 @@ public final class ExportMeteringDeviceHistory {
             return null;
         }
         if (result != null) resultErrorMessage = result.getErrorMessage();
-        if (deviceMeteringAsyncGetResult != null) resultHeader = deviceMeteringAsyncGetResult.getHeaderHolder().value;
+        if (deviceMeteringAsyncResultWaiter != null) resultHeader = deviceMeteringAsyncResultWaiter.getHeaderHolder().value;
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
         if (resultErrorMessage != null) return null;
         return result;

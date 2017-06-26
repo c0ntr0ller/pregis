@@ -206,6 +206,7 @@ public final class HouseGRADDAO {
      * @param houseId         ид дома в БД ГРАД.
      * @param apartmentNumber номер помещения (квартиры, используется для поиска абонента в БД ГРАД).
      * @param roomNumber      номер комнаты, например в коммунальной квартире (используется для поиска абонента в БД ГРАД).
+     * @param isResidential - жилое/нежилое
      * @param premisesGUID    идентификатор помещения.
      * @param premisesUniqNum уникальный номер помещения.
      * @param livingRoomGUID  идентификатор комнаты.
@@ -213,12 +214,12 @@ public final class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public void setApartmentUniqueNumber(final Integer houseId, final String apartmentNumber, final String roomNumber,
+    public void setApartmentUniqueNumber(final Integer houseId, final String apartmentNumber, final String roomNumber, final boolean isResidential,
                                          final String premisesGUID, final String premisesUniqNum,
                                          final String livingRoomGUID, final String roomUniqNumber,
                                          final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
-        final Integer abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, connectionGrad);
+        final Integer abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, isResidential, connectionGrad);
 
         if (abonentId != null) {
             // ИД дома(:building_id),
@@ -238,13 +239,8 @@ public final class HouseGRADDAO {
 //                System.err.println("Apartment code return: " + codeReturn);
             }
         } else {
-            answerProcessing.sendMessageToClient("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД, запись пропущена." + // TODO: delete this
-//            throw new PreGISException("setApartmentUniqueNumber(): Не удалось найти ID абонента в БД ГРАД." +
-            "abonentId = " + abonentId + "; " +   
-            "premisesGUID = " + premisesGUID + "; " +
-            "premisesUniqNum = " + premisesUniqNum + "; " +
-            "livingRoomGUID = " + livingRoomGUID + "; " +
-            "roomUniqNumber = " + roomUniqNumber );
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Не удалось найти ID абонента в БД ГРАД, запись пропущена. Кв № = " + apartmentNumber + "; ");
         }
     }
 
@@ -312,7 +308,9 @@ public final class HouseGRADDAO {
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
     private Integer getAbonentIdFromGrad(final Integer idHouse, final String apartmentNumber,
-                                         final String roomNumber, final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+                                         final String roomNumber,
+                                         final boolean isResidential,
+                                         final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
         if (false == temMapRooms.containsKey(idHouse)) {
 //            Если IDEA выделила просто не обращай внимание, зачистую конструкция (!temMapRooms.containsKey(idHouse)),
@@ -322,7 +320,7 @@ public final class HouseGRADDAO {
             temMapRooms.put(idHouse, accountGRADDAO.getRooms(idHouse, connectionGrad));
         }
 
-        final Integer abonentId = findAbonId(idHouse, apartmentNumber, roomNumber);
+        final Integer abonentId = findAbonId(idHouse, apartmentNumber, roomNumber, isResidential);
 
         if (abonentId == null && roomNumber == null) {
             answerProcessing.sendMessageToClient(String.format("ИД абонента для помещения: %s не найден! ИД дома: %d", apartmentNumber, idHouse)); //!!!------
@@ -343,16 +341,21 @@ public final class HouseGRADDAO {
      */
     private Integer findAbonId(final Integer idHouse, // TODO В запросе по 124 дому возвращается квартира 1, но поему-то тут она не находится! Сделать вывод в лог и проверить
                                final String apartmentNumber,
-                               final String roomNumber) {
+                               final String roomNumber,
+                               final boolean isResidential) {
 
         if (idHouse != null && temMapRooms.containsKey(idHouse) && apartmentNumber != null && temMapRooms.get(idHouse) != null) {
             for (Rooms room : temMapRooms.get(idHouse)) {
                 if (apartmentNumber.equalsIgnoreCase(room.getNumberRooms())) { // если нашли одинаковые помещения (квартиры)
                     if (roomNumber == null && room.getNumberApartment() == null) { // если номер комнаты отсутствует
-                        return room.getAbonId();
+                        if (room.isResidential() == isResidential) {
+                            return room.getAbonId();
+                        }
                     } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberApartment())){ // если номер комнаты совпадает.
                         return room.getAbonId();
                     }
+
+
                 }
             }
         }

@@ -12,6 +12,7 @@ import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
 /**
+ * Класс-получатель результатов асинхронного обращения к БД в псевдо-синхронном режиме из классов раздела HouseManagement
  * Created by Администратор on 11.05.2017.
  */
 public class HouseManagementAsyncResultWaiter {

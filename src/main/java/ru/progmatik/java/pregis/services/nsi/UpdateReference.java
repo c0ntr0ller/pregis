@@ -417,8 +417,8 @@ public class UpdateReference {
 
                 for (NsiElementType nsiElement : nsiElements) {
                     if (nsiElement.isIsActual()) {
-                        if ((nsiElement.getCode().equals(refFieldType.getNsiRef().getRef().getCode())) &&
-                                (nsiElement.getGUID().equals(refFieldType.getNsiRef().getRef().getGUID()))) {
+                        if ((nsiElement.getCode().equalsIgnoreCase(refFieldType.getNsiRef().getRef().getCode())) &&
+                                (nsiElement.getGUID().equalsIgnoreCase(refFieldType.getNsiRef().getRef().getGUID()))) {
                             NsiElementStringFieldType stringType;
                             for (NsiElementFieldType field : nsiElement.getNsiElementField()) {
                                 if (nsiDataForExecute.containsKey(nsiItemResult.getNsiItem().getNsiItemRegistryNumber().toString()) &&

@@ -97,9 +97,13 @@ public class PaymentDocumentsPort {
             return null;
         }
 
-        if (result != null) resultErrorMessage = result.getErrorMessage();
+        if (result == null) {
+            throw new PreGISException("Не удалось получить данные от сервера ГИС ЖКХ");
+        }else{
+            resultErrorMessage = result.getErrorMessage();
+        }
 
-        if (paymentsAsyncResultWaiter != null) resultHeader = paymentsAsyncResultWaiter.getHeaderHolder().value;
+        resultHeader = paymentsAsyncResultWaiter.getHeaderHolder().value;
 
         answerProcessing.sendToBaseAndAnotherError(curMethodName, null, resultHeader, resultErrorMessage, LOGGER);
 

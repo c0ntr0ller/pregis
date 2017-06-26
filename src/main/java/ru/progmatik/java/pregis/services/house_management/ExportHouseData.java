@@ -162,13 +162,13 @@ public class ExportHouseData {
                                     answerProcessing.sendMessageToClient("    Идентификатор комнаты: " + livingRoom.getLivingRoomGUID());
 
                                     // Добавляем в БД уникальный номер комнаты абонента
-                                    gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), livingRoom.getRoomNumber(),
+                                    gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), livingRoom.getRoomNumber(), true,
                                             residentialPremise.getPremisesGUID(), residentialPremise.getPremisesUniqueNumber(),
                                             livingRoom.getLivingRoomGUID(), livingRoom.getLivingRoomUniqueNumber(), connectionGrad);
                                 }
                             } else { // Если нет комнат передаем квартиру
 //                                    Добавляем в БД уникальный номер помещения.
-                                gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), null,
+                                gradDao.setApartmentUniqueNumber(houseId, residentialPremise.getPremisesNum(), null, true,
                                         residentialPremise.getPremisesGUID(), residentialPremise.getPremisesUniqueNumber(), null, null, connectionGrad);
                             }
                         }
@@ -185,7 +185,7 @@ public class ExportHouseData {
                             answerProcessing.sendMessageToClient("Идентификатор помещения: " + nonResidentialPremise.getPremisesGUID());
 
 //                            Добавляем в БД уникальный номер помещения.
-                            gradDao.setApartmentUniqueNumber(houseId, nonResidentialPremise.getPremisesNum(), null,
+                            gradDao.setApartmentUniqueNumber(houseId, nonResidentialPremise.getPremisesNum(), null, false,
                                     nonResidentialPremise.getPremisesGUID(), nonResidentialPremise.getPremisesUniqueNumber(), null, null, connectionGrad);
 
                         }
@@ -200,7 +200,7 @@ public class ExportHouseData {
 
                     for (ExportHouseResultType.LivingHouse.LivingRoom room : result.getExportHouseResult().getLivingHouse().getLivingRoom()) {
 //                            Добавляем в БД уникальный номер помещения.
-                        gradDao.setApartmentUniqueNumber(houseId, room.getRoomNumber(), null,
+                        gradDao.setApartmentUniqueNumber(houseId, room.getRoomNumber(), null, true,
                                 room.getLivingRoomGUID(), room.getLivingRoomUniqueNumber(), null, null, connectionGrad);
 
                         answerProcessing.sendMessageToClient("");
@@ -225,7 +225,6 @@ public class ExportHouseData {
 
         final RequestHeader headerRequest = OtherFormat.getRequestHeader();
 
-        RequestHeader requestHeader = OtherFormat.getRequestHeader();
         ResultHeader resultHeader = null;
         Holder<ResultHeader> headerHolder = new Holder<>();
         ErrorMessageType resultErrorMessage = new ErrorMessageType();

@@ -112,7 +112,7 @@ public class OrganizationDAO {
         ArrayList<OrganizationDataSet> organizations = getAllOrganizations();
         if (organizations != null) {
             for (OrganizationDataSet organization : organizations) {
-                if (dataSet.getOgrn().equals(organization.getOgrn())) return organization;
+                if (dataSet.getOgrn().equalsIgnoreCase(organization.getOgrn())) return organization;
             }
         }
         return null;

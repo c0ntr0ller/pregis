@@ -69,6 +69,11 @@ public class Rooms {
     private boolean isCompany;
 
     /**
+     * Жилое помещение
+     */
+    private boolean isResidential;
+
+    /**
      * Получить номер ЛС УО (иной идентификатор потребителя).
      * Обязательный.
      * Выпадающий список, один из номеров лицевых счетов, заданный на листе «Основные сведения».
@@ -232,6 +237,14 @@ public class Rooms {
      */
     public void setCompany(boolean company) {
         isCompany = company;
+    }
+
+    public boolean isResidential() {
+        return isResidential;
+    }
+
+    public void setResidential(boolean residential) {
+        isResidential = residential;
     }
 
     @Override

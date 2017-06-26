@@ -46,7 +46,11 @@ public final class PaymentDocumentGradDAO {
     }
 
     public PaymentDocumentGradDAO(AnswerProcessing answerProcessing, Connection connectionGrad) throws SQLException {
-        this.answerProcessing = answerProcessing;
+        if(answerProcessing != null) {
+            this.answerProcessing = answerProcessing;
+        }else{
+            this.answerProcessing = new AnswerProcessing();
+        }
         this.connectionGrad = connectionGrad;
         getGradClosedPeriod();
     }
@@ -114,7 +118,7 @@ public final class PaymentDocumentGradDAO {
             }
         }
         if (paymentInformationMap.size() < 1) {
-            throw new PreGISException("Не удалось получить реквизиты из процедуры \"EX_GIS_ORG_LIST\".");
+            answerProcessing.sendInformationToClientAndLog("Не удалось получить реквизиты из процедуры EX_GIS_ORG_LIST", LOGGER);
         }
         return paymentInformationMap;
     }

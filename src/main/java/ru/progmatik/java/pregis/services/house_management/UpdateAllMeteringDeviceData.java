@@ -62,7 +62,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
 
                 for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
-                    if (resultType.getStatusRootDoc().equals("Active")) {
+                    if (resultType.getStatusRootDoc().equalsIgnoreCase("Active")) {
                         deviceForArchive.put(resultType.getMeteringDeviceVersionGUID(), null);
                     }
                 }

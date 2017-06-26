@@ -55,7 +55,13 @@ public final class AccountGRADDAO {
     private SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
 
     public AccountGRADDAO(AnswerProcessing answerProcessing) throws SQLException {
-        this.answerProcessing = answerProcessing;
+
+        if(answerProcessing != null) {
+            this.answerProcessing = answerProcessing;
+        }else{
+            this.answerProcessing = new AnswerProcessing();
+        }
+
         if (!ConnectionDB.instance().tableExist(TABLE_NAME_ACCOUNT_FOR_REMOVE.toUpperCase())) {
             try (Connection connection = ConnectionDB.instance().getConnectionDB();
                  Statement statement = connection.createStatement()) {
@@ -163,6 +169,11 @@ public final class AccountGRADDAO {
                     rooms.setIdSpaceGISJKH(arrayData[10]);
                     rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
                     rooms.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
+                    if(arrayData[11].equals("0")){
+                        rooms.setResidential(false);
+                    }else{
+                        rooms.setResidential(true);
+                    }
 //                    rooms.setAccountGUID(arrayData[8]); // Саша должен добавить
 //                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
 
@@ -234,8 +245,8 @@ public final class AccountGRADDAO {
                                                                                      LinkedHashMap<String, Rooms> roomsList)
             throws ParseException, SQLException, PreGISException {
 
-        if(answerProcessing != null) {answerProcessing.sendMessageToClient("");}
-        if(answerProcessing != null) {answerProcessing.sendMessageToClient("Формирую данные...");}
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Формирую данные...");
         final ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
         if (roomsList == null) {
             roomsList = getRoomsMaps(houseID, connection);
@@ -247,7 +258,7 @@ public final class AccountGRADDAO {
         LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 
         if (basicInformationList == null || roomsList == null) {
-            throw new PreGISException("Не найдены лицевые счета для дома с ИД: " + houseID + ".");
+            answerProcessing.sendInformationToClientAndLog("Не найдены лицевые счета для дома с ИД: " + houseID + ".", LOGGER);
         }
 
         for (BasicInformation basicInformation : basicInformationList) {
@@ -345,9 +356,11 @@ public final class AccountGRADDAO {
                 setIsAccount(account);
                 account.setCreationDate(OtherFormat.getDateNow());
 
-                mapAccount.put(basicInformation.getNumberLS(), account);
+                //if (account.getAccountGUID() != null && !account.getAccountGUID().equals("")) {
+                    mapAccount.put(basicInformation.getNumberLS(), account);
 
-                count++;
+                    count++;
+                //}
 //                    roomsList.remove(i);
                 // i--;
 //                }
@@ -534,12 +547,14 @@ public final class AccountGRADDAO {
      * @throws SQLException
      */
     public Integer getAbonentIdFromGrad(final String accountNumber, final Connection connection) throws ParseException, SQLException {
+        if(accountNumber == null || accountNumber.equals("")){
+            return 0;
+        }
         Integer sqlResult;
-        String sqlRequest = "select a.id from abonents a where a.g_licschet = ?";
+        String sqlRequest = "select a.id from abonents a where a.g_licschet = '" + accountNumber + "'";
 
-        try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
-            cstmt.setString(1, accountNumber);
-            ResultSet resultSet = cstmt.executeQuery();
+        try (Statement cstmt = connection.createStatement()) { // После использования должны все соединения закрыться
+            ResultSet resultSet = cstmt.executeQuery(sqlRequest);
             resultSet.next();
             sqlResult = resultSet.getInt(1);
             resultSet.close();

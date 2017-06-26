@@ -185,7 +185,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
         for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : deviceForArchiveAndCreateMap.entrySet()) {
             for (ImportMeteringDeviceDataRequest.MeteringDevice deviceUpdate : devicesForUpdateList) {
-                if (entry.getKey().equals(deviceUpdate.getTransportGUID())) {
+                if (entry.getKey().equalsIgnoreCase(deviceUpdate.getTransportGUID())) {
                     outMap.put(deviceUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID(), entry.getValue());
                 }
             }
@@ -382,7 +382,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 basicCharacteristics.getCollectiveApartmentDevice().setPremiseGUID(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "PREMISESGUID", connectionGrad));
                 basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
                 for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                    if (exGisPu1Element[METER_ID_PU1].equals(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
+                    if (exGisPu1Element[METER_ID_PU1].equalsIgnoreCase(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
                         basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(OtherFormat.getAllDataFromString(arrayData)[ABON_ID_PU2]), connectionGrad));
                     }
                 }
@@ -392,7 +392,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 basicCharacteristics.setApartmentHouseDevice(new MeteringDeviceBasicCharacteristicsType.ApartmentHouseDevice());
                 basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
                 for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                    if (exGisPu1Element[METER_ID_PU1].equals(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
+                    if (exGisPu1Element[METER_ID_PU1].equalsIgnoreCase(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
                         basicCharacteristics.getApartmentHouseDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(OtherFormat.getAllDataFromString(arrayData)[ABON_ID_PU2]), connectionGrad));
                     }
                 }
@@ -402,7 +402,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), connectionGrad));
                 basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().add(accountGRADDAO.getBuildingIdentifiersFromBase(Integer.valueOf(exGisPu1Element[ABON_ID_PU1]), "LIVINGROOMGUID", connectionGrad));
                 for (String arrayData : getOtherLsForPu(houseId, connectionGrad)) {
-                    if (exGisPu1Element[METER_ID_PU1].equals(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
+                    if (exGisPu1Element[METER_ID_PU1].equalsIgnoreCase(OtherFormat.getAllDataFromString(arrayData)[METER_ID_PU2])) {
                         basicCharacteristics.getLivingRoomDevice().getAccountGUID().add(accountGRADDAO.getAccountGUIDFromBaseWithException(Integer.valueOf(OtherFormat.getAllDataFromString(arrayData)[ABON_ID_PU2]), connectionGrad));
                     }
                 }

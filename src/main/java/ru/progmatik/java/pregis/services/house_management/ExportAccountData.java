@@ -61,7 +61,7 @@ public class ExportAccountData {
 
         answerProcessing.sendMessageToClient("");
 
-        AccountAsyncResultWaiter accountAsyncResultWaiter = null;
+        HouseManagementAsyncResultWaiter accountAsyncResultWaiter = null;
         GetStateResult result;
 
         result = null;
@@ -75,7 +75,7 @@ public class ExportAccountData {
 
             // ждем результат в асинхронном режиме
             if (ackRequest != null) {
-                accountAsyncResultWaiter = new AccountAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
+                accountAsyncResultWaiter = new HouseManagementAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
                 result = accountAsyncResultWaiter.getRequestResult();
             }
 

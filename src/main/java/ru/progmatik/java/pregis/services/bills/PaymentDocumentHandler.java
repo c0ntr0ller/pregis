@@ -85,7 +85,7 @@ public class PaymentDocumentHandler {
         // формируем запрос на отзыв документов
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGradId, pdGradDao);
 
-            // если есть документы на закрытие после синхорнизации - добавляем их
+            // если есть документы на закрытие после синхронизации - добавляем их
         if (syncWithDrawList.size() > 0) {
             final ImportPaymentDocumentRequest withdrawPaymentDocumentRequest = new ImportPaymentDocumentRequest();
 
@@ -107,6 +107,8 @@ public class PaymentDocumentHandler {
 
     /**
      * Метод собирает запрос с новыми документами в ГИС
+     * @param houseGradId ИД дома в Град
+     * @param pdGradDao Объект работы с Градом
      * @return подготовленный к отправке запрос
      */
     private ImportPaymentDocumentRequest compileImportDocumentRequest(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
@@ -115,16 +117,18 @@ public class PaymentDocumentHandler {
         final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =
                 pdGradDao.getPaymentInformationMap(houseGradId);
 
-        answerProcessing.sendMessageToClient("Создается список новых платежных документов");
-        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap =
-                pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
-        if (paymentDocumentMap != null) {
-            allCount = paymentDocumentMap.size();
-        }
+        HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap = null;
 
-//        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
-//        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> withdrawPaymentDocuments =
-//                pdGradDao.getWithdrawPaymentDocument(houseGradId);
+        if(paymentInformationMap != null && paymentInformationMap.size() > 0) {
+            answerProcessing.sendMessageToClient("Создается список новых платежных документов");
+            paymentDocumentMap = pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
+            if (paymentDocumentMap != null) {
+                allCount = paymentDocumentMap.size();
+            }
+        }
+        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
+        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> withdrawPaymentDocuments =
+                pdGradDao.getWithdrawPaymentDocument(houseGradId);
 
         answerProcessing.clearLabelForText();
 
@@ -137,11 +141,7 @@ public class PaymentDocumentHandler {
         importPaymentDocumentRequest.setMonth(pdGradDao.getMonth());
         importPaymentDocumentRequest.setYear(pdGradDao.getYear());
         importPaymentDocumentRequest.getPaymentInformation().addAll(paymentInformationMap.values());
-        if (paymentDocumentMap != null && paymentDocumentMap.size() > 0)
-            importPaymentDocumentRequest.getPaymentDocument().addAll(paymentDocumentMap.values());
-//        if (withdrawPaymentDocuments != null && withdrawPaymentDocuments.size() > 0)
-//            importPaymentDocumentRequest.getWithdrawPaymentDocument().addAll(withdrawPaymentDocuments);
-
+        importPaymentDocumentRequest.getPaymentDocument().addAll(paymentDocumentMap.values());
         return importPaymentDocumentRequest;
     }
 
@@ -199,31 +199,34 @@ public class PaymentDocumentHandler {
 
         // запрашиваем документы из Гис
         final List<ExportPaymentDocumentResultType> paymentDocumentGisList = getPaymentDocumentsFromGIS(fias, pdGradDao.getMonth(), pdGradDao.getYear());
+
         // сравниваем и делаем поправки в Град
 
         // все, которые есть в ГИС, но отсутствуют в Град - добавляем в список на закрытие
-        for (ExportPaymentDocumentResultType paymentDocumentGis:paymentDocumentGisList) {
-            // если еще не отозван в ГИС
-            if (paymentDocumentGis.getPaymentDocument().isWithdraw() == null || !paymentDocumentGis.getPaymentDocument().isWithdraw()) {
-                if(
-                    // в Граде вообще ничего нет
-                    paymentDocumentMapGrad == null
-                    // документ в Граде есть, но он отозван
-                    || (paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
-                        && paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).isWithdraw() != null
-                    )
-                            // в Граде нет с таким номером ЕПД
-                    || !paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
-                            // в Граде есть, но без ГИД
-                    || paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID() == null
-                            // в Граде есть с таким ЕПД, но не совпадают ИД документов
-                    || !paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID().equals(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID()) ){
+        if(paymentDocumentGisList != null) {
+            for (ExportPaymentDocumentResultType paymentDocumentGis : paymentDocumentGisList) {
+                // если еще не отозван в ГИС
+                if (paymentDocumentGis.getPaymentDocument().isWithdraw() == null || !paymentDocumentGis.getPaymentDocument().isWithdraw()) {
+                    if (
+                        // в Граде вообще ничего нет
+                            paymentDocumentMapGrad == null
+                                    // документ в Граде есть, но он отозван
+                                    || (paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
+                                    && paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).isWithdraw() != null
+                            )
+                                    // в Граде нет с таким номером ЕПД
+                                    || !paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
+                                    // в Граде есть, но без ГИД
+                                    || paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID() == null
+                                    // в Граде есть с таким ЕПД, но не совпадают ИД документов
+                                    || !paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID().equals(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID())) {
 
 
-                    ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
-                    withdrawPaymentDocument.setPaymentDocumentID(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID());
-                    withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
-                    paymentDocumentWithdrawArray.add(withdrawPaymentDocument);
+                        ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
+                        withdrawPaymentDocument.setPaymentDocumentID(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID());
+                        withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
+                        paymentDocumentWithdrawArray.add(withdrawPaymentDocument);
+                    }
                 }
             }
         }
@@ -246,7 +249,9 @@ public class PaymentDocumentHandler {
             exportPaymentDocumentRequest.getAccountNumber().add(account.getAccountNumber());
         }
 
-        return new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(null, exportPaymentDocumentRequest).getExportPaymentDocResult();
+        GetStateResult stateResult = new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(null, exportPaymentDocumentRequest);
+        if(stateResult != null) return stateResult.getExportPaymentDocResult();
+        return null;
     }
 
     private boolean generateNewDocuments(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) {
@@ -348,7 +353,7 @@ public class PaymentDocumentHandler {
 
         return (out.getMonth() == in.getMonth()) && (out.getYear() == in.getYear()) &&
                 out.getSumma().equals(in.getSumma()) && (out.getAbonId() == in.getAbonId()) &&
-                out.getAccountGuid().equals(in.getAccountGuid()) && !in.isArchive();
+                out.getAccountGuid().equalsIgnoreCase(in.getAccountGuid()) && !in.isArchive();
     }
 
     private void showEnd() {

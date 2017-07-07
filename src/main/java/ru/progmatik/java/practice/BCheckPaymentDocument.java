@@ -17,6 +17,6 @@ public class BCheckPaymentDocument {
 //        PaymentDocumentHandler pdh = new PaymentDocumentHandler(null);
 //        pdh.paymentDocumentImport(21);
         PaymentDocumentGradDAO gradDAO = new PaymentDocumentGradDAO(null, ConnectionBaseGRAD.instance().getConnection());
-        gradDAO.addPaymentDocumentRegistryItem("3486", "7331f8e3-b184-4b8e-8396-a2c46079617d");
+        gradDAO.addPaymentDocumentRegistryItem("5785", "7331f8e3-b184-4b8e-8396-a2c46079617d");
     }
 }

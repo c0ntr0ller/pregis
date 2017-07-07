@@ -17,6 +17,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.sql.Date;
@@ -62,7 +63,7 @@ public final class PaymentDocumentGradDAO {
     private void getGradClosedPeriod() throws SQLException {
         try (Statement statement = connectionGrad.createStatement()) {
 
-            ResultSet rs = statement.executeQuery("select first(1) extract(month from t.closedate), extract(year from t.closedate) from T_PERIODCLOSE t");
+            ResultSet rs = statement.executeQuery("select RMONTH, RYEAR from EX_GIS_PERIOD(null)");
             if(rs.next()&& rs.getInt(1) > 0 && rs.getInt(2) > 0) {
                 this.month = rs.getInt(1);
                 this.year = rs.getShort(2);
@@ -84,8 +85,10 @@ public final class PaymentDocumentGradDAO {
 
     public boolean GeneratePaymentDocuments(final Integer houseGradID){
         try {
-            CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(null, null, null, ?, null)");
-            callableStatement.setInt(1, houseGradID);
+            CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(?, ?, null, ?, null)");
+            callableStatement.setInt(1, this.getMonth());
+            callableStatement.setShort(2, this.getYear());
+            callableStatement.setInt(3, houseGradID);
             callableStatement.execute();
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось сгенерировать ЕПД по дому " +  houseGradID, LOGGER);
@@ -411,7 +414,11 @@ public final class PaymentDocumentGradDAO {
 
                 //            Ссылка на платежные реквизиты
                 if(paymentInformationMap != null)
-                    paymentDocument.setPaymentInformationKey(paymentInformationMap.get(invoce02.getPayee_id()).getTransportGUID());
+                    if(paymentInformationMap.get(invoce02.getPayee_id()) != null) {
+                        paymentDocument.setPaymentInformationKey(paymentInformationMap.get(invoce02.getPayee_id()).getTransportGUID());
+                    }else{
+                        throw new PreGISException("Критическая ошибка - не задан платежный агент ИД " + invoce02.getPayee_id());
+                    }
             }
             // закончили заносить начисления
 
@@ -590,7 +597,7 @@ public final class PaymentDocumentGradDAO {
         return  accountsMap;
     }
 
-    private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID) throws SQLException {
+    private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID) throws SQLException, PreGISException {
         Statement chargesStatement = connectionGrad.createStatement();
         ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
                 "rgis_service, " +
@@ -657,6 +664,10 @@ public final class PaymentDocumentGradDAO {
             invoice02.setCharge_total(charges.getBigDecimal("rcharge_total"));
             invoice02.setPayee_id(charges.getInt("rpayee_id"));
 
+            if(invoice02.getCode() == null){
+                throw new PreGISException("Отсутствует код услуги ГИС!");
+            }
+
             ArrayList<Invoice02> invoceList = chargesMap.get(invoice02.getPd_no());
 
             if(invoceList == null){
@@ -679,7 +690,7 @@ public final class PaymentDocumentGradDAO {
         try {
             connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = " + paymentDocumentNumber);
         }catch(SQLException e){
-            answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber, LOGGER);
+            answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber + "; " + e.getMessage(), LOGGER);
         }
     }
 

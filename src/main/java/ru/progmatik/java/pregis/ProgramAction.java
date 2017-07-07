@@ -130,13 +130,13 @@ public final class ProgramAction {
     /**
      * Метод, получаем данные о МКД из ГИС ЖКХ.
      */
-    public void callExportHouseData() {
+    public void callExportHouseData(final String houseGradID) {
 
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
             final ExportHouseData houseData = new ExportHouseData(answerProcessing);
-            houseData.updateAllHouseData();
+            houseData.updateAllHouseData(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
         } finally {

@@ -50,13 +50,13 @@ public class PaymentsAsyncResultWaiter {
         try {
             timeOut = ResourcesUtil.instance().getTimeOut();
         } catch (PreGISException e) {
-            timeOut = 1000;
+            timeOut = 5000;
         }
 
         try {
             maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
         } catch (PreGISException e) {
-            maxRequestCount = 100;
+            maxRequestCount = 1000;
         }
     }
 

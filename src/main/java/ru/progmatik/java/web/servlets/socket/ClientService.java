@@ -64,7 +64,7 @@ public final class ClientService {
                     action.getOrgPPAGUID();
                     break;
                 case "getHouseUO":
-                    action.callExportHouseData();
+                    action.callExportHouseData(value);
                     break;
                 case "getExportPaymentDocumentData":
                     action.callExportPaymentDocumentData();

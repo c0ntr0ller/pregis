@@ -161,9 +161,8 @@ public class ResourcesUtil {
         return Long.valueOf(properties.getProperty("config.gis.timeout"));
         } catch (NumberFormatException e) {
             LOGGER.error("ResourcesUtil: Указано неверное число миллисекунд задержки в файле параметров \"settings\\application.properties\".\n" +
-                    "Значение должно содержать только цифры.");
-            throw new PreGISException("ResourcesUtil: Указано неверное число миллисекунд задержки опроса сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
-                    "Значение должно содержать только цифры.");
+                    "Значение должно содержать только цифры. Значение по-умолчанию 5 секунд");
+            return 5000;
         }
     }
 
@@ -172,11 +171,22 @@ public class ResourcesUtil {
             return Long.valueOf(properties.getProperty("config.gis.maxrequestcount"));
         } catch (NumberFormatException e) {
             LOGGER.error("ResourcesUtil: Указано неверное максимальное кол-во опросов сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
-                    "Значение должно содержать только цифры.");
-            throw new PreGISException("ResourcesUtil: Указано неверное максимальное кол-во опросов сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
-                    "Значение должно содержать только цифры.");
+                    "Значение должно содержать только цифры.  Значение по-умолчанию 1000");
+            return 1000;
         }
     }
+    public int getMaxRequestSize() throws PreGISException {
+        try{
+            return Integer.valueOf(properties.getProperty("config.gis.maxrequestsize"));
+        } catch (NumberFormatException e) {
+            LOGGER.error("ResourcesUtil: Указано неверное максимальное кол-во элементов запроса к сервера ГИС ЖКХ в файле параметров \"settings\\application.properties\".\n" +
+                    "Значение должно содержать только цифры. Значение по-умолчанию 100 записей в запросе");
+            return 100;
+        }
+    }
+
+
+
     /**
      * Метод, создаёт папку, если она не создана.
      * @param folderName имя папки.

@@ -107,7 +107,7 @@ public final class AccountGRADDAO {
                     bi.setSurname(arrayData[5]);
                     bi.setName(arrayData[6]);
                     bi.setMiddleName(arrayData[7]);
-                    bi.setSnils(arrayData[8].replaceAll("-", "").replaceAll(" ", ""));
+// закомментили. при передаче СНИЛС ругается на паспорт. но СНИЛСы у нас не подтверждены, поэтому ну их                    bi.setSnils(arrayData[8].replaceAll("-", "").replaceAll(" ", ""));
                     bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[9]));
                     bi.setNumberDocumentIdentity(arrayData[10]);
                     bi.setSeriesDocumentIdentity(arrayData[11]);
@@ -299,6 +299,8 @@ public final class AccountGRADDAO {
 //                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias()); // Выдаё ошибку, по описанию можно выбирать.
                 accommodation.setLivingRoomGUID(livingRoomGUID); // Идентификатор комнаты
                 accommodation.setSharePercent(new BigDecimal(fRoom.getSharePay()).setScale(0, BigDecimal.ROUND_DOWN));
+                if(accommodation.getSharePercent() == null) accommodation.setSharePercent(new BigDecimal(100)); // если ничего не пришло - ставим 100, иначе ГИС выдает ошибку
+
                 account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
@@ -315,9 +317,9 @@ public final class AccountGRADDAO {
                     if (basicInformation.getMiddleName() != null) {
                         account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
                     }
-                    if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
-                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
-                    }
+//                    if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
+//                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
+//                    }
                 }
 
                 if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
@@ -454,10 +456,10 @@ public final class AccountGRADDAO {
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
             String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
             try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) {
-                answerProcessing.sendMessageToClient(String.format("abonentId: %s:\n" +
-                                "accountGUID: %s\n" +
-                                "accountUniqueNumber: %s.",
-                        abonentId, accountGUID, accountUniqueNumber));
+//                answerProcessing.sendMessageToClient(String.format("abonentId: %s:\n" +
+//                                "accountGUID: %s\n" +
+//                                "accountUniqueNumber: %s.",
+//                        abonentId, accountGUID, accountUniqueNumber));
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, accountGUID);
                 cstmt.setString(3, accountUniqueNumber);

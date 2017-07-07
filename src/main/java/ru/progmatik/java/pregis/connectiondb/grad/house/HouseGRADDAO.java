@@ -80,7 +80,7 @@ public final class HouseGRADDAO {
             * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public LinkedHashMap<String, HouseRecord> getAllHouseFIASAddress(final Connection connectionGrad) throws SQLException, PreGISException {
+    public LinkedHashMap<String, HouseRecord> getAllHouseFIASAddress(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
 //        answerProcessing.sendMessageToClient(":getAllHouseFIAS"); //!!!------
 
         final List<String> allListHouseData = getAllHouseFromGrad(connectionGrad);
@@ -97,15 +97,28 @@ public final class HouseGRADDAO {
         }
         if (mapFIAS.size() == 0)
             return null;
-        else
-            return mapFIAS;
+        else {
+            if (houseGradId == null) {
+                return mapFIAS;
+            } else {
+                for (Map.Entry<String, HouseRecord> entry : mapFIAS.entrySet()) {
+                    if (houseGradId.equals(entry.getValue().getGrad_id())) {
+                        final LinkedHashMap<String, HouseRecord> tmpMap = new LinkedHashMap<>();
+                        tmpMap.put(entry.getKey(), entry.getValue());
+                        return tmpMap;
+                    }
+                }
+            }
+
+        }
+        return null;
     }
     /**
      * Метод, возвращает все найденные жилые дома, т.е. их код дома по ФИАС и ИД из БД ГРАД.
      *
      * @return перечень всех жилых домов, ФИАС = ИД дома в БД ГРАД.
      */
-    public LinkedHashMap<String, HouseRecord> getJDAllFias(final Connection connectionGrad) throws SQLException, PreGISException {
+    public LinkedHashMap<String, HouseRecord> getJDAllFias(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
 
         final ArrayList<String> listAllData = getJdAllFiasFromGrad(connectionGrad);
         final LinkedHashMap<String, HouseRecord> mapJd = new LinkedHashMap<>();
@@ -128,8 +141,23 @@ public final class HouseGRADDAO {
             }
         } else return null; // если в листе нет данных вернем null
 
-        if (mapJd.size() == 0) return null;
-        else return mapJd;
+        if (mapJd.size() == 0)
+            return null;
+        else {
+            if (houseGradId == null) {
+                return mapJd;
+            } else {
+                for (Map.Entry<String, HouseRecord> entry : mapJd.entrySet()) {
+                    if (houseGradId.equals(entry.getValue().getGrad_id())) {
+                        final LinkedHashMap<String, HouseRecord> tmpMap = new LinkedHashMap<>();
+                        tmpMap.put(entry.getKey(), entry.getValue());
+                        return tmpMap;
+                    }
+                }
+            }
+
+        }
+        return null;
     }
 
     /**
@@ -372,8 +400,8 @@ public final class HouseGRADDAO {
      */
     private Integer getHouseIdFromGrad(final String fias, final Connection connectionGrad) throws SQLException, PreGISException {
 
-        final LinkedHashMap<String, HouseRecord> mapMkdData = getAllHouseFIASAddress(connectionGrad);
-        final LinkedHashMap<String, HouseRecord> mapJdData = getJDAllFias(connectionGrad);
+        final LinkedHashMap<String, HouseRecord> mapMkdData = getAllHouseFIASAddress(null, connectionGrad);
+        final LinkedHashMap<String, HouseRecord> mapJdData = getJDAllFias(null, connectionGrad);
 
         if (mapMkdData.containsKey(fias)) {
             return mapMkdData.get(fias).getGrad_id();

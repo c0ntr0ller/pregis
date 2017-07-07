@@ -176,7 +176,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
             LOGGER.error("ClientMessageHandler: ", e);
             e.printStackTrace();
         }
-        LOGGER.error("ClientMessageHandler: Не найден элемент для подписи.");
+        // TODO Закомментировал, так как при асинхронном режиме дает постоянную ошибку , нужно разобраться LOGGER.error("ClientMessageHandler: Не найден элемент для подписи.");
         return false;
     }
 }

@@ -221,6 +221,7 @@ public class UpdateReference {
                 for (NsiElementType nsiElement : nsiElements) {
                     if (nsiElement.isIsActual()) {
                         if (!mapNsiWithCodeNsi.containsKey(nsiElement.getCode()) ||
+                                mapNsiWithCodeNsi.get(nsiElement.getCode()).getGuid() == null ||
                                 !mapNsiWithCodeNsi.get(nsiElement.getCode()).getGuid().equals(nsiElement.getGUID())) { // проверяем есть элемент в базе по коду справочника и guid'a
                             listForAdd.add(nsiElement); // элемент не найденили GUID не соответствует добавляем в лист для обновления в БД.
                         }

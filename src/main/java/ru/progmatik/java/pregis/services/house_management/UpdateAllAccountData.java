@@ -177,23 +177,28 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     if(abonId > 0) {
                         // final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(abonId, connection);
 
-                        // если в Граде у абонента ACCOUNTGUID тоже пустой
-                        if (entry.getValue().getAccountGUID() == null ||
-                                // или при одинаковом ЛС разные GUID
-                                (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
-                                        !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID())
-                                )
-                           ) {
+                        if(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null) {
+                            // если в Граде у абонента ACCOUNTGUID тоже пустой
+                            if (entry.getValue().getAccountGUID() == null ||
+                                    // или при одинаковом ЛС разные GUID
+                                    (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
+                                            !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID())
+                                    )
+                                    ) {
 
-                            // проверяем и впытаемся занести его ACCOUNTGUID в БД. если не занесли
-                            if (!checkAccountDataIsAddedGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
-                                    houseId, null, connection)) {
+                                // проверяем и впытаемся занести его ACCOUNTGUID в БД. если не занесли
+                                if (!checkAccountDataIsAddedGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
+                                        houseId, null, connection)) {
 
-                                final String transportGUID = OtherFormat.getRandomGUID();
-                                entry.getValue().setTransportGUID(transportGUID);
-//                            entry.getValue().setAccountGUID(null);
-                                accountDataMap.put(transportGUID, entry.getValue());
+                                    final String transportGUID = OtherFormat.getRandomGUID();
+                                    entry.getValue().setTransportGUID(transportGUID);
+                                    accountDataMap.put(transportGUID, entry.getValue());
+                                }
                             }
+                        }else {
+                            final String transportGUID = OtherFormat.getRandomGUID();
+                            entry.getValue().setTransportGUID(transportGUID);
+                            accountDataMap.put(transportGUID, entry.getValue());
                         }
                     }
                 }
@@ -259,7 +264,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                              LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad) throws PreGISException, SQLException {
         for (ExportAccountResultType acc: exportAccountResult) {
             if(accountListFromGrad.get(acc.getAccountNumber()) == null && acc.getClosed() == null){
-                addAccountDataForClose(acc, "Ошибка ввода", "Абонент есть в ГИС, но нет в Град");
+// TODO пока закоментил, позже разберемся с закрытием, так как не все помещения пока попали нормально                addAccountDataForClose(acc, "Ошибка ввода", "Абонент есть в ГИС, но нет в Град");
             }
         }
     }
@@ -398,8 +403,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             if (account.getAccountNumber().equalsIgnoreCase(accountFromGISJKH.getAccountNumber())) { // если в БД есть элемент, добавляем идентификаторы в БД
 
 //                Проверка откл.
-                System.err.println("GRAD: " + account.getAccountGUID());
-                System.err.println("GIS: " + accountFromGISJKH.getAccountGUID());
+//                System.err.println("GRAD: " + account.getAccountGUID());
+//                System.err.println("GIS: " + accountFromGISJKH.getAccountGUID());
 
 //                String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
 //                        accountGRADDAO.getAbonentIdFromGrad(houseId, account.getAccountNumber(), connection), connection);
@@ -514,17 +519,17 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
     private void setAccountToBase(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber, Connection connection) throws ParseException, SQLException, PreGISException {
 
         if (accountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, connection)) {
-            answerProcessing.sendMessageToClient("");
+//            answerProcessing.sendMessageToClient("");
 
-            if (accountGUID != null && accountUniqueNumber != null) {
-                answerProcessing.sendMessageToClient(String.format("Для лицевого счета № %s:\n" +
-                                "Добавлен идентификатор: %s\nДобавлен уникальный идентификатор: %s.",
-                        accountNumber, accountGUID, accountUniqueNumber));
-            } else if (accountGUID != null) {
-                answerProcessing.sendMessageToClient(String.format("Добавлен идентификатор: %s, для лицевого счета № %s", accountGUID, accountNumber));
-            } else if (accountUniqueNumber != null) {
-                answerProcessing.sendMessageToClient(String.format("Добавлен уникальный идентификатор: %s, для лицевого счета № %s", accountUniqueNumber, accountNumber));
-            }
+//            if (accountGUID != null && accountUniqueNumber != null) {
+//                answerProcessing.sendMessageToClient(String.format("Для лицевого счета № %s:\n" +
+//                                "Добавлен идентификатор: %s\nДобавлен уникальный идентификатор: %s.",
+//                        accountNumber, accountGUID, accountUniqueNumber));
+//            } else if (accountGUID != null) {
+//                answerProcessing.sendMessageToClient(String.format("Добавлен идентификатор: %s, для лицевого счета № %s", accountGUID, accountNumber));
+//            } else if (accountUniqueNumber != null) {
+//                answerProcessing.sendMessageToClient(String.format("Добавлен уникальный идентификатор: %s, для лицевого счета № %s", accountUniqueNumber, accountNumber));
+//            }
             countAddedToGRAD++;
         } else {
             setErrorState(0);

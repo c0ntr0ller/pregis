@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** класс служит для запроса списка контрактов по дому и манипулирования им
+ * АХТУНГ! importContractData не работает ввиду дебилизма ГИС ЖКХ изза требований обязательности Аттачментов к договору управления!!!
  * Created by Администратор on 06.07.2017.
  */
 public class HouseContractDataPort {
@@ -134,22 +135,22 @@ public class HouseContractDataPort {
      * @return
      * @throws SQLException
      */
-    public HashMap<String, NsiRef> getHouseServices(GetStateResult stateResult) throws SQLException {
+    public HashMap<String, NsiRef> getHouseServices(ExportCAChResultType.Contract curContract) throws SQLException {
 
         HashMap<String, NsiRef> nsiMap = new HashMap<>();
-        for(ExportCAChResultType entry: stateResult.getExportCAChResult()){
-            for(ExportCAChResultType.Contract.ContractObject contractObject : entry.getContract().getContractObject()){
-                for(ExportCAChResultType.Contract.ContractObject.HouseService houseService: contractObject.getHouseService()){
-                    if(!nsiMap.containsKey(houseService.getServiceType().getGUID()))
-                    nsiMap.put(houseService.getServiceType().getGUID(), houseService.getServiceType());
-                }
 
-                for(ExportCAChResultType.Contract.ContractObject.AddService addService: contractObject.getAddService()){
-                    if(!nsiMap.containsKey(addService.getServiceType().getGUID()))
-                        nsiMap.put(addService.getServiceType().getGUID(), addService.getServiceType());
-                }
+        for(ExportCAChResultType.Contract.ContractObject contractObject : curContract.getContractObject()){
+            for(ExportCAChResultType.Contract.ContractObject.HouseService houseService: contractObject.getHouseService()){
+                if(!nsiMap.containsKey(houseService.getServiceType().getGUID()))
+                nsiMap.put(houseService.getServiceType().getGUID(), houseService.getServiceType());
+            }
+
+            for(ExportCAChResultType.Contract.ContractObject.AddService addService: contractObject.getAddService()){
+                if(!nsiMap.containsKey(addService.getServiceType().getGUID()))
+                    nsiMap.put(addService.getServiceType().getGUID(), addService.getServiceType());
             }
         }
+
         return nsiMap;
     }
 
@@ -208,7 +209,7 @@ public class HouseContractDataPort {
         editContract.setContractVersionGUID(curContract.getContractVersionGUID());
         // editContract.setContractBase(curContract.getContractBase());
 
-        editContract.setValidity(curContract.getValidity());
+// необяз.        editContract.setValidity(curContract.getValidity());
         editContract.setCooperative(curContract.getCooperative());
         editContract.setMunicipalHousing(curContract.getMunicipalHousing());
         editContract.setBuildingOwner(curContract.getBuildingOwner());
@@ -222,12 +223,11 @@ public class HouseContractDataPort {
         //! editContract.getAgreementAttachment().addAll(curContract.getAgreementAttachment());
         editContract.getContractAttachment().addAll(curContract.getContractAttachment());
         for (AttachmentType attachmentType: editContract.getContractAttachment()) {
-            Attachment attachment = new Attachment();
-            attachmentType.setAttachment(attachment);
+            attachmentType.setAttachmentHASH(null);
         }
         editContract.setContractBase(curContract.getContractBase());
 
-        editContract.setDateDetails(curContract.getDateDetails());
+// необяз.        editContract.setDateDetails(curContract.getDateDetails());
 
         ImportContractRequest.Contract contract = new ImportContractRequest.Contract();
         contract.setEditContract(editContract);

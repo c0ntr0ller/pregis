@@ -1,12 +1,15 @@
 package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.Attachment;
+import ru.gosuslugi.dom.schema.integration.base.AttachmentType;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.bills.*;
 import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
+import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryDataSet;
@@ -16,6 +19,7 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house_management.HouseContractDataPort;
+import ru.progmatik.java.pregis.services.house_management.AccountIndividualServicesPort;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Connection;
@@ -106,10 +110,10 @@ public class PaymentDocumentHandler {
         }
 
         // формируем массив запросов
-        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(houseGradId, pdGradDao);
+        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGradId, pdGradDao);
 
         // синхронизируем услуги документов с услугами дома
-        synchronizeContracts(fias, importPaymentDocumentRequestList);
+        synchronizeContracts(fias, importPaymentDocumentRequestList, pdGradDao);
 
         if(importPaymentDocumentRequestList != null) {
             for (ImportPaymentDocumentRequest request : importPaymentDocumentRequestList) {
@@ -127,13 +131,74 @@ public class PaymentDocumentHandler {
      * @param fias ФИАС дома
      * @param importPaymentDocumentRequestList - массив запросов на создание платежных документов
      */
-    private void synchronizeContracts(String fias, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList) throws SQLException {
+    private void synchronizeContracts(final String fias, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException {
         // запрашиваем услуги из ГИС
         HouseContractDataPort contractDataPort = new HouseContractDataPort(answerProcessing);
         ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(fias);
 
-        HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(resultContract);
+        // получаем действующий контракт
+        ExportCAChResultType.Contract curContract = null;
+        for(ExportCAChResultType caChResultType:resultContract.getExportCAChResult()){
+            if(caChResultType.getContract().getContractStatus().equals("Approved")){
+                curContract = caChResultType.getContract();
+            }
+        }
+        if(curContract == null){
+            curContract = resultContract.getExportCAChResult().get(0).getContract();
+        }
+        // по контракту получаем список услуг на доме (на доме, а не на абонентах!!!)
+        HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(curContract);
 
+        // бежим по реквесту с документами и смотрим услуги для каждого абонента. если услуги нет - создаем ее у абонента
+        for (ImportPaymentDocumentRequest request: importPaymentDocumentRequestList) {
+            for (ImportPaymentDocumentRequest.PaymentDocument paymentDocument: request.getPaymentDocument()) {
+                Iterator<PaymentDocumentType.ChargeInfo> it = paymentDocument.getChargeInfo().iterator();
+                while (it.hasNext()) {
+                    PaymentDocumentType.ChargeInfo chargeInfo = it.next();
+                    // коммунальные
+                    if(chargeInfo.getMunicipalService() != null){
+                        if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
+
+                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
+                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
+                                        address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName(), LOGGER);
+                            }
+
+                            it.remove();
+                        }
+                    }
+                    // жилищные
+                    if(chargeInfo.getHousingService() != null){
+                        if(!gisServices.containsKey(chargeInfo.getHousingService().getServiceType().getGUID())){
+
+                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
+                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
+                                        address.getValue() + " присутствует не заведенная на доме жилищная услуга " + chargeInfo.getHousingService().getServiceType().getName(), LOGGER);
+                            }
+
+                            it.remove();
+                        }
+                    }
+                    // допуслуги
+                    if(chargeInfo.getAdditionalService() != null){
+                        if(!gisServices.containsKey(chargeInfo.getAdditionalService().getServiceType().getGUID())){
+
+                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
+                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
+                                        address.getValue() + " присутствует не заведенная на доме доп.услуга " + chargeInfo.getAdditionalService().getServiceType().getName(), LOGGER);
+                            }
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }
+
+
+/* TODO Разобраться с файлами аттачмента
         // составляем массив услуг из запросов
         HashMap<String, NsiRef> requestServices = new HashMap<> ();
         for (ImportPaymentDocumentRequest request: importPaymentDocumentRequestList) {
@@ -160,6 +225,72 @@ public class PaymentDocumentHandler {
         if(absentServices.size() > 0){
             contractDataPort.callCreateNewContracts(fias, absentServices, resultContract);
         }
+*/
+    }
+
+    /**
+     * Метод получает услуги абонента из ГИС и проверяет - входит ли в его услуги указанная услуга из начислений
+     * @param chargeInfo
+     * @param accountGUID
+     * @return
+     * @throws SQLException
+     */
+    private boolean accountContainsService(final PaymentDocumentType.ChargeInfo chargeInfo,
+                                           final String accountGUID) throws SQLException {
+
+        AccountIndividualServicesPort accountIndividualServicesPort = new AccountIndividualServicesPort(answerProcessing);
+        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult stateResult = accountIndividualServicesPort.callExportAccountIndividualServices(accountGUID);
+
+        for(ExportAccountIndividualServicesResultType servicesResultType: stateResult.getExportAccountIndividualServicesResult()){
+            if(servicesResultType.getAccountGUID().equals(accountGUID)){
+                if(servicesResultType.getAccountIndividualServiceGUID().equals(chargeInfo.getAdditionalService().getServiceType().getGUID())){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Метод создает запрос на добавление индивидуальной услуги абоненту и вызывает его
+     * @param chargeInfo Информация о начислении. Отсюда будем брать название услуги и ее ИД
+     * @param accountGUID GUID абонента
+     * @param beginDate Дата начала контракта на дом
+     * @param endDate Дата конца контракта на дом
+     * @throws SQLException
+     */
+    private void importIndividualService(final PaymentDocumentType.ChargeInfo chargeInfo,
+                                         final String accountGUID,
+                                         final XMLGregorianCalendar beginDate,
+                                         final XMLGregorianCalendar endDate) throws SQLException {
+
+        // если у абонента уже есть такая услуга - ничего не делаем
+        if(accountContainsService(chargeInfo, accountGUID)) return;
+
+        // собираем запрос на добавление услуги
+        ImportAccountIndividualServicesRequest.IndividualService individualService = new ImportAccountIndividualServicesRequest.IndividualService();
+        individualService.setAdditionalService(chargeInfo.getAdditionalService().getServiceType());
+        individualService.setBeginDate(beginDate);
+        individualService.setEndDate(endDate);
+
+        AttachmentType attachmentType = new AttachmentType();
+
+        attachmentType.setName("Добавление услуги " + chargeInfo.getAdditionalService().getServiceType().getName());
+        attachmentType.setDescription("Добавление услуги " + chargeInfo.getAdditionalService().getServiceType().getName());
+        attachmentType.setAttachment(new Attachment());
+        attachmentType.getAttachment().setAttachmentGUID(OtherFormat.getRandomGUID());
+
+        individualService.setAttachment(attachmentType);
+        individualService.setAccountGUID(accountGUID);
+        individualService.setTransportGUID(OtherFormat.getRandomGUID());
+
+        ImportAccountIndividualServicesRequest request = new ImportAccountIndividualServicesRequest();
+        request.setIndividualService(individualService);
+
+        // отсылаем запрос на добавление услуги. результат нас особо не интересует
+        AccountIndividualServicesPort accountIndividualServicesPort = new AccountIndividualServicesPort(answerProcessing);
+        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult StateResult = accountIndividualServicesPort.callImportAccountIndividualServices(request);
     }
 
     /**
@@ -168,7 +299,7 @@ public class PaymentDocumentHandler {
      * @param pdGradDao Объект работы с Градом
      * @return массив подготовленных к отправке запросов
      */
-    private List<ImportPaymentDocumentRequest> compileImportDocumentRequest(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
+    private List<ImportPaymentDocumentRequest> compileImportDocumentRequest(final String fias, final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
 
         answerProcessing.sendMessageToClient("Создается список платежных реквизитов получателей по дому");
         final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =

@@ -567,7 +567,9 @@ public final class PaymentDocumentGradDAO {
                 "ravans, " +
                 "rpays_advance, " +
                 "rbik, " +
-                "rbank_account " +
+                "rbank_account, " +
+                "rnls, " +
+                "raddress " +
                 "from ex_gis_invoce01(" + month + ", " +
                 year + ", " +
                 "null, " +
@@ -579,6 +581,8 @@ public final class PaymentDocumentGradDAO {
         while(accountsResultSet.next()){
             Invoice01 invoce01 = new Invoice01();
             invoce01.setAccountguid(accountsResultSet.getString("raccountguid"));
+            invoce01.setAccountNLS(accountsResultSet.getString("rnls"));
+            invoce01.setAddress(accountsResultSet.getString("raddress"));
             invoce01.setPd_type(accountsResultSet.getString("rpd_type"));
             invoce01.setPd_no(accountsResultSet.getString("rpd_no"));
             invoce01.setSq_total(accountsResultSet.getBigDecimal("rsq_total"));
@@ -637,6 +641,7 @@ public final class PaymentDocumentGradDAO {
         while (charges.next()){
             Invoice02 invoice02 = new Invoice02();
             invoice02.setPd_no(charges.getString("rpd_no"));
+            invoice02.setGis_service(charges.getString("rgis_service"));
             invoice02.setGis_service_uiid(charges.getString("rgis_service_uiid"));
             invoice02.setIpu(charges.getString("ripu"));
             invoice02.setAmount_personal(charges.getDouble("ramount_personal"));
@@ -694,6 +699,35 @@ public final class PaymentDocumentGradDAO {
         }
     }
 
+    /**
+     * Метод, находит в БД ГРАД ЛС и адрес абонента по GUID.
+     *
+     * @param GUID номер ЛС.
+     * @return ЛС и адрес абонента
+     * @throws ParseException
+     * @throws SQLException
+     */
+    public HashMap<String, String> getAbonentNLSbyGUIDFromGrad(final String GUID) throws ParseException, SQLException {
+        if(GUID == null || GUID.equals("")){
+            return null;
+        }
+        HashMap<String, String> accountNLSMap = new HashMap<>();
+
+        String sqlRequest = "select a.g_licschet, a.address_short\n" +
+                "from v_abons a\n" +
+                "join abonents2traits a2t on a2t.abonent_id = a.id\n" +
+                "join abonent_traits t on t.id = a2t.traits_id\n" +
+                "where t.code = 'ACCOUNTGUID'\n" +
+                "  and a2t.traits_value = '" + GUID + "'";
+
+        try (Statement cstmt = connectionGrad.createStatement()) { // После использования должны все соединения закрыться
+            ResultSet resultSet = cstmt.executeQuery(sqlRequest);
+            resultSet.next();
+            accountNLSMap.put(resultSet.getString(1), resultSet.getString(2));
+            resultSet.close();
+        }
+        return accountNLSMap;
+    }
 
     /**
      * Метод, возвращает статус ошибки.

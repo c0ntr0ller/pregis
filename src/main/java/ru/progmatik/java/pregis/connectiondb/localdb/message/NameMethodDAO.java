@@ -65,7 +65,9 @@ class NameMethodDAO {
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importVotingProtocol', 'Импорт протокола ОСС'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportShareEncbrData', 'Экспорт долей собственности и обременений. ВИ_ИРАО_ЭКСП_ДОЛЯОБР.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importShareEncbrData', 'Импорт долей собственности и обременений. ВИ_ИРАО_ИМП_ДОЛЯОБР.'); " +
-            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importNotificationData', 'Импорт новостей для информирования граждан. ВИ_ИО_И_1.');";
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importNotificationData', 'Импорт новостей для информирования граждан. ВИ_ИО_И_1.'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importAccountIndividualServices', 'Импорт индивидуальных услуг лицевого счета'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportAccountIndividualServices', 'Экспорт индивидуальных услуг лицевого счета'); ";
 
     /**
      * Конструктор проверяет, существует таблица или нет. Если таблицы нет, то создаст её.

@@ -8,6 +8,8 @@ import java.math.BigDecimal;
  */
 public class Invoice01 {
     private String accountguid;
+    private String accountNLS;
+    private String address;
     private String pd_type;
     private String pd_no;
     private BigDecimal sq_total;
@@ -26,6 +28,22 @@ public class Invoice01 {
 
     public void setAccountguid(String accountguid) {
         this.accountguid = accountguid;
+    }
+
+    public String getAccountNLS() {
+        return accountNLS;
+    }
+
+    public void setAccountNLS(String accountNLS) {
+        this.accountNLS = accountNLS;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPd_type() {

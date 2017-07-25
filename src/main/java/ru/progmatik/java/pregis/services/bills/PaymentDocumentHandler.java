@@ -112,10 +112,11 @@ public class PaymentDocumentHandler {
         // формируем массив запросов
         final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGradId, pdGradDao);
 
-        // синхронизируем услуги документов с услугами дома
-        synchronizeContracts(fias, importPaymentDocumentRequestList, pdGradDao);
+        if(importPaymentDocumentRequestList != null && importPaymentDocumentRequestList.size() > 0) {
 
-        if(importPaymentDocumentRequestList != null) {
+            // синхронизируем услуги документов с услугами дома
+            synchronizeContracts(fias, importPaymentDocumentRequestList, pdGradDao);
+
             for (ImportPaymentDocumentRequest request : importPaymentDocumentRequestList) {
                 if (request != null) {
                     // отсылаем результат в процедуру, которая вышлет данные в ГИС и обработает ответ
@@ -313,8 +314,9 @@ public class PaymentDocumentHandler {
         ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentArrayList = null;
         if(paymentInformationMap.size() > 0) {
             answerProcessing.sendMessageToClient("Создается список новых платежных документов");
-            paymentDocumentArrayList = new ArrayList<>(pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap).values());
-            allCount = paymentDocumentArrayList.size();
+            HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentHashMap = pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
+            if (paymentDocumentHashMap != null)
+                paymentDocumentArrayList = new ArrayList(paymentDocumentHashMap.values());
         }
 //        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
 //        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> withdrawPaymentDocuments =
@@ -328,6 +330,7 @@ public class PaymentDocumentHandler {
             return null;
         }
 
+        allCount = paymentDocumentArrayList.size();
         ArrayList<ImportPaymentDocumentRequest> importPaymentDocumentRequestArrayList = new ArrayList<>();
 
         int chunk = ResourcesUtil.instance().getMaxRequestSize();; // chunk size to divide

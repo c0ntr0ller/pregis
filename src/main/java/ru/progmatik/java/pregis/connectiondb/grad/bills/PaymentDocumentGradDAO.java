@@ -182,6 +182,7 @@ public final class PaymentDocumentGradDAO {
 //            paymentDocument.setPaymentDocumentNumber(String.format("%010d", accountGrad.getValue().getPd_no()));
 
             // создаем Адресные сведения
+/* ушло в версии 11.2.0.18
             paymentDocument.setAddressInfo(new PaymentDocumentType.AddressInfo());
             // Количество проживающих
             paymentDocument.getAddressInfo().setLivingPersonsNumber(accountGrad.getValue().getTencount());
@@ -191,7 +192,7 @@ public final class PaymentDocumentGradDAO {
             paymentDocument.getAddressInfo().setHeatedArea(accountGrad.getValue().getSq_heat());
             // Общая площадь для ЛС
             paymentDocument.getAddressInfo().setTotalSquare(accountGrad.getValue().getSq_total());
-
+*/
             // заносим начисления
             for (Invoice02 invoce02: accountCharges) {
                 PaymentDocumentType.ChargeInfo chargeInfo = new PaymentDocumentType.ChargeInfo();

@@ -91,9 +91,9 @@ public class ExportAccountData {
 
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
 
-        if (resultErrorMessage != null) {
-            result = null;
-        }
+//        if (resultErrorMessage != null) {
+//            result = null;
+//        }
 
         return result;
     }

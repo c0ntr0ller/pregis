@@ -79,11 +79,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 final LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
                 countAll += accountListFromGrad.size();
 
-                if (stateResult == null || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
+                if (stateResult == null){ // || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
                     errorState = 0;
                 } else if (stateResult.getErrorMessage() != null && stateResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
                     checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
-                } else {
+                } else if(stateResult.getErrorMessage() != null || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0){
+                    errorState = 0;
+                }else {
                     countAllGisJkh += stateResult.getExportAccountResult().size();
 //                    List<ExportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
 ////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.

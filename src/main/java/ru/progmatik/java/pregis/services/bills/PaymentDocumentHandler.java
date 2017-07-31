@@ -161,6 +161,7 @@ public class PaymentDocumentHandler {
                 while (it.hasNext()) {
                     PaymentDocumentType.ChargeInfo chargeInfo = it.next();
                     // коммунальные
+/*  коммунальные пока не проверяем, так как там могут быть вложенные услуги. да их намного меньше, исправят руками
                     if(chargeInfo.getMunicipalService() != null){
                         if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
 
@@ -172,7 +173,7 @@ public class PaymentDocumentHandler {
 
                             it.remove();
                         }
-                    }
+                    } */
                     // жилищные
                     if(chargeInfo.getHousingService() != null){
                         if(!gisServices.containsKey(chargeInfo.getHousingService().getServiceType().getGUID())){

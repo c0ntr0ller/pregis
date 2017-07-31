@@ -16,6 +16,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhFor
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
@@ -83,12 +84,13 @@ public final class PaymentDocumentGradDAO {
      * @param houseGradID          идентификатор дома в БД ГРАДа
      */
 
-    public boolean GeneratePaymentDocuments(final Integer houseGradID){
+    public boolean generatePaymentDocuments(final Integer houseGradID) throws PreGISException {
         try {
-            CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(?, ?, null, ?, null)");
+            CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(?, ?, ?, ?, null)");
             callableStatement.setInt(1, this.getMonth());
             callableStatement.setShort(2, this.getYear());
-            callableStatement.setInt(3, houseGradID);
+            callableStatement.setInt(3, ResourcesUtil.instance().getCompanyGradId());
+            callableStatement.setInt(4, houseGradID);
             callableStatement.execute();
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось сгенерировать ЕПД по дому " +  houseGradID, LOGGER);
@@ -555,7 +557,7 @@ public final class PaymentDocumentGradDAO {
      * @return - map  с ключом - номер ЕПД
      * @throws SQLException
      */
-    private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID) throws SQLException {
+    private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID) throws SQLException, PreGISException {
         Statement accountStatement = connectionGrad.createStatement();
         String sqlQuery = "select raccountguid, " +
                 "rpd_type, " +
@@ -573,7 +575,7 @@ public final class PaymentDocumentGradDAO {
                 "raddress " +
                 "from ex_gis_invoce01(" + month + ", " +
                 year + ", " +
-                "null, " +
+                ResourcesUtil.instance().getCompanyGradId() + ", " +
                 houseGradID + ", null)";
         ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
 
@@ -634,7 +636,7 @@ public final class PaymentDocumentGradDAO {
                 "rpayee_id " +
                 "from ex_gis_invoce02(" + month + ", " +
                 year + ", " +
-                "null, " +
+                ResourcesUtil.instance().getCompanyGradId() + ", " +
                 houseGradID + ", null)");
 
         HashMap<String, ArrayList<Invoice02>> chargesMap = new HashMap<>();

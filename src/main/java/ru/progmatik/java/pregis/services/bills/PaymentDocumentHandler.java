@@ -9,7 +9,6 @@ import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentRegistryDataSet;
@@ -83,7 +82,7 @@ public class PaymentDocumentHandler {
      * @param connectionGrad
      * @throws SQLException
      */
-    public void sendPaymentDocumentsHouse(final String fias, final int houseGradId, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
+    private void sendPaymentDocumentsHouse(final String fias, final int houseGradId, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
         final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing, connectionGrad);
 
@@ -132,10 +131,15 @@ public class PaymentDocumentHandler {
      * @param fias ФИАС дома
      * @param importPaymentDocumentRequestList - массив запросов на создание платежных документов
      */
-    private void synchronizeContracts(final String fias, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException {
+    private void synchronizeContracts(final String fias, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException, PreGISException {
         // запрашиваем услуги из ГИС
         HouseContractDataPort contractDataPort = new HouseContractDataPort(answerProcessing);
         ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(fias);
+
+        // если нет контрактов - выдаем ошибку
+        if(resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
+            throw new PreGISException("Не найден договор управления на доме в ГИС ЖКХ.");
+        }
 
         // получаем действующий контракт
         ExportCAChResultType.Contract curContract = null;
@@ -459,10 +463,10 @@ public class PaymentDocumentHandler {
         return null;
     }
 
-    private boolean generateNewDocuments(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) {
+    private boolean generateNewDocuments(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws PreGISException {
         answerProcessing.sendMessageToClient("Формируются платежные документы по дому в ГРАД");
         // Генерация документов на стороне БД. Если успешно - создаем списки документов
-        boolean result = pdGradDao.GeneratePaymentDocuments(houseGradId);
+        boolean result = pdGradDao.generatePaymentDocuments(houseGradId);
         if (!result) {
             answerProcessing.sendMessageToClient("Не удалось сформировать платежные документы");
         }else{

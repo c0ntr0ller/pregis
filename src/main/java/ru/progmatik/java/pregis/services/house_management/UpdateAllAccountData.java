@@ -157,7 +157,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         final LinkedHashMap<String, ExportAccountResultType> accountsMapFromGISJKH = new LinkedHashMap<>();
         if(accountsListFromGISJKH != null) {
             for (ExportAccountResultType exportAccountResultType : accountsListFromGISJKH) {
-                accountsMapFromGISJKH.put(exportAccountResultType.getAccountNumber(), exportAccountResultType);
+                if(exportAccountResultType.getClosed() == null)
+                    accountsMapFromGISJKH.put(exportAccountResultType.getAccountNumber(), exportAccountResultType);
             }
         }
 //        Ключ - TransportGUID, значение - Account
@@ -243,13 +244,17 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      */
     private void checkDuplicateAccountDataGisJkh(final List<ExportAccountResultType> exportAccountResult) throws PreGISException, SQLException {
         for (int i = 0; i < exportAccountResult.size(); i++) {
+
+            String ar1 = exportAccountResult.get(i).getAccountNumber();
+
             for (int j = i + 1; j < exportAccountResult.size(); j++) {
-                String ar1 = exportAccountResult.get(i).getAccountNumber();
+
                 String ar2 = exportAccountResult.get(j).getAccountNumber();
+
                 if (ar1 != null && ar2 != null && !exportAccountResult.get(i).getAccountGUID().equals(exportAccountResult.get(j).getAccountGUID()) &&
                         ar1.equalsIgnoreCase(ar2) &&
                         (exportAccountResult.get(i).getClosed() == null && exportAccountResult.get(j).getClosed() == null)) {
-//                    addAccountDataForClose(exportAccountResult.get(i), "Изменение реквизитов лицевого счета", "Абонент продублирован в ГИС");
+
                     addAccountDataForClose(exportAccountResult.get(j), "Изменение реквизитов лицевого счета", "Абонент продублирован в ГИС");
                 }
             }

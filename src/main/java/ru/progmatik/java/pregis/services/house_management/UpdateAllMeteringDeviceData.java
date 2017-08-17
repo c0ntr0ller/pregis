@@ -1,10 +1,7 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResult;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResultType;
-import ru.gosuslugi.dom.schema.integration.house_management.ImportMeteringDeviceDataRequest;
-import ru.gosuslugi.dom.schema.integration.house_management.ImportResult;
+import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
@@ -94,33 +91,41 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 if (answerProcessing!= null ) {answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());}
                 final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
 
-                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD);
-
 //                Импортируем ранее загруженные ПУ
                 final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-                List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey()).getExportMeteringDeviceDataResult();
-                if (exportMeteringDeviceDataResultList != null) {
-                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
-                    devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD); // если добавились новые идентификаторы, нужно исключить их
+
+                GetStateResult getStateResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList;
+                if(getStateResult != null) {
+                    exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
+                    if (exportMeteringDeviceDataResultList != null) {
+                        meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
+                    }
                 }
+
+                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD); // если добавились новые идентификаторы, нужно исключить их
 
                 countAll += meteringDeviceGRADDAO.getCountAll();
 
                 callImportMeteringDevices(importMeteringDeviceData, devices, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
 
 //                Повторно загружаем для занесения MeteringDeviceRootGUID.
-                exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey()).getExportMeteringDeviceDataResult();
-                if (exportMeteringDeviceDataResultList != null) {
-                    meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
-                    for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResultList) {
-                        if (device.getStatusRootDoc().equalsIgnoreCase("Active")) {
+                getStateResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                if(getStateResult != null) {
+                    exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
+                    if (exportMeteringDeviceDataResultList != null) {
+                        meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
+                        for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResultList) {
+                            if (device.getStatusRootDoc().equalsIgnoreCase("Active")) {
 //                            только активные устройства
-                            countAllGisJkh++;
+                                countAllGisJkh++;
+                            }
                         }
-                    }
 //                    все устройства даже архивные
 //                    countAllGisJkh = exportMeteringDeviceDataResult.getMeteringDevice().size();
+                    }
                 }
+
                 if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
                     archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
                 }
@@ -257,16 +262,16 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 }
                 if (importResult != null && importResult.getCommonResult() != null) {
                     deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
-
-                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
-                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
-                        answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
-                        if(result.getImportMeteringDevice() != null) {
-                            answerProcessing.sendMessageToClient("meteringDeviceGUID: " + result.getImportMeteringDevice().getMeteringDeviceGUID());
-                        }
-                        answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
-                        answerProcessing.sendMessageToClient("");
-                    }
+                    answerProcessing.sendMessageToClient("Кол-во ПУ в резултате импорта: " + importResult.getCommonResult().size());
+//                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
+//                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
+//                        answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
+//                        if(result.getImportMeteringDevice() != null) {
+//                            answerProcessing.sendMessageToClient("meteringDeviceGUID: " + result.getImportMeteringDevice().getMeteringDeviceGUID());
+//                        }
+//                        answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
+//                        answerProcessing.sendMessageToClient("");
+//                    }
                     if (errorState > deviceGRADDAO.getErrorState()) errorState = deviceGRADDAO.getErrorState();
                 } else {
                     errorState = -1;

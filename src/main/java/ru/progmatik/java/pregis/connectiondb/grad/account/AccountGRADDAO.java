@@ -212,17 +212,17 @@ public final class AccountGRADDAO {
                 try {
                     final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(1));
 
-                    rooms.setNumberLS(arrayData[1]);
-                    rooms.setAddress(arrayData[2]);
-                    rooms.setFias(arrayData[3]);
+                    rooms.setAddress(arrayData[1]);
+                    rooms.setFias(arrayData[2]);
                     rooms.setNumberRooms(arrayData[4]);
-                    rooms.setNumberApartment(arrayData[5]);
-                    rooms.setIdSpaceGISJKH(arrayData[6]);
-                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
-                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
+                    //rooms.setNumberApartment(arrayData[4]);
+                    //rooms.setIdSpaceGISJKH(arrayData[8]);
+                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[7])));
+                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[8])));
+                    rooms.setNumberLS(arrayData[11]);
 //                    rooms.setAccountGUID(arrayData[9]); // Саша должен добавить
 //                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
-                    listRooms.put(arrayData[1], rooms);
+                    listRooms.put(rooms.getNumberLS(), rooms);
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                 }

@@ -67,6 +67,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     private LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchiveAndCreateMap = new LinkedHashMap<>();
     private int countAll = 0;
     private int countAdded = 0;
+    private int countSeted = 0;
     private int countUpdate = 0;
     private int errorState = 1;
 
@@ -276,11 +277,11 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         if (exGisPu1Element[4] == null) {
             try {
                 String[] ModelAndStamp = parsePU(exGisPu1Element[3]);
-//                  Марка ПУ
+//                  Марка ПУ обязательный
                 basicCharacteristics.setMeteringDeviceStamp(ModelAndStamp[1]);
 
-//                   Модель ПУ, обязательный, из БД приходит пустое значение
-                basicCharacteristics.setMeteringDeviceModel(ModelAndStamp[0]);
+//                   Модель ПУ, обязательный, если из БД приходит пустое значение - ставим расходомер
+                basicCharacteristics.setMeteringDeviceModel(ModelAndStamp[0].equals("") ? "расходомер" : ModelAndStamp[0]);
             } catch (NullPointerException e) {
 //                  Марка ПУ
                 basicCharacteristics.setMeteringDeviceStamp(exGisPu1Element[3]);
@@ -993,7 +994,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 //            LOGGER.debug("setMeteringDeviceToBase");
             if (setMeteringDeviceToBase(abonId, meterId, this.houseId, meteringUniqueNumber, meteringRootGUID, meteringVersionGUID, transportGUID, device, connectionGrad)) {
                 LOGGER.debug("Добавлен ПУ, abinId: " + abonId + " meterId: " + meterId);
-                countAdded++;
+                countSeted++;
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendMessageToClient("Дабавлен прибор учёта, Уникальный номер: " + meteringUniqueNumber + " идентификатор: " + meteringVersionGUID);
 //                answerProcessing.sendMessageToClient("");
@@ -1284,6 +1285,10 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 
             return value;
         }
+    }
+
+    public int getCountSeted() {
+        return countSeted;
     }
 
     /**

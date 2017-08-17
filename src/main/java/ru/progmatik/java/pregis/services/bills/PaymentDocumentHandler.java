@@ -138,7 +138,7 @@ public class PaymentDocumentHandler {
 
         // если нет контрактов - выдаем ошибку
         if(resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
-            throw new PreGISException("Не найден договор управления на доме в ГИС ЖКХ.");
+            throw new PreGISException("Не найден договор управления на доме в ГИС ЖКХ");
         }
 
         // получаем действующий контракт
@@ -151,6 +151,10 @@ public class PaymentDocumentHandler {
         if(curContract == null){
             curContract = resultContract.getExportCAChResult().get(0).getContract();
         }
+
+        if(curContract == null){
+            throw new PreGISException("Не найден ни один договор управления на доме в ГИС ЖКХ");
+        }
         // по контракту получаем список услуг на доме (на доме, а не на абонентах!!!)
         HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(curContract);
 
@@ -161,19 +165,18 @@ public class PaymentDocumentHandler {
                 while (it.hasNext()) {
                     PaymentDocumentType.ChargeInfo chargeInfo = it.next();
                     // коммунальные
-/*  коммунальные пока не проверяем, так как там могут быть вложенные услуги. да их намного меньше, исправят руками
+// /*  коммунальные пока не проверяем, так как там могут быть вложенные услуги. да их намного меньше, исправят руками
                     if(chargeInfo.getMunicipalService() != null){
                         if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
 
                             HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
                             for(Map.Entry<String,String> address: accountNLS.entrySet()) {
                                 answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
-                                        address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName(), LOGGER);
+                                        address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName() + ". Если она является субуслугой в ГИС, то, возможно, ошибки нет", LOGGER);
                             }
-
-                            it.remove();
+                            //it.remove(); // по коммунальной не убираем, так как может быть субуслугой
                         }
-                    } */
+                    }
                     // жилищные
                     if(chargeInfo.getHousingService() != null){
                         if(!gisServices.containsKey(chargeInfo.getHousingService().getServiceType().getGUID())){

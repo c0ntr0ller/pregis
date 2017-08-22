@@ -148,6 +148,7 @@ public final class AccountGRADDAO {
     @Deprecated
     public ArrayList<Rooms> getRooms(final int houseID, final Connection connection) throws ParseException, SQLException {
 
+        final Integer columnIndex = 2; // column with API data format
         final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
         final ArrayList<Rooms> listRooms = new ArrayList();
 
@@ -155,12 +156,12 @@ public final class AccountGRADDAO {
             while (resultSet.next()) {
 
 //                Бывают попадаются null
-                if (resultSet.getString(1) == null) continue;
+                if (resultSet.getString(columnIndex) == null) continue;
 
                 final Rooms rooms = new Rooms();
 
                 try {
-                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(1));
+                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(columnIndex));
 
                     rooms.setNumberLS(arrayData[1]);
                     rooms.setAddress(arrayData[2]);

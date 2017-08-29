@@ -137,7 +137,7 @@ public class PaymentDocumentHandler {
         ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(fias);
 
         // если нет контрактов - выдаем ошибку
-        if(resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
+        if(resultContract == null || resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
             throw new PreGISException("Не найден договор управления на доме в ГИС ЖКХ");
         }
 
@@ -158,7 +158,7 @@ public class PaymentDocumentHandler {
         // по контракту получаем список услуг на доме (на доме, а не на абонентах!!!)
         HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(curContract);
 
-        // бежим по реквесту с документами и смотрим услуги для каждого абонента. если услуги нет - создаем ее у абонента
+        // бежим по реквесту с документами и сравниваем услуги документов и контракта
         for (ImportPaymentDocumentRequest request: importPaymentDocumentRequestList) {
             for (ImportPaymentDocumentRequest.PaymentDocument paymentDocument: request.getPaymentDocument()) {
                 Iterator<PaymentDocumentType.ChargeInfo> it = paymentDocument.getChargeInfo().iterator();
@@ -174,7 +174,7 @@ public class PaymentDocumentHandler {
                                 answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
                                         address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName() + ". Если она является субуслугой в ГИС, то, возможно, ошибки нет", LOGGER);
                             }
-                            //it.remove(); // по коммунальной не убираем, так как может быть субуслугой
+//                            it.remove(); // по коммунальной не убираем, так как может быть субуслугой
                         }
                     }
                     // жилищные

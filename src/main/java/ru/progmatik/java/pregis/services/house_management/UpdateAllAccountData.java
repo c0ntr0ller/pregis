@@ -209,18 +209,18 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         } else {// если в ГИС ничего нет - всё просто добавляем
             for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
                 if (!isInClosedAccountList(entry.getKey())) {
+                    if(entry.getValue().getAccountGUID() == null) {
+                        final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
+                        if(abonId > 0) {
+                            final String accountGUIDFromBase = accountGRADDAO.getAccountGUIDFromBase(abonId, connection);
 
-                    final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
-                    if(abonId > 0) {
-                        final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
-                                accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection), connection);
+                            if (accountGUIDFromBase == null) {
 
-                        if (uniqueNumberFromDB == null && entry.getValue().getAccountGUID() == null) {
-
-                            final String transportGUID = OtherFormat.getRandomGUID();
-                            entry.getValue().setTransportGUID(transportGUID);
+                                final String transportGUID = OtherFormat.getRandomGUID();
+                                entry.getValue().setTransportGUID(transportGUID);
 //                            entry.getValue().setAccountGUID(null);
-                            accountDataMap.put(transportGUID, entry.getValue());
+                                accountDataMap.put(transportGUID, entry.getValue());
+                            }
                         }
                     }
                 }

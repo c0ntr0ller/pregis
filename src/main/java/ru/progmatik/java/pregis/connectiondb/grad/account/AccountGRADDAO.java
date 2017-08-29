@@ -170,7 +170,7 @@ public final class AccountGRADDAO {
                     rooms.setNumberApartment(arrayData[6]);
                     rooms.setIdSpaceGISJKH(arrayData[10]);
                     rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
-                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
+                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
                     if(arrayData[11].equals("0")){
                         rooms.setResidential(false);
                     }else{
@@ -199,6 +199,7 @@ public final class AccountGRADDAO {
      */
     public LinkedHashMap<String, Rooms> getRoomsMaps(final int houseID, final Connection connection) throws ParseException, SQLException {
 
+        final Integer columnIndex = 2; // column with API data format
         final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
         final LinkedHashMap<String, Rooms> listRooms = new LinkedHashMap<>();
 
@@ -206,21 +207,21 @@ public final class AccountGRADDAO {
             while (resultSet.next()) {
 
 //                Бывают попадаются null
-                if (resultSet.getString(1) == null) continue;
+                if (resultSet.getString(columnIndex) == null) continue;
 
                 final Rooms rooms = new Rooms();
 
                 try {
-                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(1));
+                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(columnIndex));
 
-                    rooms.setAddress(arrayData[1]);
-                    rooms.setFias(arrayData[2]);
-                    rooms.setNumberRooms(arrayData[4]);
-                    //rooms.setNumberApartment(arrayData[4]);
+                    rooms.setAddress(arrayData[2]);
+                    rooms.setFias(arrayData[3]);
+                    rooms.setNumberRooms(arrayData[5]);
+                    rooms.setNumberApartment(arrayData[6]);
                     //rooms.setIdSpaceGISJKH(arrayData[8]);
-                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[7])));
-                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[8])));
-                    rooms.setNumberLS(arrayData[11]);
+                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
+                    rooms.setNumberLS(arrayData[1]);
 //                    rooms.setAccountGUID(arrayData[9]); // Саша должен добавить
 //                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
                     listRooms.put(rooms.getNumberLS(), rooms);
@@ -261,6 +262,7 @@ public final class AccountGRADDAO {
 
         if (basicInformationList == null || roomsList == null) {
             answerProcessing.sendInformationToClientAndLog("Не найдены лицевые счета для дома с ИД: " + houseID + ".", LOGGER);
+            return mapAccount;
         }
 
         for (BasicInformation basicInformation : basicInformationList) {

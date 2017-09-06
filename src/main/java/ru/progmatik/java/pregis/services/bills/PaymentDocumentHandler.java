@@ -138,7 +138,7 @@ public class PaymentDocumentHandler {
 
         // если нет контрактов - выдаем ошибку
         if(resultContract == null || resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
-            throw new PreGISException("Не найден договор управления на доме в ГИС ЖКХ");
+            answerProcessing.sendMessageToClient("Не найден договор управления в ГИС ЖКХ, сверка не производится");
         }
 
         // получаем действующий контракт
@@ -166,17 +166,17 @@ public class PaymentDocumentHandler {
                     PaymentDocumentType.ChargeInfo chargeInfo = it.next();
                     // коммунальные
 // /*  коммунальные пока не проверяем, так как там могут быть вложенные услуги. да их намного меньше, исправят руками
-                    if(chargeInfo.getMunicipalService() != null){
-                        if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
-
-                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
-                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
-                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
-                                        address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName() + ". Если она является субуслугой в ГИС, то, возможно, ошибки нет", LOGGER);
-                            }
-//                            it.remove(); // по коммунальной не убираем, так как может быть субуслугой
-                        }
-                    }
+//                    if(chargeInfo.getMunicipalService() != null){
+//                        if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
+//
+//                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
+//                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+//                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
+//                                        address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName() + ". Если она является субуслугой в ГИС, то, возможно, ошибки нет", LOGGER);
+//                            }
+////                            it.remove(); // по коммунальной не убираем, так как может быть субуслугой
+//                        }
+//                    }
                     // жилищные
                     if(chargeInfo.getHousingService() != null){
                         if(!gisServices.containsKey(chargeInfo.getHousingService().getServiceType().getGUID())){

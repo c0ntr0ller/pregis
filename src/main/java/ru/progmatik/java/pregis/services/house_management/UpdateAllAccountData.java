@@ -87,7 +87,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     errorState = 0;
                 }else {
                     countAllGisJkh += stateResult.getExportAccountResult().size();
-//                    List<ExportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
+//                    List<ExCportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
 ////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.
 //                    while (countAllGisJkh % 50 == 0) {
 //                        exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());

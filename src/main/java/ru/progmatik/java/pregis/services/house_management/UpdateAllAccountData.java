@@ -12,7 +12,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.structures.HouseRecord;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import java.sql.Connection;

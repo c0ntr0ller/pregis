@@ -16,7 +16,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.pregis.other.UrlLoader;
-import ru.progmatik.java.pregis.structures.HouseRecord;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 
 import javax.xml.ws.Holder;
 import java.sql.Connection;

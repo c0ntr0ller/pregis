@@ -19,7 +19,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house_management.HouseContractDataPort;
 import ru.progmatik.java.pregis.services.house_management.AccountIndividualServicesPort;
-import ru.progmatik.java.pregis.structures.HouseRecord;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Connection;

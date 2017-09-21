@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.exception.PreGISArgumentNotFoundFromBaseExceptio
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.house_management.IMeteringDevices;
 
 import javax.xml.bind.JAXBContext;
@@ -138,13 +139,13 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                     answerProcessing.sendMessageToClient("идентификатор ПУ в Граде: " + exGisPu1Element[METER_ID_PU1] + ",\n" +
                             "идентификатор абонента в Граде: " + exGisPu1Element[ABON_ID_PU1]);
                 }
-                LOGGER.info("ПУ добавлен для выгрузки meterId: " + exGisPu1Element[METER_ID_PU1] +
-                        " AbonId: " + exGisPu1Element[ABON_ID_PU1]);
+//                LOGGER.info("ПУ добавлен для выгрузки meterId: " + exGisPu1Element[METER_ID_PU1] +
+//                        " AbonId: " + exGisPu1Element[ABON_ID_PU1]);
             }
         }
         for (ImportMeteringDeviceDataRequest.MeteringDevice deviceForUpdate : devicesForUpdateList) {
             meteringDeviceList.add(deviceForUpdate);
-            LOGGER.info("ПУ добавлен для обновления в ГИС ЖКХ: " + deviceForUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
+//            LOGGER.info("ПУ добавлен для обновления в ГИС ЖКХ: " + deviceForUpdate.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
         }
 
         return meteringDeviceList;
@@ -433,7 +434,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param connectionGRAD                 подключение к БД ГРАД.
      * @throws SQLException
      */
-    public void checkExportMeteringDevices(List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList, Connection connectionGRAD) throws SQLException {
+    public void checkExportMeteringDevices(List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList, Connection connectionGRAD) throws SQLException, PreGISException {
 
         for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
             if (resultType.getStatusRootDoc().equals("Active")) {
@@ -504,7 +505,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      */
     private void checkMeteringDevice(String meteringDeviceRootGUID, String meteringDeviceVersionGUID,
                                      MeteringDeviceBasicCharacteristicsType meteringDeviceBasicCharacteristicsType,
-                                     Connection connectionGRAD) throws SQLException {
+                                     Connection connectionGRAD) throws SQLException, PreGISException {
 
         Integer meterId;
         String meteringRootGUIDGrad;
@@ -639,7 +640,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     private void setByAccountAndPremiseGUIDs(String meteringDeviceRootGUID,
                                              String meteringDeviceVersionGUID,
                                              MeteringDeviceBasicCharacteristicsType basicCharacteristics,
-                                             Connection connectionGRAD) throws SQLException {
+                                             Connection connectionGRAD) throws SQLException, PreGISException {
 
         for (Map.Entry<String, LinkedHashMap<Integer, ImportMeteringDeviceDataRequest.MeteringDevice>>
                 mapEntry : mapTransportMeteringDevice.entrySet()) {
@@ -756,7 +757,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param meteringDeviceVersionGUID идентификатор версии ПУ в ГИС ЖКХ.
      * @param connectionGRAD            подключение к БД ГРАД.
      */
-    public void updateMeteringVersionGUID(Integer meterId, String meteringDeviceRootGUID, String meteringDeviceVersionGUID, Connection connectionGRAD) throws SQLException {
+    public void updateMeteringVersionGUID(Integer meterId, String meteringDeviceRootGUID, String meteringDeviceVersionGUID, Connection connectionGRAD) throws SQLException, PreGISException {
         setMeteringDeviceUniqueNumbers(meterId, meteringDeviceVersionGUID, meteringDeviceRootGUID, connectionGRAD);
         if (devicesDataLocalDBDAO.getMeterIdFromLocalBaseUseMeteringVersionGUID(meteringDeviceVersionGUID) == null) {
             devicesDataLocalDBDAO.setMeteringVersionGUIDToLocalDb(meterId, meteringDeviceRootGUID, meteringDeviceVersionGUID);
@@ -775,7 +776,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param meteringDeviceRootGUID идентификатор ПУ в ГИС ЖКХ.
      * @param connectionGRAD         подключение к БД ГРАД.
      */
-    private void setMeteringRootGUID(Integer meterId, String meteringDeviceRootGUID, Connection connectionGRAD) throws SQLException {
+    private void setMeteringRootGUID(Integer meterId, String meteringDeviceRootGUID, Connection connectionGRAD) throws SQLException, PreGISException {
         setMeteringDeviceUniqueNumbers(meterId, null, meteringDeviceRootGUID, connectionGRAD);
         if (devicesDataLocalDBDAO.getMeterIdFromLocalBaseUseMeteringRootGUID(meteringDeviceRootGUID) == null) {  // Если передали новый meteringDeviceRootGUID, то из базы вернется null
             devicesDataLocalDBDAO.setMeteringRootGUIDToLocalDb(meterId, meteringDeviceRootGUID);
@@ -909,7 +910,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param connectionGrad подключение к БД ГРАД.
      * @throws SQLException
      */
-    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
+    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
 
         if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
@@ -966,7 +967,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @throws SQLException
      */
     private void setMeteringDevices(String meteringUniqueNumber, String meteringRootGUID, String meteringVersionGUID,
-                                    String transportGUID, Connection connectionGrad) throws SQLException {
+                                    String transportGUID, Connection connectionGrad) throws SQLException, PreGISException {
 
         if (mapTransportMeteringDevice.containsKey(transportGUID)) {
 
@@ -1021,7 +1022,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      */
     private boolean setMeteringDeviceToBase(Integer abonId, Integer meterId, Integer houseId, String meteringUniqueNumber,
                                             String meteringRootGUID, String meteringVersionGUID, String transportGUID,
-                                            ImportMeteringDeviceDataRequest.MeteringDevice device, Connection connectionGRAD) throws SQLException {
+                                            ImportMeteringDeviceDataRequest.MeteringDevice device, Connection connectionGRAD) throws SQLException, PreGISException {
 
         boolean state = false;
 
@@ -1100,7 +1101,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      */
     private boolean setMeteringDeviceToBase(Integer abonId, Integer meterId, Integer houseId, String accountGUID, String premiseGUID,
                                             String livingRoomGUID, String meteringDeviceNumber, String meteringUniqueNumber,
-                                            String meteringRootGUID, String meteringVersionGUID, String transportGUID, boolean isNonResitential, Connection connectionGrad) throws SQLException {
+                                            String meteringRootGUID, String meteringVersionGUID, String transportGUID, boolean isNonResitential, Connection connectionGrad) throws SQLException, PreGISException {
 
         LOGGER.debug("abinId: " + abonId + " meterId: " + meterId + " houseId: " + houseId);
         if (devicesDataLocalDBDAO.getMeterIdFromLocalBaseUseMeteringRootGUID(meteringRootGUID) == null) {
@@ -1211,7 +1212,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param connectionGrad            подключение к БД ГРАД.
      * @throws SQLException
      */
-    private void setMeteringDeviceUniqueNumbers(Integer meterId, String meteringDeviceVersionGUID, String meteringDeviceRootGUID, Connection connectionGrad) throws SQLException {
+    private void setMeteringDeviceUniqueNumbers(Integer meterId, String meteringDeviceVersionGUID, String meteringDeviceRootGUID, Connection connectionGrad) throws SQLException, PreGISException {
 //        Могут принять null объект из-за этого лучше так:
 //        String tempMeteringDeviceVersionGUID = accountGRADDAO.getBuildingIdentifiersFromBase(abonId, "METERVERSIONGUID", connectionGrad);
 //        String tempMeteringDeviceRootGUID = accountGRADDAO.getBuildingIdentifiersFromBase(abonId, "METERROOTGUID", connectionGrad);
@@ -1228,10 +1229,11 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 //        }
 
 //        if (tempMeteringDeviceRootGUID != null || tempMeteringDeviceVersionGUID != null) {
-        try (CallableStatement call = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, ?, NULL)}")) {
+        try (CallableStatement call = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, ?, NULL, NULL, ?)}")) {
             call.setInt(1, meterId);
             call.setString(2, meteringDeviceVersionGUID);
             call.setString(3, meteringDeviceRootGUID);
+            call.setInt(4, ResourcesUtil.instance().getCompanyGradId());
             call.executeQuery();
         } catch (NullPointerException e) {
             LOGGER.info("Не удалось найти нидентификатор прибора учёта! MeterID: " + meterId +
@@ -1249,15 +1251,16 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @return найденный идентификатор в БД ГРАД или null.
      * @throws SQLException
      */
-    public String getMeteringDeviceUniqueNumbersFromGrad(Integer meterId, String identifier, Connection connectionGRAD) throws SQLException {
+    public String getMeteringDeviceUniqueNumbersFromGrad(Integer meterId, String identifier, Connection connectionGRAD) throws SQLException, PreGISException {
 
         String answer;
 //        отслеживание параметров процедуры
 //        LOGGER.debug("EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , " + meterId + ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + identifier + ")");
 
-        try (CallableStatement call = connectionGRAD.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}")) {
+        try (CallableStatement call = connectionGRAD.prepareCall("{EXECUTE PROCEDURE EX_GIS_ID(NULL, NULL , ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, NULL, ?)}")) {
             call.setInt(1, meterId);
             call.setString(2, identifier);
+            call.setInt(3, ResourcesUtil.instance().getCompanyGradId());
             ResultSet rs = call.executeQuery();
             rs.next();
             answer = rs.getString(1);

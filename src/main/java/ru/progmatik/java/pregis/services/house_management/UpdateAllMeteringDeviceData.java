@@ -247,7 +247,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
     private void callImportMeteringDevices(final ImportMeteringDeviceData importMeteringDeviceData,
                                            final List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
                                            final String fias, final IMeteringDevices deviceGRADDAO,
-                                           final Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
+                                           final Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
 
         if (devices.size() > 0) {
             int count = 0;
@@ -262,7 +262,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 }
                 if (importResult != null && importResult.getCommonResult() != null) {
                     deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
-                    answerProcessing.sendMessageToClient("Кол-во ПУ в резултате импорта: " + importResult.getCommonResult().size());
+                    answerProcessing.sendMessageToClient("Кол-во ПУ в результате импорта: " + importResult.getCommonResult().size());
 //                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 //                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
 //                        answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());

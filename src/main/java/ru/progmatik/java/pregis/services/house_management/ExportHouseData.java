@@ -71,7 +71,7 @@ public class ExportHouseData {
      * @throws PreGISException ошибки обработанные приложением.
      * @throws SQLException    ошибки связанные с базой данных.
      */
-    public void updateAllHouseData(final Integer houseGradId) throws PreGISException, SQLException, ParseException {
+    public void callUpdateAllHouseData(final Integer houseGradId) throws PreGISException, SQLException, ParseException {
         try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
             final HouseGRADDAO gradDao = new HouseGRADDAO(answerProcessing);
 //        Обработка МКД

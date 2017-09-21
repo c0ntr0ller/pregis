@@ -243,7 +243,7 @@ public final class AccountGRADDAO {
      * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
      * @throws SQLException   возможны ошибки БД.
      */
-    public LinkedHashMap<String, ImportAccountRequest.Account> getAccountMapFromGrad(final int houseID,
+    public LinkedHashMap<BasicInformation, ImportAccountRequest.Account> getAccountMapFromGrad(final int houseID,
                                                                                      final Connection connection,
                                                                                      LinkedHashMap<String, Rooms> roomsList)
             throws ParseException, SQLException, PreGISException {
@@ -258,7 +258,7 @@ public final class AccountGRADDAO {
         final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
 //        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
-        LinkedHashMap<String, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
+        LinkedHashMap<BasicInformation, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 
         if (basicInformationList == null || roomsList == null) {
             answerProcessing.sendInformationToClientAndLog("Не найдены лицевые счета для дома с ИД: " + houseID + ".", LOGGER);
@@ -363,7 +363,7 @@ public final class AccountGRADDAO {
                 account.setCreationDate(OtherFormat.getDateNow());
 
                 //if (account.getAccountGUID() != null && !account.getAccountGUID().equals("")) {
-                    mapAccount.put(basicInformation.getNumberLS(), account);
+                    mapAccount.put(basicInformation, account);
 
                     count++;
                 //}
@@ -415,14 +415,15 @@ public final class AccountGRADDAO {
      * @return идентификатор.
      * @throws SQLException
      */
-    public String getBuildingIdentifiersFromBase(Integer abonId, String identifier, Connection connectionGRAD) throws SQLException {
+    public String getBuildingIdentifiersFromBase(Integer abonId, String identifier, Connection connectionGRAD) throws SQLException, PreGISException {
 
         String sqlResult;
-        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, NULL, ?)}";
 
         try (CallableStatement cstmt = connectionGRAD.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, abonId);
             cstmt.setString(2, identifier);
+            cstmt.setInt(3, ResourcesUtil.instance().getCompanyGradId());
             ResultSet resultSet = cstmt.executeQuery();
             resultSet.next();
             sqlResult = resultSet.getString(1);
@@ -458,7 +459,7 @@ public final class AccountGRADDAO {
             // ИД прибора учета(:meter_id),
             // уникальный идентификатор ГИС ЖКХ(:gis_id),
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
+            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
             try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) {
 //                answerProcessing.sendMessageToClient(String.format("abonentId: %s:\n" +
 //                                "accountGUID: %s\n" +
@@ -467,6 +468,7 @@ public final class AccountGRADDAO {
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, accountGUID);
                 cstmt.setString(3, accountUniqueNumber);
+                cstmt.setInt(4, ResourcesUtil.instance().getCompanyGradId());
                 cstmt.executeUpdate();
 //                int codeReturn = cstmt.executeUpdate();
 //                System.err.println("Apartment code return: " + codeReturn);
@@ -494,7 +496,7 @@ public final class AccountGRADDAO {
      * @return Уникальный идентификатор ГИС ЖКХ.
      * @throws SQLException любые ошибки полученные во время работ с базой данных.
      */
-    public String getUnifiedAccountNumber(Integer abonId, Connection connection) throws SQLException {
+    public String getUnifiedAccountNumber(Integer abonId, Connection connection) throws SQLException, PreGISException {
 
         return getBuildingIdentifiersFromBase(abonId, "ACCOUNTUNIQNUM", connection);
     }
@@ -506,14 +508,15 @@ public final class AccountGRADDAO {
      * @return AccountGUID идентификатор ЛС в ГИС ЖКХ.
      * @throws SQLException
      */
-    public String getAccountGUIDFromBase(Integer abonId, Connection connection) throws SQLException {
+    public String getAccountGUIDFromBase(Integer abonId, Connection connection) throws SQLException, PreGISException {
 
         String sqlResult;
-        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+        String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, NULL, ?)}";
 
         try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, abonId);
             cstmt.setString(2, "ACCOUNTGUID");
+            cstmt.setInt(3, ResourcesUtil.instance().getCompanyGradId());
             ResultSet resultSet = cstmt.executeQuery();
             resultSet.next();
             sqlResult = resultSet.getString(1);
@@ -534,7 +537,7 @@ public final class AccountGRADDAO {
      * @throws SQLException
      * @throws PreGISArgumentNotFoundFromBaseException
      */
-    public String getAccountGUIDFromBaseWithException(Integer abonId, Connection connection) throws SQLException, PreGISArgumentNotFoundFromBaseException {
+    public String getAccountGUIDFromBaseWithException(Integer abonId, Connection connection) throws SQLException, PreGISArgumentNotFoundFromBaseException, PreGISException {
 
         String accountGUID = getAccountGUIDFromBase(abonId, connection);
         if (accountGUID == null) {

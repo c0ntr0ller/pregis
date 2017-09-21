@@ -94,6 +94,7 @@ public final class PaymentDocumentGradDAO {
             callableStatement.execute();
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось сгенерировать ЕПД по дому " +  houseGradID, LOGGER);
+            answerProcessing.sendInformationToClientAndLog(e.getMessage(), LOGGER);
             return false;
         }
         return true;
@@ -359,7 +360,7 @@ public final class PaymentDocumentGradDAO {
                     chargeInfo.getHousingService().getConsumption().getVolume().setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
 */
 
-                } else if (invoce02.getCode_parent().equals("1")) { // а если Дополнительная услуга
+                } else /* if (invoce02.getCode_parent().equals("1")) */ { // а если Дополнительная услуга -- закомментарил код - теперь все что не 50 и 51 идёт в дополнительные
 
                     chargeInfo.setAdditionalService(new PDServiceChargeType.AdditionalService());
 //                    Код услуги (жилищной, коммунальной или дополнительной)
@@ -390,7 +391,7 @@ public final class PaymentDocumentGradDAO {
                         chargeInfo.getAdditionalService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
                     }
                 }
-                if (chargeInfo != null) {
+                if (chargeInfo.getAdditionalService() != null && chargeInfo.getHousingService() != null && chargeInfo.getMunicipalService() != null) {
                     paymentDocument.getChargeInfo().add(chargeInfo);
                 }
 /*              TODO пока не заполняем
@@ -696,7 +697,7 @@ public final class PaymentDocumentGradDAO {
     public void addPaymentDocumentRegistryItem(final String paymentDocumentNumber,
                                                final String paymentDocumentGUID){
         try {
-            connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = " + paymentDocumentNumber);
+            connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = '" + paymentDocumentNumber + "'");
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber + "; " + e.getMessage(), LOGGER);
         }

@@ -6,11 +6,13 @@ import ru.gosuslugi.dom.schema.integration.individual_registry_base.ID;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.structures.HouseRecord;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import java.sql.Connection;
@@ -51,7 +53,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      *
      * @param houseGradId идентификатор дома в БД Град или null, если нужно обработать все дома.
      */
-    public int updateAllAccountData(final Integer houseGradId) throws SQLException, PreGISException, ParseException {
+    public int callUpdateAllAccountData(final Integer houseGradId) throws SQLException, PreGISException, ParseException {
 
         errorState = 1;
 
@@ -59,45 +61,47 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
             final HouseGRADDAO graddao = new HouseGRADDAO(answerProcessing);
 
-            final LinkedHashMap<String, Integer> houseAddedGisJkh = graddao.getListHouse(houseGradId, connectionGRAD);
+            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = graddao.getAllHouseFIASAddress(houseGradId, connectionGRAD);
 
             final ExportAccountData accountData = new ExportAccountData(answerProcessing);
 
-            for (Map.Entry<String, Integer> itemHouse : houseAddedGisJkh.entrySet()) {
+            if (houseAddedGisJkh != null) {
+                for (Map.Entry<String, HouseRecord> itemHouse : houseAddedGisJkh.entrySet()) {
 
-                clearCounts();
+                    clearCounts();
 
-                if (answerProcessing != null) {
-                    answerProcessing.clearLabelForText();
-                    answerProcessing.sendMessageToClient("");
-                    answerProcessing.sendMessageToClient("Обрабатываю дом...");
-                    answerProcessing.sendMessageToClient("Код дома по ФИАС: " + itemHouse.getKey());
-                    answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue());
+                    if (answerProcessing != null) {
+                        answerProcessing.clearLabelForText();
+                        answerProcessing.sendMessageToClient("");
+                        answerProcessing.sendMessageToClient("Обрабатываю дом " + itemHouse.getValue().getAddresString() + "...");
+                        answerProcessing.sendMessageToClient("Код дома по ФИАС: " + itemHouse.getKey());
+                        answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue().getGrad_id());
+                    }
+
+                    final GetStateResult stateResult = accountData.callExportAccountData(itemHouse.getKey());
+                    final LinkedHashMap<BasicInformation, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue().getGrad_id(), connectionGRAD);
+                    countAll += accountListFromGrad.size();
+
+                    if (stateResult == null){ // || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
+                        errorState = 0;
+                    } else if (stateResult.getErrorMessage() != null && stateResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
+                        checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue().getGrad_id(), connectionGRAD);
+                    } else if(stateResult.getErrorMessage() != null || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0){
+                        errorState = 0;
+                    }else {
+                        countAllGisJkh += stateResult.getExportAccountResult().size();
+    //                    List<ExCportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
+    ////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.
+    //                    while (countAllGisJkh % 50 == 0) {
+    //                        exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
+    //                        countAllGisJkh += exportAccountResult.getAccounts().size();
+    //                        accountsListFromGISJKH.addAll(exportAccountResult.getAccounts());
+    //                    }
+                        checkAndSendAccountData(stateResult.getExportAccountResult(), accountListFromGrad, itemHouse.getValue().getGrad_id(), connectionGRAD);
+
+                    }
+                    printReport(itemHouse.getKey());
                 }
-
-                final GetStateResult stateResult = accountData.callExportAccountData(itemHouse.getKey());
-                final LinkedHashMap<String, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue(), connectionGRAD);
-                countAll += accountListFromGrad.size();
-
-                if (stateResult == null){ // || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
-                    errorState = 0;
-                } else if (stateResult.getErrorMessage() != null && stateResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
-                    checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
-                } else if(stateResult.getErrorMessage() != null || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0){
-                    errorState = 0;
-                }else {
-                    countAllGisJkh += stateResult.getExportAccountResult().size();
-//                    List<ExCportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
-////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.
-//                    while (countAllGisJkh % 50 == 0) {
-//                        exportAccountResult = accountData.callExportAccountData(itemHouse.getKey());
-//                        countAllGisJkh += exportAccountResult.getAccounts().size();
-//                        accountsListFromGISJKH.addAll(exportAccountResult.getAccounts());
-//                    }
-                    checkAndSendAccountData(stateResult.getExportAccountResult(), accountListFromGrad, itemHouse.getValue(), connectionGRAD);
-
-                }
-                printReport(itemHouse.getKey());
             }
         }
         // лицевые еа закрытие обрабатываются после ответа пользователя в go()
@@ -150,7 +154,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param connection             подключение к БД ГРАД.
      */
     private void checkAndSendAccountData(final List<ExportAccountResultType> accountsListFromGISJKH,
-                                         final LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad,
+                                         final LinkedHashMap<BasicInformation,ImportAccountRequest.Account> accountListFromGrad,
                                          final Integer houseId, final Connection connection) throws SQLException, PreGISException, ParseException {
 
         // для удобства создаем мапу с лицевыми счетами из ГИС. Ключ - ЛС из Града
@@ -172,12 +176,12 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             checkIncorrectAccountGisJkh(accountsListFromGISJKH, accountListFromGrad);
 
             // бежим по ЛС из Града
-            for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
+            for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
                 // если еще не входит в список на закрытие
-                if (!isInClosedAccountList(entry.getKey())) {
+                if (!isInClosedAccountList(entry.getKey().getNumberLS())) {
                     // получаем ACCOUNTUNIQNUM абонента
-                    final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
-                    if(abonId > 0) {
+//                    final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
+                    if(entry.getKey().getGradID() > 0) {
                         // final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(abonId, connection);
 
                         if(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null) {
@@ -207,20 +211,20 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 }
             }
         } else {// если в ГИС ничего нет - всё просто добавляем
-            for (Map.Entry<String, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
-                if (!isInClosedAccountList(entry.getKey())) {
+            for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
+                if (!isInClosedAccountList(entry.getKey().getNumberLS())) {
                     if(entry.getValue().getAccountGUID() == null) {
-                        final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
-                        if(abonId > 0) {
-                            final String accountGUIDFromBase = accountGRADDAO.getAccountGUIDFromBase(abonId, connection);
-
-                            if (accountGUIDFromBase == null) {
-
-                                final String transportGUID = OtherFormat.getRandomGUID();
-                                entry.getValue().setTransportGUID(transportGUID);
+//                        final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
+                        if(entry.getKey().getGradID() > 0) {
+//                            final String accountGUIDFromBase = accountGRADDAO.getAccountGUIDFromBase(abonId, connection);
+//
+//                            if (accountGUIDFromBase == null) {
+//
+                            final String transportGUID = OtherFormat.getRandomGUID();
+                            entry.getValue().setTransportGUID(transportGUID);
 //                            entry.getValue().setAccountGUID(null);
-                                accountDataMap.put(transportGUID, entry.getValue());
-                            }
+                            accountDataMap.put(transportGUID, entry.getValue());
+//                            }
                         }
                     }
                 }
@@ -268,7 +272,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      */
     private void checkIncorrectAccountGisJkh(final List<ExportAccountResultType> exportAccountResult,
-                                             LinkedHashMap<String,ImportAccountRequest.Account> accountListFromGrad) throws PreGISException, SQLException {
+                                             LinkedHashMap<BasicInformation,ImportAccountRequest.Account> accountListFromGrad) throws PreGISException, SQLException {
         for (ExportAccountResultType acc: exportAccountResult) {
             if(accountListFromGrad.get(acc.getAccountNumber()) == null && acc.getClosed() == null){
 // TODO пока закоментил, позже разберемся с закрытием, так как не все помещения пока попали нормально                addAccountDataForClose(acc, "Ошибка ввода", "Абонент есть в ГИС, но нет в Град");
@@ -618,8 +622,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      * @throws PreGISException
      */
-    private LinkedHashMap<String, ImportAccountRequest.Account> getAccountsFromGrad(final int houseId,
-                                                                                    final Connection connectionGrad)
+    private LinkedHashMap<BasicInformation, ImportAccountRequest.Account> getAccountsFromGrad(final int houseId,
+                                                                                              final Connection connectionGrad)
             throws ParseException, SQLException, PreGISException {
 
         return accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad, null);

@@ -261,6 +261,11 @@ public final class UpdateMeteringDeviceValues {
             nsiList.add(nsiRef);
         }
 
+        if (nsiList.size() == 0){
+            answerProcessing.sendErrorToClientNotException("Не загружен справочник типов ПУ, обмен невозможен");
+            return null;
+        }
+
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(System.currentTimeMillis()));
         calendar.add(Calendar.MONTH, -2);

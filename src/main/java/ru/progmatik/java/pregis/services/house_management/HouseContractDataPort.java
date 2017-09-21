@@ -67,7 +67,7 @@ public class HouseContractDataPort {
         exportCAChRequestCriteriaType.setFIASHouseGuid(fias);
         exportCAChRequestCriteriaType.setUOGUID(OtherFormat.getOrgPPAGUID());
 
-        //exportCAChRequestCriteriaType.setLastVersionOnly(true);
+        exportCAChRequestCriteriaType.setLastVersionOnly(true);
 
         request.getCriteria().add(exportCAChRequestCriteriaType);
 

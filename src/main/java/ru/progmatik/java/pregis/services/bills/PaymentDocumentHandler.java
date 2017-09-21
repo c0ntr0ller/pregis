@@ -19,6 +19,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house_management.HouseContractDataPort;
 import ru.progmatik.java.pregis.services.house_management.AccountIndividualServicesPort;
+import ru.progmatik.java.pregis.structures.HouseRecord;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Connection;
@@ -54,21 +55,23 @@ public class PaymentDocumentHandler {
      * @throws ParseException могут возникнуть ошибки, если у абонента указана не верно площадь или идентификатор в Граде.
      * @param houseGradID идентификатор дома в БД Град.
      */
-    public void paymentDocumentImport(final Integer houseGradID) throws SQLException, ParseException, PreGISException {
+    public void callPaymentDocumentImport(final Integer houseGradID) throws SQLException, ParseException, PreGISException {
 
         setErrorStatus(1);
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             answerProcessing.sendMessageToClient("Формирую список домов...");
             final HouseGRADDAO houseDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> houseMap = houseDAO.getListHouse(houseGradID, connectionGRAD);
+            final LinkedHashMap<String, HouseRecord> houseMap = houseDAO.getAllHouseFIASAddress(houseGradID, connectionGRAD);
             answerProcessing.sendMessageToClient("");
 //          Бежим по списку домов
-            for (Map.Entry<String, Integer> houseEntry : houseMap.entrySet()) {
-                try {
-                    sendPaymentDocumentsHouse(houseEntry.getKey(), houseEntry.getValue(), connectionGRAD);
-                } catch (PreGISException e) {
-                    answerProcessing.sendErrorToClient("paymentDocumentImport(): ", "", LOGGER, e);
-                    setErrorStatus(0);
+            if (houseMap != null) {
+                for (Map.Entry<String, HouseRecord> houseEntry : houseMap.entrySet()) {
+                    try {
+                        sendPaymentDocumentsHouse(houseEntry.getKey(), houseEntry.getValue(), connectionGRAD);
+                    } catch (PreGISException e) {
+                        answerProcessing.sendErrorToClient("callPaymentDocumentImport(): ", "", LOGGER, e);
+                        setErrorStatus(0);
+                    }
                 }
             }
         }
@@ -78,25 +81,25 @@ public class PaymentDocumentHandler {
      * Метод для заданного дома получает информацию по документам из ГРАД, формирует importPaymentDocumentDataRequest,
      * отсылает его, получает результат и заносит идентификаторы в Град
      * @param fias
-     * @param houseGradId
+     * @param houseGrad
      * @param connectionGrad
      * @throws SQLException
      */
-    private void sendPaymentDocumentsHouse(final String fias, final int houseGradId, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
+    private void sendPaymentDocumentsHouse(final String fias, final HouseRecord houseGrad, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
         final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing, connectionGrad);
 
         answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Обработка дома ФИАС: " + fias);
+        answerProcessing.sendMessageToClient("Обработка дома : " + houseGrad.getAddresString());
 
         // создаем новые документы, все старые - закрываются
-        if(!generateNewDocuments(houseGradId, pdGradDao)) {
+        if(!generateNewDocuments(houseGrad.getGrad_id(), pdGradDao)) {
             setErrorStatus(0);
             return;
         }
 
         // формируем запрос на отзыв документов
-        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGradId, pdGradDao);
+        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGrad, pdGradDao);
 
             // если есть документы на закрытие после синхронизации - добавляем их
         if (syncWithDrawList.size() > 0) {
@@ -109,12 +112,12 @@ public class PaymentDocumentHandler {
         }
 
         // формируем массив запросов
-        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGradId, pdGradDao);
+        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao);
 
         if(importPaymentDocumentRequestList != null && importPaymentDocumentRequestList.size() > 0) {
 
             // синхронизируем услуги документов с услугами дома
-            synchronizeContracts(fias, importPaymentDocumentRequestList, pdGradDao);
+            synchronizeContracts(houseGrad, importPaymentDocumentRequestList, pdGradDao);
 
             for (ImportPaymentDocumentRequest request : importPaymentDocumentRequestList) {
                 if (request != null) {
@@ -128,17 +131,18 @@ public class PaymentDocumentHandler {
 
     /**
      * Метод синхронизирует услуги в высылаемых документах и в доме в ГИС. Недостающие услуги - создаются
-     * @param fias ФИАС дома
+     * @param houseGrad запись дома
      * @param importPaymentDocumentRequestList - массив запросов на создание платежных документов
      */
-    private void synchronizeContracts(final String fias, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException, PreGISException {
+    private void synchronizeContracts(final HouseRecord houseGrad, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException, PreGISException {
         // запрашиваем услуги из ГИС
         HouseContractDataPort contractDataPort = new HouseContractDataPort(answerProcessing);
-        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(fias);
+        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(houseGrad.getFias());
 
         // если нет контрактов - выдаем ошибку
         if(resultContract == null || resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
             answerProcessing.sendMessageToClient("Не найден договор управления в ГИС ЖКХ, сверка не производится");
+            return;
         }
 
         // получаем действующий контракт
@@ -158,6 +162,18 @@ public class PaymentDocumentHandler {
         // по контракту получаем список услуг на доме (на доме, а не на абонентах!!!)
         HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(curContract);
 
+        // вспомогательный класс для вывода сообщений
+        class AlarmServ{
+            String serviceType; // тип услуги - коммунальная или другое
+            String serviceName; // имя услуги
+            AlarmServ(String serviceType, String serviceName){
+                this.serviceType = serviceType;
+                this.serviceName = serviceName;
+            }
+        }
+
+        HashMap<String, AlarmServ> alarmServices = new HashMap<>();
+
         // бежим по реквесту с документами и сравниваем услуги документов и контракта
         for (ImportPaymentDocumentRequest request: importPaymentDocumentRequestList) {
             for (ImportPaymentDocumentRequest.PaymentDocument paymentDocument: request.getPaymentDocument()) {
@@ -165,27 +181,40 @@ public class PaymentDocumentHandler {
                 while (it.hasNext()) {
                     PaymentDocumentType.ChargeInfo chargeInfo = it.next();
                     // коммунальные
-// /*  коммунальные пока не проверяем, так как там могут быть вложенные услуги. да их намного меньше, исправят руками
-//                    if(chargeInfo.getMunicipalService() != null){
-//                        if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
-//
+
+                    if(chargeInfo.getMunicipalService() == null && chargeInfo.getHousingService() == null && chargeInfo.getAdditionalService() == null)
+                    {
+                        paymentDocument.getChargeInfo().remove(chargeInfo);
+                        continue;
+                    }
+
+                    if(chargeInfo.getMunicipalService() != null){
+                        // если услуга не содержится
+                        if(!gisServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
+                            // если услуга еще не алярмируется - добавляем ее в массив
+                            if(!alarmServices.containsKey(chargeInfo.getMunicipalService().getServiceType().getGUID())){
+                                alarmServices.put(chargeInfo.getMunicipalService().getServiceType().getGUID(), new AlarmServ("коммунальная", chargeInfo.getMunicipalService().getServiceType().getName()));
+                            }
 //                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
 //                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+//
 //                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
 //                                        address.getValue() + " присутствует не заведенная на доме коммунальная услуга " + chargeInfo.getMunicipalService().getServiceType().getName() + ". Если она является субуслугой в ГИС, то, возможно, ошибки нет", LOGGER);
 //                            }
-////                            it.remove(); // по коммунальной не убираем, так как может быть субуслугой
-//                        }
-//                    }
+//                            it.remove(); // по коммунальной не убираем, так как может быть субуслугой
+                        }
+                    }
                     // жилищные
                     if(chargeInfo.getHousingService() != null){
                         if(!gisServices.containsKey(chargeInfo.getHousingService().getServiceType().getGUID())){
-
-                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
-                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
-                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
-                                        address.getValue() + " присутствует не заведенная на доме жилищная услуга " + chargeInfo.getHousingService().getServiceType().getName(), LOGGER);
+                            if(!alarmServices.containsKey(chargeInfo.getHousingService().getServiceType().getGUID())){
+                                alarmServices.put(chargeInfo.getHousingService().getServiceType().getGUID(), new AlarmServ("жилищная", chargeInfo.getHousingService().getServiceType().getName()));
                             }
+//                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
+//                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+//                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
+//                                        address.getValue() + " присутствует не заведенная на доме жилищная услуга " + chargeInfo.getHousingService().getServiceType().getName(), LOGGER);
+//                            }
 
                             it.remove();
                         }
@@ -193,15 +222,23 @@ public class PaymentDocumentHandler {
                     // допуслуги
                     if(chargeInfo.getAdditionalService() != null){
                         if(!gisServices.containsKey(chargeInfo.getAdditionalService().getServiceType().getGUID())){
-
-                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
-                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
-                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
-                                        address.getValue() + " присутствует не заведенная на доме доп.услуга " + chargeInfo.getAdditionalService().getServiceType().getName(), LOGGER);
+                            if(!alarmServices.containsKey(chargeInfo.getAdditionalService().getServiceType().getGUID())){
+                                alarmServices.put(chargeInfo.getAdditionalService().getServiceType().getGUID(), new AlarmServ("дополнительная", chargeInfo.getAdditionalService().getServiceType().getName()));
                             }
+//                            HashMap<String, String> accountNLS = pdGradDao.getAbonentNLSbyGUIDFromGrad(paymentDocument.getAccountGuid());
+//                            for(Map.Entry<String,String> address: accountNLS.entrySet()) {
+//                                answerProcessing.sendInformationToClientAndLog("Внимание!\nНа лицевом счете " + address.getKey() + " по адресу " +
+//                                        address.getValue() + " присутствует не заведенная на доме доп.услуга " + chargeInfo.getAdditionalService().getServiceType().getName(), LOGGER);
+//                            }
                             it.remove();
                         }
                     }
+                }
+            }
+
+            if(alarmServices.size() > 0){
+                for(Map.Entry<String, AlarmServ> service: alarmServices.entrySet()) {
+                    answerProcessing.sendInformationToClientAndLog("Внимание! В документах на выгрузку присутствует не заведенная в ГИС " + service.getValue().serviceType + " услуга " + service.getValue().serviceName, LOGGER);
                 }
             }
         }
@@ -320,13 +357,12 @@ public class PaymentDocumentHandler {
         }
 
         ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentArrayList = null;
-        if(paymentInformationMap.size() > 0) {
-            answerProcessing.sendMessageToClient("Создается список новых платежных документов");
-            HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentHashMap = pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
-            if (paymentDocumentHashMap != null)
-                paymentDocumentArrayList = new ArrayList(paymentDocumentHashMap.values());
+        answerProcessing.sendMessageToClient("Создается список новых платежных документов");
+        HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentHashMap = pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
+        if (paymentDocumentHashMap != null) {
+            paymentDocumentArrayList = new ArrayList<>(paymentDocumentHashMap.values());
         }
-//        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
+        //        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
 //        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> withdrawPaymentDocuments =
 //                pdGradDao.getWithdrawPaymentDocument(houseGradId);
 
@@ -394,21 +430,21 @@ public class PaymentDocumentHandler {
      * Метод запрашивает список ЛС из ГИС, потом по нему строит запрос на ЕПД этих ЛС, запрашивает документы из
      * Град, сравнивает и формирует список документов на отзыв из ГИС
      * @param fias ФИАС дома
-     * @param houseGradId ИД дома в Град
+     * @param houseGrad ИД дома в Град
      * @param pdGradDao объект для связи с Град
      * @return список документов на отзыв
      * @throws SQLException
      * @throws PreGISException
      * @throws ParseException
      */
-    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> synchronizeDocuments(final String fias, final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
+    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> synchronizeDocuments(final String fias, final HouseRecord houseGrad, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
 
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
 
         answerProcessing.sendMessageToClient("Синхронизируются имеющиеся платежные документы с ГИС ЖКХ");
         // запрашиваем текущие документы по дому из Град
         final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad =
-                pdGradDao.getPaymentDocumentMap(houseGradId, null);
+                pdGradDao.getPaymentDocumentMap(houseGrad.getGrad_id(), null);
 
         // запрашиваем документы из Гис
         final List<ExportPaymentDocumentResultType> paymentDocumentGisList = getPaymentDocumentsFromGIS(fias, pdGradDao.getMonth(), pdGradDao.getYear());

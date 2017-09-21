@@ -43,10 +43,10 @@ public class BekDebugClass {
 //        ClientService clientService = new ClientService();
 //        ProgramAction action = new ProgramAction(clientService);
 //        action.updateAccountData("21");
-//        action.updateAllAccountData(21);
+//        action.callUpdateAllAccountData(21);
 
-//        final UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(null);
-//        final int state = updateAllAccountData.updateAllAccountData(21);
+//        final UpdateAllAccountData callUpdateAllAccountData = new UpdateAllAccountData(null);
+//        final int state = callUpdateAllAccountData.callUpdateAllAccountData(21);
 
 //        AccountGRADDAO agd = new AccountGRADDAO(null);
 //        LinkedHashMap<String, ImportAccountRequest.Account> accs = agd.getAccountMapFromGrad(21, ConnectionBaseGRAD.instance().getConnection());

@@ -136,9 +136,9 @@ public final class ProgramAction {
         try {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
             final ExportHouseData houseData = new ExportHouseData(answerProcessing);
-            houseData.updateAllHouseData(checkHouseGradId(houseGradID));
+            houseData.callUpdateAllHouseData(checkHouseGradId(houseGradID));
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callUpdateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
@@ -155,7 +155,7 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("Синхронизация лицевых счетов...");
 
             final UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
-            final int state = updateAllAccountData.updateAllAccountData(checkHouseGradId(houseGradID));
+            final int state = updateAllAccountData.callUpdateAllAccountData(checkHouseGradId(houseGradID));
 
             answerProcessing.clearLabelForText();
             if (state == -1) {
@@ -170,7 +170,7 @@ public final class ProgramAction {
             }
         } catch (Exception e) {
             answerProcessing.sendMessageToClient("");
-            answerProcessing.sendErrorToClient("updateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);
+            answerProcessing.sendErrorToClient("callUpdateAllHouseData(): ", "\"Синхронизация ЛС\" ", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
@@ -373,7 +373,7 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежных документов...");
             final PaymentDocumentHandler handler = new PaymentDocumentHandler(answerProcessing);
-            handler.paymentDocumentImport(checkHouseGradId(houseGradID));
+            handler.callPaymentDocumentImport(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         } finally {

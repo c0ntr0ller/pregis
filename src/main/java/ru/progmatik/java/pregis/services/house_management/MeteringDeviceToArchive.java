@@ -100,7 +100,7 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
      * @param connectionGrad подключение к БД ГРАД.
      * @throws SQLException
      */
-    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException {
+    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
 
         if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
@@ -150,7 +150,7 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
      * @param connectionGrad подключение к БД ГРАД.
      * @throws SQLException
      */
-    private void setMeteringDevices(String meteringDeviceVersionGUID, String transportGUID, Connection connectionGrad) throws SQLException {
+    private void setMeteringDevices(String meteringDeviceVersionGUID, String transportGUID, Connection connectionGrad) throws SQLException, PreGISException {
 
         if (meteringDevicesToArchiveLinkedHashMap.containsKey(transportGUID)) {
             ImportMeteringDeviceDataRequest.MeteringDevice meteringDevice = meteringDevicesToArchiveLinkedHashMap.get(transportGUID);

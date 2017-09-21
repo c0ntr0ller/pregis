@@ -445,7 +445,7 @@ public class BasicInformation {
      * Цифровое поле, 20 символов, включая 4 после запятой.
      */
     public void setHeadtedArea(double headtedArea) {
-        this.headtedArea = headtedArea;
+        this.headtedArea = (headtedArea < this.totalArea)?headtedArea:this.totalArea;
 //        this.headtedArea = headtedArea.setScale(4, BigDecimal.ROUND_HALF_UP);
     }
 

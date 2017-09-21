@@ -12,6 +12,7 @@
 package ru.progmatik.java.pregis.connectiondb.grad.house;
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResultType;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -203,7 +204,7 @@ public final class HouseGRADDAO {
      */
     public void setHouseUniqueNumber(final Integer houseId,
                                      final String houseUniqueNumber,
-                                     final Connection connectionGrad) throws SQLException {
+                                     final Connection connectionGrad) throws SQLException, PreGISException {
 
 //        Integer idHouse = getHouseIdFromGrad(fias);
 
@@ -214,10 +215,11 @@ public final class HouseGRADDAO {
         // уникальный идентификатор ГИС ЖКХ(:gis_id),
         // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
 //        System.err.println("houseID: " + houseId + " houseUniqueNumber: " + houseUniqueNumber);
-        final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)}";
+        final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
         try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
             cstmt.setInt(1, houseId);
             cstmt.setString(2, houseUniqueNumber);
+            cstmt.setInt(3, ResourcesUtil.instance().getCompanyGradId());
 //                System.out.println(houseId + " : " + houseUniqueNumber);
             cstmt.executeUpdate();
 //                System.err.println("Code return: " + codeReturn);
@@ -255,13 +257,14 @@ public final class HouseGRADDAO {
             // ИД прибора учета(:meter_id),
             // уникальный идентификатор ГИС ЖКХ(:gis_id),
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-            final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL)}";
+            final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?)}";
             try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, premisesGUID);
                 cstmt.setString(3, premisesUniqNum);
                 cstmt.setString(4, livingRoomGUID);
                 cstmt.setString(5, roomUniqNumber);
+                cstmt.setInt(6, ResourcesUtil.instance().getCompanyGradId());
                 cstmt.executeUpdate();
 //                int codeReturn = cstmt.executeUpdate();
 //                System.err.println("Apartment code return: " + codeReturn);
@@ -476,13 +479,14 @@ public final class HouseGRADDAO {
      * @return true - у дома есть уникальный номер ГИС ЖКХ, false - дом не получил уникальный идентификатор ГИС ЖКХ.
      * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    private boolean isAddedHouseInGisJkh(final Integer houseId, final Connection connectionGrad) throws SQLException {
+    private boolean isAddedHouseInGisJkh(final Integer houseId, final Connection connectionGrad) throws SQLException, PreGISException {
 
-        final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+        final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(NULL, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, NULL, ?)}";
 
         try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) { // После использования должны все соединения закрыться
             cstmt.setInt(1, houseId);
             cstmt.setString(2, "HOUSEUNIQNUM");
+            cstmt.setInt(3, ResourcesUtil.instance().getCompanyGradId());
             final ResultSet resultSet = cstmt.executeQuery();
             resultSet.next();
             final String sqlResult = resultSet.getString(1);

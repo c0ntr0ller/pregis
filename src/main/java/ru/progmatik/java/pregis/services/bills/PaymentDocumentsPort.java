@@ -93,7 +93,9 @@ public class PaymentDocumentsPort {
                 result = paymentsAsyncResultWaiter.getRequestResult();
             }
         } catch (Fault fault) {
-             answerProcessing.sendServerErrorToClient(curMethodName, requestHeader, LOGGER, fault);
+            if (importRequest != null || !fault.getMessage().contains("INT002012")) {
+                answerProcessing.sendServerErrorToClient(curMethodName, requestHeader, LOGGER, fault);
+            }
             return null;
         }
 

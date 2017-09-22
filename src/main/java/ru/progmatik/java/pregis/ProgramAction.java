@@ -7,26 +7,19 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
-import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.bills.ExportPaymentDocumentData;
 import ru.progmatik.java.pregis.services.bills.PaymentDocumentHandler;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
-import ru.progmatik.java.pregis.services.house.ExportCAChData;
-import ru.progmatik.java.pregis.services.house.ExportStatusCAChData;
 import ru.progmatik.java.pregis.services.house_management.*;
 import ru.progmatik.java.pregis.services.nsi.UpdateReference;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
-import ru.progmatik.java.pregis.services.payment.ExportPaymentDocumentDetails;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 import ru.progmatik.java.web.servlets.socket.ValueJSON;
 
@@ -388,28 +381,28 @@ public final class ProgramAction {
 
         setStateRunOn();
         try {
-            answerProcessing.sendMessageToClient("Запуск получения ПД...");
-            final ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
-            final List<String> list = new ArrayList<>();
-            list.add("210870201");
-            list.add("210887401");
-            list.add("210889101");
-            list.add("210915701");
-            list.add("212866301 ");
-
-            final ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
-            final List<String> listServiceID = new ArrayList<>();
-
-            try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
-
-                final ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
-                for (ReferenceItemDataSet item : allItems) {
-                    listServiceID.add(item.getGuid());
-                }
-            }
-
-            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
-            answerProcessing.sendMessageToClient("Получение ПД завершено.");
+//            answerProcessing.sendMessageToClient("Запуск получения ПД...");
+//            final ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
+//            final List<String> list = new ArrayList<>();
+//            list.add("210870201");
+//            list.add("210887401");
+//            list.add("210889101");
+//            list.add("210915701");
+//            list.add("212866301 ");
+//
+//            final ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
+//            final List<String> listServiceID = new ArrayList<>();
+//
+//            try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
+//
+//                final ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
+//                for (ReferenceItemDataSet item : allItems) {
+//                    listServiceID.add(item.getGuid());
+//                }
+//            }
+//
+//            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
+//            answerProcessing.sendMessageToClient("Получение ПД завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
         }finally {
@@ -424,28 +417,28 @@ public final class ProgramAction {
 
         setStateRunOn();
         try {
-            answerProcessing.sendMessageToClient("Запуск отзыва ПД...");
-            final ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
-            final List<String> list = new ArrayList<>();
-            list.add("210870201");
-            list.add("210887401");
-            list.add("210889101");
-            list.add("210915701");
-            list.add("212866301 ");
-
-            final ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
-            final List<String> listServiceID = new ArrayList<>();
-
-            try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
-
-                final ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
-                for (ReferenceItemDataSet item : allItems) {
-                    listServiceID.add(item.getGuid());
-                }
-            }
-
-            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
-            answerProcessing.sendMessageToClient("Получение ПД завершено.");
+//            answerProcessing.sendMessageToClient("Запуск отзыва ПД...");
+//            final ExportPaymentDocumentData paymentDocumentData = new ExportPaymentDocumentData(answerProcessing);
+//            final List<String> list = new ArrayList<>();
+//            list.add("210870201");
+//            list.add("210887401");
+//            list.add("210889101");
+//            list.add("210915701");
+//            list.add("212866301 ");
+//
+//            final ReferenceItemGRADDAO reference = new ReferenceItemGRADDAO();
+//            final List<String> listServiceID = new ArrayList<>();
+//
+//            try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
+//
+//                final ArrayList<ReferenceItemDataSet> allItems = reference.getAllItems(connectionGrad);
+//                for (ReferenceItemDataSet item : allItems) {
+//                    listServiceID.add(item.getGuid());
+//                }
+//            }
+//
+//            paymentDocumentData.getExportPaymentDocumentDataWithAccountNumbers(list, listServiceID, "b58c5da4-8d62-438f-b11e-d28103220952", OtherFormat.getCalendarForPaymentDocument());
+//            answerProcessing.sendMessageToClient("Получение ПД завершено.");
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportPaymentDocumentData(): ", "", LOGGER, e);
         }finally {
@@ -506,50 +499,50 @@ public final class ProgramAction {
     }
 
 
-//    Не используются
+////    Не используются
+//
+//    /**
+//     * Метод асинхронный, экспорт реквизитов платежных документов для банков.
+//     */
+//    public void callExportPaymentDocumentDetails() {
+//
+//        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
+//        try {
+//            details.callExportPaymentDocumentDetails();
+//        } catch (SQLException e) {
+//            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+//        }
+//    }
+//
+//    /**
+//     * Метод асинхронный, получить ответ, экспорт реквизитов платежных документов для банков.
+//     */
+//    public void getStateExportPaymentDocumentDetails() {
+//        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
+//        try {
+//            details.getStateExportPaymentDocumentDetails();
+//        } catch (SQLException e) {
+//            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
+//        }
+//    }
 
-    /**
-     * Метод асинхронный, экспорт реквизитов платежных документов для банков.
-     */
-    public void callExportPaymentDocumentDetails() {
+//    public void callExportStatusCAChData() {
+//        ExportStatusCAChData statusCAChData = new ExportStatusCAChData();
+//        try {
+//            statusCAChData.callExportStatusCAChData();
+//        } catch (SQLException e) {
+//            answerProcessing.sendErrorToClient("callExportStatusCAChData(): ", "", LOGGER, e);
+//        }
+//    }
 
-        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
-        try {
-            details.callExportPaymentDocumentDetails();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
-        }
-    }
-
-    /**
-     * Метод асинхронный, получить ответ, экспорт реквизитов платежных документов для банков.
-     */
-    public void getStateExportPaymentDocumentDetails() {
-        ExportPaymentDocumentDetails details = new ExportPaymentDocumentDetails();
-        try {
-            details.getStateExportPaymentDocumentDetails();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportOrgPeriodData(): ", "", LOGGER, e);
-        }
-    }
-
-    public void callExportStatusCAChData() {
-        ExportStatusCAChData statusCAChData = new ExportStatusCAChData();
-        try {
-            statusCAChData.callExportStatusCAChData();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportStatusCAChData(): ", "", LOGGER, e);
-        }
-    }
-
-    public void callExportCAChData() {
-        ExportCAChData caChData = new ExportCAChData();
-        try {
-            caChData.callExportCAChData();
-        } catch (SQLException e) {
-            answerProcessing.sendErrorToClient("callExportCAChData(): ", "", LOGGER, e);
-        }
-    }
+//    public void callExportCAChData() {
+//        ExportCAChData caChData = new ExportCAChData(null);
+//        try {
+//            caChData.callExportCAChData();
+//        } catch (SQLException e) {
+//            answerProcessing.sendErrorToClient("callExportCAChData(): ", "", LOGGER, e);
+//        }
+//    }
 
     /**
      * Экспорт договоров ресурсоснабжения.

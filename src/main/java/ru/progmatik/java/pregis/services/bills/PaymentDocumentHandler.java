@@ -17,7 +17,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
-import ru.progmatik.java.pregis.services.house_management.HouseContractDataPort;
+import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house_management.AccountIndividualServicesPort;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 
@@ -136,7 +136,7 @@ public class PaymentDocumentHandler {
      */
     private void synchronizeContracts(final HouseRecord houseGrad, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException, PreGISException {
         // запрашиваем услуги из ГИС
-        HouseContractDataPort contractDataPort = new HouseContractDataPort(answerProcessing);
+        ExportCAChData contractDataPort = new ExportCAChData(answerProcessing);
         ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(houseGrad.getFias());
 
         // если нет контрактов - выдаем ошибку
@@ -498,7 +498,7 @@ public class PaymentDocumentHandler {
             exportPaymentDocumentRequest.getAccountNumber().add(account.getAccountNumber());
         }
 
-        GetStateResult stateResult = new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(null, exportPaymentDocumentRequest);
+        GetStateResult stateResult = new BillsAsyncPort(answerProcessing).interactionPaymentDocument(null, exportPaymentDocumentRequest);
         if(stateResult != null) return stateResult.getExportPaymentDocResult();
         return null;
     }
@@ -524,7 +524,7 @@ public class PaymentDocumentHandler {
      */
     private void sendDocumentsToGisJkh(final ImportPaymentDocumentRequest request, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException {
 
-        GetStateResult result = new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(request, null);
+        GetStateResult result = new BillsAsyncPort(answerProcessing).interactionPaymentDocument(request, null);
 
         if (result != null && result.getImportResult() != null) {
             answerProcessing.sendMessageToClient("Обработка результата импорта данных. Кол-во данных: " + request.getPaymentDocument().size());
@@ -584,7 +584,7 @@ public class PaymentDocumentHandler {
                                               List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
                                               int month, short year) throws SQLException, PreGISException {
 
-        return new PaymentDocumentsPort(answerProcessing).interactionPaymentDocument(paymentDocumentList,
+        return new BillsAsyncPort(answerProcessing).interactionPaymentDocument(paymentDocumentList,
                 paymentInformationList,
                 month,
                 year);

@@ -128,7 +128,7 @@ public final class ProgramAction {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
-            final ExportHouseData houseData = new ExportHouseData(answerProcessing);
+            final UpdateAllHouseData houseData = new UpdateAllHouseData(answerProcessing);
             houseData.callUpdateAllHouseData(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callUpdateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
@@ -338,8 +338,8 @@ public final class ProgramAction {
         try {
             answerProcessing.sendMessageToClient("Запуск получения ЛС...");
 
-            final ExportAccountData accountData = new ExportAccountData(answerProcessing);
-            final GetStateResult stateResult = accountData.callExportAccountData(fias);
+            //final ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            final GetStateResult stateResult = HomeManagementAsyncPort.callExportAccountData(fias, answerProcessing);
 
             if (stateResult == null || stateResult.getExportAccountResult() == null) {
                 answerProcessing.sendMessageToClient("Возникла ошибка, ЛС не удалось получить.");

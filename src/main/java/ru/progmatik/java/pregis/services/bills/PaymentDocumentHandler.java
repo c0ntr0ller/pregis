@@ -16,10 +16,10 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.house_management.ExportAccountData;
 import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.house_management.AccountIndividualServicesPort;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
+import ru.progmatik.java.pregis.services.house_management.HomeManagementAsyncPort;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Connection;
@@ -300,6 +300,7 @@ public class PaymentDocumentHandler {
 
     /**
      * Метод создает запрос на добавление индивидуальной услуги абоненту и вызывает его
+     * пока не используется, вместо него выводим ошибку о несоотвествии услуг на доме и услуг в платежном документе
      * @param chargeInfo Информация о начислении. Отсюда будем брать название услуги и ее ИД
      * @param accountGUID GUID абонента
      * @param beginDate Дата начала контракта на дом
@@ -486,7 +487,8 @@ public class PaymentDocumentHandler {
 
     private List<ExportPaymentDocumentResultType> getPaymentDocumentsFromGIS(final String fias, final int month, final short year) throws SQLException, PreGISException {
         // формируем запрос в ГИС и получаем абонентов
-        List<ExportAccountResultType> accountList = new ExportAccountData(answerProcessing).callExportAccountData(fias).getExportAccountResult();
+//        List<ExportAccountResultType> accountList = new ExportAccountData(answerProcessing).callExportAccountData(fias).getExportAccountResult();
+        List<ExportAccountResultType> accountList = HomeManagementAsyncPort.callExportAccountData(fias, answerProcessing).getExportAccountResult();
 
         // по абонентам формируем запрос на платежные документы
         ExportPaymentDocumentRequest exportPaymentDocumentRequest = new ExportPaymentDocumentRequest();

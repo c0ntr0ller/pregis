@@ -52,8 +52,8 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 //        Получаем выгруженные ПУ.
-            final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-            List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList = exportMeteringDeviceData.callExportMeteringDeviceData(fias).getExportMeteringDeviceDataResult();
+            //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+            List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList =  HomeManagementAsyncPort.callExportMeteringDeviceData(fias,answerProcessing).getExportMeteringDeviceDataResult();
 
             if (exportMeteringDeviceDataResultList.size() > 0) {
                 final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
@@ -92,9 +92,9 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
 
 //                Импортируем ранее загруженные ПУ
-                final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+                //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
 
-                GetStateResult getStateResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                GetStateResult getStateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getKey(), answerProcessing);
                 List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList;
                 if(getStateResult != null) {
                     exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
@@ -110,7 +110,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 callImportMeteringDevices(importMeteringDeviceData, devices, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
 
 //                Повторно загружаем для занесения MeteringDeviceRootGUID.
-                getStateResult = exportMeteringDeviceData.callExportMeteringDeviceData(entryHouse.getKey());
+                getStateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getKey(), answerProcessing);
                 if(getStateResult != null) {
                     exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
                     if (exportMeteringDeviceDataResultList != null) {

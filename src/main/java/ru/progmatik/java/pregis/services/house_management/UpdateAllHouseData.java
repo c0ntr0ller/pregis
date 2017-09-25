@@ -31,12 +31,9 @@ import java.util.Map;
  * Получает ФИАСы всех домов из ГРАДа, формирует запрос в ГИС ЖКХ, полученый результат заносит в БД.
  * Получаем данные из системы ГИС ЖКХ.
  */
-public class ExportHouseData {
+public class UpdateAllHouseData {
 
-    private static final Logger LOGGER = Logger.getLogger(ExportHouseData.class);
-    private static final String NAME_METHOD = "exportHouseData";
-
-    private final HouseManagementPortsTypeAsync port;
+    private static final Logger LOGGER = Logger.getLogger(UpdateAllHouseData.class);
     private final AnswerProcessing answerProcessing;
 
     // Статус ошибок:
@@ -48,19 +45,13 @@ public class ExportHouseData {
     /**
      * Конструктор, получает в параметр сылку на веб-сокет.
      */
-    public ExportHouseData(final AnswerProcessing answerProcessing) {
+    public UpdateAllHouseData(final AnswerProcessing answerProcessing) {
 
         if(answerProcessing != null) {
             this.answerProcessing = answerProcessing;
         }else{
             this.answerProcessing = new AnswerProcessing();
         }
-
-        final HouseManagementServiceAsync service = UrlLoader.instance().getUrlMap().get("homeManagementAsync") == null ? new HouseManagementServiceAsync()
-                : new HouseManagementServiceAsync(UrlLoader.instance().getUrlMap().get("homeManagementAsync"));
-
-        port = service.getHouseManagementPortAsync();
-        OtherFormat.setPortSettings(service, port);
 
         errorStatus = 1;
     }
@@ -117,7 +108,8 @@ public class ExportHouseData {
 
         try {
             // делаем запрос в ГИС
-            final GetStateResult result = callExportHouseData(fias);
+//            final GetStateResult result = callExportHouseData(fias);
+            final GetStateResult result = HomeManagementAsyncPort.callExportHouseData(fias, answerProcessing);
 
             if (result != null && result.getErrorMessage() == null) { // Если нет ошибок
 
@@ -182,58 +174,6 @@ public class ExportHouseData {
     }
 
     /**
-     * Метод отсылает запрос ExportHouseRequest в ГИС и возвращает результат
-     * @param fias
-     * @return
-     * @throws SQLException
-     */
-    private GetStateResult callExportHouseData(final String fias) throws SQLException {
-
-        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-        final Holder<ResultHeader> resultHolder = new Holder<>();
-
-        final RequestHeader headerRequest = OtherFormat.getRequestHeader();
-
-        ResultHeader resultHeader = null;
-        Holder<ResultHeader> headerHolder = new Holder<>();
-        ErrorMessageType resultErrorMessage = new ErrorMessageType();
-
-        GetStateResult result = null;
-        HouseManagementAsyncResultWaiter houseManagementAsyncResultWaiter = null;
-
-        try {
-            answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
-            AckRequest ackRequest = port.exportHouseData(getExportHouseRequest(fias), headerRequest, resultHolder);
-            answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
-
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, headerRequest, null,null, LOGGER);
-
-            // ждем данные
-            if (ackRequest != null) {
-                houseManagementAsyncResultWaiter = new HouseManagementAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
-
-                result = houseManagementAsyncResultWaiter.getRequestResult();
-
-                if (result != null) {
-                    resultHeader = houseManagementAsyncResultWaiter.getHeaderHolder().value;
-                    resultErrorMessage = result.getErrorMessage();
-                }
-                else{
-                    resultErrorMessage.setErrorCode("ПреГИС");
-                    resultErrorMessage.setDescription("Запрос не вернул данных");
-                }
-            }
-
-        } catch (Fault fault) {
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, headerRequest, LOGGER, fault);
-            setErrorStatus(-1);
-        }
-
-        answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader ,resultErrorMessage, LOGGER);
-        return result;
-    }
-
-    /**
      * Метод, подготавливает данные и перенаправляет их в метод getHouseData().
      *
      * @param houseRecord    содержит данные о доме.
@@ -250,24 +190,6 @@ public class ExportHouseData {
         answerProcessing.sendMessageToClient("Запрос по ФИАС: " + houseRecord.getFias());
         answerProcessing.sendMessageToClient("Адрес: " + houseRecord.getAddresString());
         getHouseData(houseRecord.getFias(), houseRecord.getGrad_id(), gradDao, connectionGrad);
-    }
-
-    /**
-     * Метод, формирует запрос ExportHouseRequest.
-     *
-     * @param fias код дома по ФИАС.
-     * @return готовый запрос в ГИС ЖКХ.
-     */
-    private ExportHouseRequest getExportHouseRequest(final String fias) {
-
-        final ExportHouseRequest request = new ExportHouseRequest();
-        request.setId(OtherFormat.getId());
-        request.setFIASHouseGuid(fias);
-        request.setVersion(request.getVersion());
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("ФИАС дома: " + fias);
-
-        return request;
     }
 
     /**

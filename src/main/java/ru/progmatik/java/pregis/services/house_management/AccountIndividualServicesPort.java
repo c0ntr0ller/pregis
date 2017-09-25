@@ -24,7 +24,7 @@ import java.sql.SQLException;
  * Created by Администратор on 10.07.2017.
  */
 public class AccountIndividualServicesPort {
-    private static final Logger LOGGER = Logger.getLogger(ExportAccountData.class);
+    private static final Logger LOGGER = Logger.getLogger(AccountIndividualServicesPort.class);
 
     private static final String NAME_METHOD_IMPORT = "importAccountIndividualServices";
     private static final String NAME_METHOD_EXPORT = "exportAccountIndividualServices";

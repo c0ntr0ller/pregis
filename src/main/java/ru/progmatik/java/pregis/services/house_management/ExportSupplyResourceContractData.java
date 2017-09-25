@@ -22,7 +22,7 @@ import java.sql.SQLException;
  */
 public class ExportSupplyResourceContractData {
 
-    private static final Logger LOGGER = Logger.getLogger(ExportMeteringDeviceData.class);
+    private static final Logger LOGGER = Logger.getLogger(ExportSupplyResourceContractData.class);
     private static final String NAME_METHOD = "exportSupplyResourceContractData";
 
     private final HouseManagementPortsType port;

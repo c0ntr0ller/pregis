@@ -63,7 +63,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
             final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = graddao.getAllHouseFIASAddress(houseGradId, connectionGRAD);
 
-            final ExportAccountData accountData = new ExportAccountData(answerProcessing);
+            //final ExportAccountData accountData = new ExportAccountData(answerProcessing);
 
             if (houseAddedGisJkh != null) {
                 for (Map.Entry<String, HouseRecord> itemHouse : houseAddedGisJkh.entrySet()) {
@@ -78,7 +78,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         answerProcessing.sendMessageToClient("Код дома в системе \"ГРАД\": " + itemHouse.getValue().getGrad_id());
                     }
 
-                    final GetStateResult stateResult = accountData.callExportAccountData(itemHouse.getKey());
+//                    final GetStateResult stateResult = accountData.callExportAccountData(itemHouse.getKey());
+                    final GetStateResult stateResult = HomeManagementAsyncPort.callExportAccountData(itemHouse.getKey(), answerProcessing);
                     final LinkedHashMap<BasicInformation, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue().getGrad_id(), connectionGRAD);
                     countAll += accountListFromGrad.size();
 
@@ -460,12 +461,12 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                          final Integer houseId,
                                          final Connection connection) throws PreGISException, SQLException, ParseException {
 
-        final ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
+        // final ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Отправляем данные в ГИС ЖКХ...");
 
-        ru.gosuslugi.dom.schema.integration.house_management.ImportResult result;
+        GetStateResult result;
         int count = 0;
 
         final ArrayList<ImportAccountRequest.Account> accountsList = accountDataFromGrad.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toCollection(ArrayList::new));
@@ -476,29 +477,32 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             answerProcessing.clearLabelForText();
 
             if (count + ACCOUNT_COUNTER_FOR_REQUEST > accountsList.size()) {
-                result = sendAccountToGis.callImportAccountData(accountsList.subList(count, accountsList.size()));
+                result = HomeManagementAsyncPort.callImportAccountData(accountsList.subList(count, accountsList.size()), answerProcessing);
+//                result = sendAccountToGis.callImportAccountData(accountsList.subList(count, accountsList.size()));
                 count += ACCOUNT_COUNTER_FOR_REQUEST;
             } else {
-                result = sendAccountToGis.callImportAccountData(accountsList.subList(count, count += ACCOUNT_COUNTER_FOR_REQUEST));
+                result = HomeManagementAsyncPort.callImportAccountData(accountsList.subList(count, count += ACCOUNT_COUNTER_FOR_REQUEST), answerProcessing);
             }
 
-            if (result != null && result.getCommonResult() != null) {
+            if (result != null && result.getImportResult() != null) {
 
-                for (ImportResult.CommonResult commonResult : result.getCommonResult()) {
+                for (ImportResult importResult : result.getImportResult()) {
+                    for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
 
-                    if (commonResult.getError() == null || commonResult.getError().size() == 0) {
-                        countAdded++;
-                        setAccountToBase(houseId,
-                                accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
-                                commonResult.getGUID(),
-                                commonResult.getImportAccount().getUnifiedAccountNumber(),
-                                connection);
+                        if (commonResult.getError() == null || commonResult.getError().size() == 0) {
+                            countAdded++;
+                            setAccountToBase(houseId,
+                                    accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
+                                    commonResult.getGUID(),
+                                    commonResult.getImportAccount().getUnifiedAccountNumber(),
+                                    connection);
 
-                    } else {
-                        answerProcessing.sendMessageToClient("");
-                        answerProcessing.sendMessageToClient("Код ошибки: " + commonResult.getError().get(0).getErrorCode());
-                        answerProcessing.sendMessageToClient("Описание ошибки: " + commonResult.getError().get(0).getDescription());
-                        setErrorState(0);
+                        } else {
+                            answerProcessing.sendMessageToClient("");
+                            answerProcessing.sendMessageToClient("Код ошибки: " + commonResult.getError().get(0).getErrorCode());
+                            answerProcessing.sendMessageToClient("Описание ошибки: " + commonResult.getError().get(0).getDescription());
+                            setErrorState(0);
+                        }
                     }
                 }
             }
@@ -557,8 +561,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         if (listForClose.size() > 0) {
 
             answerProcessing.sendMessageToClient("Закрытие ЛС...");
-            ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
-            ru.gosuslugi.dom.schema.integration.house_management.ImportResult result;
+            // ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
+            GetStateResult result;
             int count = 0;
 
             while (count < listForClose.size()) {
@@ -567,14 +571,14 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                 try {
                     if (count + 5 > listForClose.size()) {
-                        result = sendAccountToGis.callImportAccountData(listForClose.subList(count, listForClose.size()));
+                        result = HomeManagementAsyncPort.callImportAccountData(listForClose.subList(count, listForClose.size()), answerProcessing);
                         count += 5;
                     } else {
-                        result = sendAccountToGis.callImportAccountData(listForClose.subList(count, count += 5));
+                        result = HomeManagementAsyncPort.callImportAccountData(listForClose.subList(count, count += 5), answerProcessing);
                     }
 
-                    if (result != null && result.getCommonResult() != null) {
-                        for (ImportResult.CommonResult commonResult : result.getCommonResult()) {
+                    for (ImportResult importResult : result.getImportResult()) {
+                        for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
                             if (commonResult.getError() == null || commonResult.getError().size() == 0) {
                                 answerProcessing.sendMessageToClient("");
                                 answerProcessing.sendMessageToClient(String.format("Уникальный номер абонента ГИС ЖКХ: %s, успешно закрыт.", commonResult.getUniqueNumber()));
@@ -587,9 +591,10 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         }
                     }
 
-                } catch (SQLException e) {
+                } catch (SQLException | PreGISException e) {
                     answerProcessing.sendErrorToClient("Закрытие ЛС", "\"Закрытие ЛС\"", LOGGER, e);
                 }
+
             }
             accountsForCloseList.clear();
         }

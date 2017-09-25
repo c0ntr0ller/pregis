@@ -110,7 +110,7 @@ public class BillsAsyncPort {
 
         if (resultErrorMessage != null) {
             if(resultErrorMessage.getErrorCode().contains("INT002012")) { // это не ошибка, просто нет данных
-                answerProcessing.sendMessageToClient("Нет объектов для экспорта в ГИС ЖКХ");
+                answerProcessing.sendMessageToClient("Нет объектов для экспорта из ГИС ЖКХ");
             }else{
                 answerProcessing.sendToBaseAndAnotherError(curMethodName, null, resultHeader, resultErrorMessage, LOGGER);
             }

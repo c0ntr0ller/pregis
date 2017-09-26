@@ -30,16 +30,8 @@ public class DeviceMeteringAsyncPort {
     private DeviceMeteringAsyncPort(AnswerProcessing answerProcessing, String methodName){
         this.answerProcessing = answerProcessing;
         this.NAME_METHOD = methodName;
-//        URL url = null;
-//        try {
-//            url = new URL("C:\\Java\\pregis_b\\res\\wsdl\\device-metering\\hcs-device-metering-service-async.wsdl");
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-//        URL url = UrlLoader.instance().getUrlMap().get("deviceMeteringAsync");
         DeviceMeteringServiceAsync service = UrlLoader.instance().getUrlMap().get("deviceMeteringAsync") == null ? new DeviceMeteringServiceAsync()
                 : new DeviceMeteringServiceAsync(UrlLoader.instance().getUrlMap().get("deviceMeteringAsync"));
-//        DeviceMeteringServiceAsync service = new DeviceMeteringServiceAsync(url);
         port = service.getDeviceMeteringPortAsync();
         OtherFormat.setPortSettings(service, port);
     }

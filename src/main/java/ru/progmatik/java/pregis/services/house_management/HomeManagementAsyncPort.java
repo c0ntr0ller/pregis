@@ -1,7 +1,10 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
@@ -42,22 +45,22 @@ public class HomeManagementAsyncPort {
      */
     public static GetStateResult callExportMeteringDeviceData(String fias, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "exportMeteringDeviceData");
-        return homeManagementAsyncPort.callExportData(getExportMeteringDeviceDataRequest(fias));
+        return homeManagementAsyncPort.callPort(getExportMeteringDeviceDataRequest(fias));
     }
 
     public static GetStateResult callExportAccountData(String fias, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "exportAccountData");
-        return homeManagementAsyncPort.callExportData(getExportAccountRequest(fias));
+        return homeManagementAsyncPort.callPort(getExportAccountRequest(fias));
     }
 
     public static GetStateResult callExportHouseData(String fias, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "exportHouseData");
-        return homeManagementAsyncPort.callExportData(getExportHouseRequest(fias));
+        return homeManagementAsyncPort.callPort(getExportHouseRequest(fias));
     }
 
     public static GetStateResult callImportAccountData(List<ImportAccountRequest.Account> accounts, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "importAccountData");
-        return homeManagementAsyncPort.callExportData(getImportAccountRequest(accounts));
+        return homeManagementAsyncPort.callPort(getImportAccountRequest(accounts));
     }
 
     /**
@@ -67,7 +70,7 @@ public class HomeManagementAsyncPort {
      * @throws SQLException
      * @throws PreGISException
      */
-    private GetStateResult callExportData(Object requestObject) throws SQLException, PreGISException {
+    private GetStateResult callPort(Object requestObject) throws SQLException, PreGISException {
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);

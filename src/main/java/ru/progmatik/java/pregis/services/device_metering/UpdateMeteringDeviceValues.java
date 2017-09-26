@@ -1,9 +1,7 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.BaseAsyncResponseType;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
-import ru.gosuslugi.dom.schema.integration.base.ImportResult;
 import ru.gosuslugi.dom.schema.integration.device_metering.*;
 import ru.gosuslugi.dom.schema.integration.metering_device_base.ElectricMeteringValueType;
 import ru.gosuslugi.dom.schema.integration.metering_device_base.OneRateMeteringValueType;
@@ -22,8 +20,6 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -116,7 +112,7 @@ public final class UpdateMeteringDeviceValues {
     private void compareMeteringDevicesValue(final String fias,
                                              final HashMap<String, MeteringDeviceValuesObject> meteringDevicesValuesFromGrad,
                                              final HashMap<String, MeteringDeviceValuesObject> meteringDevicesValueFromGISJKH,
-                                             final Connection connectionGrad) throws SQLException, DatatypeConfigurationException {
+                                             final Connection connectionGrad) throws SQLException, DatatypeConfigurationException, PreGISException {
 
         final ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
         request.setFIASHouseGuid(fias);
@@ -185,22 +181,19 @@ public final class UpdateMeteringDeviceValues {
         }
 
         if (request.getMeteringDevicesValues().size() > 0) { // если есть показания для отправки в ГИС ЖКХ
-            final ImportMeteringDeviceValues importMeteringDeviceValues = new ImportMeteringDeviceValues(answerProcessing);
-            final ImportResult result = importMeteringDeviceValues.callImportMeteringDeviceValues(request);
-//                ImportResult result = null;
 
-            if (result != null) { // если есть ответ от ГИС ЖКХ
-                if (result.getCommonResult().size() > 0) {
-                    for (CommonResultType resultType : result.getCommonResult()) { // смотрим каждый элемент
-                        if (resultType.getError().size() > 0) { // если есть ошибки
-                            for (CommonResultType.Error error : resultType.getError()) {
-                                showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
-                            }
-                        } else {
-                            answerProcessing.sendMessageToClient("");
-                            answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. " +
-                                    "идентификатор ПУ: " + resultType.getGUID());
+            final GetStateResult result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(request, answerProcessing);
+
+            if (result != null && result.getImportResult() != null && result.getImportResult().size() > 0){ // если есть ответ от ГИС ЖКХ
+                for (CommonResultType resultType : result.getImportResult()) { // смотрим каждый элемент
+                    if (resultType.getError().size() > 0) { // если есть ошибки
+                        for (CommonResultType.Error error : resultType.getError()) {
+                            showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
                         }
+                    } else {
+                        answerProcessing.sendMessageToClient("");
+                        answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. " +
+                                "идентификатор ПУ: " + resultType.getGUID());
                     }
                 }
             } else {
@@ -247,7 +240,7 @@ public final class UpdateMeteringDeviceValues {
      * @return статус состояния, 1 - всё прошло успешно, 0 - возникли ошибки, но метод выполнен, -1 - возникли ошибки метод прерван.
      * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    private GetStateResult getExportMeteringDeviceHistory(final String fias) throws SQLException {
+    private GetStateResult getExportMeteringDeviceHistory(final String fias) throws SQLException, PreGISException {
 
         final ReferenceNSIDAO nsidao = new ReferenceNSIDAO();
         final ArrayList<ReferenceItemDataSet> allItems = nsidao.getAllItemsCodeParent("27");
@@ -276,9 +269,10 @@ public final class UpdateMeteringDeviceValues {
         request.getMeteringDeviceType().addAll(nsiList);
         request.setInputDateFrom(OtherFormat.getDateForXML(calendar.getTime()));
 
-        final ExportMeteringDeviceHistory deviceHistory = new ExportMeteringDeviceHistory(answerProcessing);
+        //final ExportMeteringDeviceHistory deviceHistory = new ExportMeteringDeviceHistory(answerProcessing);
 
-        return deviceHistory.getExportMeteringHistoryResult(request);
+        //return deviceHistory.getExportMeteringHistoryResult(request);
+        return DeviceMeteringAsyncPort.callExportMeteringDeviceHistory(request, answerProcessing);
     }
 
     /**

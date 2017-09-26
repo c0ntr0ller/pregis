@@ -1,12 +1,15 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.device_metering.ExportMeteringDeviceHistoryRequest;
-import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringPortTypesAsync;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringServiceAsync;
-import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.TextForLog;
@@ -95,7 +98,7 @@ public final class ExportMeteringDeviceHistory {
         if (result != null) resultErrorMessage = result.getErrorMessage();
         if (deviceMeteringAsyncResultWaiter != null) resultHeader = deviceMeteringAsyncResultWaiter.getHeaderHolder().value;
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, resultHeader, resultErrorMessage, LOGGER);
-        if (resultErrorMessage != null) return null;
+        // if (resultErrorMessage != null) return null;
         return result;
     }
 

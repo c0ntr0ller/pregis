@@ -3,14 +3,10 @@ package ru.progmatik.java.pregis.connectiondb.grad.bills;
 import com.google.inject.internal.Nullable;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.bills.*;
-import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
-import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice01;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice02;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
-import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ServicesGisJkhForGradDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -18,14 +14,13 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Класс, получает из БД ГРАДа информацию о платежном документе.
@@ -124,7 +119,7 @@ public final class PaymentDocumentGradDAO {
             }
         }
         if (paymentInformationMap.size() < 1) {
-            answerProcessing.sendInformationToClientAndLog("Не удалось получить реквизиты из процедуры EX_GIS_ORG_LIST", LOGGER);
+            answerProcessing.sendInformationToClientAndLog("Не удалось получить реквизиты из процедуры EX_GIS_INVOCE03 по дому Град ИД " + houseGradID, LOGGER);
         }
         return paymentInformationMap;
     }

@@ -386,7 +386,7 @@ public final class PaymentDocumentGradDAO {
                         chargeInfo.getAdditionalService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
                     }
                 }
-                if (chargeInfo.getAdditionalService() != null && chargeInfo.getHousingService() != null && chargeInfo.getMunicipalService() != null) {
+                if (chargeInfo.getAdditionalService() != null || chargeInfo.getHousingService() != null || chargeInfo.getMunicipalService() != null) {
                     paymentDocument.getChargeInfo().add(chargeInfo);
                 }
 /*              TODO пока не заполняем

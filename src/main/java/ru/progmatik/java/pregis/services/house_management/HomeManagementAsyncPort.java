@@ -112,6 +112,7 @@ public class HomeManagementAsyncPort {
 
                 result = houseManagementAsyncResultWaiter.getRequestResult();
                 resultHeader = houseManagementAsyncResultWaiter.getHeaderHolder().value;
+
             }else{
                 return null;
             }
@@ -129,11 +130,13 @@ public class HomeManagementAsyncPort {
         if (resultErrorMessage != null) {
             if(resultErrorMessage.getErrorCode().contains("INT002012")) { // это не ошибка, просто нет данных
                 answerProcessing.sendMessageToClient("Нет объектов для экспорта из ГИС ЖКХ");
-            }else{
-                answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
+                answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, null, LOGGER);
             }
-            result = null;
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
         }
+        else
+            // сохраняем ответ
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, null, LOGGER);
 
         return result;
     }

@@ -1,7 +1,10 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringPortTypesAsync;
 import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
@@ -10,6 +13,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
+
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
@@ -76,6 +80,7 @@ public class DeviceMeteringAsyncResultWaiter {
                 result = port.getState(getStateRequest, requestHeader, headerHolder);
             } catch (Fault fault) {
                 answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+                break;
             }
 
             if (result != null){

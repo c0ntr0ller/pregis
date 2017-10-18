@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.services.bills;
 
-import ru.gosuslugi.dom.schema.integration.base.AckRequest;
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
 import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
@@ -80,6 +80,7 @@ public class BillsAsyncResultWaiter {
                 result = port.getState(getStateRequest, requestHeader, headerHolder);
             } catch (Fault fault) {
                 if(answerProcessing != null) answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+                break;
             }
 
             if (result != null){

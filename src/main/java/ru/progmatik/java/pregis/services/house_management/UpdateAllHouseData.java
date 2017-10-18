@@ -1,24 +1,14 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.AckRequest;
-import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
-import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.house_management.*;
-import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
-import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
-import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementServiceAsync;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResultType;
+import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.TextForLog;
-import ru.progmatik.java.pregis.other.UrlLoader;
-import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 
-import javax.xml.ws.Holder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -66,31 +56,31 @@ public class UpdateAllHouseData {
         try (Connection connectionGrad = ConnectionBaseGRAD.instance().getConnection()) {
             final HouseGRADDAO gradDao = new HouseGRADDAO(answerProcessing);
 //        Обработка МКД
-            final LinkedHashMap<String, HouseRecord> mapMKD = gradDao.getAllHouseFIASAddress(houseGradId, connectionGrad); // Берем из процедуры все дома, которые содержат ФИАС
+            final LinkedHashMap<String, HouseRecord> mapHouses = gradDao.getHouseRecords(houseGradId, connectionGrad); // Берем из процедуры все дома, которые содержат ФИАС
 
-            if (mapMKD != null) {
-                for (Map.Entry<String, HouseRecord> entry : mapMKD.entrySet()) {
+            if (mapHouses != null) {
+                for (Map.Entry<String, HouseRecord> entry : mapHouses.entrySet()) {
                     getHouseData(entry.getValue(), gradDao, connectionGrad);
                 }
             }
-
-//          Обработка ЖД.
-            final LinkedHashMap<String, HouseRecord> mapJd = gradDao.getJDAllFias(houseGradId, connectionGrad);
-            if (mapJd != null) {
-                for (Map.Entry<String, HouseRecord> entry : mapJd.entrySet()) {
-                    getHouseData(entry.getValue(), gradDao, connectionGrad);
-                }
-            }
+//
+////          Обработка ЖД.
+//            final LinkedHashMap<String, HouseRecord> mapJd = gradDao.getAllJdHouseRecords(houseGradId, connectionGrad);
+//            if (mapJd != null) {
+//                for (Map.Entry<String, HouseRecord> entry : mapJd.entrySet()) {
+//                    getHouseData(entry.getValue(), gradDao, connectionGrad);
+//                }
+//            }
         }
         if (getErrorStatus() == 1) {
             answerProcessing.sendOkMessageToClient("");
-            answerProcessing.sendOkMessageToClient("Сведения о МКД успешно получены!");
+            answerProcessing.sendOkMessageToClient("Сведения о доме успешно получены!");
         } else if (getErrorStatus() == 0) {
             answerProcessing.sendMessageToClient("");
-            answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведения о МКД получены с ошибками!");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведения о доме получены с ошибками!");
         } else if (getErrorStatus() == -1) {
             answerProcessing.sendMessageToClient("");
-            answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведения о МКД не получены!");
+            answerProcessing.sendErrorToClientNotException("Возникли ошибки, сведения о доме не получены!");
         }
     }
 
@@ -111,7 +101,7 @@ public class UpdateAllHouseData {
 //            final GetStateResult result = callExportHouseData(fias);
             final GetStateResult result = HomeManagementAsyncPort.callExportHouseData(fias, answerProcessing);
 
-            if (result != null && result.getErrorMessage() == null) { // Если нет ошибок
+            if (result != null && result.getErrorMessage() == null && result.getExportHouseResult() != null) { // Если нет ошибок
 
                 answerProcessing.sendMessageToClient("Уникальный номер дома: " + result.getExportHouseResult().getHouseUniqueNumber());
                 gradDao.setHouseUniqueNumber(houseId, result.getExportHouseResult().getHouseUniqueNumber(), connectionGrad);

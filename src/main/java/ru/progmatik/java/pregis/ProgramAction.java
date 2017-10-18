@@ -7,6 +7,7 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -27,7 +28,9 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Класс будет обращаться ко всем объектам.
@@ -567,15 +570,17 @@ public final class ProgramAction {
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
             final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getHouseAddedGisJkh(connectionGRAD);
-            final HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow();
+            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(null, connectionGRAD);
+//            final HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow(connectionGRAD);
             final ArrayList<ValueJSON> listHouseModalWindow = new ArrayList<>();
 
-            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
-                if (allHouseForListModalWindow.containsKey(entry.getValue())) {
-                    listHouseModalWindow.add(new ValueJSON(
-                            entry.getValue().toString(),
-                            allHouseForListModalWindow.get(entry.getValue())));
+            if (houseAddedGisJkh != null && !houseAddedGisJkh.isEmpty()) {
+                for (Map.Entry<String, HouseRecord> entry : houseAddedGisJkh.entrySet()) {
+                    if (!entry.getValue().getHouseUniqNum().isEmpty()) {
+                        listHouseModalWindow.add(new ValueJSON(
+                                entry.getValue().getGrad_id().toString(),
+                                entry.getValue().getAddresStringShort()));
+                    }
                 }
             }
 
@@ -588,7 +593,7 @@ public final class ProgramAction {
             }
 
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Получение домов добавленых в ГИС ЖКХ\" ", LOGGER, e);
+            answerProcessing.sendErrorToClient("getHouseAddedGisJkh(): ", "\"Ошибка при получении домов добавленых в ГИС ЖКХ\" ", LOGGER, e);
         }
     }
 

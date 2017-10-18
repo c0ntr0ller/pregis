@@ -1,8 +1,13 @@
 package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
-import ru.gosuslugi.dom.schema.integration.bills.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
+import ru.gosuslugi.dom.schema.integration.bills.ExportPaymentDocumentRequest;
+import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
 import ru.gosuslugi.dom.schema.integration.bills_service_async.BillsPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.bills_service_async.BillsServiceAsync;
 import ru.gosuslugi.dom.schema.integration.bills_service_async.Fault;
@@ -107,15 +112,16 @@ public class BillsAsyncPort {
 
         resultHeader = billsAsyncResultWaiter.getHeaderHolder().value;
 
-
         if (resultErrorMessage != null) {
             if(resultErrorMessage.getErrorCode().contains("INT002012")) { // это не ошибка, просто нет данных
                 answerProcessing.sendMessageToClient("Нет объектов для экспорта из ГИС ЖКХ");
             }else{
                 answerProcessing.sendToBaseAndAnotherError(curMethodName, null, resultHeader, resultErrorMessage, LOGGER);
             }
-            result = null;
         }
+        else
+            // сохраняем ответ
+            answerProcessing.sendToBaseAndAnotherError(curMethodName, null, resultHeader, null, LOGGER);
 
         return result;
     }

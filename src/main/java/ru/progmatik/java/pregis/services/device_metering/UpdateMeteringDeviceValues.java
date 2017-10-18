@@ -9,6 +9,7 @@ import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDeviceValuesLocalDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
@@ -57,10 +58,10 @@ public final class UpdateMeteringDeviceValues {
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getListHouse(houseGradID, connectionGRAD);
-            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
+            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradID, connectionGRAD);
+            for (Map.Entry<String, HouseRecord> entry : houseAddedGisJkh.entrySet()) {
                 tempMeteringDevicesValue = new HashMap<>();
-                updateMeteringDeviceValues(entry.getKey(), entry.getValue(), connectionGRAD);
+                updateMeteringDeviceValues(entry.getValue(), connectionGRAD);
             }
         }
 
@@ -71,23 +72,23 @@ public final class UpdateMeteringDeviceValues {
      * Метод, разбирает ответ, находит нужные показания и заносит их если они отличаются от показаний в ГРАДе.
      * Если ГИС ЖКХ вернул ошибку или ничего, обработка прекращается.
      */
-    private void updateMeteringDeviceValues(final String fias, final int houseId, final Connection connectionGrad)
+    private void updateMeteringDeviceValues(HouseRecord houseRecord, final Connection connectionGrad)
             throws SQLException, ParseException, PreGISException, DatatypeConfigurationException {
 
-        final GetStateResult result = getExportMeteringDeviceHistory(fias);
+        final GetStateResult result = getExportMeteringDeviceHistory(houseRecord.getFias());
 
         if (result == null) { // Если в ответ получили ничего
-            answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
+            answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому: " + houseRecord.getAddresString());
             setErrorStatus(-1);
 //            Если нет, ещё не одного выгруженного показания ПУ
         } else if (result.getErrorMessage() != null &&
                 result.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) {
             deviceValuesGradDAO = new MeteringDeviceValuesGradDAO(answerProcessing);
-            final HashMap<String, MeteringDeviceValuesObject> deviceValuesFromGrad = deviceValuesGradDAO.getMeteringDeviceValueFromGrad(houseId, connectionGrad);
-            compareMeteringDevicesValue(fias, deviceValuesFromGrad, tempMeteringDevicesValue, connectionGrad);
+            final HashMap<String, MeteringDeviceValuesObject> deviceValuesFromGrad = deviceValuesGradDAO.getMeteringDeviceValueFromGrad(houseRecord.getGrad_id(), connectionGrad);
+            compareMeteringDevicesValue(houseRecord.getFias(), deviceValuesFromGrad, tempMeteringDevicesValue, connectionGrad);
 //            Если возникла непредвиденная ошибка
         } else if (result.getErrorMessage() != null) {
-            answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому с ФИАС: " + fias);
+            answerProcessing.sendErrorToClientNotException("Не удалось получить показания ПУ по дому: " + houseRecord.getAddresString());
 //            answerProcessing.sendErrorToClientNotException("Сообщение от сервера ГИС ЖКХ: ");
 //            answerProcessing.sendErrorToClientNotException("Код ошибки: " + result.getErrorMessage().getErrorCode());
 //            answerProcessing.sendErrorToClientNotException("Описание ошибки: " + result.getErrorMessage().getDescription());
@@ -96,8 +97,8 @@ public final class UpdateMeteringDeviceValues {
         } else {
             parseMeteringDeviceValuesFromGISJKH(result);
             deviceValuesGradDAO = new MeteringDeviceValuesGradDAO(answerProcessing);
-            final HashMap<String, MeteringDeviceValuesObject> deviceValuesFromGrad = deviceValuesGradDAO.getMeteringDeviceValueFromGrad(houseId, connectionGrad);
-            compareMeteringDevicesValue(fias, deviceValuesFromGrad, tempMeteringDevicesValue, connectionGrad);
+            final HashMap<String, MeteringDeviceValuesObject> deviceValuesFromGrad = deviceValuesGradDAO.getMeteringDeviceValueFromGrad(houseRecord.getGrad_id(), connectionGrad);
+            compareMeteringDevicesValue(houseRecord.getFias(), deviceValuesFromGrad, tempMeteringDevicesValue, connectionGrad);
         }
     }
 

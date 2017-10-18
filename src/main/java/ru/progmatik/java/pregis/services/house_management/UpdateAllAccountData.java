@@ -8,11 +8,11 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import java.sql.Connection;
@@ -61,7 +61,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
             final HouseGRADDAO graddao = new HouseGRADDAO(answerProcessing);
 
-            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = graddao.getAllHouseFIASAddress(houseGradId, connectionGRAD);
+            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = graddao.getHouseRecords(houseGradId, connectionGRAD);
 
             //final ExportAccountData accountData = new ExportAccountData(answerProcessing);
 

@@ -1,10 +1,14 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.house_management.*;
+import ru.gosuslugi.dom.schema.integration.house_management.ExportMeteringDeviceDataResultType;
+import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportMeteringDeviceDataRequest;
+import ru.gosuslugi.dom.schema.integration.house_management.ImportResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
@@ -15,7 +19,10 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Класс, синхронизирует данные о ПУ.
@@ -55,7 +62,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
             List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList =  HomeManagementAsyncPort.callExportMeteringDeviceData(fias,answerProcessing).getExportMeteringDeviceDataResult();
 
-            if (exportMeteringDeviceDataResultList.size() > 0) {
+            if (exportMeteringDeviceDataResultList != null && exportMeteringDeviceDataResultList.size() > 0) {
                 final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
 
                 for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
@@ -84,12 +91,14 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, Integer> houseAddedGisJkh = houseGRADDAO.getListHouse(houseGradId, connectionGRAD);
+            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradId, connectionGRAD);
             final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
-            for (Map.Entry<String, Integer> entryHouse : houseAddedGisJkh.entrySet()) {
-                if (answerProcessing!= null ) {answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getKey());}
-                final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
+            for (Map.Entry<String, HouseRecord> entryHouse : houseAddedGisJkh.entrySet()) {
+                if (answerProcessing!= null ) {
+                    answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getValue().getAddresString());
+                }
+                final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue().getGrad_id()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
 
 //                Импортируем ранее загруженные ПУ
                 //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);

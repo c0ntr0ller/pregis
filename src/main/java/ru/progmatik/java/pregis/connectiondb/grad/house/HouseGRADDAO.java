@@ -16,7 +16,6 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;
@@ -37,13 +36,14 @@ public final class HouseGRADDAO {
     private static final int NUMBER_HOUSE_GRAD_MKD = 16;
     private static final int ADDRESS_GRAD_JD = 12;
     private static final int NUMBER_HOUSE_GRAD_JD = 13;
-
+    private static final int HOUSE_HOUSEUNIQNUM = 17;
     private final AnswerProcessing answerProcessing;
     private static final Logger LOGGER = Logger.getLogger(HouseGRADDAO.class);
 
     //    Временные листы, что бы не ходить 2 или более раза за одним и темже в БД
-    private final ArrayList<String> tempMKD = new ArrayList<>();
-    private final ArrayList<String> tempJD = new ArrayList<>();
+//    private final ArrayList<String> tempMKD = new ArrayList<>();
+//    private final ArrayList<String> tempJD = new ArrayList<>();
+    private final LinkedHashMap<String, HouseRecord> allHouses = new LinkedHashMap<>();
     private final HashMap<Integer, ArrayList<Rooms>> temMapRooms = new HashMap<>();
 
     public HouseGRADDAO(final AnswerProcessing answerProcessing) {
@@ -57,84 +57,141 @@ public final class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public LinkedHashMap<String, Integer> getAllHouseFIAS(final Connection connectionGrad) throws SQLException, PreGISException {
-//        answerProcessing.sendMessageToClient(":getAllHouseFIAS"); //!!!------
+//    public LinkedHashMap<String, Integer> getAllHouseFIAS(final Connection connectionGrad) throws SQLException, PreGISException {
+////        answerProcessing.sendMessageToClient(":getAllHouseFIAS"); //!!!------
+//
+//        final List<String> allListHouseData = getMKDHousesFromGrad(connectionGrad);
+//        final LinkedHashMap<String, Integer> mapFIAS = new LinkedHashMap<String, Integer>();
+//
+//        for (String itemListHouse : allListHouseData) {
+//            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
+//                mapFIAS.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
+//            }
+//        }
+//        if (mapFIAS.size() == 0)
+//            return null;
+//        else
+//            return mapFIAS;
+//    }
+//     /*
+//            *
+//            * @return
+//            * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
+//     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
+//     */
 
-        final List<String> allListHouseData = getAllHouseFromGrad(connectionGrad);
-        final LinkedHashMap<String, Integer> mapFIAS = new LinkedHashMap<String, Integer>();
-
-        for (String itemListHouse : allListHouseData) {
-            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
-                mapFIAS.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
-            }
-        }
-        if (mapFIAS.size() == 0)
-            return null;
-        else
-            return mapFIAS;
-    }
-     /* Метод, обращается в БД ГРАДа, получает сведенья о доме, извлекает ФИАС, ИД и Адрес дома в БД ГРАД, затем добавляет его в Map.
-            *
-            * @return список всех ФИАСов (домов) указаной организации.
-            * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
-     * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
+    /**
+     * По запросу выдает список домов из Град. Если заан ИД дома - выдает только его
+     * @param houseGradId
+     * @param connectionGrad
+     * @return
+     * @throws SQLException
+     * @throws PreGISException
      */
-    public LinkedHashMap<String, HouseRecord> getAllHouseFIASAddress(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
-//        answerProcessing.sendMessageToClient(":getAllHouseFIAS"); //!!!------
-
-        final List<String> allListHouseData = getAllHouseFromGrad(connectionGrad);
-        final LinkedHashMap<String, HouseRecord> mapFIAS = new LinkedHashMap<>();
-
-        for (String itemListHouse : allListHouseData) {
-            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
-                mapFIAS.put(getAllData(itemListHouse)[HOUSE_FIAS],
-                        new HouseRecord(
-                                getAllData(itemListHouse)[HOUSE_FIAS],
-                                Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]),
-                                getAllData(itemListHouse)[HOUSE_ADDRESS_GRAD_MKD]));
+    public LinkedHashMap<String, HouseRecord> getHouseRecords(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
+        // если список пустой - запрашиваем из БД
+        if(allHouses.isEmpty()) {
+            getHouseRecordsFromDB(connectionGrad);
+        }
+        if (houseGradId != null && !allHouses.isEmpty()){
+            for (Map.Entry<String, HouseRecord> entry : allHouses.entrySet()) {
+                if (houseGradId.equals(entry.getValue().getGrad_id())) {
+                    final LinkedHashMap<String, HouseRecord> tmpMap = new LinkedHashMap<>();
+                    tmpMap.put(entry.getKey(), entry.getValue());
+                    return tmpMap;
+                }
             }
         }
-        if (mapFIAS.size() == 0)
-            return null;
-        else {
-            if (houseGradId == null) {
-                return mapFIAS;
-            } else {
-                for (Map.Entry<String, HouseRecord> entry : mapFIAS.entrySet()) {
-                    if (houseGradId.equals(entry.getValue().getGrad_id())) {
-                        final LinkedHashMap<String, HouseRecord> tmpMap = new LinkedHashMap<>();
-                        tmpMap.put(entry.getKey(), entry.getValue());
-                        return tmpMap;
+        return allHouses;
+    }
+
+    /**
+     * Заполняет мапу с домами из БД
+     * @param connectionGrad
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    private void getHouseRecordsFromDB(final Connection connectionGrad) throws SQLException, PreGISException {
+        // получем сначала все МКД
+        final LinkedHashMap<String, HouseRecord> mapMkd = getAllMkdHouseRecords(connectionGrad);
+        // получаем все жилые дома
+        final LinkedHashMap<String, HouseRecord> mapJd = getAllJdHouseRecords(connectionGrad);
+
+        if (mapMkd != null){
+            allHouses.putAll(mapMkd);
+        }
+        if (mapJd != null){
+            allHouses.putAll(mapJd);
+        }
+    }
+    /**
+     * Метод, обращается в БД ГРАДа, получает сведения о многоквартирных домах, извлекает ФИАС и информацию о домме из строк, затем добавляет его в Map. Ключ ФИАС дома
+     * @param connectionGrad - соединение с Град
+     * @return список всех домов указаной организации.
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    private LinkedHashMap<String, HouseRecord> getAllMkdHouseRecords(final Connection connectionGrad) throws SQLException, PreGISException {
+
+        final List<String> allListHouseData = getMKDHousesFromGrad(connectionGrad);
+        final LinkedHashMap<String, HouseRecord> mapMkd = new LinkedHashMap<>();
+        if (allListHouseData.size() > 1) {
+            for (String itemListHouse : allListHouseData) {
+                if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
+                    String[] houseAllData = getAllData(itemListHouse);
+                    String HOUSE_ID = houseAllData[HOUSE_ID_GRAD_MKD];
+
+                    if (HOUSE_ID.equals("-1-")) {
+                        answerProcessing.sendMessageToClient("-1- Не найден ИД дома в данных Града в строке: " + itemListHouse);
+                    } else {
+                        mapMkd.put(houseAllData[HOUSE_FIAS],
+                                new HouseRecord(
+                                        houseAllData[HOUSE_FIAS],
+                                        Integer.valueOf(houseAllData[HOUSE_ID_GRAD_MKD]),
+                                        houseAllData[HOUSE_ADDRESS_GRAD_MKD],
+                                        ((houseAllData.length <= HOUSE_HOUSEUNIQNUM) ? "" : houseAllData[HOUSE_HOUSEUNIQNUM]),
+                                        String.format("%s %s", houseAllData[ADDRESS_GRAD_MKD], houseAllData[NUMBER_HOUSE_GRAD_MKD])
+                                )
+                        );
                     }
                 }
             }
-
         }
-        return null;
+        if (mapMkd.size() == 0)
+            return null;
+        else {
+            return mapMkd;
+        }
     }
     /**
-     * Метод, возвращает все найденные жилые дома, т.е. их код дома по ФИАС и ИД из БД ГРАД.
-     *
-     * @return перечень всех жилых домов, ФИАС = ИД дома в БД ГРАД.
+     * Метод, обращается в БД ГРАДа, получает сведения о частных домах, извлекает ФИАС и информацию о домме из строк, затем добавляет его в Map. Ключ ФИАС дома
+     * @param connectionGrad - соединение с Град
+     * @return список всех домов указаной организации.
+     * @throws SQLException
+     * @throws PreGISException
      */
-    public LinkedHashMap<String, HouseRecord> getJDAllFias(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
+    private LinkedHashMap<String, HouseRecord> getAllJdHouseRecords(final Connection connectionGrad) throws SQLException, PreGISException {
 
-        final ArrayList<String> listAllData = getJdAllFiasFromGrad(connectionGrad);
+        final ArrayList<String> allListHouseData = getJdHousesFromGrad(connectionGrad);
         final LinkedHashMap<String, HouseRecord> mapJd = new LinkedHashMap<>();
-        if (listAllData.size() > 1) { // Если в листе вообще есть данные тогда
-            for (String itemData : listAllData) {
-                if (getAllData(itemData)[HOUSE_FIAS] != null && !getAllData(itemData)[HOUSE_FIAS].isEmpty()) { // проверяем содержится ФИАС, если есть то добавляем
-                    String HOUSE_ID = getAllData(itemData)[HOUSE_ID_GRAD_JD];
+        if (allListHouseData.size() > 1) { // Если в листе вообще есть данные тогда
+            for (String itemListHouse : allListHouseData) {
+                if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
+                    String[] houseAllData = getAllData(itemListHouse);
+                    String HOUSE_ID = houseAllData[HOUSE_ID_GRAD_JD];
 
-                    if (HOUSE_ID.equals("-1-")){
-                        answerProcessing.sendMessageToClient("-1- Не найден ИД дома в данных Града в строке: " + itemData);
-                    }
-                    else {
-                        mapJd.put(getAllData(itemData)[HOUSE_FIAS],
+                    if (HOUSE_ID.equals("-1-")) {
+                        answerProcessing.sendMessageToClient("-1- Не найден ИД дома в данных Града в строке: " + itemListHouse);
+                    } else {
+                        mapJd.put(houseAllData[HOUSE_FIAS],
                                 new HouseRecord(
-                                        getAllData(itemData)[HOUSE_FIAS],
-                                        Integer.valueOf(getAllData(itemData)[HOUSE_ID_GRAD_JD]),
-                                        getAllData(itemData)[HOUSE_ADDRESS_GRAD_MKD]));
+                                        houseAllData[HOUSE_FIAS],
+                                        Integer.valueOf(houseAllData[HOUSE_ID_GRAD_JD]),
+                                        houseAllData[HOUSE_ADDRESS_GRAD_MKD],
+                                        ((houseAllData.length <= HOUSE_HOUSEUNIQNUM) ? "" : houseAllData[HOUSE_HOUSEUNIQNUM]),
+                                        String.format("%s %s", houseAllData[ADDRESS_GRAD_JD], houseAllData[NUMBER_HOUSE_GRAD_JD])
+                                )
+                        );
                     }
                 }
             }
@@ -143,20 +200,8 @@ public final class HouseGRADDAO {
         if (mapJd.size() == 0)
             return null;
         else {
-            if (houseGradId == null) {
-                return mapJd;
-            } else {
-                for (Map.Entry<String, HouseRecord> entry : mapJd.entrySet()) {
-                    if (houseGradId.equals(entry.getValue().getGrad_id())) {
-                        final LinkedHashMap<String, HouseRecord> tmpMap = new LinkedHashMap<>();
-                        tmpMap.put(entry.getKey(), entry.getValue());
-                        return tmpMap;
-                    }
-                }
-            }
-
+            return mapJd;
         }
-        return null;
     }
 
     /**
@@ -165,18 +210,24 @@ public final class HouseGRADDAO {
      *
      * @return пара ключ-значение ФИАС-ИД ГРАДа.
      */
-    public LinkedHashMap<String, Integer> getHouseAddedGisJkh(final Connection connectionGrad) throws SQLException, PreGISException {
+    @Deprecated
+    public LinkedHashMap<String, Integer> getHouseAddedGisJkh(final Connection connectionGrad, final boolean allHouses) throws SQLException, PreGISException {
 
-        final ArrayList<String> allListMKD = getAllHouseFromGrad(connectionGrad);
-        final ArrayList<String> listAllJD = getJdAllFiasFromGrad(connectionGrad);
+        final ArrayList<String> allListMKD = getMKDHousesFromGrad(connectionGrad);
+        final ArrayList<String> listAllJD = getJdHousesFromGrad(connectionGrad);
 
         final LinkedHashMap<String, Integer> mapAllHouseWithIdGis = new LinkedHashMap<String, Integer>();
 
 //        Получение данных из БД о МКД.
         for (String itemListHouse : allListMKD) {
-            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty() &&
-                    isAddedHouseInGisJkh(Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]), connectionGrad)) {
-                mapAllHouseWithIdGis.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
+            if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {// если задан ФИАС
+                if (allHouses // если добавляем все дома
+                            ||
+                        ((getAllData(itemListHouse).length > HOUSE_HOUSEUNIQNUM) && // или уже есть идентификатор
+                            getAllData(itemListHouse)[HOUSE_HOUSEUNIQNUM] != null &&
+                            !getAllData(itemListHouse)[HOUSE_HOUSEUNIQNUM].isEmpty())) {
+                    mapAllHouseWithIdGis.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
+                }
             }
         }
 
@@ -280,51 +331,52 @@ public final class HouseGRADDAO {
      * @param connectionGrad подключение к БД ГРАД.
      * @return ключ - abonId, значение - общая площадь помещения.
      */
-    public HashMap<Integer, String> getTotalSquare(final int houseId, final Connection connectionGrad) throws SQLException {
+//    public HashMap<Integer, String> getTotalSquare(final int houseId, final Connection connectionGrad) throws SQLException {
+//
+//        final HashMap<Integer, String> totalSquareMap = new HashMap<>();
+//        try (CallableStatement cstmt = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS04(?)}")) {
+//            cstmt.setString(1, String.valueOf(houseId));
+//            final ResultSet resultSet = cstmt.executeQuery();
+//
+//            while (resultSet.next()) {
+//                final String[] data = OtherFormat.getAllDataFromString(resultSet.getString(1));
+//                totalSquareMap.put(Integer.parseInt(data[7]), data[4]);
+//            }
+//        }
+//        return totalSquareMap;
+//    }
 
-        final HashMap<Integer, String> totalSquareMap = new HashMap<>();
-        try (CallableStatement cstmt = connectionGrad.prepareCall("{EXECUTE PROCEDURE EX_GIS04(?)}")) {
-            cstmt.setString(1, String.valueOf(houseId));
-            final ResultSet resultSet = cstmt.executeQuery();
-
-            while (resultSet.next()) {
-                final String[] data = OtherFormat.getAllDataFromString(resultSet.getString(1));
-                totalSquareMap.put(Integer.parseInt(data[7]), data[4]);
-            }
-        }
-        return totalSquareMap;
-    }
-
-    /**
-     * Метод, получает идентификатор дома в Граде, по нему находит дом добавлены в ГИС ЖКХ, для последующего обмена.
-     * @param houseGradId идентификатор дома в Граде
-     * @param connectionGrad подключение к БД Град
-     * @return ключ - код дома по ФИАС, значение - идентификатор дома в Граде.
-     * @throws SQLException могут возникнуть ошибки во время работы с БД.
-     * @throws PreGISException могут появится ошибка если в файле параметров не указана ИД организации в Граде.
-     */
-    public LinkedHashMap<String, Integer> getListHouse(final Integer houseGradId,
-                                                        final Connection connectionGrad) throws SQLException, PreGISException {
-
-        final LinkedHashMap<String, Integer> tempMap = new LinkedHashMap<>();
-        final LinkedHashMap<String, Integer> houseAddedGisJkh = getHouseAddedGisJkh(connectionGrad);
-
-        if (houseGradId == null) {
-            return houseAddedGisJkh;
-        } else if (houseAddedGisJkh != null){
-            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
-                if (houseGradId.equals(entry.getValue())) {
-                    tempMap.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-
-        if (houseAddedGisJkh == null) {
-            throw new PreGISException("Не найден ни один дом готовый для выгрузки в ГИС ЖКХ.");
-        }
-
-        return tempMap;
-    }
+//    /**
+//     * Метод, получает идентификатор дома в Граде, по нему находит дом добавлены в ГИС ЖКХ, для последующего обмена.
+//     * @param houseGradId идентификатор дома в Граде
+//     * @param connectionGrad подключение к БД Град
+//     * @return ключ - код дома по ФИАС, значение - идентификатор дома в Граде.
+//     * @throws SQLException могут возникнуть ошибки во время работы с БД.
+//     * @throws PreGISException могут появится ошибка если в файле параметров не указана ИД организации в Граде.
+//     */
+//    @Deprecated
+//    public LinkedHashMap<String, Integer> getListHouse(final Integer houseGradId,
+//                                                        final Connection connectionGrad) throws SQLException, PreGISException {
+//
+//        final LinkedHashMap<String, Integer> tempMap = new LinkedHashMap<>();
+//        final LinkedHashMap<String, Integer> houseAddedGisJkh = getHouseAddedGisJkh(connectionGrad,false);
+//
+//        if (houseGradId == null) {
+//            return houseAddedGisJkh;
+//        } else if (houseAddedGisJkh != null){
+//            for (Map.Entry<String, Integer> entry : houseAddedGisJkh.entrySet()) {
+//                if (houseGradId.equals(entry.getValue())) {
+//                    tempMap.put(entry.getKey(), entry.getValue());
+//                }
+//            }
+//        }
+//
+//        if (houseAddedGisJkh == null) {
+//            throw new PreGISException("Не найден ни один дом готовый для выгрузки в ГИС ЖКХ.");
+//        }
+//
+//        return tempMap;
+//    }
 
     /**
      * Метод, получает значение номера квартиры и комнаты (если есть), возвращает ИД абонента в БД ГРАД.
@@ -383,8 +435,6 @@ public final class HouseGRADDAO {
                     } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberApartment())){ // если номер комнаты совпадает.
                         return room.getAbonId();
                     }
-
-
                 }
             }
         }
@@ -399,19 +449,19 @@ public final class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private Integer getHouseIdFromGrad(final String fias, final Connection connectionGrad) throws SQLException, PreGISException {
-
-        final LinkedHashMap<String, HouseRecord> mapMkdData = getAllHouseFIASAddress(null, connectionGrad);
-        final LinkedHashMap<String, HouseRecord> mapJdData = getJDAllFias(null, connectionGrad);
-
-        if (mapMkdData.containsKey(fias)) {
-            return mapMkdData.get(fias).getGrad_id();
-        } else if (mapJdData.containsKey(fias)) {
-            return mapJdData.get(fias).getGrad_id();
-        } else {
-            return null;
-        }
-    }
+//    private Integer getHouseIdFromGrad(final String fias, final Connection connectionGrad) throws SQLException, PreGISException {
+//
+//        final LinkedHashMap<String, HouseRecord> mapMkdData = getHouseRecords(null, connectionGrad);
+//        final LinkedHashMap<String, HouseRecord> mapJdData = getAllJdHouseRecords(null, connectionGrad);
+//
+//        if (mapMkdData.containsKey(fias)) {
+//            return mapMkdData.get(fias).getGrad_id();
+//        } else if (mapJdData.containsKey(fias)) {
+//            return mapJdData.get(fias).getGrad_id();
+//        } else {
+//            return null;
+//        }
+//    }
 
     /**
      * Метод, получает все МКД из БД ГРАД.
@@ -421,11 +471,11 @@ public final class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private ArrayList<String> getAllHouseFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
-//        answerProcessing.sendMessageToClient(":getAllHouseFromGrad"); //!!!------
+    private ArrayList<String> getMKDHousesFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
+//        answerProcessing.sendMessageToClient(":getMKDHousesFromGrad"); //!!!------
         final String sqlRequest = "SELECT * FROM EX_GIS01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
 
-        return getHouseFromGrad(sqlRequest, tempMKD, connectionGrad);
+        return getHouseFromGrad(sqlRequest, connectionGrad);
     }
 
 
@@ -435,34 +485,50 @@ public final class HouseGRADDAO {
      *
      * @return список жилых домов.
      */
-    private ArrayList<String> getJdAllFiasFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
+    private ArrayList<String> getJdHousesFromGrad(final Connection connectionGrad) throws PreGISException, SQLException {
 
         final String sqlRequest = "SELECT * FROM EX_GIS_LH01('" + ResourcesUtil.instance().getCompanyGradId() + "')";
 
-        return getHouseFromGrad(sqlRequest, tempJD, connectionGrad);
+        return getHouseFromGrad(sqlRequest, connectionGrad);
     }
 
     /**
-     * Метод, отправляет в БД Града запрос, получает список домов и возвращает его.
+     * Метод, отправляет в БД Града запрос, получает резултсет домов в виде массива строк и возвращает его.
      * @param sqlRequest SQL запрос.
-     * @param tempDataHouse временный список.
      * @param connectionGrad подключение к БД Град.
      * @return список домов.
      * @throws SQLException могут возникнуть ошибки во время работы с БД.
      */
-    private ArrayList<String> getHouseFromGrad(final String sqlRequest, final ArrayList<String> tempDataHouse,
-                                               final Connection connectionGrad) throws SQLException {
+    private ArrayList<String> getHouseFromGrad(final String sqlRequest, final Connection connectionGrad) throws SQLException {
 //        answerProcessing.sendMessageToClient(":getHouseFromGrad:" + sqlRequest); //!!!------
         final ArrayList<String> allHouseData = new ArrayList<>();
-        tempDataHouse.clear();
+// переделываем на общий список        tempDataHouse.clear();
 
         try (Statement statement = connectionGrad.createStatement();
             ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
+            // определяем - есть ли в наших данных новое поле для АПИ, в котором данные уже в новом формате. По-умолчанию считает что нет
+            boolean apiStrExists = false;
+            final String apiColumnName = "RAPISTR";
+            for (int i = 1; i < resultSet.getMetaData().getColumnCount(); i++) {
+                if(resultSet.getMetaData().getColumnName(i).equals(apiColumnName)){
+                    apiStrExists = true;
+                    break;
+                }
+            }
 
-            while (resultSet.next()) {
-                if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
-                    allHouseData.add(resultSet.getString(1));
-                    tempDataHouse.add(resultSet.getString(1));
+            if(apiStrExists){ // если база возвращает новый формат данных - обрабатываем их
+                while (resultSet.next()) {
+                    if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
+                        allHouseData.add(resultSet.getString(1));
+// переделываем на общий список                        tempDataHouse.add(resultSet.getString(1));
+                    }
+                }
+            }else {// иначе обрабатываем старый формат данных
+                while (resultSet.next()) {
+                    if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
+                        allHouseData.add(resultSet.getString(1));
+// переделываем на общий список                        tempDataHouse.add(resultSet.getString(1));
+                    }
                 }
             }
 //            answerProcessing.sendMessageToClient(String.valueOf(allHouseData.size())); //!!!------
@@ -509,41 +575,47 @@ public final class HouseGRADDAO {
         return data.split(Pattern.quote("|"));
     }
 
-    /**
-     * Метод, возвращает временный список содержащий информацию о МКД из процедуры "EX_GIS01".
-     * @return возвращает временный список содержащий информацию о МКД.
-     */
-    public ArrayList<String> getTempMKD() {
-        return tempMKD;
-    }
-
-    /**
-     * Метод, возвращает временный список содержащий информацию о ЖД из процедуры "EX_GIS_LH01".
-     * @return возвращает временный список содержащий информацию о ЖД.
-     */
-    public ArrayList<String> getTempJD() {
-        return tempJD;
-    }
+//    /**
+//     * Метод, возвращает временный список содержащий информацию о МКД из процедуры "EX_GIS01".
+//     * @return возвращает временный список содержащий информацию о МКД.
+//     */
+//    public ArrayList<String> getTempMKD() {
+//        return tempMKD;
+//    }
+//
+//    /**
+//     * Метод, возвращает временный список содержащий информацию о ЖД из процедуры "EX_GIS_LH01".
+//     * @return возвращает временный список содержащий информацию о ЖД.
+//     */
+//    public ArrayList<String> getTempJD() {
+//        return tempJD;
+//    }
 
     /**
      * Метод, возвращает из темпа все полученные дома (МКД, ЖД), где ключ - ид дома в Граде, значение - адрес дома.
      * Для отображения в UI список домов для выбора.
      * Внимание, если до этого не разу не получены данные по МКД или ЖД, получите пустую Map.
      */
-    public HashMap<Integer, String> getAllHouseForListModalWindow() {
-        
-        final HashMap<Integer, String> mapAddress = new HashMap<>();
-        
-        for (String item : tempMKD) {
-            final String[] allData = getAllData(item);
-            mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_MKD]),
-                    String.format("%s %s", allData[ADDRESS_GRAD_MKD], allData[NUMBER_HOUSE_GRAD_MKD]));
-        }
-        for (String item : tempJD) {
-            final String[] allData = getAllData(item);
-            mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_JD]),
-                    String.format("%s %s", allData[ADDRESS_GRAD_JD], allData[NUMBER_HOUSE_GRAD_JD]));
-        }
-        return mapAddress;
-    }
+//    public HashMap<Integer, String> getAllHouseForListModalWindow(final Connection connectionGRAD) throws SQLException, PreGISException {
+//        if(allHouses.isEmpty()) {
+//            getHouseRecordsFromDB(connectionGRAD);
+//        }
+//
+//        final HashMap<Integer, String> mapAddress = new HashMap<>();
+//        for (Map.Entry<String, HouseRecord> houseEntry :allHouses.entrySet()) {
+//            mapAddress.put(houseEntry.getValue().getGrad_id(), houseEntry.getValue().getAddresString());
+//        }
+//
+////        for (String item : tempMKD) {
+////            final String[] allData = getAllData(item);
+////            mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_MKD]),
+////                    String.format("%s %s", allData[ADDRESS_GRAD_MKD], allData[NUMBER_HOUSE_GRAD_MKD]));
+////        }
+////        for (String item : tempJD) {
+////            final String[] allData = getAllData(item);
+////            mapAddress.put(Integer.valueOf(allData[HOUSE_ID_GRAD_JD]),
+////                    String.format("%s %s", allData[ADDRESS_GRAD_JD], allData[NUMBER_HOUSE_GRAD_JD]));
+////        }
+//        return mapAddress;
+//    }
 }

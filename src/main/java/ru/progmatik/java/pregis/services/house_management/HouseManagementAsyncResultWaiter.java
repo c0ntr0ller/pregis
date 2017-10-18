@@ -1,12 +1,18 @@
 package ru.progmatik.java.pregis.services.house_management;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.house_management_service_async.*;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.other.*;
+import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
+import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
@@ -74,6 +80,7 @@ public class HouseManagementAsyncResultWaiter {
                 result = port.getState(getStateRequest, requestHeader, headerHolder);
             } catch (Fault fault) {
                 answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+                break;
             }
 
             if (result != null){

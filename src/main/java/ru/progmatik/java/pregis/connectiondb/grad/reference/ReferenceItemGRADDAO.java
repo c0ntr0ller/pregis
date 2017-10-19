@@ -126,10 +126,10 @@ public class ReferenceItemGRADDAO {
         try (PreparedStatement ps = connectionGrad.prepareStatement(
                 "INSERT INTO SERVICES_GIS_JKH(NAME, CODE, UIID, GROUP_NAME, CODE_PARENT, ORG_ID) VALUES(?, ? ,? ,?, ?, ?)")){
             if (dataSet.getId() == null) { // проверяем если у элемента нет id, т.е. его нет в базе, то добавляем
-                ps.setString(1, dataSet.getName());
+                ps.setString(1, dataSet.getName().length() <= ps.getParameterMetaData().getPrecision(1)? dataSet.getName():dataSet.getName().substring(0, ps.getParameterMetaData().getPrecision(1) - 1));
                 ps.setString(2, dataSet.getCode());
                 ps.setString(3, dataSet.getGuid());
-                ps.setString(4, dataSet.getGroupName());
+                ps.setString(4, dataSet.getGroupName().length() <= ps.getParameterMetaData().getPrecision(4)? dataSet.getGroupName():dataSet.getGroupName().substring(0, ps.getParameterMetaData().getPrecision(4) - 1));
                 ps.setInt(5, Integer.parseInt(dataSet.getCodeParent()));
                 ps.setInt(6, org_id);
                 ps.executeUpdate();

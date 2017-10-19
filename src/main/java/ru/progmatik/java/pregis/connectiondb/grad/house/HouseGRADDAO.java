@@ -37,9 +37,8 @@ public final class HouseGRADDAO {
     private static final int ADDRESS_GRAD_JD = 12;
     private static final int NUMBER_HOUSE_GRAD_JD = 13;
     private static final int HOUSE_HOUSEUNIQNUM = 17;
-    private final AnswerProcessing answerProcessing;
     private static final Logger LOGGER = Logger.getLogger(HouseGRADDAO.class);
-
+    private final AnswerProcessing answerProcessing;
     //    Временные листы, что бы не ходить 2 или более раза за одним и темже в БД
 //    private final ArrayList<String> tempMKD = new ArrayList<>();
 //    private final ArrayList<String> tempJD = new ArrayList<>();
@@ -82,6 +81,7 @@ public final class HouseGRADDAO {
 
     /**
      * По запросу выдает список домов из Град. Если заан ИД дома - выдает только его
+     *
      * @param houseGradId
      * @param connectionGrad
      * @return
@@ -90,10 +90,10 @@ public final class HouseGRADDAO {
      */
     public LinkedHashMap<String, HouseRecord> getHouseRecords(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
         // если список пустой - запрашиваем из БД
-        if(allHouses.isEmpty()) {
+        if (allHouses.isEmpty()) {
             getHouseRecordsFromDB(connectionGrad);
         }
-        if (houseGradId != null && !allHouses.isEmpty()){
+        if (houseGradId != null && !allHouses.isEmpty()) {
             for (Map.Entry<String, HouseRecord> entry : allHouses.entrySet()) {
                 if (houseGradId.equals(entry.getValue().getGrad_id())) {
                     final LinkedHashMap<String, HouseRecord> tmpMap = new LinkedHashMap<>();
@@ -107,6 +107,7 @@ public final class HouseGRADDAO {
 
     /**
      * Заполняет мапу с домами из БД
+     *
      * @param connectionGrad
      * @throws SQLException
      * @throws PreGISException
@@ -117,15 +118,17 @@ public final class HouseGRADDAO {
         // получаем все жилые дома
         final LinkedHashMap<String, HouseRecord> mapJd = getAllJdHouseRecords(connectionGrad);
 
-        if (mapMkd != null){
+        if (mapMkd != null) {
             allHouses.putAll(mapMkd);
         }
-        if (mapJd != null){
+        if (mapJd != null) {
             allHouses.putAll(mapJd);
         }
     }
+
     /**
      * Метод, обращается в БД ГРАДа, получает сведения о многоквартирных домах, извлекает ФИАС и информацию о домме из строк, затем добавляет его в Map. Ключ ФИАС дома
+     *
      * @param connectionGrad - соединение с Град
      * @return список всех домов указаной организации.
      * @throws SQLException
@@ -163,8 +166,10 @@ public final class HouseGRADDAO {
             return mapMkd;
         }
     }
+
     /**
      * Метод, обращается в БД ГРАДа, получает сведения о частных домах, извлекает ФИАС и информацию о домме из строк, затем добавляет его в Map. Ключ ФИАС дома
+     *
      * @param connectionGrad - соединение с Град
      * @return список всех домов указаной организации.
      * @throws SQLException
@@ -222,10 +227,10 @@ public final class HouseGRADDAO {
         for (String itemListHouse : allListMKD) {
             if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {// если задан ФИАС
                 if (allHouses // если добавляем все дома
-                            ||
+                        ||
                         ((getAllData(itemListHouse).length > HOUSE_HOUSEUNIQNUM) && // или уже есть идентификатор
-                            getAllData(itemListHouse)[HOUSE_HOUSEUNIQNUM] != null &&
-                            !getAllData(itemListHouse)[HOUSE_HOUSEUNIQNUM].isEmpty())) {
+                                getAllData(itemListHouse)[HOUSE_HOUSEUNIQNUM] != null &&
+                                !getAllData(itemListHouse)[HOUSE_HOUSEUNIQNUM].isEmpty())) {
                     mapAllHouseWithIdGis.put(getAllData(itemListHouse)[HOUSE_FIAS], Integer.valueOf(getAllData(itemListHouse)[HOUSE_ID_GRAD_MKD]));
                 }
             }
@@ -285,7 +290,7 @@ public final class HouseGRADDAO {
      * @param houseId         ид дома в БД ГРАД.
      * @param apartmentNumber номер помещения (квартиры, используется для поиска абонента в БД ГРАД).
      * @param roomNumber      номер комнаты, например в коммунальной квартире (используется для поиска абонента в БД ГРАД).
-     * @param isResidential - жилое/нежилое
+     * @param isResidential   - жилое/нежилое
      * @param premisesGUID    идентификатор помещения.
      * @param premisesUniqNum уникальный номер помещения.
      * @param livingRoomGUID  идентификатор комнаты.
@@ -415,9 +420,10 @@ public final class HouseGRADDAO {
 
     /**
      * Метод, ищет в локальной Map идентификатор абонента.
-     * @param idHouse идентификатор дома в БД Град.
+     *
+     * @param idHouse         идентификатор дома в БД Град.
      * @param apartmentNumber номер помещения в ГИС ЖКХ.
-     * @param roomNumber номер комнаты в ГИС ЖКХ.
+     * @param roomNumber      номер комнаты в ГИС ЖКХ.
      * @return идентификатор абонента в БД Град.
      */
     private Integer findAbonId(final Integer idHouse, // TODO В запросе по 124 дому возвращается квартира 1, но поему-то тут она не находится! Сделать вывод в лог и проверить
@@ -432,7 +438,7 @@ public final class HouseGRADDAO {
                         if (room.isResidential() == isResidential) {
                             return room.getAbonId();
                         }
-                    } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberApartment())){ // если номер комнаты совпадает.
+                    } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberApartment())) { // если номер комнаты совпадает.
                         return room.getAbonId();
                     }
                 }
@@ -479,7 +485,6 @@ public final class HouseGRADDAO {
     }
 
 
-
     /**
      * Метод, получает все жилые дома содержащие из БД ГРАД.
      *
@@ -494,7 +499,8 @@ public final class HouseGRADDAO {
 
     /**
      * Метод, отправляет в БД Града запрос, получает резултсет домов в виде массива строк и возвращает его.
-     * @param sqlRequest SQL запрос.
+     *
+     * @param sqlRequest     SQL запрос.
      * @param connectionGrad подключение к БД Град.
      * @return список домов.
      * @throws SQLException могут возникнуть ошибки во время работы с БД.
@@ -505,25 +511,25 @@ public final class HouseGRADDAO {
 // переделываем на общий список        tempDataHouse.clear();
 
         try (Statement statement = connectionGrad.createStatement();
-            ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
+             ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
             // определяем - есть ли в наших данных новое поле для АПИ, в котором данные уже в новом формате. По-умолчанию считает что нет
             boolean apiStrExists = false;
             final String apiColumnName = "RAPISTR";
             for (int i = 1; i < resultSet.getMetaData().getColumnCount(); i++) {
-                if(resultSet.getMetaData().getColumnName(i).equals(apiColumnName)){
+                if (resultSet.getMetaData().getColumnName(i).equals(apiColumnName)) {
                     apiStrExists = true;
                     break;
                 }
             }
 
-            if(apiStrExists){ // если база возвращает новый формат данных - обрабатываем их
+            if (apiStrExists) { // если база возвращает новый формат данных - обрабатываем их
                 while (resultSet.next()) {
                     if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
                         allHouseData.add(resultSet.getString(1));
 // переделываем на общий список                        tempDataHouse.add(resultSet.getString(1));
                     }
                 }
-            }else {// иначе обрабатываем старый формат данных
+            } else {// иначе обрабатываем старый формат данных
                 while (resultSet.next()) {
                     if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
                         allHouseData.add(resultSet.getString(1));

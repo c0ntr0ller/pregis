@@ -583,6 +583,16 @@ public final class ProgramAction {
                     }
                 }
             }
+            // если домов с HOUSEUNIQNUM нет вообще - добавляем ВСЕ дома, это нужно дя первого обмена
+            if (listHouseModalWindow.size() == 0) {
+                if (houseAddedGisJkh != null && !houseAddedGisJkh.isEmpty()) {
+                    for (Map.Entry<String, HouseRecord> entry : houseAddedGisJkh.entrySet()) {
+                            listHouseModalWindow.add(new ValueJSON(
+                                    entry.getValue().getGrad_id().toString(),
+                                    entry.getValue().getAddresStringShort()));
+                    }
+                }
+            }
 
             if (listHouseModalWindow.size() > 0) {
                 answerProcessing.showHouseListModalWindow(listHouseModalWindow);

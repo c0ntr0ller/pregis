@@ -138,7 +138,7 @@ public final class HouseGRADDAO {
 
         final List<String> allListHouseData = getMKDHousesFromGrad(connectionGrad);
         final LinkedHashMap<String, HouseRecord> mapMkd = new LinkedHashMap<>();
-        if (allListHouseData.size() > 1) {
+        if (allListHouseData.size() > 0) {
             for (String itemListHouse : allListHouseData) {
                 if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
                     String[] houseAllData = getAllData(itemListHouse);

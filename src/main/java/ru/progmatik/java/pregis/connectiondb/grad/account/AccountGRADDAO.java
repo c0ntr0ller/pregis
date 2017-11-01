@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
@@ -106,8 +105,8 @@ public final class AccountGRADDAO {
                     bi.setTypeLS(arrayData[3]);
                     bi.setEmployer(AnswerYesOrNo.getAnswer(arrayData[4]));
                     bi.setSurname(arrayData[5]);
-                    bi.setName(arrayData[6]);
-                    bi.setMiddleName(arrayData[7]);
+                    if(!arrayData[6].isEmpty()) {bi.setName(arrayData[6]);}
+                    if(!arrayData[7].isEmpty()) {bi.setMiddleName(arrayData[7]);}
 // закомментили. при передаче СНИЛС ругается на паспорт. но СНИЛСы у нас не подтверждены, поэтому ну их                    bi.setSnils(arrayData[8].replaceAll("-", "").replaceAll(" ", ""));
                     bi.setTypeDocument(DocumentType.getTypeDocument(arrayData[9]));
                     bi.setNumberDocumentIdentity(arrayData[10]);
@@ -308,10 +307,13 @@ public final class AccountGRADDAO {
                 account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
-//                    Сведения о платильщике
+//                    Сведения о плательщике
                 account.setPayerInfo(new AccountType.PayerInfo());
 //                    if (basicInformation.getOgrnOrOgrnip() == 0) {
-                if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()) {
+                if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
+                        && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
+
+                    // создаем информацию о плательщике только если есть и Фамилия и Имя
 
                     account.getPayerInfo().setInd(new AccountIndType());
                     account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());

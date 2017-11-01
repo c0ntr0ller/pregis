@@ -105,7 +105,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 }
             }
         }
-        // лицевые еа закрытие обрабатываются после ответа пользователя в go()
+        // лицевые на закрытие обрабатываются после ответа пользователя в go()
         if (accountsForCloseList.size() > 0) {
             setErrorState(0);
             answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +

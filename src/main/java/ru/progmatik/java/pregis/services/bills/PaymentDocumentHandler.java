@@ -150,8 +150,10 @@ public class PaymentDocumentHandler {
         // получаем действующий контракт
         ExportCAChResultType.Contract curContract = null;
         for(ExportCAChResultType caChResultType:resultContract.getExportCAChResult()){
-            if(caChResultType.getContract().getContractStatus().equals("Approved")){
-                curContract = caChResultType.getContract();
+            if (caChResultType.getContract() != null && caChResultType.getContract().getContractStatus() != null) {
+                if (caChResultType.getContract().getContractStatus().equals("Approved")) {
+                    curContract = caChResultType.getContract();
+                }
             }
         }
         if(curContract == null){
@@ -159,7 +161,8 @@ public class PaymentDocumentHandler {
         }
 
         if(curContract == null){
-            throw new PreGISException("Не найден ни один договор управления на доме в ГИС ЖКХ");
+            answerProcessing.sendMessageToClient("Не найден ни один договор управления на доме в ГИС ЖКХ, сверка не производится");
+            return;
         }
         // по контракту получаем список услуг на доме (на доме, а не на абонентах!!!)
         HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(curContract);

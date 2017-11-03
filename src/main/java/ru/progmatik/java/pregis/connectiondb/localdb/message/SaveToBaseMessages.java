@@ -8,8 +8,6 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -20,9 +18,11 @@ import java.sql.Timestamp;
 public class SaveToBaseMessages {
 
     private static final Logger LOGGER = Logger.getLogger(SaveToBaseMessages.class);
-    private static final String SAVE_FOLDER = "temp";
+    private static final String TMP_FOLDER = "temp";
+    private static final String SAVE_FOLDER = "exchange";
     private static final String FILE_OUTBOUND = "outbound.xml";
     private static final String FILE_INBOUND = "inbound.xml";
+
 
     private MessageDAO messageDAO;
     private String stateMessage = "OK";
@@ -45,19 +45,24 @@ public class SaveToBaseMessages {
     public void setRequest(HeaderType headerRequest, String nameMethod) {
 
         String typeOperation = "Request";
-//        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
-        File file = new File(SAVE_FOLDER + File.separator + FILE_OUTBOUND);
+        ResourcesUtil.instance().createFolder(TMP_FOLDER);
+        ResourcesUtil.instance().createFolder(SAVE_FOLDER);
+        File file = new File(TMP_FOLDER + File.separator + FILE_OUTBOUND);
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
+        String newFileName = SAVE_FOLDER + File.separator + nameMethod + "_" + headerRequest.getMessageGUID() + "_" + typeOperation + ".xml";
 
-        try (FileInputStream inputStream = new FileInputStream(file)) {
-            setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, inputStream, stateMessage);
-            file.deleteOnExit();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-//            e.printStackTrace();
-        } finally {
-            file.delete();
-        }
+//        try {
+
+        file.renameTo(new File(newFileName));
+        setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, null, stateMessage);
+            //file.deleteOnExit();
+//        } catch (IOException e) {
+//            LOGGER.error(e.getMessage());
+////            e.printStackTrace();
+//        }
+////        finally {
+////            file.delete();
+////        }
     }
 
     /**
@@ -69,31 +74,36 @@ public class SaveToBaseMessages {
     public void setResult(HeaderType headerRequest, String nameMethod, ErrorMessageType errorMessage) {
 
         String typeOperation = "Result";
+        ResourcesUtil.instance().createFolder(TMP_FOLDER);
         ResourcesUtil.instance().createFolder(SAVE_FOLDER);
-        File file = new File(SAVE_FOLDER + File.separator + FILE_INBOUND);
+        File file = new File(TMP_FOLDER + File.separator + FILE_INBOUND);
         Timestamp timestamp = Timestamp.valueOf(getDate(headerRequest));
+
+        String newFileName = SAVE_FOLDER + File.separator + nameMethod + "_" + headerRequest.getMessageGUID() + "_" + typeOperation + ".xml";
 
         StringBuilder stateBuilder = new StringBuilder("OK");
 
-        if (errorMessage != null) {
-            stateBuilder.setLength(0);
-            stateBuilder.append(errorMessage.getErrorCode());
-            stateBuilder.append("\n");
-            stateBuilder.append(errorMessage.getDescription());
-            stateBuilder.append("\n");
-            stateBuilder.append(errorMessage.getStackTrace());
-//            LOGGER.error(stateBuilder.toString());
-        }
+//        if (errorMessage != null) {
+//            stateBuilder.setLength(0);
+//            stateBuilder.append(errorMessage.getErrorCode());
+//            stateBuilder.append("\n");
+//            stateBuilder.append(errorMessage.getDescription());
+//            stateBuilder.append("\n");
+//            stateBuilder.append(errorMessage.getStackTrace());
+////            LOGGER.error(stateBuilder.toString());
+//        }
 
-        try (FileInputStream inputStream = new FileInputStream(file)) {
-            setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, inputStream, stateBuilder.toString());
-            file.deleteOnExit();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+//        try {
+        file.renameTo(new File(newFileName));
+        setMessageToBase(headerRequest.getMessageGUID(), nameMethod, timestamp, typeOperation, null, stateBuilder.toString());
+//            file.deleteOnExit();
+//        } catch (IOException e) {
+//            LOGGER.error(e.getMessage());
 //            e.printStackTrace();
-        } finally {
-            file.delete();
-        }
+//        }
+//        finally {
+//            file.delete();
+//        }
     }
 
     /**

@@ -68,6 +68,7 @@ public class ExportDataProviderNsiPagingItem {
 //            throw fault;
             return null;
         }
+        // TODO добавить обработку ошибки INT002012 Нет объектов для экспорта
         answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, headerHolder.value, result.getErrorMessage(), LOGGER);
 
         if (result.getErrorMessage() != null) {

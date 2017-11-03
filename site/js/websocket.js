@@ -129,7 +129,7 @@ function showHouseListModalWindow(arrayHouse) {
 
     if (arrayJSON.length > 0 ) {
         selectBox.append($("<option></option>").attr("value", -1).text("Выгрузить все"));
-
+if (arrayJSON.length > 0 ) {
         for (var i = 0; i < arrayJSON.length; i++) {
             // console.log("value: " + arrayJSON[i].value);
             selectBox.append($("<option></option>").attr("value", arrayJSON[i].value).text(arrayJSON[i].name));

@@ -100,8 +100,12 @@ public class PaymentDocumentHandler {
             return;
         }
 
-        // формируем запрос на отзыв документов
-        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGrad, pdGradDao);
+        // запрашиваем текущие документы по дому из Град
+        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad =
+                pdGradDao.getPaymentDocumentMap(houseGrad.getGrad_id(), null);
+
+        // сравниваем с документами ГИС и формируем запрос на отзыв документов
+        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGrad, pdGradDao, paymentDocumentMapGrad);
 
             // если есть документы на закрытие после синхронизации - добавляем их
         if (syncWithDrawList != null && syncWithDrawList.size() > 0) {
@@ -113,8 +117,8 @@ public class PaymentDocumentHandler {
             sendDocumentsToGisJkh(withdrawPaymentDocumentRequest, pdGradDao);
         }
 
-        // формируем массив запросов
-        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao);
+        // формируем массив запросов из оставшихся документов Град
+        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao, paymentDocumentMapGrad);
 
         if(importPaymentDocumentRequestList != null && importPaymentDocumentRequestList.size() > 0) {
 
@@ -351,7 +355,14 @@ public class PaymentDocumentHandler {
      * @param pdGradDao Объект работы с Градом
      * @return массив подготовленных к отправке запросов
      */
-    private List<ImportPaymentDocumentRequest> compileImportDocumentRequest(final String fias, final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
+    private List<ImportPaymentDocumentRequest> compileImportDocumentRequest(
+            final String fias,
+            final int houseGradId,
+            final PaymentDocumentGradDAO pdGradDao,
+            HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad) throws SQLException, PreGISException, ParseException {
+
+
+
 
         answerProcessing.sendMessageToClient("Создается список платежных реквизитов получателей по дому");
         final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =
@@ -362,23 +373,20 @@ public class PaymentDocumentHandler {
             return null;
         }
 
-        ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentArrayList = null;
+        ArrayList<ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentArrayList = new ArrayList<>(paymentDocumentMapGrad.values());
         answerProcessing.sendMessageToClient("Создается список новых платежных документов");
-        HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentHashMap = pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
-        if (paymentDocumentHashMap != null && paymentDocumentHashMap.size() > 0) {
-            paymentDocumentArrayList = new ArrayList<>(paymentDocumentHashMap.values());
-        } else{
-            return null;
-        }
-
-        //        answerProcessing.sendMessageToClient("Создается список документов на отзыв");
-//        final ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> withdrawPaymentDocuments =
-//                pdGradDao.getWithdrawPaymentDocument(houseGradId);
-
-        answerProcessing.clearLabelForText();
-
+//        HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentHashMap = pdGradDao.getPaymentDocumentMap(houseGradId, paymentInformationMap);
+//        if (paymentDocumentHashMap != null && paymentDocumentHashMap.size() > 0) {
+//            paymentDocumentArrayList = new ArrayList<>(paymentDocumentHashMap.values());
+//        } else{
+//            return null;
+//        }
+//
+//
+//        answerProcessing.clearLabelForText();
+//
         // формируем запрос
-        if (paymentDocumentArrayList == null || paymentDocumentArrayList.size() == 0){
+        if (paymentDocumentArrayList.size() == 0){
             answerProcessing.sendMessageToClient("Отсутствуют новые платежные документы!");
             return null;
         }
@@ -386,7 +394,7 @@ public class PaymentDocumentHandler {
         allCount = paymentDocumentArrayList.size();
         ArrayList<ImportPaymentDocumentRequest> importPaymentDocumentRequestArrayList = new ArrayList<>();
 
-        int chunk = ResourcesUtil.instance().getMaxRequestSize();; // chunk size to divide
+        int chunk = ResourcesUtil.instance().getMaxRequestSize(); // chunk size to divide
         for(int i=0; i<paymentDocumentArrayList.size(); i+=chunk){
             ArrayList<ImportPaymentDocumentRequest.PaymentDocument> subarray = new ArrayList<>(paymentDocumentArrayList.subList(i, Math.min(paymentDocumentArrayList.size(),i+chunk)));
 
@@ -446,19 +454,18 @@ public class PaymentDocumentHandler {
      * @throws PreGISException
      * @throws ParseException
      */
-    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> synchronizeDocuments(final String fias, final HouseRecord houseGrad, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException, ParseException {
+    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> synchronizeDocuments(final String fias,
+                                                                                                 final HouseRecord houseGrad,
+                                                                                                 final PaymentDocumentGradDAO pdGradDao,
+                                                                                                 HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad) throws SQLException, PreGISException, ParseException {
 
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
 
         answerProcessing.sendMessageToClient("Синхронизируются имеющиеся платежные документы с ГИС ЖКХ");
-        // запрашиваем текущие документы по дому из Град
-        final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad =
-                pdGradDao.getPaymentDocumentMap(houseGrad.getGrad_id(), null);
-// TODO переделать - надо чотбы сначала запрашивались все документы из ГРАД, сравнивались с ГИС, в гисе неправльные откатывались, те что из града - обрезались по уже имеющимся в ГИС и отсылалсь
         if (paymentDocumentMapGrad == null || paymentDocumentMapGrad.size() == 0){
             answerProcessing.sendErrorToClientNotException("В Град нет новых сгенерированных документов");
-// TODO поэтому пока просто выходим
-            return null;
+            // TODO поэтому пока просто выходим
+//            return null;
         }
 
         // запрашиваем документы из Гис
@@ -471,23 +478,10 @@ public class PaymentDocumentHandler {
             for (ExportPaymentDocumentResultType paymentDocumentGis : paymentDocumentGisList) {
                 // если еще не отозван в ГИС
                 if (paymentDocumentGis.getPaymentDocument().isWithdraw() == null || !paymentDocumentGis.getPaymentDocument().isWithdraw()) {
-                    if (
-                        // в Граде вообще ничего нет
-                            paymentDocumentMapGrad == null
-                                    // документ в Граде есть, но он отозван
-                                    || (paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
-                                    && paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).isWithdraw() != null
-                            )
-                                    // в Граде нет с таким номером ЕПД
-                                    || !paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()))
-//                    отключил, так как мы не храним ИД документов, только номера, сгенерированные нами
-//                                    // в Граде есть, но без ГИД
-//                                    || paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID() == null
-//                                    // в Граде есть с таким ЕПД, но не совпадают ИД документов
-//                                    || !paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).getPaymentDocumentID().equals(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID()))
+                    if (        // документ в Граде есть, но он отозван или нет в Град
+                            !paymentDocumentMapGrad.containsKey(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber())
+                            || paymentDocumentMapGrad.get(paymentDocumentGis.getPaymentDocument().getPaymentDocumentNumber()).isWithdraw() != null)
                     {
-
-
                         ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
                         withdrawPaymentDocument.setPaymentDocumentID(paymentDocumentGis.getPaymentDocument().getPaymentDocumentID());
                         withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
@@ -495,6 +489,17 @@ public class PaymentDocumentHandler {
                     }
                 }
             }
+        }
+
+        // все, которые есть в Град, но отсутствуют в ГИС - удаляем из списка Града
+        if(paymentDocumentMapGrad != null && paymentDocumentGisList != null) {
+            final Map<String, ExportPaymentDocumentResultType> paymentDocumentGisMap = new HashMap<>();
+            for (ExportPaymentDocumentResultType exportPaymentDocumentResultType: paymentDocumentGisList) {
+                paymentDocumentGisMap.put(exportPaymentDocumentResultType.getPaymentDocument().getPaymentDocumentNumber(), exportPaymentDocumentResultType);
+            }
+
+            // если есть в ГИС - удаляем
+            paymentDocumentMapGrad.keySet().removeIf(paymentDocumentGisMap::containsKey);
         }
 
         return paymentDocumentWithdrawArray;

@@ -10,18 +10,19 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-//import ru.CryptoPro.JCP.JCP;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.signet.Configure;
 import ru.progmatik.java.pregis.signet.bcsign.security.XmlDSignTools;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
-import ru.progmatik.java.web.servlets.web.*;
+import ru.progmatik.java.web.servlets.web.IndexServlet;
+import ru.progmatik.java.web.servlets.web.LoginClient;
+import ru.progmatik.java.web.servlets.web.MainServlet;
+import ru.progmatik.java.web.servlets.web.UsersServlet;
 
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 import java.security.Security;
+
+//import ru.CryptoPro.JCP.JCP;
 
 public class Main {
 
@@ -44,7 +45,7 @@ public class Main {
 
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
-
+        Security.setProperty("crypto.policy", "unlimited");
 //        System.setProperty("javax.net.ssl.supportGVO", "false");
 
 //        System.setProperty("javax.net.debug", "all");

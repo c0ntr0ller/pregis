@@ -2,17 +2,12 @@ package ru.progmatik.java.practice;
 
 import org.apache.xml.security.exceptions.AlgorithmAlreadyRegisteredException;
 import org.apache.xml.security.signature.XMLSignatureException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import ru.gosuslugi.dom.schema.integration.house_management.ExportCAChResultType;
-import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.services.house.ExportCAChData;
-import ru.progmatik.java.pregis.signet.bcsign.security.XmlDSignTools;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.soap.SOAPException;
 import java.io.FileNotFoundException;
-import java.security.Security;
 import java.sql.SQLException;
 import java.text.ParseException;
 
@@ -21,6 +16,8 @@ import java.text.ParseException;
  */
 public class BekDebugClass {
     public static void main(String[] args) throws SQLException, ParseException, PreGISException, FileNotFoundException, SOAPException, JAXBException, XMLSignatureException, AlgorithmAlreadyRegisteredException, ClassNotFoundException {
+
+        ResourcesUtil.instance().createFolder("exchange");
 //        ReferenceItemGRADDAO gradDAO = new ReferenceItemGRADDAO();
 //        Map<String, ReferenceItemDataSet> mapNsiWithCodeNsi = gradDAO.getMapItemsCodeParent("51", ConnectionBaseGRAD.instance().getConnection());
 //
@@ -40,6 +37,9 @@ public class BekDebugClass {
 //        final int state = updateAllMeteringDeviceData.updateMeteringDeviceData(21);
 //        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(null);
 //        pdGradDao.addPaymentDocumentRegistryItem("1767", "20ВС786289-01-7031", ConnectionBaseGRAD.instance().getConnection());
+
+
+/*
         Security.addProvider(new BouncyCastleProvider());  // Добавим Bouncy Castle
         XmlDSignTools.init("BC"); // Инициализация алгоритма ГОСТ для подписи файлов
 
@@ -64,6 +64,6 @@ public class BekDebugClass {
                 System.out.println(stringBuilder.toString());
             }
         }
-
+*/
     }
 }

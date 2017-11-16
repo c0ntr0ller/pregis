@@ -45,7 +45,7 @@ public class Main {
 
 //        Укажем XMLSignature формировать подпись без разделителей '\n'
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
-        Security.setProperty("crypto.policy", "unlimited");
+//        Security.setProperty("crypto.policy", "unlimited");
 //        System.setProperty("javax.net.ssl.supportGVO", "false");
 
 //        System.setProperty("javax.net.debug", "all");

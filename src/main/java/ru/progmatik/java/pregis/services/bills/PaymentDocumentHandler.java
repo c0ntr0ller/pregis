@@ -101,8 +101,12 @@ public class PaymentDocumentHandler {
         }
 
         // запрашиваем текущие документы по дому из Град
+        answerProcessing.sendMessageToClient("Создается список платежных реквизитов получателей по дому");
+        final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = pdGradDao.getPaymentInformationMap(houseGrad.getGrad_id());
+
+        answerProcessing.sendMessageToClient("Создается список платежных документов по дому");
         final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad =
-                pdGradDao.getPaymentDocumentMap(houseGrad.getGrad_id(), null);
+                pdGradDao.getPaymentDocumentMap(houseGrad.getGrad_id(), paymentInformationMap);
 
         // сравниваем с документами ГИС и формируем запрос на отзыв документов
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGrad, pdGradDao, paymentDocumentMapGrad);
@@ -118,7 +122,7 @@ public class PaymentDocumentHandler {
         }
 
         // формируем массив запросов из оставшихся документов Град
-        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao, paymentDocumentMapGrad);
+        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao, paymentDocumentMapGrad, paymentInformationMap);
 
         if(importPaymentDocumentRequestList != null && importPaymentDocumentRequestList.size() > 0) {
 
@@ -359,14 +363,16 @@ public class PaymentDocumentHandler {
             final String fias,
             final int houseGradId,
             final PaymentDocumentGradDAO pdGradDao,
-            HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad) throws SQLException, PreGISException, ParseException {
+            HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad,
+            HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap) throws SQLException, PreGISException, ParseException {
 
 
 
 
         answerProcessing.sendMessageToClient("Создается список платежных реквизитов получателей по дому");
-        final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap =
-                pdGradDao.getPaymentInformationMap(houseGradId);
+        if(paymentInformationMap == null || paymentInformationMap.size() == 0){
+            paymentInformationMap = pdGradDao.getPaymentInformationMap(houseGradId);
+        }
 
         if(paymentInformationMap == null || paymentInformationMap.size() == 0){
             answerProcessing.sendMessageToClient("Список получателей пуст, ничего не высылается в ГИС");
@@ -461,7 +467,7 @@ public class PaymentDocumentHandler {
 
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
 
-        answerProcessing.sendMessageToClient("Синхронизируются имеющиеся платежные документы с ГИС ЖКХ");
+        answerProcessing.sendMessageToClient("Синхронизируются платежные документы с ГИС ЖКХ");
         if (paymentDocumentMapGrad == null || paymentDocumentMapGrad.size() == 0){
             answerProcessing.sendErrorToClientNotException("В Град нет новых сгенерированных документов");
             // TODO поэтому пока просто выходим
@@ -510,13 +516,12 @@ public class PaymentDocumentHandler {
         // формируем запрос в ГИС и получаем абонентов
 //        List<ExportAccountResultType> accountList = new ExportAccountData(answerProcessing).callExportAccountData(fias).getExportAccountResult();
         ru.gosuslugi.dom.schema.integration.house_management.GetStateResult accountStateResult = HomeManagementAsyncPort.callExportAccountData(fias, answerProcessing);
-        List<ExportAccountResultType> accountList = null;
 
         if(accountStateResult == null) {
             return null;
         }
 
-        accountList = accountStateResult.getExportAccountResult();
+        List<ExportAccountResultType> accountList = accountStateResult.getExportAccountResult();
 
         if(accountList == null || accountList.size() == 0){
             return null;

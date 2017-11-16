@@ -3,9 +3,7 @@ package ru.progmatik.java.practice;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
-import ru.progmatik.java.pregis.services.bills.PaymentDocumentHandler;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 

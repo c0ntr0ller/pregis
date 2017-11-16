@@ -140,10 +140,10 @@ public final class PaymentDocumentGradDAO {
         final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMap = new HashMap<>();
 
         // получаем заголовки платежных документов по абонентам
-        HashMap<String, Invoice01> accountsMapGrad = getAccountMap(houseGradID);
+        HashMap<String, Invoice01> invocesMapGrad = getAccountMap(houseGradID);
 
         // если нечего посылать - возвращаем пусто
-        if (accountsMapGrad == null || accountsMapGrad.size() == 0){
+        if (invocesMapGrad == null || invocesMapGrad.size() == 0){
             return null;
         }
 
@@ -156,16 +156,16 @@ public final class PaymentDocumentGradDAO {
         }
 
         // бежим по мапе заголовков платежных документов из Града
-        for (Map.Entry<String, Invoice01> accountGrad: accountsMapGrad.entrySet()) {
+        for (Map.Entry<String, Invoice01> invoceGrad: invocesMapGrad.entrySet()) {
             // выделяем начисления данного ЛС
-            ArrayList<Invoice02> accountCharges = chargesMapGrad.get(accountGrad.getValue().getPd_no());
+            ArrayList<Invoice02> accountCharges = chargesMapGrad.get(invoceGrad.getValue().getPd_no());
             // если начислений нет - не отсылаем этот адрес, переходим к другому
             if (accountCharges == null || accountCharges.size() == 0) continue;
 
             // GUID абонента проверяем
-            if(accountGrad.getValue().getAccountguid() == null || accountGrad.getValue().getAccountguid().equals("")){
+            if(invoceGrad.getValue().getAccountguid() == null || invoceGrad.getValue().getAccountguid().equals("")){
                 if(answerProcessing != null) {
-                    answerProcessing.sendInformationToClientAndLog("Не указан Accountguid у ЕПД с номером " + accountGrad.getValue().getPd_no(), LOGGER);
+                    answerProcessing.sendInformationToClientAndLog("Не указан Accountguid у ЕПД с номером " + invoceGrad.getValue().getPd_no(), LOGGER);
                     answerProcessing.clearLabelForText();
                 }
                 continue;
@@ -174,9 +174,9 @@ public final class PaymentDocumentGradDAO {
             //Создадим платежный документ
             ImportPaymentDocumentRequest.PaymentDocument paymentDocument = new ImportPaymentDocumentRequest.PaymentDocument();
             // GUID абонента
-            paymentDocument.setAccountGuid(accountGrad.getValue().getAccountguid());
+            paymentDocument.setAccountGuid(invoceGrad.getValue().getAccountguid());
             //Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
-            paymentDocument.setPaymentDocumentNumber(accountGrad.getValue().getPd_no());
+            paymentDocument.setPaymentDocumentNumber(invoceGrad.getValue().getPd_no());
 //            paymentDocument.setPaymentDocumentNumber(String.format("%010d", accountGrad.getValue().getPd_no()));
 
             // создаем Адресные сведения

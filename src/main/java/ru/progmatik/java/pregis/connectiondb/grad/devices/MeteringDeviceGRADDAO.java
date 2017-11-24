@@ -26,7 +26,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Класс, получает данные из  БД ГРАД и формирует объект пригодный для ГИС ЖКХ.
@@ -673,7 +676,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                     null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                 LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
@@ -827,8 +830,9 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")}",
                 connection, resultSet1 -> {
                     while (resultSet1.next()) {
-                        if (OtherFormat.getAllDataFromString(resultSet1.getString(1))[ABON_ID_PU1] != null &&
-                                !OtherFormat.getAllDataFromString(resultSet1.getString(1))[ABON_ID_PU1].isEmpty()) {
+                        if (OtherFormat.getAllDataFromString(resultSet1.getString(1))[TYPE_PU].equalsIgnoreCase("Коллективный (общедомовой)") ||
+                                (OtherFormat.getAllDataFromString(resultSet1.getString(1))[ABON_ID_PU1] != null &&
+                                !OtherFormat.getAllDataFromString(resultSet1.getString(1))[ABON_ID_PU1].isEmpty())) {
                             list.add(OtherFormat.getAllDataFromString(resultSet1.getString(1)));
                         } else {
                             LOGGER.debug("ПУ: " + resultSet1.getString(1) +

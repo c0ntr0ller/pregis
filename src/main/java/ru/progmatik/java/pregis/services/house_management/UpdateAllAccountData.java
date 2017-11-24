@@ -198,15 +198,34 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                 if (!checkAccountDataIsAddedGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
                                         houseId, null, connection)) {
 
-                                    final String transportGUID = OtherFormat.getRandomGUID();
-                                    entry.getValue().setTransportGUID(transportGUID);
-                                    accountDataMap.put(transportGUID, entry.getValue());
+                                    addEntryToGISMap(accountDataMap, entry.getValue());
+                                }
+                            }else{
+                                // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО) - добавляем на обновление в ГИС
+                                if(entry.getValue().getAccountGUID() != null &&
+                                        accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
+                                        entry.getValue().getPayerInfo().getInd() != null && //TODO временная затыка, так как на самом деле мы должны по юрлицам получиьт их GUID и передавать их тоже
+                                        accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
+                                        (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
+                                                !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getFirstName().equalsIgnoreCase(
+                                                entry.getValue().getPayerInfo().getInd().getFirstName()) ||
+                                                !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getSurname().equalsIgnoreCase(
+                                                        entry.getValue().getPayerInfo().getInd().getSurname()) ||
+                                                (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getPatronymic() != null &&
+                                                        entry.getValue().getPayerInfo().getInd().getPatronymic() != null &&
+                                                !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getPatronymic().equalsIgnoreCase(
+                                                        entry.getValue().getPayerInfo().getInd().getPatronymic())
+                                                )
+
+                                        )
+                                        )
+                                {
+                                    addEntryToGISMap(accountDataMap, entry.getValue());
                                 }
                             }
+
                         }else {
-                            final String transportGUID = OtherFormat.getRandomGUID();
-                            entry.getValue().setTransportGUID(transportGUID);
-                            accountDataMap.put(transportGUID, entry.getValue());
+                            addEntryToGISMap(accountDataMap, entry.getValue());
                         }
                     }
                 }
@@ -221,10 +240,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //
 //                            if (accountGUIDFromBase == null) {
 //
-                            final String transportGUID = OtherFormat.getRandomGUID();
-                            entry.getValue().setTransportGUID(transportGUID);
-//                            entry.getValue().setAccountGUID(null);
-                            accountDataMap.put(transportGUID, entry.getValue());
+                            addEntryToGISMap(accountDataMap, entry.getValue());
 //                            }
                         }
                     }
@@ -238,6 +254,17 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             answerProcessing.sendMessageToClient("Не найдены лицевые счета для выгрузки в ГИС ЖКХ.");
         }
 
+    }
+
+    /**
+     * Вспомогательный метод для checkAndSendAccountData
+     * @param accountDataMap ссылка на мапу для отсылки в ГИС
+     * @param entryValue инфа по абоненту
+     */
+    private void addEntryToGISMap(LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap, ImportAccountRequest.Account entryValue){
+        final String transportGUID = OtherFormat.getRandomGUID();
+        entryValue.setTransportGUID(transportGUID);
+        accountDataMap.put(transportGUID, entryValue);
     }
 
     /**

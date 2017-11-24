@@ -133,7 +133,7 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
             final UpdateAllHouseData houseData = new UpdateAllHouseData(answerProcessing);
             houseData.callUpdateAllHouseData(checkHouseGradId(houseGradID));
-        } catch (Exception e) {
+        }catch (Exception e) {
             answerProcessing.sendErrorToClient("callUpdateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.

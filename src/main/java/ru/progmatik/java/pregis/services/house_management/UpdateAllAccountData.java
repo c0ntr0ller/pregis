@@ -207,6 +207,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                         entry.getValue().getPayerInfo().getInd() != null && //TODO временная затыка, так как на самом деле мы должны по юрлицам получиьт их GUID и передавать их тоже
                                         accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
                                         (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
+                                                accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd() == null ||
+                                                accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getFirstName() == null ||
                                                 !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getFirstName().equalsIgnoreCase(
                                                 entry.getValue().getPayerInfo().getInd().getFirstName()) ||
                                                 !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getSurname().equalsIgnoreCase(

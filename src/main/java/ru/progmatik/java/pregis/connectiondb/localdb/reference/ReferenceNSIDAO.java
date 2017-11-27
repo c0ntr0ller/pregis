@@ -154,7 +154,7 @@ public class ReferenceNSIDAO {
             ps.executeUpdate();
             ps.close();
             connection.close();
-            LOGGER.info("Добавлеен элемент в справочник: ID = " + dataSet.getId() + " Name: " + dataSet.getName() +
+            LOGGER.info("Добавлен элемент в справочник: ID = " + dataSet.getId() + " Name: " + dataSet.getName() +
                     " Code: " + dataSet.getCode() + " GUID: " + dataSet.getGuid() + " GROUP_NAME: " + dataSet.getGroupName());
         } else { // иначе проверяем остальные поля и просто обновляем значение в БД.
             if (!dataSet.getName().isEmpty() && !dataSet.getCode().isEmpty() && !dataSet.getGuid().isEmpty()) {  // перестраховка

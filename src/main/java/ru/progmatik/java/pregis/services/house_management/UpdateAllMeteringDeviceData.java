@@ -262,19 +262,16 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             int count = 0;
             while (count < devices.size()) {
                 // answerProcessing.sendMessageToClient("::clearLabelText");
-                GetStateResult result;
+                ImportResult importResult;
                 if (count + 20 > devices.size()) {
-                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(devices.subList(count, devices.size()), answerProcessing);
+                    importResult = importMeteringDeviceData.callImportMeteringDeviceData(fias, devices.subList(count, devices.size()));
                     count += 20;
                 } else {
-                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(devices.subList(count, count += 20), answerProcessing);
+                    importResult = importMeteringDeviceData.callImportMeteringDeviceData(fias, devices.subList(count, count += 20));
                 }
-
-                if (result != null && result.getImportResult() != null) {
-                    for (ImportResult importResult : result.getImportResult()) {
-                        if (importResult != null && importResult.getCommonResult() != null) {
-                            deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
-                            answerProcessing.sendMessageToClient("Кол-во ПУ в результате импорта: " + importResult.getCommonResult().size());
+                if (importResult != null && importResult.getCommonResult() != null) {
+                    deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
+                    answerProcessing.sendMessageToClient("Кол-во ПУ в результате импорта: " + importResult.getCommonResult().size());
 //                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 //                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());
 //                        answerProcessing.sendMessageToClient("UniqueNumber: " + result.getUniqueNumber());
@@ -284,11 +281,9 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 //                        answerProcessing.sendMessageToClient("TransportGUID: " + result.getTransportGUID());
 //                        answerProcessing.sendMessageToClient("");
 //                    }
-                            if (errorState > deviceGRADDAO.getErrorState()) errorState = deviceGRADDAO.getErrorState();
-                        } else {
-                            errorState = -1;
-                        }
-                    }
+                    if (errorState > deviceGRADDAO.getErrorState()) errorState = deviceGRADDAO.getErrorState();
+                } else {
+                    errorState = -1;
                 }
             }
         }

@@ -48,11 +48,6 @@ public class HomeManagementAsyncPort {
         return homeManagementAsyncPort.callPort(getExportMeteringDeviceDataRequest(fias));
     }
 
-    public static GetStateResult callImportMeteringDeviceData(final java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
-        HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "importMeteringDeviceData");
-        return homeManagementAsyncPort.callPort(getImportMeteringDeviceDataRequest(meteringDeviceList));
-    }
-
     public static GetStateResult callExportAccountData(String fias, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "exportAccountData");
         return homeManagementAsyncPort.callPort(getExportAccountRequest(fias));
@@ -93,9 +88,6 @@ public class HomeManagementAsyncPort {
             switch (requestObject.getClass().getSimpleName()) {
                 case "ExportMeteringDeviceDataRequest":
                     ackRequest = port.exportMeteringDeviceData((ExportMeteringDeviceDataRequest)requestObject, requestHeader, headerHolder);
-                    break;
-                case "ImportMeteringDeviceDataRequest":
-                    ackRequest = port.importMeteringDeviceData((ImportMeteringDeviceDataRequest)requestObject, requestHeader, headerHolder);
                     break;
                 case "ExportAccountRequest":
                     ackRequest = port.exportAccountData((ExportAccountRequest)requestObject, requestHeader, headerHolder);
@@ -195,19 +187,6 @@ public class HomeManagementAsyncPort {
         request.setVersion(request.getVersion());
 
         request.getAccount().addAll(accounts);
-
-        return request;
-    }
-
-    private static ImportMeteringDeviceDataRequest getImportMeteringDeviceDataRequest(java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) {
-//        Если нужно закрыть счет, то закрываем где нибудь затем передаём в этот метод
-        ImportMeteringDeviceDataRequest request = new ImportMeteringDeviceDataRequest();
-
-        request.setId(OtherFormat.getId());
-
-        request.setVersion(request.getVersion());
-
-        request.getMeteringDevice().addAll(meteringDeviceList);
 
         return request;
     }

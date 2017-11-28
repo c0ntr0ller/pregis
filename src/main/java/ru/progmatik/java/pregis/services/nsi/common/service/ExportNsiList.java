@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.services.nsi.common.service;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiListRequest;
 import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiListResult;
@@ -19,7 +19,7 @@ public class ExportNsiList {
 
     public void callExportNsiList(NsiListGroupEnum nsiType) {
 
-        HeaderType requestHeader = OtherFormat.getISRequestHeader();
+        ISRequestHeader requestHeader = OtherFormat.getISRequestHeader();
 
         Holder<ResultHeader> headerHolder = new Holder<>();
 

@@ -145,7 +145,7 @@ public final class UpdateMeteringDeviceValues {
                             currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
                             currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
                             currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
-                            electricDeviceValue.getCurrentValue().add(currentValue);
+                            electricDeviceValue.setCurrentValue(currentValue);
                             devicesValues.setElectricDeviceValue(electricDeviceValue);
 
                         } else { // остальные ПУ

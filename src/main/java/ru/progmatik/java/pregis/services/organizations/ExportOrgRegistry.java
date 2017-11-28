@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryRequest;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
@@ -54,7 +54,7 @@ public class ExportOrgRegistry {
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
-        HeaderType header = getHeader();
+        ISRequestHeader header = getHeader();
 
 //        SaveToBaseMessages saveToBase = new SaveToBaseMessages();
 
@@ -122,9 +122,9 @@ public class ExportOrgRegistry {
      *
      * @return ISRequestHeader
      */
-    private HeaderType getHeader() {
+    private ISRequestHeader getHeader() {
 
-        HeaderType isRequestHeader = new HeaderType();
+        ISRequestHeader isRequestHeader = new ISRequestHeader();
         isRequestHeader.setDate(OtherFormat.getDateNow());
         isRequestHeader.setMessageGUID(OtherFormat.getRandomGUID());
 

@@ -290,7 +290,7 @@ public final class AccountGRADDAO {
 // debug                    answerProcessing.sendMessageToClient(basicInformation.getNumberLS() + " found!");
                 ImportAccountRequest.Account account = new ImportAccountRequest.Account();
 //                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно? добавил при отправки нового счета
-                account.setLivingPersonsNumber((byte) basicInformation.getAmountLiving());
+                account.setLivingPersonsNumber(basicInformation.getAmountLiving());
                 account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()).setScale(2, BigDecimal.ROUND_DOWN));
                 account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()).setScale(2, BigDecimal.ROUND_DOWN));
                 if (basicInformation.getHeadtedArea() > 0.0) {

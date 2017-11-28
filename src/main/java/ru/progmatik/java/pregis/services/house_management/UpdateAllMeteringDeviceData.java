@@ -264,10 +264,10 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 // answerProcessing.sendMessageToClient("::clearLabelText");
                 GetStateResult result;
                 if (count + 20 > devices.size()) {
-                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(devices.subList(count, devices.size()), answerProcessing);
+                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(fias, devices.subList(count, devices.size()), answerProcessing);
                     count += 20;
                 } else {
-                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(devices.subList(count, count += 20), answerProcessing);
+                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(fias, devices.subList(count, count += 20), answerProcessing);
                 }
 
                 if (result != null && result.getImportResult() != null) {

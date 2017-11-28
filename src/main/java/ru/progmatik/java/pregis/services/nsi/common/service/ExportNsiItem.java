@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.services.nsi.common.service;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemRequest;
 import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult;
@@ -45,7 +45,7 @@ public class ExportNsiItem {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
 
-        HeaderType requestHeader = OtherFormat.getISRequestHeader();
+        ISRequestHeader requestHeader = OtherFormat.getISRequestHeader();
 
         Holder<ResultHeader> headerHolder = new Holder<>();
 

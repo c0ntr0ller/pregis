@@ -48,9 +48,9 @@ public class HomeManagementAsyncPort {
         return homeManagementAsyncPort.callPort(getExportMeteringDeviceDataRequest(fias));
     }
 
-    public static GetStateResult callImportMeteringDeviceData(final java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
+    public static GetStateResult callImportMeteringDeviceData(String fias, final java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "importMeteringDeviceData");
-        return homeManagementAsyncPort.callPort(getImportMeteringDeviceDataRequest(meteringDeviceList));
+        return homeManagementAsyncPort.callPort(getImportMeteringDeviceDataRequest(fias, meteringDeviceList));
     }
 
     public static GetStateResult callExportAccountData(String fias, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
@@ -199,11 +199,12 @@ public class HomeManagementAsyncPort {
         return request;
     }
 
-    private static ImportMeteringDeviceDataRequest getImportMeteringDeviceDataRequest(java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) {
+    private static ImportMeteringDeviceDataRequest getImportMeteringDeviceDataRequest(String fias, java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceList) {
 //        Если нужно закрыть счет, то закрываем где нибудь затем передаём в этот метод
         ImportMeteringDeviceDataRequest request = new ImportMeteringDeviceDataRequest();
 
         request.setId(OtherFormat.getId());
+        request.setFIASHouseGuid(fias);
 
         request.setVersion(request.getVersion());
 

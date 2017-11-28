@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.other;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
 import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 
@@ -110,9 +110,9 @@ public final class OtherFormat {
      *
      * @return ISRequestHeader заголовок сообщения без "SenderID".
      */
-    public static HeaderType getISRequestHeader() {
+    public static ISRequestHeader getISRequestHeader() {
 
-        final HeaderType isRequestHeader = new HeaderType();
+        final ISRequestHeader isRequestHeader = new ISRequestHeader();
         isRequestHeader.setDate(getDateNow());
         isRequestHeader.setMessageGUID(getRandomGUID());
 

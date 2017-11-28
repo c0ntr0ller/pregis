@@ -219,7 +219,7 @@ public final class PaymentDocumentGradDAO {
                     // перерасчеты
                     if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
                             !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
-                        chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeType());
+                        chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeImportType());
 //                        Перерасчеты, корректировки (руб)
                         chargeInfo.getMunicipalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
 //                          Льготы, субсидии, скидки (руб)
@@ -339,7 +339,7 @@ public final class PaymentDocumentGradDAO {
                     // перерасчеты
                     if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
                             !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
-                        chargeInfo.getHousingService().setServiceCharge(new ServiceChargeType());
+                        chargeInfo.getHousingService().setServiceCharge(new ServiceChargeImportType());
 //                        Перерасчеты, корректировки (руб)
                         chargeInfo.getHousingService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
 //                          Льготы, субсидии, скидки (руб)
@@ -379,7 +379,7 @@ public final class PaymentDocumentGradDAO {
                     // перерасчеты
                     if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
                             !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
-                        chargeInfo.getAdditionalService().setServiceCharge(new ServiceChargeType());
+                        chargeInfo.getAdditionalService().setServiceCharge(new ServiceChargeImportType());
 //                        Перерасчеты, корректировки (руб)
                         chargeInfo.getAdditionalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
 //                          Льготы, субсидии, скидки (руб)

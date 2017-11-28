@@ -1,7 +1,7 @@
 package ru.progmatik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.HeaderType;
+import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderRequest;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportDataProviderResult;
@@ -37,7 +37,7 @@ public class ExportDataProvider {
     public ExportDataProviderResult callExportDataProvide() {
 
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
-        HeaderType header = getHeader();
+        ISRequestHeader header = getHeader();
 
         Holder<ResultHeader> resultHolder = new Holder<>();
 
@@ -88,9 +88,9 @@ public class ExportDataProvider {
         return exportDataProviderRequest;
     }
 
-    private HeaderType getHeader() {
+    private ISRequestHeader getHeader() {
 
-        HeaderType requestHeader = new HeaderType();
+        ISRequestHeader requestHeader = new ISRequestHeader();
 //        requestHeader.setSenderID(BaseOrganization.getSenderID());
         requestHeader.setMessageGUID(OtherFormat.getRandomGUID());
         requestHeader.setDate(OtherFormat.getDateNow());

@@ -122,8 +122,10 @@ public class PaymentDocumentHandler {
         }
 
         // формируем массив запросов из оставшихся документов Град
-        final List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao, paymentDocumentMapGrad, paymentInformationMap);
-
+        List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList = null;
+        if (paymentDocumentMapGrad != null && paymentDocumentMapGrad.size() > 0) {
+            importPaymentDocumentRequestList = compileImportDocumentRequest(fias, houseGrad.getGrad_id(), pdGradDao, paymentDocumentMapGrad, paymentInformationMap);
+        }
         if(importPaymentDocumentRequestList != null && importPaymentDocumentRequestList.size() > 0) {
 
             // синхронизируем услуги документов с услугами дома
@@ -471,7 +473,7 @@ public class PaymentDocumentHandler {
         if (paymentDocumentMapGrad == null || paymentDocumentMapGrad.size() == 0){
             answerProcessing.sendErrorToClientNotException("В Град нет новых сгенерированных документов");
             // TODO поэтому пока просто выходим
-//            return null;
+            return null;
         }
 
         // запрашиваем документы из Гис

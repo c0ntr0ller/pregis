@@ -5,14 +5,11 @@ import com.google.gson.reflect.TypeToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
-import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
-import ru.gosuslugi.dom.schema.integration.bills.PaymentDocumentType;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
-import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
@@ -32,7 +29,9 @@ import javax.xml.soap.SOAPException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -40,7 +39,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
-import java.util.Timer;
 
 
 public class TestMain {
@@ -349,7 +347,7 @@ public class TestMain {
 //                        System.err.println("Найден повтор записи:");
 //                        System.out.println(rooms.get(i).getAbonId());
 //                        System.out.println(rooms.get(i).getAddress());
-//                        System.out.println(rooms.get(i).getNumberApartment());
+//                        System.out.println(rooms.get(i).getNumberRoom());
 //                        System.out.println(rooms.get(i).getNumberLS());
 //                        System.out.println(rooms.get(i).getIdSpaceGISJKH());
 //                        System.out.println();

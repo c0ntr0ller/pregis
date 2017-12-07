@@ -33,7 +33,7 @@ public class Rooms {
      * Строковое поле до 255 символов, заполняется если не указано значение
      * «Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ»
      */
-    private String numberRooms;
+    private String numberAppart;
 
     /**
      * Номер комнаты.
@@ -41,7 +41,7 @@ public class Rooms {
      * Строковое поле до 255 символов, заполняется если не указано значение
      * «Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ»
      */
-    private String numberApartment;
+    private String numberRoom;
 
     /**
      * Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ.
@@ -135,8 +135,8 @@ public class Rooms {
      * Строковое поле до 255 символов, заполняется если не указано значение
      * «Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ»
      */
-    public String getNumberRooms() {
-        return numberRooms;
+    public String getNumberAppart() {
+        return numberAppart;
     }
 
     /**
@@ -145,8 +145,8 @@ public class Rooms {
      * Строковое поле до 255 символов, заполняется если не указано значение
      * «Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ»
      */
-    public void setNumberRooms(String numberRooms) {
-        this.numberRooms = numberRooms;
+    public void setNumberAppart(String numberAppart) {
+        this.numberAppart = numberAppart;
     }
 
     /**
@@ -155,8 +155,8 @@ public class Rooms {
      * Строковое поле до 255 символов, заполняется если не указано значение
      * «Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ»
      */
-    public String getNumberApartment() {
-        return numberApartment;
+    public String getNumberRoom() {
+        return numberRoom;
     }
 
     /**
@@ -165,8 +165,8 @@ public class Rooms {
      * Строковое поле до 255 символов, заполняется если не указано значение
      * «Идентификатор дома, помещения, комнаты, присвоенный ГИС ЖКХ»
      */
-    public void setNumberApartment(String numberApartment) {
-        this.numberApartment = numberApartment;
+    public void setNumberRoom(String numberRoom) {
+        this.numberRoom = numberRoom;
     }
 
     /**
@@ -253,8 +253,8 @@ public class Rooms {
                 "numberLS='" + numberLS + '\'' +
                 ", address='" + address + '\'' +
                 ", fias='" + fias + '\'' +
-                ", numberRooms='" + numberRooms + '\'' +
-                ", numberApartment='" + numberApartment + '\'' +
+                ", numberAppart='" + numberAppart + '\'' +
+                ", numberRoom='" + numberRoom + '\'' +
                 ", idSpaceGISJKH='" + idSpaceGISJKH + '\'' +
                 ", sharePay=" + sharePay +
                 ", abonId=" + abonId +

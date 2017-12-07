@@ -22,6 +22,7 @@ import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Класс, обращается в БД ГРАД, за данными о МКД.
@@ -43,7 +44,7 @@ public final class HouseGRADDAO {
 //    private final ArrayList<String> tempMKD = new ArrayList<>();
 //    private final ArrayList<String> tempJD = new ArrayList<>();
     private final LinkedHashMap<String, HouseRecord> allHouses = new LinkedHashMap<>();
-    private final HashMap<Integer, ArrayList<Rooms>> temMapRooms = new HashMap<>();
+    private final HashMap<Integer, ArrayList<Rooms>> houseRoomsMap = new HashMap<>();
 
     public HouseGRADDAO(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
@@ -303,25 +304,27 @@ public final class HouseGRADDAO {
                                          final String livingRoomGUID, final String roomUniqNumber,
                                          final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
-        final Integer abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, isResidential, connectionGrad);
+        final List<Integer> abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, isResidential, connectionGrad);
 
-        if (abonentId != null) {
+        if (abonentId != null && abonentId.size() > 0) {
             // ИД дома(:building_id),
             // ИД абонента(:abon_id),
             // ИД прибора учета(:meter_id),
             // уникальный идентификатор ГИС ЖКХ(:gis_id),
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-            final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?)}";
-            try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
-                cstmt.setInt(1, abonentId);
-                cstmt.setString(2, premisesGUID);
-                cstmt.setString(3, premisesUniqNum);
-                cstmt.setString(4, livingRoomGUID);
-                cstmt.setString(5, roomUniqNumber);
-                cstmt.setInt(6, ResourcesUtil.instance().getCompanyGradId());
-                cstmt.executeUpdate();
-//                int codeReturn = cstmt.executeUpdate();
-//                System.err.println("Apartment code return: " + codeReturn);
+            for (Integer abonId: abonentId) {
+                final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?)}";
+                try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
+                    cstmt.setInt(1, abonId);
+                    cstmt.setString(2, premisesGUID);
+                    cstmt.setString(3, premisesUniqNum);
+                    cstmt.setString(4, livingRoomGUID);
+                    cstmt.setString(5, roomUniqNumber);
+                    cstmt.setInt(6, ResourcesUtil.instance().getCompanyGradId());
+                    cstmt.executeUpdate();
+    //                int codeReturn = cstmt.executeUpdate();
+    //                System.err.println("Apartment code return: " + codeReturn);
+                }
             }
         } else {
             answerProcessing.sendMessageToClient("");
@@ -393,25 +396,25 @@ public final class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    private Integer getAbonentIdFromGrad(final Integer idHouse, final String apartmentNumber,
+    private List<Integer> getAbonentIdFromGrad(final Integer idHouse, final String apartmentNumber,
                                          final String roomNumber,
                                          final boolean isResidential,
                                          final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
 
-        if (false == temMapRooms.containsKey(idHouse)) {
-//            Если IDEA выделила просто не обращай внимание, зачистую конструкция (!temMapRooms.containsKey(idHouse)),
+        if (false == houseRoomsMap.containsKey(idHouse)) {
+//            Если IDEA выделила просто не обращай внимание, зачистую конструкция (!houseRoomsMap.containsKey(idHouse)),
 //            менее заметнее чем указанную выше, где явно должны получить false
             final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
-            temMapRooms.clear();
-            temMapRooms.put(idHouse, accountGRADDAO.getRooms(idHouse, connectionGrad));
+            houseRoomsMap.clear();
+            houseRoomsMap.put(idHouse, accountGRADDAO.getRooms(idHouse, connectionGrad));
         }
 
-        final Integer abonentId = findAbonId(idHouse, apartmentNumber, roomNumber, isResidential);
+        final List<Integer> abonentId = findAbonId(idHouse, apartmentNumber, roomNumber, isResidential);
 
-        if (abonentId == null && roomNumber == null) {
+        if ((abonentId == null || abonentId.size() == 0) && roomNumber == null) {
             answerProcessing.sendMessageToClient(String.format("ИД абонента для помещения: %s не найден! ИД дома: %d", apartmentNumber, idHouse)); //!!!------
 //            throw new PreGISException(String.format("ИД абонента для помещения: %s не найден! ИД дома: %d", apartmentNumber, idHouse));
-        } else if (abonentId == null) {
+        } else if ((abonentId == null || abonentId.size() == 0)) {
             answerProcessing.sendMessageToClient(String.format("ИД абонента для помещения: %s и комнаты: %s не найдены! ИД дома: %d", apartmentNumber, roomNumber, idHouse)); //!!!------
 //            throw new PreGISException(String.format("ИД абонента для помещения: %s и комнаты: %s не найдены! ИД дома: %d", apartmentNumber, roomNumber, idHouse));
         }
@@ -426,25 +429,39 @@ public final class HouseGRADDAO {
      * @param roomNumber      номер комнаты в ГИС ЖКХ.
      * @return идентификатор абонента в БД Град.
      */
-    private Integer findAbonId(final Integer idHouse, // TODO В запросе по 124 дому возвращается квартира 1, но поему-то тут она не находится! Сделать вывод в лог и проверить
+    private List<Integer> findAbonId(final Integer idHouse,
                                final String apartmentNumber,
                                final String roomNumber,
                                final boolean isResidential) {
 
-        if (idHouse != null && temMapRooms.containsKey(idHouse) && apartmentNumber != null && temMapRooms.get(idHouse) != null) {
-            for (Rooms room : temMapRooms.get(idHouse)) {
-                if (apartmentNumber.equalsIgnoreCase(room.getNumberRooms())) { // если нашли одинаковые помещения (квартиры)
-                    if (roomNumber == null && room.getNumberApartment() == null) { // если номер комнаты отсутствует
-                        if (room.isResidential() == isResidential) {
-                            return room.getAbonId();
+        List<Integer> wasApartmentNumber = new ArrayList<>(); // флаг, что таким номером квартиры мы всетаки нашли
+        final List<Integer> abonIDs = new ArrayList<>();
+        if (idHouse != null && houseRoomsMap.containsKey(idHouse) && apartmentNumber != null && houseRoomsMap.get(idHouse) != null) {
+
+            // фильтруем лист по номеру квартиры
+            List<Rooms> tmpRoomsMap = houseRoomsMap.get(idHouse).stream().filter(r -> r.getNumberAppart().equalsIgnoreCase(apartmentNumber)).collect(Collectors.toList());
+            for (Rooms room : tmpRoomsMap) {
+                if (room.isResidential() == isResidential) {
+                    if (roomNumber == null){
+                        if(room.getNumberRoom() == null) { // если номер комнаты отсутствует в обоих случайя - это нужный нам абонент!
+                            abonIDs.add(room.getAbonId());
                         }
-                    } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberApartment())) { // если номер комнаты совпадает.
-                        return room.getAbonId();
+                        else {
+                            wasApartmentNumber.add(room.getAbonId()); // запоминаем ИД абонента с таким номером квартиры, на случай если совсем не найдем с номером комнаты
+                        }
                     }
+                } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberRoom())) { // если номер комнаты совпадает.
+                    abonIDs.add(room.getAbonId());
                 }
             }
         }
-        return null;
+        if (abonIDs.size() == 0) {// если ничего не нашли
+            if (wasApartmentNumber.size() > 0){// но стаким номером квартиры всетаки был
+                abonIDs.addAll(wasApartmentNumber);
+                return abonIDs;
+            }
+        }
+        return abonIDs;
     }
 
     /**

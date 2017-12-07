@@ -165,8 +165,8 @@ public final class AccountGRADDAO {
                     rooms.setNumberLS(arrayData[1]);
                     rooms.setAddress(arrayData[2]);
                     rooms.setFias(arrayData[3]);
-                    rooms.setNumberRooms(arrayData[5]);
-                    rooms.setNumberApartment(arrayData[6]);
+                    rooms.setNumberAppart(arrayData[5]);
+                    rooms.setNumberRoom(arrayData[6]);
                     rooms.setIdSpaceGISJKH(arrayData[10]);
                     rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
                     rooms.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
@@ -215,8 +215,8 @@ public final class AccountGRADDAO {
 
                     rooms.setAddress(arrayData[2]);
                     rooms.setFias(arrayData[3]);
-                    rooms.setNumberRooms(arrayData[5]);
-                    rooms.setNumberApartment(arrayData[6]);
+                    rooms.setNumberAppart(arrayData[5]);
+                    rooms.setNumberRoom(arrayData[6]);
                     //rooms.setIdSpaceGISJKH(arrayData[8]);
                     rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
                     rooms.setAbonId(Integer.valueOf(checkZero(arrayData[0])));

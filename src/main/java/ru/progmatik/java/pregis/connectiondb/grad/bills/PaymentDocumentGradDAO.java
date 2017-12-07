@@ -336,14 +336,20 @@ public final class PaymentDocumentGradDAO {
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
 //                    chargeInfo.getHousingService().setCalcExplanation("Иное");
 
-                        // перерасчеты
-                        if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
-                                !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
-//                        Перерасчеты, корректировки (руб)
+                        // Перерасчеты, корректировки (руб)
+                        if (invoce02.getRepays() == null || invoce02.getExempts().equals(new BigDecimal(0))) {
+                            capitalRepairImportType.setMoneyRecalculation(new BigDecimal(0));
+                        }else {
                             capitalRepairImportType.setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+                        }
 //                          Льготы, субсидии, скидки (руб)
+                        if(invoce02.getExempts() == null || invoce02.getRepays().equals(new BigDecimal(0))) {
+                            capitalRepairImportType.setMoneyDiscount(new BigDecimal(0));
+                        }
+                        else {
                             capitalRepairImportType.setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
                         }
+
                         paymentDocument.setCapitalRepairCharge(capitalRepairImportType);
 
                     }else {

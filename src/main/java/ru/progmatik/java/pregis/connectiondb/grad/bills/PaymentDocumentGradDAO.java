@@ -204,8 +204,34 @@ public final class PaymentDocumentGradDAO {
                     chargeInfo.getMunicipalService().getServiceType().setCode(invoce02.getCode());
                     chargeInfo.getMunicipalService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
-//                    Тариф
-                    chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+                    if(invoce02.getAmount_personal() != 0 || invoce02.getAmount_shared() != 0) {
+//                      Тариф
+                        chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+
+                        chargeInfo.getMunicipalService().setConsumption(new PDServiceChargeType.MunicipalService.Consumption());
+
+                        if (invoce02.getAmount_personal() != 0) {
+
+                            PDServiceChargeType.MunicipalService.Consumption.Volume volumeIndividual = new PDServiceChargeType.MunicipalService.Consumption.Volume();
+//                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
+                            volumeIndividual.setType("I");
+//                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
+//                            volumeIndividual.setDeterminingMethod();
+                            volumeIndividual.setValue(new BigDecimal(invoce02.getAmount_personal()).setScale(3, BigDecimal.ROUND_DOWN));
+                            chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeIndividual);
+
+                        }
+                        if (invoce02.getAmount_shared() != 0) {
+
+                            PDServiceChargeType.MunicipalService.Consumption.Volume volumeOverall = new PDServiceChargeType.MunicipalService.Consumption.Volume();
+//                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
+                            volumeOverall.setType("O");
+//                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
+//                            volumeIndividual.setDeterminingMethod();
+                            volumeOverall.setValue(new BigDecimal(invoce02.getAmount_shared()).setScale(3, BigDecimal.ROUND_DOWN));
+                            chargeInfo.getMunicipalService().getConsumption().getVolume().add(volumeOverall);
+                        }
+                    }
 
 //                    Итого к оплате за расчетный период, руб.
                     chargeInfo.getMunicipalService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
@@ -337,13 +363,13 @@ public final class PaymentDocumentGradDAO {
 //                    chargeInfo.getHousingService().setCalcExplanation("Иное");
 
                         // Перерасчеты, корректировки (руб)
-                        if (invoce02.getRepays() == null || invoce02.getExempts().equals(new BigDecimal(0))) {
+                        if (invoce02.getRepays() == null || invoce02.getRepays().equals(new BigDecimal(0))) {
                             capitalRepairImportType.setMoneyRecalculation(new BigDecimal(0));
                         }else {
                             capitalRepairImportType.setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
                         }
 //                          Льготы, субсидии, скидки (руб)
-                        if(invoce02.getExempts() == null || invoce02.getRepays().equals(new BigDecimal(0))) {
+                        if(invoce02.getExempts() == null || invoce02.getExempts().equals(new BigDecimal(0))) {
                             capitalRepairImportType.setMoneyDiscount(new BigDecimal(0));
                         }
                         else {

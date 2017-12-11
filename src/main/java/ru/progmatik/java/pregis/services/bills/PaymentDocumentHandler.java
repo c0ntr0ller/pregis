@@ -411,6 +411,7 @@ public class PaymentDocumentHandler {
             importPaymentDocumentRequest.setMonth(pdGradDao.getMonth());
             importPaymentDocumentRequest.setYear(pdGradDao.getYear());
             importPaymentDocumentRequest.getPaymentInformation().addAll(paymentInformationMap.values());
+            importPaymentDocumentRequest.setConfirmAmountsCorrect(true);
 
             importPaymentDocumentRequest.getPaymentDocument().addAll(subarray);
             importPaymentDocumentRequestArrayList.add(importPaymentDocumentRequest);

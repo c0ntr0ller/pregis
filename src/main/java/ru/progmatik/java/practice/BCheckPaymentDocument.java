@@ -12,7 +12,7 @@ import java.text.ParseException;
  */
 public class BCheckPaymentDocument {
     public static void main(String[] args) throws ParseException, SQLException, PreGISException {
-//        PaymentDocumentHandler pdh = new PaymentDocumentHandler(null);
+//        BillsHandler pdh = new BillsHandler(null);
 //        pdh.callPaymentDocumentImport(21);
         PaymentDocumentGradDAO gradDAO = new PaymentDocumentGradDAO(null, ConnectionBaseGRAD.instance().getConnection());
         gradDAO.addPaymentDocumentRegistryItem("5785", "7331f8e3-b184-4b8e-8396-a2c46079617d");

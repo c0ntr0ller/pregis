@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public final class UpdateAllAccountData implements ClientDialogWindowObservable {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateAllAccountData.class);
-    private static final int ACCOUNT_COUNTER_FOR_REQUEST = 5;
+    private static final int ACCOUNT_COUNTER_FOR_REQUEST = 25;
     private final AnswerProcessing answerProcessing;
     private final AccountGRADDAO accountGRADDAO;
     private final ArrayList<ImportAccountRequest.Account> accountsForCloseList = new ArrayList<>();

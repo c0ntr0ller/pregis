@@ -32,15 +32,15 @@ import java.util.*;
 /**
  * Класс, обрабатывает платежные документы.
  */
-public class PaymentDocumentHandler {
+public class BillsHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(PaymentDocumentHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(BillsHandler.class);
     private final AnswerProcessing answerProcessing;
     private int errorStatus;
     private int addedGisJkhCount;
     private int allCount;
 
-    public PaymentDocumentHandler(final AnswerProcessing answerProcessing) {
+    public BillsHandler(final AnswerProcessing answerProcessing) {
 
         if(answerProcessing != null) {
             this.answerProcessing = answerProcessing;

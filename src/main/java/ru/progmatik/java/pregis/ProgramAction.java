@@ -13,7 +13,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDa
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.bills.PaymentDocumentHandler;
+import ru.progmatik.java.pregis.services.bills.BillsHandler;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house_management.*;
 import ru.progmatik.java.pregis.services.nsi.UpdateReference;
@@ -368,7 +368,7 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежных документов...");
-            final PaymentDocumentHandler handler = new PaymentDocumentHandler(answerProcessing);
+            final BillsHandler handler = new BillsHandler(answerProcessing);
             handler.callPaymentDocumentImport(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);

@@ -204,9 +204,11 @@ public final class PaymentDocumentGradDAO {
                     chargeInfo.getMunicipalService().getServiceType().setCode(invoce02.getCode());
                     chargeInfo.getMunicipalService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
+//                  Тариф
+                    chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+
+                    // если заданы объемы - заносим их
                     if(invoce02.getAmount_personal() != 0 || invoce02.getAmount_shared() != 0) {
-//                      Тариф
-                        chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
 
                         chargeInfo.getMunicipalService().setConsumption(new PDServiceChargeType.MunicipalService.Consumption());
 

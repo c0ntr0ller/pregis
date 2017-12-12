@@ -1133,12 +1133,21 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     private void setArchivingReasonToLocalBaseByRootGUID(Integer nsiCodeElement, ExportMeteringDeviceDataResultType resultType) throws SQLException {
         String accountGUID;
         String premeseGUID;
+        String livingroomGUID;
         if (resultType.getBasicChatacteristicts().getResidentialPremiseDevice() != null){
             accountGUID = resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getAccountGUID().get(0);
             premeseGUID = resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getPremiseGUID();
-        }else{
+        }else if(resultType.getBasicChatacteristicts().getNonResidentialPremiseDevice() != null){
             accountGUID = resultType.getBasicChatacteristicts().getNonResidentialPremiseDevice().getAccountGUID().get(0);
             premeseGUID = resultType.getBasicChatacteristicts().getNonResidentialPremiseDevice().getPremiseGUID();
+        }else if(resultType.getBasicChatacteristicts().getCollectiveApartmentDevice() != null){
+            accountGUID = resultType.getBasicChatacteristicts().getCollectiveApartmentDevice().getAccountGUID().get(0);
+            premeseGUID = resultType.getBasicChatacteristicts().getCollectiveApartmentDevice().getPremiseGUID();
+        }else if(resultType.getBasicChatacteristicts().getLivingRoomDevice() != null){
+            accountGUID = resultType.getBasicChatacteristicts().getLivingRoomDevice().getAccountGUID().get(0);
+            livingroomGUID = resultType.getBasicChatacteristicts().getLivingRoomDevice().getLivingRoomGUID();
+        }else if (resultType.getBasicChatacteristicts().getApartmentHouseDevice() != null){
+            accountGUID = resultType.getBasicChatacteristicts().getApartmentHouseDevice().getAccountGUID().get(0);
         }
         if (!devicesDataLocalDBDAO.setArchivingReasonToLocalBaseByRootGUID(nsiCodeElement, resultType.getMeteringDeviceRootGUID())) {
             devicesDataLocalDBDAO.setMeteringDeviceToLocalBase(
@@ -1147,7 +1156,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                     houseId,
                     accountGUID,
                     premeseGUID,
-                    null,
+                    livingroomGUID,
                     resultType.getBasicChatacteristicts().getMeteringDeviceNumber(),
                     null,
                     resultType.getMeteringDeviceRootGUID(),

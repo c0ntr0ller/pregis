@@ -1131,9 +1131,9 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @throws SQLException
      */
     private void setArchivingReasonToLocalBaseByRootGUID(Integer nsiCodeElement, ExportMeteringDeviceDataResultType resultType) throws SQLException {
-        String accountGUID;
-        String premeseGUID;
-        String livingroomGUID;
+        String accountGUID = null;
+        String premeseGUID = null;
+        String livingroomGUID = null;
         if (resultType.getBasicChatacteristicts().getResidentialPremiseDevice() != null){
             accountGUID = resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getAccountGUID().get(0);
             premeseGUID = resultType.getBasicChatacteristicts().getResidentialPremiseDevice().getPremiseGUID();
@@ -1145,7 +1145,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             premeseGUID = resultType.getBasicChatacteristicts().getCollectiveApartmentDevice().getPremiseGUID();
         }else if(resultType.getBasicChatacteristicts().getLivingRoomDevice() != null){
             accountGUID = resultType.getBasicChatacteristicts().getLivingRoomDevice().getAccountGUID().get(0);
-            livingroomGUID = resultType.getBasicChatacteristicts().getLivingRoomDevice().getLivingRoomGUID();
+            livingroomGUID = resultType.getBasicChatacteristicts().getLivingRoomDevice().getLivingRoomGUID().get(0);
         }else if (resultType.getBasicChatacteristicts().getApartmentHouseDevice() != null){
             accountGUID = resultType.getBasicChatacteristicts().getApartmentHouseDevice().getAccountGUID().get(0);
         }

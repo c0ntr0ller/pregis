@@ -61,14 +61,14 @@ public class BillsAsyncPort {
     /**
      * Метод, импорт/экспорт сведений о платежных документах из/в ГИС ЖКХ.
      */
-    GetStateResult interactionPaymentDocument(ImportPaymentDocumentRequest importRequest, ExportPaymentDocumentRequest exportRequest) throws PreGISException, SQLException {
+    public GetStateResult interactPaymentDocument(ImportPaymentDocumentRequest importRequest, ExportPaymentDocumentRequest exportRequest) throws PreGISException, SQLException {
 
         answerProcessing.sendMessageToClient("");
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         ResultHeader resultHeader = null;
         Holder<ResultHeader> resultHeaderHolder = new Holder<>();
         ErrorMessageType resultErrorMessage = null;
-        String curMethodName = "interactionPaymentDocument";
+        String curMethodName = "interactPaymentDocument";
 
         BillsAsyncResultWaiter billsAsyncResultWaiter = null;
         GetStateResult result = null;

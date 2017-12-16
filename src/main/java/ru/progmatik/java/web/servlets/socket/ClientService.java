@@ -102,6 +102,9 @@ public final class ClientService {
                 case "callExportSupplyResourceContractData":
                     action.callExportSupplyResourceContractData();
                     break;
+                case "callImportPayments":
+                    action.callImportPayments(value);
+                    break;
                 case "getHouseAddedGisJkh":
                     action.getHouseAddedGisJkh();
                     break;

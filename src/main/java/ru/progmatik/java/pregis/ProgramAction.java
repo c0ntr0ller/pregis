@@ -13,7 +13,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDa
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
-import ru.progmatik.java.pregis.services.bills.BillsHandler;
+import ru.progmatik.java.pregis.services.bills.UpdateBills;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house_management.*;
 import ru.progmatik.java.pregis.services.nsi.UpdateReference;
@@ -21,6 +21,7 @@ import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
+import ru.progmatik.java.pregis.services.payment.UpdatePayments;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 import ru.progmatik.java.web.servlets.socket.ValueJSON;
 
@@ -368,8 +369,8 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежных документов...");
-            final BillsHandler handler = new BillsHandler(answerProcessing);
-            handler.callPaymentDocumentImport(checkHouseGradId(houseGradID));
+            final UpdateBills updateBills = new UpdateBills(answerProcessing);
+            updateBills.callPaymentDocumentImport(checkHouseGradId(houseGradID));
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         } finally {
@@ -463,6 +464,24 @@ public final class ProgramAction {
 //            setStateRunOff();
 //        }
 //    }
+
+    /**
+     * Метод, импорт сведений о платежах.
+     */
+    public void callImportPayments(final String houseGradID) {
+        setStateRunOn();
+        try {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Запуск...");
+            answerProcessing.sendMessageToClient("Выгрузка платежей...");
+            final UpdatePayments updatePayments = new UpdatePayments(answerProcessing);
+            updatePayments.callSendPayments(checkHouseGradId(houseGradID));
+        } catch (Exception e) {
+            answerProcessing.sendErrorToClient("callImportPayments(): ", "", LOGGER, e);
+        } finally {
+            setStateRunOff();
+        }
+    }
 
     /**
      * Метод, возвращает состояние выполнения какого либо метода.

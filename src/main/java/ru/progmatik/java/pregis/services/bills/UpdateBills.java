@@ -32,15 +32,15 @@ import java.util.*;
 /**
  * Класс, обрабатывает платежные документы.
  */
-public class BillsHandler {
+public class UpdateBills {
 
-    private static final Logger LOGGER = Logger.getLogger(BillsHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(UpdateBills.class);
     private final AnswerProcessing answerProcessing;
     private int errorStatus;
     private int addedGisJkhCount;
     private int allCount;
 
-    public BillsHandler(final AnswerProcessing answerProcessing) {
+    public UpdateBills(final AnswerProcessing answerProcessing) {
 
         if(answerProcessing != null) {
             this.answerProcessing = answerProcessing;
@@ -540,7 +540,7 @@ public class BillsHandler {
             exportPaymentDocumentRequest.getAccountNumber().add(account.getAccountNumber());
         }
 
-        GetStateResult billsStateResult = new BillsAsyncPort(answerProcessing).interactionPaymentDocument(null, exportPaymentDocumentRequest);
+        GetStateResult billsStateResult = new BillsAsyncPort(answerProcessing).interactPaymentDocument(null, exportPaymentDocumentRequest);
         if(billsStateResult != null) return billsStateResult.getExportPaymentDocResult();
         return null;
     }
@@ -566,10 +566,10 @@ public class BillsHandler {
      */
     private void sendDocumentsToGisJkh(final ImportPaymentDocumentRequest request, final PaymentDocumentGradDAO pdGradDao) throws SQLException, PreGISException {
 
-        GetStateResult result = new BillsAsyncPort(answerProcessing).interactionPaymentDocument(request, null);
+        GetStateResult result = new BillsAsyncPort(answerProcessing).interactPaymentDocument(request, null);
 
         if (result != null && result.getImportResult() != null) {
-            answerProcessing.sendMessageToClient("Обработка результата импорта данных. Кол-во данных: " + request.getPaymentDocument().size());
+            answerProcessing.sendMessageToClient("Обработка результата импорта данных. Кол-во данных: " + result.getImportResult().size());
             for (CommonResultType resultType : result.getImportResult()) {
 
                 if (resultType.getError() != null && resultType.getError().size() > 0) {
@@ -626,7 +626,7 @@ public class BillsHandler {
                                               List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationList,
                                               int month, short year) throws SQLException, PreGISException {
 
-        return new BillsAsyncPort(answerProcessing).interactionPaymentDocument(paymentDocumentList,
+        return new BillsAsyncPort(answerProcessing).interactPaymentDocument(paymentDocumentList,
                 paymentInformationList,
                 month,
                 year);

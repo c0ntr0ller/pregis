@@ -38,15 +38,15 @@ public class DeviceMeteringAsyncPort {
 
     public static GetStateResult callExportMeteringDeviceHistory(ExportMeteringDeviceHistoryRequest request, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         DeviceMeteringAsyncPort deviceMeteringAsyncPort = new DeviceMeteringAsyncPort(answerProcessing, "exportMeteringDeviceHistory");
-        return deviceMeteringAsyncPort.callPort(setSignIdExportMeteringHistoryRequest(request));
+        return deviceMeteringAsyncPort.interactDeviceMetering(setSignIdExportMeteringHistoryRequest(request));
     }
 
     public static GetStateResult callImportMeteringDeviceValues(ImportMeteringDeviceValuesRequest request, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         DeviceMeteringAsyncPort deviceMeteringAsyncPort = new DeviceMeteringAsyncPort(answerProcessing, "importMeteringDeviceValues");
-        return deviceMeteringAsyncPort.callPort(setSignIdImportMeteringHistoryRequest(request));
+        return deviceMeteringAsyncPort.interactDeviceMetering(setSignIdImportMeteringHistoryRequest(request));
     }
 
-    private GetStateResult callPort(Object requestObject) throws SQLException, PreGISException {
+    private GetStateResult interactDeviceMetering(Object requestObject) throws SQLException, PreGISException {
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();

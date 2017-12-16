@@ -1,7 +1,10 @@
 package ru.progmatik.java.pregis.services.payment;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.*;
+import ru.gosuslugi.dom.schema.integration.base.AckRequest;
+import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
+import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.payment.ExportPaymentDocumentDetailsRequest;
 import ru.gosuslugi.dom.schema.integration.payment.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.payment.Individual;
@@ -27,6 +30,7 @@ import java.sql.SQLException;
  * ГИС ЖКХ в ответ возвращает список найденных документов вместе с системными ключами (PaymentDocumentGuid), которые передаются в извещении, а также платежные реквизиты получателя платежа
  * Согласно п. 125 589/944/пр., остаток суммы по ПД к оплате возвращается только в случае, если передан AmountRequired и реквизиты плательщика полностью совпали с данными в лицевом счете. Для плательщиков-физлиц выполняется строковое сравнение по фамилии, имени и отчеству без учета регистра символов, «е» и «ё» считаются разными символами. Если совпадение не выполнено, то платежный документ возвращается без остатка к оплате и соответствующей отметкой об ошибке.
  */
+@Deprecated
 public class ExportPaymentDocumentDetails {
 
     private static final Logger LOGGER = Logger.getLogger(ExportPaymentDocumentDetails.class);

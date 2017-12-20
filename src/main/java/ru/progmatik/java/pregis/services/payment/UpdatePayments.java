@@ -115,11 +115,8 @@ public class UpdatePayments {
      */
     private void markPaymentsInGrad(final List<ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType> request,
                                     final CommonResultType resultType,
-                                    final PaymentGRADDAO paymentGRADDAO){
-        for (ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType payment: request) {
-            paymentGRADDAO.markPayment(payment);
-        }
-
+                                    final PaymentGRADDAO paymentGRADDAO) throws SQLException {
+            paymentGRADDAO.markPayments(request);
     }
 
     /**

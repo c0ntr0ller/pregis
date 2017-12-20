@@ -205,7 +205,7 @@ public final class PaymentDocumentGradDAO {
                     chargeInfo.getMunicipalService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
 //                  Тариф
-                    chargeInfo.getMunicipalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+                    chargeInfo.getMunicipalService().setRate(OtherFormat.getBigDecimalTwo(invoce02.getTariff()));
 
                     // если заданы объемы - заносим их
                     if(invoce02.getAmount_personal() != 0 || invoce02.getAmount_shared() != 0) {
@@ -236,10 +236,10 @@ public final class PaymentDocumentGradDAO {
                     }
 
 //                    Итого к оплате за расчетный период, руб.
-                    chargeInfo.getMunicipalService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
+                    chargeInfo.getMunicipalService().setTotalPayable(OtherFormat.getBigDecimalTwo(invoce02.getForpay()));
 
 //                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
-                    chargeInfo.getMunicipalService().setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
+                    chargeInfo.getMunicipalService().setAccountingPeriodTotal(OtherFormat.getBigDecimalTwo(invoce02.getCharge_total()));
 
 //                        Порядок расчетов ??? TODO
 //                    chargeInfo.getMunicipalService().setCalcExplanation("Иное");
@@ -249,9 +249,9 @@ public final class PaymentDocumentGradDAO {
                             !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
                         chargeInfo.getMunicipalService().setServiceCharge(new ServiceChargeImportType());
 //                        Перерасчеты, корректировки (руб)
-                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyRecalculation(OtherFormat.getBigDecimalTwo(invoce02.getRepays()));
 //                          Льготы, субсидии, скидки (руб)
-                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
+                        chargeInfo.getMunicipalService().getServiceCharge().setMoneyDiscount(OtherFormat.getBigDecimalTwo(invoce02.getExempts()));
                     }
 
 //                        Рассрочка. Раздел 6. Иваненко Дмитрий сказал, что у наших клиентов нет таких.
@@ -263,7 +263,7 @@ public final class PaymentDocumentGradDAO {
 //                            Основания перерасчётов
                         chargeInfo.getMunicipalService().getPaymentRecalculation().setRecalculationReason(invoce02.getRepays_text());
 //                            Сумма
-                        chargeInfo.getMunicipalService().getPaymentRecalculation().setSum(getBigDecimalTwo(invoce02.getRepays_sum()));
+                        chargeInfo.getMunicipalService().getPaymentRecalculation().setSum(OtherFormat.getBigDecimalTwo(invoce02.getRepays_sum()));
                     }
 
 //                        Норматив потребления коммунальной услуги
@@ -353,13 +353,13 @@ public final class PaymentDocumentGradDAO {
 //                        chargeInfo.getHousingService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
 //                    Тариф
-                        capitalRepairImportType.setContribution(getBigDecimalTwo(invoce02.getTariff()));
+                        capitalRepairImportType.setContribution(OtherFormat.getBigDecimalTwo(invoce02.getTariff()));
 
 //                    Итого к оплате за расчетный период, руб.
-                        capitalRepairImportType.setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
+                        capitalRepairImportType.setTotalPayable(OtherFormat.getBigDecimalTwo(invoce02.getForpay()));
 
 //                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
-                        capitalRepairImportType.setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
+                        capitalRepairImportType.setAccountingPeriodTotal(OtherFormat.getBigDecimalTwo(invoce02.getCharge_total()));
 
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
 //                    chargeInfo.getHousingService().setCalcExplanation("Иное");
@@ -368,14 +368,14 @@ public final class PaymentDocumentGradDAO {
                         if (invoce02.getRepays() == null || invoce02.getRepays().equals(new BigDecimal(0))) {
                             capitalRepairImportType.setMoneyRecalculation(new BigDecimal(0));
                         }else {
-                            capitalRepairImportType.setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+                            capitalRepairImportType.setMoneyRecalculation(OtherFormat.getBigDecimalTwo(invoce02.getRepays()));
                         }
 //                          Льготы, субсидии, скидки (руб)
                         if(invoce02.getExempts() == null || invoce02.getExempts().equals(new BigDecimal(0))) {
                             capitalRepairImportType.setMoneyDiscount(new BigDecimal(0));
                         }
                         else {
-                            capitalRepairImportType.setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
+                            capitalRepairImportType.setMoneyDiscount(OtherFormat.getBigDecimalTwo(invoce02.getExempts()));
                         }
 
                         paymentDocument.setCapitalRepairCharge(capitalRepairImportType);
@@ -390,13 +390,13 @@ public final class PaymentDocumentGradDAO {
                         chargeInfo.getHousingService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
 //                    Тариф
-                        chargeInfo.getHousingService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+                        chargeInfo.getHousingService().setRate(OtherFormat.getBigDecimalTwo(invoce02.getTariff()));
 
 //                    Итого к оплате за расчетный период, руб.
-                        chargeInfo.getHousingService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
+                        chargeInfo.getHousingService().setTotalPayable(OtherFormat.getBigDecimalTwo(invoce02.getForpay()));
 
 //                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
-                        chargeInfo.getHousingService().setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
+                        chargeInfo.getHousingService().setAccountingPeriodTotal(OtherFormat.getBigDecimalTwo(invoce02.getCharge_total()));
 
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
 //                    chargeInfo.getHousingService().setCalcExplanation("Иное");
@@ -406,9 +406,9 @@ public final class PaymentDocumentGradDAO {
                                 !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
                             chargeInfo.getHousingService().setServiceCharge(new ServiceChargeImportType());
 //                        Перерасчеты, корректировки (руб)
-                            chargeInfo.getHousingService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+                            chargeInfo.getHousingService().getServiceCharge().setMoneyRecalculation(OtherFormat.getBigDecimalTwo(invoce02.getRepays()));
 //                          Льготы, субсидии, скидки (руб)
-                            chargeInfo.getHousingService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
+                            chargeInfo.getHousingService().getServiceCharge().setMoneyDiscount(OtherFormat.getBigDecimalTwo(invoce02.getExempts()));
                         }
 
 /*
@@ -430,13 +430,13 @@ public final class PaymentDocumentGradDAO {
                     chargeInfo.getAdditionalService().getServiceType().setGUID(invoce02.getGis_service_uiid());
 
 //                    Тариф
-                    chargeInfo.getAdditionalService().setRate(getBigDecimalTwo(invoce02.getTariff()));
+                    chargeInfo.getAdditionalService().setRate(OtherFormat.getBigDecimalTwo(invoce02.getTariff()));
 
 //                    Итого к оплате за расчетный период, руб.
-                    chargeInfo.getAdditionalService().setTotalPayable(getBigDecimalTwo(invoce02.getForpay()));
+                    chargeInfo.getAdditionalService().setTotalPayable(OtherFormat.getBigDecimalTwo(invoce02.getForpay()));
 
 //                    Всего начислено за расчетный период (без перерасчетов и льгот), руб.
-                    chargeInfo.getAdditionalService().setAccountingPeriodTotal(getBigDecimalTwo(invoce02.getCharge_total()));
+                    chargeInfo.getAdditionalService().setAccountingPeriodTotal(OtherFormat.getBigDecimalTwo(invoce02.getCharge_total()));
 
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
 //                    chargeInfo.getAdditionalService().setCalcExplanation("Иное");
@@ -446,9 +446,9 @@ public final class PaymentDocumentGradDAO {
                             !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {
                         chargeInfo.getAdditionalService().setServiceCharge(new ServiceChargeImportType());
 //                        Перерасчеты, корректировки (руб)
-                        chargeInfo.getAdditionalService().getServiceCharge().setMoneyRecalculation(getBigDecimalTwo(invoce02.getRepays()));
+                        chargeInfo.getAdditionalService().getServiceCharge().setMoneyRecalculation(OtherFormat.getBigDecimalTwo(invoce02.getRepays()));
 //                          Льготы, субсидии, скидки (руб)
-                        chargeInfo.getAdditionalService().getServiceCharge().setMoneyDiscount(getBigDecimalTwo(invoce02.getExempts()));
+                        chargeInfo.getAdditionalService().getServiceCharge().setMoneyDiscount(OtherFormat.getBigDecimalTwo(invoce02.getExempts()));
                     }
                 }
                 if (chargeInfo.getAdditionalService() != null || chargeInfo.getHousingService() != null || chargeInfo.getMunicipalService() != null) {
@@ -517,27 +517,6 @@ public final class PaymentDocumentGradDAO {
             }
         }
         return paymentDocumentWithdrawArray;
-    }
-
-    public BigDecimal getBigDecimalTwo(BigDecimal value) {
-
-//        ROUND_DOWN: Отбрасывание разряда
-//        0.333  ->   0.33
-//       -0.333  ->  -0.33
-
-//        ROUND_HALF_UP: Округление вверх, если число после запятой >= .5
-//        0.5  ->  1.0
-//        0.4  ->  0.0
-
-//        ROUND_HALF_DOWN: Округление вверх, если число после запятой > .5
-//        0.5  ->  0.0
-//        0.6  ->  1.0
-
-//        MoneyType 2 знака после точки.
-        if (value != null) {
-            value = value.setScale(2, BigDecimal.ROUND_DOWN);
-        }
-        return value;
     }
 
     /**

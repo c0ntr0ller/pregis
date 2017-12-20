@@ -10,6 +10,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -148,6 +149,27 @@ public final class OtherFormat {
         provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, OtherFormat.PASSWORD);
         provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, service.getWSDLDocumentLocation().toString());
 //        provider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+    }
+
+    public static BigDecimal getBigDecimalTwo(BigDecimal value) {
+
+//        ROUND_DOWN: Отбрасывание разряда
+//        0.333  ->   0.33
+//       -0.333  ->  -0.33
+
+//        ROUND_HALF_UP: Округление вверх, если число после запятой >= .5
+//        0.5  ->  1.0
+//        0.4  ->  0.0
+
+//        ROUND_HALF_DOWN: Округление вверх, если число после запятой > .5
+//        0.5  ->  0.0
+//        0.6  ->  1.0
+
+//        MoneyType 2 знака после точки.
+        if (value != null) {
+            value = value.setScale(2, BigDecimal.ROUND_DOWN);
+        }
+        return value;
     }
 
     /**

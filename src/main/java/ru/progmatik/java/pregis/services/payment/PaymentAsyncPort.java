@@ -60,16 +60,16 @@ public class PaymentAsyncPort {
 
             switch (requestObject.getClass().getSimpleName()) {
                 case "ImportNotificationsOfOrderExecutionRequest":
-                    ackRequest = port.importNotificationsOfOrderExecution((ImportNotificationsOfOrderExecutionRequest)requestObject, requestHeader, headerHolder);
+                    ackRequest = port.importNotificationsOfOrderExecution(getImportNotificationsOfOrderExecutionRequest(requestObject), requestHeader, headerHolder);
                     break;
                 case "ImportNotificationsOfOrderExecutionCancellationRequest":
-                    ackRequest = port.importNotificationsOfOrderExecutionCancellation((ImportNotificationsOfOrderExecutionCancellationRequest)requestObject, requestHeader, headerHolder);
+                    ackRequest = port.importNotificationsOfOrderExecutionCancellation(getImportNotificationsOfOrderExecutionCancellationRequest(requestObject), requestHeader, headerHolder);
                     break;
                 case "ImportSupplierNotificationsOfOrderExecutionRequest":
-                    ackRequest = port.importSupplierNotificationsOfOrderExecution((ImportSupplierNotificationsOfOrderExecutionRequest)requestObject, requestHeader, headerHolder);
+                    ackRequest = port.importSupplierNotificationsOfOrderExecution(getImportSupplierNotificationsOfOrderExecutionRequest(requestObject), requestHeader, headerHolder);
                     break;
                 case "ExportPaymentDocumentDetailsRequest":
-                    ackRequest = port.exportPaymentDocumentDetails((ExportPaymentDocumentDetailsRequest)requestObject, requestHeader, headerHolder);
+                    ackRequest = port.exportPaymentDocumentDetails(getExportPaymentDocumentDetailsRequest(requestObject), requestHeader, headerHolder);
                     break;
                 default:
                     answerProcessing.sendMessageToClient("Не определен метод экспорта/импорта " + NAME_METHOD);
@@ -113,5 +113,37 @@ public class PaymentAsyncPort {
 
         return result;
 
+    }
+
+    private ImportNotificationsOfOrderExecutionRequest getImportNotificationsOfOrderExecutionRequest(Object requestObject){
+        ImportNotificationsOfOrderExecutionRequest request = (ImportNotificationsOfOrderExecutionRequest)requestObject;
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
+        return request;
+    }
+
+    private ImportNotificationsOfOrderExecutionCancellationRequest getImportNotificationsOfOrderExecutionCancellationRequest(Object requestObject){
+        ImportNotificationsOfOrderExecutionCancellationRequest request = (ImportNotificationsOfOrderExecutionCancellationRequest)requestObject;
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
+        return request;
+    }
+
+    private ImportSupplierNotificationsOfOrderExecutionRequest getImportSupplierNotificationsOfOrderExecutionRequest(Object requestObject){
+        ImportSupplierNotificationsOfOrderExecutionRequest request = (ImportSupplierNotificationsOfOrderExecutionRequest)requestObject;
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
+        return request;
+    }
+
+    private ExportPaymentDocumentDetailsRequest getExportPaymentDocumentDetailsRequest(Object requestObject){
+        ExportPaymentDocumentDetailsRequest request = (ExportPaymentDocumentDetailsRequest)requestObject;
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
+        return request;
     }
 }

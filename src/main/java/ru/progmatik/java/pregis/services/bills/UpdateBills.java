@@ -601,7 +601,7 @@ public class UpdateBills {
     private void setResultFromGisJkh(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocuments, CommonResultType resultType, final PaymentDocumentGradDAO pdGradDao) throws SQLException {
         for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
             if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
-                pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType.getGUID());
+                pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType);
                 addedGisJkhCount++;
 //                answerProcessing.sendMessageToClient("");
 //                answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());

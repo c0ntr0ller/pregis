@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.bills;
 
 import com.google.inject.internal.Nullable;
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.bills.*;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice01;
@@ -178,6 +179,18 @@ public final class PaymentDocumentGradDAO {
             //Номер платежного документа, по которому внесена плата, присвоенный такому документу исполнителем в целях осуществления расчетов по внесению платы
             paymentDocument.setPaymentDocumentNumber(invoceGrad.getValue().getPd_no());
 //            paymentDocument.setPaymentDocumentNumber(String.format("%010d", accountGrad.getValue().getPd_no()));
+
+            if(invoceGrad.getValue().getDebt() != 0){
+                paymentDocument.setDebtPreviousPeriods(OtherFormat.getBigDecimalTwo(new BigDecimal(invoceGrad.getValue().getDebt())));
+            }else{
+                if(invoceGrad.getValue().getAvans() != 0){
+                    paymentDocument.setAdvanceBllingPeriod(OtherFormat.getBigDecimalTwo(new BigDecimal(invoceGrad.getValue().getAvans())));
+                }
+            }
+            // на оплату
+            paymentDocument.setExpose(true);
+            // Транспортный GUID
+            paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
 
             // создаем Адресные сведения
 /* ушло в версии 11.2.0.18
@@ -486,10 +499,6 @@ public final class PaymentDocumentGradDAO {
             }
             // закончили заносить начисления
 
-            // на оплату
-            paymentDocument.setExpose(true);
-            // Транспортный GUID
-            paymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
 
             paymentDocumentMap.put(paymentDocument.getPaymentDocumentNumber(), paymentDocument);
         }
@@ -731,14 +740,14 @@ public final class PaymentDocumentGradDAO {
     /**
      * Метод устанавливает
      * @param paymentDocumentNumber - номер ЕПД в Град
-     * @param paymentDocumentGUID - присвоенный ГИС идентификатор
+     * @param resultType - результат с присвоенными ГИС идентификаторами
      */
     public void addPaymentDocumentRegistryItem(final String paymentDocumentNumber,
-                                               final String paymentDocumentGUID){
+                                               final CommonResultType resultType){
         try {
-            connectionGrad.createStatement().execute("update EX_GIS_INVOCES set RPD_GIS_NO = '" + paymentDocumentGUID + "' where RPD_NO = '" + paymentDocumentNumber + "'");
+            connectionGrad.createStatement().execute(String.format("update EX_GIS_INVOCES set RPD_GIS_NO = '%s', GISUNIQUENUMBER = '%s' where RPD_NO = '%s'", resultType.getGUID(), resultType.getUniqueNumber(), paymentDocumentNumber));
         }catch(SQLException e){
-            answerProcessing.sendInformationToClientAndLog("Не удалось выставить GUID из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber + "; " + e.getMessage(), LOGGER);
+            answerProcessing.sendInformationToClientAndLog("Не удалось выставить идентификаторы из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber + "; " + e.getMessage(), LOGGER);
         }
     }
 

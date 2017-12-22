@@ -68,6 +68,7 @@ class NameMethodDAO {
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importNotificationData', 'Импорт новостей для информирования граждан. ВИ_ИО_И_1.'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('importAccountIndividualServices', 'Импорт индивидуальных услуг лицевого счета'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('exportAccountIndividualServices', 'Экспорт индивидуальных услуг лицевого счета'); " +
+            "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('ImportSupplierNotificationsOfOrderExecutionRequest', 'Импорт пакета документов «Извещение о принятии к исполнению распоряжения»'); " +
             "INSERT INTO PUBLIC.SPR_NAME_METHOD(NAME_METHOD, NAME_METHOD_RU) VALUES('ImportNotificationsOfOrderExecution', 'Пакет извещений о принятии к исполнению распоряжений (СД_ИОПЛАТА_ИЗВ_ЗАП).'); ";
 
     /**

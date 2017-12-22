@@ -3,7 +3,7 @@ package ru.progmatik.java.pregis.services.payment;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.payment.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.payment.ImportNotificationsOfOrderExecutionRequest;
+import ru.gosuslugi.dom.schema.integration.payment.ImportSupplierNotificationsOfOrderExecutionRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
@@ -13,10 +13,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UpdatePayments {
     private static final Logger LOGGER = Logger.getLogger(UpdatePayments.class);
@@ -67,26 +64,39 @@ public class UpdatePayments {
         PaymentGRADDAO paymentGRADDAO = new PaymentGRADDAO(answerProcessing, connectionGrad);
 
         answerProcessing.sendMessageToClient("Получаем платежи из Град по дому " + houseGrad.getAddresStringShort() + "...");
-        List<ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType> paymentsListGrad = paymentGRADDAO.getPaymentsFromGrad(houseGrad);
+        HashMap<String, ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsMapGrad = paymentGRADDAO.getPaymentsFromGrad(houseGrad);
 
-        if(paymentsListGrad == null || paymentsListGrad.size() == 0){
+        if(paymentsMapGrad == null || paymentsMapGrad.size() == 0){
             answerProcessing.sendMessageToClient("В Град нет платежей для выгрузки в ГИС ЖКХ");
             return;
         }
         // формируем запросы в ГИС по 1000 платежей
-        List<ImportNotificationsOfOrderExecutionRequest> requestList = compileImportNotificationsOfOrderExecutionRequest(paymentsListGrad);
+        List<ImportSupplierNotificationsOfOrderExecutionRequest> requestList = compileImportSupplierNotificationsOfOrderExecutionRequest(new ArrayList<>(paymentsMapGrad.values()));
         // отсылаем в ГИС и обрабатываем ответ
 
         if(requestList != null && requestList.size() > 0){
-            for (ImportNotificationsOfOrderExecutionRequest request: requestList) {
-                sendPaymentsToGisGKH(request, paymentGRADDAO);
+            for (ImportSupplierNotificationsOfOrderExecutionRequest request: requestList) {
+                sendPaymentsToGisGKH(request, paymentsMapGrad, paymentGRADDAO);
             }
         }
     }
 
-    private void sendPaymentsToGisGKH(final ImportNotificationsOfOrderExecutionRequest request, final PaymentGRADDAO paymentGRADDAO) throws SQLException, PreGISException {
-        GetStateResult result = new PaymentAsyncPort(answerProcessing, "ImportNotificationsOfOrderExecution").interactPayments(request);
+    /**
+     * метод отсылает реквест в ГИС, получает результат и обрабатывает его (отсылает в Град отметки о высылке платежей)
+     * @param request
+     * @param paymentsMapGrad
+     * @param paymentGRADDAO
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    private void sendPaymentsToGisGKH(final ImportSupplierNotificationsOfOrderExecutionRequest request,
+                                      final HashMap<String, ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsMapGrad,
+                                      final PaymentGRADDAO paymentGRADDAO) throws SQLException, PreGISException {
+        GetStateResult result = new PaymentAsyncPort(answerProcessing, "ImportSupplierNotificationsOfOrderExecutionRequest").interactPayments(request);
 
+        StringBuilder paymentDocumentIDs = new StringBuilder();
+        StringBuilder uniqueNumbers = new StringBuilder();
+        StringBuilder paymentGUIDs = new StringBuilder();
         if (result != null && result.getImportResult() != null) {
             answerProcessing.sendMessageToClient("Обработка результата импорта данных. Кол-во данных: " + result.getImportResult().size());
             for (CommonResultType resultType : result.getImportResult()) {
@@ -98,25 +108,18 @@ public class UpdatePayments {
                             resultType.getError().get(0).getDescription());
                     setErrorStatus(0);
                 }else {
-//                   отмечаем в Град как отправленные
-                    markPaymentsInGrad(request.getNotificationOfOrderExecutionType(), resultType, paymentGRADDAO);
+//                    request.getSupplierNotificationOfOrderExecution().stream().collect(Collectors.toMap(ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution::getTransportGUID, Function.identity()))
+                    paymentDocumentIDs.append(",").append(paymentsMapGrad.get(resultType.getTransportGUID()).getPaymentDocumentID());
+                    uniqueNumbers.append(",").append(resultType.getUniqueNumber());
+                    paymentGUIDs.append(",").append(resultType.getGUID());
                 }
+            }
+            if(paymentDocumentIDs.length() > 0){
+                paymentGRADDAO.markPayments(paymentDocumentIDs.toString(), uniqueNumbers.toString(), paymentGUIDs.toString());
             }
         } else if (result == null) {
             setErrorStatus(0);
         }
-    }
-
-    /**
-     * метод отмечает в Град отосланные платежи
-     * @param request
-     * @param resultType
-     * @param paymentGRADDAO
-     */
-    private void markPaymentsInGrad(final List<ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType> request,
-                                    final CommonResultType resultType,
-                                    final PaymentGRADDAO paymentGRADDAO) throws SQLException {
-            paymentGRADDAO.markPayments(request);
     }
 
     /**
@@ -145,8 +148,8 @@ public class UpdatePayments {
      * @param paymentsListGrad
      * @return
      */
-    private List<ImportNotificationsOfOrderExecutionRequest> compileImportNotificationsOfOrderExecutionRequest(
-            List<ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType> paymentsListGrad){
+    private List<ImportSupplierNotificationsOfOrderExecutionRequest> compileImportSupplierNotificationsOfOrderExecutionRequest(
+            List<ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsListGrad){
 
         // формируем запрос
         if (paymentsListGrad.size() == 0){
@@ -155,21 +158,19 @@ public class UpdatePayments {
         }
 
         allCount = paymentsListGrad.size();
-        ArrayList<ImportNotificationsOfOrderExecutionRequest> importNotificationsOfOrderExecutionRequestArrayList = new ArrayList<>();
+        ArrayList<ImportSupplierNotificationsOfOrderExecutionRequest> importSupplierNotificationsOfOrderExecutionRequestArrayList = new ArrayList<>();
 
         int chunk = 1000; //не берем из настроек - в доке указано жестко 1000  ResourcesUtil.instance().getMaxRequestSize(); // chunk size to divide
         for(int i=0; i<paymentsListGrad.size(); i+=chunk){
-            ArrayList<ImportNotificationsOfOrderExecutionRequest.NotificationOfOrderExecutionType> subarray = new ArrayList<>(paymentsListGrad.subList(i, Math.min(paymentsListGrad.size(),i+chunk)));
+            ArrayList<ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> starry = new ArrayList<>(paymentsListGrad.subList(i, Math.min(paymentsListGrad.size(),i+chunk)));
 
-            final ImportNotificationsOfOrderExecutionRequest importNotificationsOfOrderExecutionRequest = new ImportNotificationsOfOrderExecutionRequest();
+            final ImportSupplierNotificationsOfOrderExecutionRequest importSupplierNotificationsOfOrderExecutionRequest = new ImportSupplierNotificationsOfOrderExecutionRequest();
 
-//            importNotificationsOfOrderExecutionRequest.setMonth(pdGradDao.getMonth());
-//            importNotificationsOfOrderExecutionRequest.setYear(pdGradDao.getYear());
-            importNotificationsOfOrderExecutionRequest.getNotificationOfOrderExecutionType().addAll(subarray);
-            importNotificationsOfOrderExecutionRequestArrayList.add(importNotificationsOfOrderExecutionRequest);
+            importSupplierNotificationsOfOrderExecutionRequest.getSupplierNotificationOfOrderExecution().addAll(starry);
+            importSupplierNotificationsOfOrderExecutionRequestArrayList.add(importSupplierNotificationsOfOrderExecutionRequest);
         }
 
-        return importNotificationsOfOrderExecutionRequestArrayList;
+        return importSupplierNotificationsOfOrderExecutionRequestArrayList;
     }
 
     private void setErrorStatus(int errorStatus) {

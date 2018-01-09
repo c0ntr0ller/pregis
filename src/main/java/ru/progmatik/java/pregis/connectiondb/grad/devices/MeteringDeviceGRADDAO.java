@@ -1,7 +1,6 @@
 package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
@@ -927,7 +926,9 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                             result.getError().get(0).getDescription());
                 }
             }
-        } else {  // Возвращает не тот объект ответа.
+        }
+        /* Закомментарил. Сюда может попасть и при отсутствии ответа (его нулевой длине), а так как мы больше не сохраняем запросы в БД, то тут возникает ошибка
+        else {  // Возвращает не тот объект ответа.
 
             ru.gosuslugi.dom.schema.integration.base.ImportResult castResult = getImportResultLastFromDataBase();
             for (CommonResultType resultType : castResult.getCommonResult()) {
@@ -943,6 +944,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 }
             }
         }
+        */
     }
 
     /**

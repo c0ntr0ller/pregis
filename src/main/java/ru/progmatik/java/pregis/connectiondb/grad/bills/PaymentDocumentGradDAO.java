@@ -607,133 +607,120 @@ public final class PaymentDocumentGradDAO {
      * @throws SQLException
      */
     private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID) throws SQLException, PreGISException {
-        Statement accountStatement = connectionGrad.createStatement();
-        String sqlQuery = "select raccountguid, " +
-                "rpd_type, " +
-                "rpd_no, " +
-                "rsq_total, " +
-                "rsq_live, " +
-                "rsq_heat, " +
-                "rtencount, " +
-                "rdebt, " +
-                "ravans, " +
-                "rpays_advance, " +
-                "rbik, " +
-                "rbank_account, " +
-                "rnls, " +
-                "raddress " +
-                "from ex_gis_invoce01(" + month + ", " +
-                year + ", " +
-                ResourcesUtil.instance().getCompanyGradId() + ", " +
-                houseGradID + ", null)";
-        ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
-
         HashMap<String, Invoice01> accountsMap = new HashMap<>();
 
-        while(accountsResultSet.next()){
-            Invoice01 invoce01 = new Invoice01();
-            invoce01.setAccountguid(accountsResultSet.getString("raccountguid"));
-            invoce01.setAccountNLS(accountsResultSet.getString("rnls"));
-            invoce01.setAddress(accountsResultSet.getString("raddress"));
-            invoce01.setPd_type(accountsResultSet.getString("rpd_type"));
-            invoce01.setPd_no(accountsResultSet.getString("rpd_no"));
-            invoce01.setSq_total(accountsResultSet.getBigDecimal("rsq_total"));
-            invoce01.setSq_live(accountsResultSet.getBigDecimal("rsq_live"));
-            invoce01.setSq_heat(accountsResultSet.getBigDecimal("rsq_heat"));
-            invoce01.setTencount(accountsResultSet.getByte("rtencount"));
-            invoce01.setDebt(accountsResultSet.getDouble("rdebt"));
-            invoce01.setAvans(accountsResultSet.getDouble("ravans"));
-            invoce01.setPays_advance(accountsResultSet.getDouble("rpays_advance"));
-            invoce01.setBik(accountsResultSet.getString("rbik"));
-            invoce01.setBank_account(accountsResultSet.getString("rbank_account"));
+        try(Statement accountStatement = connectionGrad.createStatement()) {
+            String sqlQuery = String.format("select raccountguid, rpd_type, rpd_no, rsq_total, " +
+                            "rsq_live, rsq_heat, rtencount, rdebt, ravans, rpays_advance, " +
+                            "rbik, rbank_account, rnls, raddress from ex_gis_invoce01(%d, %s, %d, %d, null)",
+                    month, year, ResourcesUtil.instance().getCompanyGradId(), houseGradID);
+            ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
 
-            accountsMap.put(invoce01.getPd_no(), invoce01);
+
+            while (accountsResultSet.next()) {
+                Invoice01 invoce01 = new Invoice01();
+                invoce01.setAccountguid(accountsResultSet.getString("raccountguid"));
+                invoce01.setAccountNLS(accountsResultSet.getString("rnls"));
+                invoce01.setAddress(accountsResultSet.getString("raddress"));
+                invoce01.setPd_type(accountsResultSet.getString("rpd_type"));
+                invoce01.setPd_no(accountsResultSet.getString("rpd_no"));
+                invoce01.setSq_total(accountsResultSet.getBigDecimal("rsq_total"));
+                invoce01.setSq_live(accountsResultSet.getBigDecimal("rsq_live"));
+                invoce01.setSq_heat(accountsResultSet.getBigDecimal("rsq_heat"));
+                invoce01.setTencount(accountsResultSet.getByte("rtencount"));
+                invoce01.setDebt(accountsResultSet.getDouble("rdebt"));
+                invoce01.setAvans(accountsResultSet.getDouble("ravans"));
+                invoce01.setPays_advance(accountsResultSet.getDouble("rpays_advance"));
+                invoce01.setBik(accountsResultSet.getString("rbik"));
+                invoce01.setBank_account(accountsResultSet.getString("rbank_account"));
+
+                accountsMap.put(invoce01.getPd_no(), invoce01);
+            }
         }
-
         return  accountsMap;
     }
 
     private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID) throws SQLException, PreGISException {
-        Statement chargesStatement = connectionGrad.createStatement();
-        ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
-                "rgis_service, " +
-                "ripu, " +
-                "ramount_personal, " +
-                "rodn_pu, " +
-                "ramount_shared, " +
-                "rtariff, " +
-                "rrepays, " +
-                "rexempts, " +
-                "rcharge_legend, " +
-                "rnorm_personal, " +
-                "rnorm_shared, " +
-                "rmeters_personal, " +
-                "rmeters_shared, " +
-                "rsumm_amount_personal, " +
-                "rsumm_amount_shared, " +
-                "rrepays_text, " +
-                "rrepays_sum, " +
-                "rrassroch_current, " +
-                "rrassroch_other, " +
-                "rrassroch_percentsum, " +
-                "rrassroch_percent, " +
-                "rforpay, " +
-                "rgis_service_uiid," +
-                "rgis_service_code," +
-                "rgis_service_code_parent," +
-                "rcharge_total," +
-                "rpayee_id " +
-                "from ex_gis_invoce02(" + month + ", " +
-                year + ", " +
-                ResourcesUtil.instance().getCompanyGradId() + ", " +
-                houseGradID + ", null)");
-
         HashMap<String, ArrayList<Invoice02>> chargesMap = new HashMap<>();
-        
-        while (charges.next()){
-            Invoice02 invoice02 = new Invoice02();
-            invoice02.setPd_no(charges.getString("rpd_no"));
-            invoice02.setGis_service(charges.getString("rgis_service"));
-            invoice02.setGis_service_uiid(charges.getString("rgis_service_uiid"));
-            invoice02.setIpu(charges.getString("ripu"));
-            invoice02.setAmount_personal(charges.getDouble("ramount_personal"));
-            invoice02.setOdn_pu(charges.getString("rodn_pu"));
-            invoice02.setAmount_shared(charges.getDouble("ramount_shared"));
-            invoice02.setTariff(charges.getBigDecimal("rtariff"));
-            invoice02.setRepays(charges.getBigDecimal("rrepays"));
-            invoice02.setExempts(charges.getBigDecimal("rexempts"));
-            invoice02.setCharge_legend(charges.getString("rcharge_legend"));
-            invoice02.setNorm_personal(charges.getDouble("rnorm_personal"));
-            invoice02.setNorm_shared(charges.getDouble("rnorm_shared"));
-            invoice02.setMeters_personal(charges.getString("rmeters_personal"));
-            invoice02.setMeters_shared(charges.getString("rmeters_shared"));
-            invoice02.setSumm_amount_personal(charges.getDouble("rsumm_amount_personal"));
-            invoice02.setSumm_amount_shared(charges.getDouble("rsumm_amount_shared"));
-            invoice02.setRepays_text(charges.getString("rrepays_text"));
-            invoice02.setRepays_sum(charges.getBigDecimal("rrepays_sum"));
-            invoice02.setRassroch_current(charges.getDouble("rrassroch_current"));
-            invoice02.setRassroch_other(charges.getDouble("rrassroch_other"));
-            invoice02.setRassroch_percentsum(charges.getDouble("rrassroch_percentsum"));
-            invoice02.setRassroch_percent(charges.getDouble("rrassroch_percent"));
-            invoice02.setForpay(charges.getBigDecimal("rforpay"));
-            invoice02.setCode(charges.getString("rgis_service_code"));
-            invoice02.setCode_parent(charges.getString("rgis_service_code_parent"));
-            invoice02.setCharge_total(charges.getBigDecimal("rcharge_total"));
-            invoice02.setPayee_id(charges.getInt("rpayee_id"));
 
-            if(invoice02.getCode() == null){
-                throw new PreGISException("Отсутствует код услуги ГИС!");
+        try(Statement chargesStatement = connectionGrad.createStatement()) {
+            ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
+                    "rgis_service, " +
+                    "ripu, " +
+                    "ramount_personal, " +
+                    "rodn_pu, " +
+                    "ramount_shared, " +
+                    "rtariff, " +
+                    "rrepays, " +
+                    "rexempts, " +
+                    "rcharge_legend, " +
+                    "rnorm_personal, " +
+                    "rnorm_shared, " +
+                    "rmeters_personal, " +
+                    "rmeters_shared, " +
+                    "rsumm_amount_personal, " +
+                    "rsumm_amount_shared, " +
+                    "rrepays_text, " +
+                    "rrepays_sum, " +
+                    "rrassroch_current, " +
+                    "rrassroch_other, " +
+                    "rrassroch_percentsum, " +
+                    "rrassroch_percent, " +
+                    "rforpay, " +
+                    "rgis_service_uiid," +
+                    "rgis_service_code," +
+                    "rgis_service_code_parent," +
+                    "rcharge_total," +
+                    "rpayee_id " +
+                    "from ex_gis_invoce02(" + month + ", " +
+                    year + ", " +
+                    ResourcesUtil.instance().getCompanyGradId() + ", " +
+                    houseGradID + ", null)");
+
+            while (charges.next()) {
+                Invoice02 invoice02 = new Invoice02();
+                invoice02.setPd_no(charges.getString("rpd_no"));
+                invoice02.setGis_service(charges.getString("rgis_service"));
+                invoice02.setGis_service_uiid(charges.getString("rgis_service_uiid"));
+                invoice02.setIpu(charges.getString("ripu"));
+                invoice02.setAmount_personal(charges.getDouble("ramount_personal"));
+                invoice02.setOdn_pu(charges.getString("rodn_pu"));
+                invoice02.setAmount_shared(charges.getDouble("ramount_shared"));
+                invoice02.setTariff(charges.getBigDecimal("rtariff"));
+                invoice02.setRepays(charges.getBigDecimal("rrepays"));
+                invoice02.setExempts(charges.getBigDecimal("rexempts"));
+                invoice02.setCharge_legend(charges.getString("rcharge_legend"));
+                invoice02.setNorm_personal(charges.getDouble("rnorm_personal"));
+                invoice02.setNorm_shared(charges.getDouble("rnorm_shared"));
+                invoice02.setMeters_personal(charges.getString("rmeters_personal"));
+                invoice02.setMeters_shared(charges.getString("rmeters_shared"));
+                invoice02.setSumm_amount_personal(charges.getDouble("rsumm_amount_personal"));
+                invoice02.setSumm_amount_shared(charges.getDouble("rsumm_amount_shared"));
+                invoice02.setRepays_text(charges.getString("rrepays_text"));
+                invoice02.setRepays_sum(charges.getBigDecimal("rrepays_sum"));
+                invoice02.setRassroch_current(charges.getDouble("rrassroch_current"));
+                invoice02.setRassroch_other(charges.getDouble("rrassroch_other"));
+                invoice02.setRassroch_percentsum(charges.getDouble("rrassroch_percentsum"));
+                invoice02.setRassroch_percent(charges.getDouble("rrassroch_percent"));
+                invoice02.setForpay(charges.getBigDecimal("rforpay"));
+                invoice02.setCode(charges.getString("rgis_service_code"));
+                invoice02.setCode_parent(charges.getString("rgis_service_code_parent"));
+                invoice02.setCharge_total(charges.getBigDecimal("rcharge_total"));
+                invoice02.setPayee_id(charges.getInt("rpayee_id"));
+
+                if (invoice02.getCode() == null) {
+                    throw new PreGISException("Отсутствует код услуги ГИС!");
+                }
+
+                ArrayList<Invoice02> invoceList = chargesMap.get(invoice02.getPd_no());
+
+                if (invoceList == null) {
+                    invoceList = new ArrayList<Invoice02>();
+                    chargesMap.put(invoice02.getPd_no(), invoceList);
+                }
+                invoceList.add(invoice02);
             }
-
-            ArrayList<Invoice02> invoceList = chargesMap.get(invoice02.getPd_no());
-
-            if(invoceList == null){
-                invoceList = new ArrayList<Invoice02>();
-                chargesMap.put(invoice02.getPd_no(), invoceList);
-            }
-            invoceList.add(invoice02);
         }
-
         return chargesMap;
     }
 

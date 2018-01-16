@@ -661,88 +661,88 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 }
             }
 
-            if (basicCharacteristics.getMeteringDeviceNumber().equalsIgnoreCase(device.getMeteringDeviceNumber()) &&
-                    basicCharacteristics.getMeteringDeviceStamp().equalsIgnoreCase(device.getMeteringDeviceStamp()) &&
-                    basicCharacteristics.getMeteringDeviceModel().equalsIgnoreCase(device.getMeteringDeviceModel())) {
-                if (basicCharacteristics.getLivingRoomDevice() != null) { // Комунальные комнаты - один счетчик много комнат
-                    if (basicCharacteristics.getLivingRoomDevice().getAccountGUID().contains(device.getLivingRoomDevice().getAccountGUID().get(0)) &&
-                            basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().contains(device.getLivingRoomDevice().getLivingRoomGUID().get(0))) {
+            if (device != null) {
+                if (basicCharacteristics.getMeteringDeviceNumber().equalsIgnoreCase(device.getMeteringDeviceNumber()) && basicCharacteristics.getMeteringDeviceStamp().equalsIgnoreCase(device.getMeteringDeviceStamp()) && basicCharacteristics.getMeteringDeviceModel().equalsIgnoreCase(device.getMeteringDeviceModel())) {
+                    if (basicCharacteristics.getLivingRoomDevice() != null) { // Комунальные комнаты - один счетчик много комнат
+                        if (basicCharacteristics.getLivingRoomDevice().getAccountGUID().contains(device.getLivingRoomDevice().getAccountGUID().get(0)) &&
+                                basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID().contains(device.getLivingRoomDevice().getLivingRoomGUID().get(0))) {
 
-                        for (String itemRoom : basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID()) {
+                            for (String itemRoom : basicCharacteristics.getLivingRoomDevice().getLivingRoomGUID()) {
+                                if (setMeteringDeviceToBase(abonId, meterId, houseId,
+                                        basicCharacteristics.getLivingRoomDevice().getAccountGUID().get(0),
+                                        null, itemRoom, basicCharacteristics.getMeteringDeviceNumber(),
+                                        null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                    LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
+                                    countAdded++;
+                                    answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("");
+                                }
+                            }
+                        }
+                    } else if (basicCharacteristics.getResidentialPremiseDevice() != null && device.getResidentialPremiseDevice() != null) { // жилые помещения, одно помещение и может быть несколько л.счетов.
+
+                        if (basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().contains(device.getResidentialPremiseDevice().getAccountGUID().get(0)) &&
+                                basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getResidentialPremiseDevice().getPremiseGUID())) {
+
+                            for (String accountGUID : basicCharacteristics.getResidentialPremiseDevice().getAccountGUID()) {
+                                if (setMeteringDeviceToBase(abonId, meterId, houseId, accountGUID,
+                                        basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID(), null,
+                                        basicCharacteristics.getMeteringDeviceNumber(),
+                                        null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                    LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
+                                    countAdded++;
+                                    answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("");
+                                }
+                            }
+                        }
+                    } else if (basicCharacteristics.getNonResidentialPremiseDevice() != null && device.getNonResidentialPremiseDevice() != null) { // не жилые помещения
+
+                        if (basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().contains(device.getNonResidentialPremiseDevice().getAccountGUID().get(0)) &&
+                                basicCharacteristics.getNonResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getNonResidentialPremiseDevice().getPremiseGUID())) {
+
                             if (setMeteringDeviceToBase(abonId, meterId, houseId,
-                                    basicCharacteristics.getLivingRoomDevice().getAccountGUID().get(0),
-                                    null, itemRoom, basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
-                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                                countAdded++;
-                                answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                                answerProcessing.sendMessageToClient("");
-                            }
-                        }
-                    }
-                } else if (basicCharacteristics.getResidentialPremiseDevice() != null && device.getResidentialPremiseDevice() != null) { // жилые помещения, одно помещение и может быть несколько л.счетов.
-
-                    if (basicCharacteristics.getResidentialPremiseDevice().getAccountGUID().contains(device.getResidentialPremiseDevice().getAccountGUID().get(0)) &&
-                            basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getResidentialPremiseDevice().getPremiseGUID())) {
-
-                        for (String accountGUID : basicCharacteristics.getResidentialPremiseDevice().getAccountGUID()) {
-                            if (setMeteringDeviceToBase(abonId, meterId, houseId, accountGUID,
-                                    basicCharacteristics.getResidentialPremiseDevice().getPremiseGUID(), null,
+                                    basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().get(0),
+                                    basicCharacteristics.getNonResidentialPremiseDevice().getPremiseGUID(), null,
                                     basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
-                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
+                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, true, connectionGRAD)) {
+                                LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
                                 answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
-                    }
-                } else if (basicCharacteristics.getNonResidentialPremiseDevice() != null && device.getNonResidentialPremiseDevice() != null) { // не жилые помещения
+                    } else if (basicCharacteristics.getCollectiveApartmentDevice() != null && device.getCollectiveApartmentDevice() != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
 
-                    if (basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().contains(device.getNonResidentialPremiseDevice().getAccountGUID().get(0)) &&
-                            basicCharacteristics.getNonResidentialPremiseDevice().getPremiseGUID().equalsIgnoreCase(device.getNonResidentialPremiseDevice().getPremiseGUID())) {
+                        if (basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().contains(device.getCollectiveApartmentDevice().getAccountGUID().get(0)) &&
+                                basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID().equalsIgnoreCase(device.getCollectiveApartmentDevice().getPremiseGUID())) {
 
-                        if (setMeteringDeviceToBase(abonId, meterId, houseId,
-                                basicCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().get(0),
-                                basicCharacteristics.getNonResidentialPremiseDevice().getPremiseGUID(), null,
-                                basicCharacteristics.getMeteringDeviceNumber(),
-                                null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, true, connectionGRAD)) {
-                            LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                            countAdded++;
-                            answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                            answerProcessing.sendMessageToClient("");
-                        }
-                    }
-                } else if (basicCharacteristics.getCollectiveApartmentDevice() != null && device.getCollectiveApartmentDevice() != null) { // Характеристики общеквартирного ПУ (для квартир коммунального заселения)
-
-                    if (basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID().contains(device.getCollectiveApartmentDevice().getAccountGUID().get(0)) &&
-                            basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID().equalsIgnoreCase(device.getCollectiveApartmentDevice().getPremiseGUID())) {
-
-                        for (String accountGUID : basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID()) {
-                            if (setMeteringDeviceToBase(abonId, meterId, houseId, accountGUID,
-                                    basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID(), null,
-                                    basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
-                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                                countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                                answerProcessing.sendMessageToClient("");
+                            for (String accountGUID : basicCharacteristics.getCollectiveApartmentDevice().getAccountGUID()) {
+                                if (setMeteringDeviceToBase(abonId, meterId, houseId, accountGUID,
+                                        basicCharacteristics.getCollectiveApartmentDevice().getPremiseGUID(), null,
+                                        basicCharacteristics.getMeteringDeviceNumber(),
+                                        null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                    LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
+                                    countAdded++;
+                                    answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("");
+                                }
                             }
                         }
-                    }
 
-                } else if (basicCharacteristics.getApartmentHouseDevice() != null) {  // Тип ПУ Коллективный (общедомовой) или Индивидуальный ПУ в ЖД
+                    } else if (basicCharacteristics.getApartmentHouseDevice() != null) {  // Тип ПУ Коллективный (общедомовой) или Индивидуальный ПУ в ЖД
 
-                    if (basicCharacteristics.getApartmentHouseDevice().getAccountGUID().contains(device.getApartmentHouseDevice().getAccountGUID().get(0))) {
+                        if (basicCharacteristics.getApartmentHouseDevice().getAccountGUID().contains(device.getApartmentHouseDevice().getAccountGUID().get(0))) {
 
-                        for (String accountGUID : basicCharacteristics.getApartmentHouseDevice().getAccountGUID()) {
-                            if (setMeteringDeviceToBase(abonId, meterId, houseId, accountGUID, null, null,
-                                    basicCharacteristics.getMeteringDeviceNumber(),
-                                    null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
-                                LOGGER.debug("abinId: " + abonId + " meterId: " + meterId);
-                                countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
-                                answerProcessing.sendMessageToClient("");
+                            for (String accountGUID : basicCharacteristics.getApartmentHouseDevice().getAccountGUID()) {
+                                if (setMeteringDeviceToBase(abonId, meterId, houseId, accountGUID, null, null,
+                                        basicCharacteristics.getMeteringDeviceNumber(),
+                                        null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
+                                    LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
+                                    countAdded++;
+                                    answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("");
+                                }
                             }
                         }
                     }
@@ -913,7 +913,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
      * @param connectionGrad подключение к БД ГРАД.
      * @throws SQLException
      */
-    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
+    public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, PreGISException {
 
         if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {

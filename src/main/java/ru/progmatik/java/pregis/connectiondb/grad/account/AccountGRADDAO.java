@@ -704,7 +704,7 @@ public final class AccountGRADDAO {
         if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RSO")) {
             account.setIsRSOAccount(true); // Если РСО
         } else if (ResourcesUtil.instance().getCompanyRole() != null && ResourcesUtil.instance().getCompanyRole().equalsIgnoreCase("RCA")) {
-            account.setIsRSOAccount(true); // Если РКЦ
+            account.setIsRCAccount(true); // Если РКЦ
         } else {
             account.setIsUOAccount(true); // По-умолчанию УО.
         }

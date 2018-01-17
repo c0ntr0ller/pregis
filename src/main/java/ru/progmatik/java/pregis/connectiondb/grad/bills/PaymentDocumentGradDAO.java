@@ -357,7 +357,7 @@ public final class PaymentDocumentGradDAO {
 */
 
                 } else if (invoce02.getCode_parent().equals("50")) { // если Жилищная услуга или Капермонт
-                    if (invoce02.getCode().equals("2")){ // Кап.ремонт
+                    /* if (invoce02.getCode().equals("2")){ // Кап.ремонт
                         CapitalRepairImportType capitalRepairImportType = new CapitalRepairImportType();
 //                    Код услуги (жилищной, коммунальной или дополнительной)
 //                        chargeInfo.getHousingService().setServiceType(new NsiRef());
@@ -394,7 +394,7 @@ public final class PaymentDocumentGradDAO {
                         paymentDocument.setCapitalRepairCharge(capitalRepairImportType);
 
                     }else {
-
+*/
                         chargeInfo.setHousingService(new PDServiceChargeType.HousingService());
 //                    Код услуги (жилищной, коммунальной или дополнительной)
                         chargeInfo.getHousingService().setServiceType(new NsiRef());
@@ -432,7 +432,7 @@ public final class PaymentDocumentGradDAO {
                     chargeInfo.getHousingService().getConsumption().getVolume().setType("I");
                     chargeInfo.getHousingService().getConsumption().getVolume().setValue(rs.getBigDecimal(5).setScale(3, BigDecimal.ROUND_DOWN));
 */
-                    }
+                    // }
                 } else /* if (invoce02.getCode_parent().equals("1")) */ { // а если Дополнительная услуга -- закомментарил код - теперь все что не 50 и 51 идёт в дополнительные
 
                     chargeInfo.setAdditionalService(new PDServiceChargeType.AdditionalService());

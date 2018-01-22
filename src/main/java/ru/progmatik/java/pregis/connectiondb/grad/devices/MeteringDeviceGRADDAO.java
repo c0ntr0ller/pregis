@@ -209,6 +209,10 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         // String tmpStr = Arrays.toString(exGisPu1Element);
         // if(answerProcessing != null) {answerProcessing.sendMessageToClient("exGisPu1Element.toString(): " + tmpStr);}
 //        LinkedHashMap<Integer, String[]> exGisIpuIndMap = getExGisIpuIndMap(houseId, connectionGrad);
+        if(exGisPu1Element[METERING_VALUE].isEmpty()){
+            throw new PreGISException("Не заданы показания установки для прибора ИД " + exGisPu1Element[METER_ID_PU1][);
+        }
+
         MeteringDeviceFullInformationType device = new MeteringDeviceFullInformationType();
 
         device.setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));

@@ -8,7 +8,6 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.payment.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.payment_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.payment_service_async.PaymentPortsTypeAsync;
-import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -43,17 +42,8 @@ public class PaymentAsyncResultWaiter {
         this.answerProcessing = answerProcessing;
         this.port = port;
 
-        try {
-            timeOut = ResourcesUtil.instance().getTimeOut();
-        } catch (PreGISException e) {
-            timeOut = 1000;
-        }
-
-        try {
-            maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
-        } catch (PreGISException e) {
-            maxRequestCount = 100;
-        }
+        timeOut = ResourcesUtil.instance().getTimeOut();
+        maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
     }
 
     public GetStateResult getRequestResult() throws SQLException {

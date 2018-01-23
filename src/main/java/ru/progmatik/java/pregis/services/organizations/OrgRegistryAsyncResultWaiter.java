@@ -1,31 +1,26 @@
-package ru.progmatik.java.pregis.services.device_metering;
+package ru.progmatik.java.pregis.services.organizations;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.AckRequest;
 import ru.gosuslugi.dom.schema.integration.base.GetStateRequest;
-import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
+import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
-import ru.gosuslugi.dom.schema.integration.device_metering.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.device_metering_service_async.DeviceMeteringPortTypesAsync;
-import ru.gosuslugi.dom.schema.integration.device_metering_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common.GetStateResult;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service_async.Fault;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_common_service_async.RegOrgPortsTypeAsync;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.other.TextForLog;
 
 import javax.xml.ws.Holder;
-import java.sql.SQLException;
 
-/**
- * Класс-получатель результата асинхронного запроса к ГИС ЖКХ по SOAP из класса ExportMeteringDeviceHistory
- * Created by Администратор on 16.05.2017.
- */
-public class DeviceMeteringAsyncResultWaiter {
+public class OrgRegistryAsyncResultWaiter {
     private final AckRequest ackRequest;
-    private static final Logger LOGGER = Logger.getLogger(DeviceMeteringAsyncResultWaiter.class);
+    private static final Logger LOGGER = Logger.getLogger(OrgRegistryAsyncResultWaiter.class);
     private final String NAME_METHOD;
 
-    private final DeviceMeteringPortTypesAsync port;
+    private final RegOrgPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
     public Holder<ResultHeader> getHeaderHolder() {
@@ -40,7 +35,7 @@ public class DeviceMeteringAsyncResultWaiter {
     private long timeOut;
     private long maxRequestCount;
 
-    public DeviceMeteringAsyncResultWaiter(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, DeviceMeteringPortTypesAsync port) {
+    public OrgRegistryAsyncResultWaiter(AckRequest ackRequest, String name_method, AnswerProcessing answerProcessing, RegOrgPortsTypeAsync port) {
         this.ackRequest = ackRequest;
         NAME_METHOD = name_method;
         this.answerProcessing = answerProcessing;
@@ -50,8 +45,8 @@ public class DeviceMeteringAsyncResultWaiter {
         maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
     }
 
-    public GetStateResult getRequestResult() throws SQLException {
-        RequestHeader requestHeader = OtherFormat.getRequestHeader();
+    public GetStateResult getRequestResult(){
+        ISRequestHeader requestHeader = OtherFormat.getISRequestHeader();
 
         GetStateRequest getStateRequest = new GetStateRequest();
         getStateRequest.setMessageGUID(ackRequest.getAck().getMessageGUID());
@@ -84,5 +79,5 @@ public class DeviceMeteringAsyncResultWaiter {
             }
         }
         return result;
-    }    
+    }
 }

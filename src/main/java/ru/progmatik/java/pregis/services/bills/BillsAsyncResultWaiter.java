@@ -8,7 +8,6 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.bills.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.bills_service_async.BillsPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.bills_service_async.Fault;
-import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -47,17 +46,8 @@ public class BillsAsyncResultWaiter {
         this.port = port;
         this.answerProcessing = answerProcessing;
 
-        try {
-            timeOut = ResourcesUtil.instance().getTimeOut();
-        } catch (PreGISException e) {
-            timeOut = 5000;
-        }
-
-        try {
-            maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
-        } catch (PreGISException e) {
-            maxRequestCount = 1000;
-        }
+        timeOut = ResourcesUtil.instance().getTimeOut();
+        maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
     }
 
     public GetStateResult getRequestResult() throws SQLException {

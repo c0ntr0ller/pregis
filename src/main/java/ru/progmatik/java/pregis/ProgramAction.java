@@ -2,17 +2,13 @@ package ru.progmatik.java.pregis;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
-import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.UpdateBills;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house_management.*;
@@ -64,40 +60,13 @@ public final class ProgramAction {
             // answerProcessing.sendMessageToClient("!------ 1");
             final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
 
-            final ExportOrgRegistryResult exportOrgRegistryResult = req.callExportOrgRegistry(req.getExportOrgRegistryRequest());
-
-
-            if (exportOrgRegistryResult != null && exportOrgRegistryResult.getErrorMessage() == null) {
-
-
-                final OrganizationDataSet dataSet = new OrganizationDataSet(
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getFullName(),
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getShortName(),
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getOGRN(),
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getINN(),
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getLegal().getKPP(),
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgRootEntityGUID(),
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgPPAGUID(),
-                        ResourcesUtil.instance().getCompanyRole(), // Роль УО
-                        ResourcesUtil.instance().getCompanyGradId(), // Идентификатор в БД ГРАД
-                        exportOrgRegistryResult.getOrgData().get(0).getOrgVersion().getOrgVersionGUID()); // Примечание
-
-                final OrganizationDAO organizationDAO = new OrganizationDAO();
-                organizationDAO.addOrganization(dataSet);
-
-                answerProcessing.sendOkMessageToClient("");
-                answerProcessing.sendOkMessageToClient("Идентификатор зарегистрированной организации успешно получен!");
-
-            } else {
-                answerProcessing.sendErrorToClientNotException("Возникли ошибки, идентификатор зарегистрированной организации не получен!");
-            }
+            req.exportOrgRegistry();
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации\" ", LOGGER, e);
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }
-
     }
 
     /**

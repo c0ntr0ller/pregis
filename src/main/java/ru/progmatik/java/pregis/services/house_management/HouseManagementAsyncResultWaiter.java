@@ -8,7 +8,6 @@ import ru.gosuslugi.dom.schema.integration.base.ResultHeader;
 import ru.gosuslugi.dom.schema.integration.house_management.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
-import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -47,17 +46,8 @@ public class HouseManagementAsyncResultWaiter {
         this.answerProcessing = answerProcessing;
         this.port = port;
 
-        try {
-            timeOut = ResourcesUtil.instance().getTimeOut();
-        } catch (PreGISException e) {
-            timeOut = 1000;
-        }
-
-        try {
-            maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
-        } catch (PreGISException e) {
-            maxRequestCount = 100;
-        }
+        timeOut = ResourcesUtil.instance().getTimeOut();
+        maxRequestCount = ResourcesUtil.instance().getMaxRequestCount();
     }
 
     public GetStateResult getRequestResult() throws SQLException {

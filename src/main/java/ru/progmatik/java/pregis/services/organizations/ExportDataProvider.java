@@ -15,6 +15,7 @@ import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 
+@Deprecated
 public class ExportDataProvider {
 
     private static final Logger LOGGER = Logger.getLogger(ExportDataProvider.class);

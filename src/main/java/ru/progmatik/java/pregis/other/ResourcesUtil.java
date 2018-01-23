@@ -19,6 +19,7 @@ public class ResourcesUtil {
     private static final String FILE_DIRECTORY = "settings";
     private static ResourcesUtil resourcesUtil;
     private Properties properties;
+    private Boolean kapremont;
 
     private ResourcesUtil() {
         properties = getFileParameter();
@@ -156,7 +157,7 @@ public class ResourcesUtil {
         return properties.getProperty("config.server.stunnel.address");
     }
 
-    public long getTimeOut() throws PreGISException {
+    public long getTimeOut() {
         try{
         return Long.valueOf(properties.getProperty("config.gis.timeout"));
         } catch (NumberFormatException e) {
@@ -166,7 +167,7 @@ public class ResourcesUtil {
         }
     }
 
-    public long getMaxRequestCount() throws PreGISException {
+    public long getMaxRequestCount(){
         try{
             return Long.valueOf(properties.getProperty("config.gis.maxrequestcount"));
         } catch (NumberFormatException e) {
@@ -175,7 +176,7 @@ public class ResourcesUtil {
             return 1000;
         }
     }
-    public int getMaxRequestSize() throws PreGISException {
+    public int getMaxRequestSize(){
         try{
             return Integer.valueOf(properties.getProperty("config.gis.maxrequestsize"));
         } catch (NumberFormatException e) {
@@ -185,6 +186,18 @@ public class ResourcesUtil {
         }
     }
 
+    public boolean getKapremontProp(){
+        if (kapremont == null ) {
+
+            if (properties.getProperty("config.gis.kapremont") != null && !properties.getProperty("config.gis.kapremont").isEmpty()) {
+                kapremont = properties.getProperty("config.gis.kapremont").equals("1");
+            } else {
+                LOGGER.error("ResourcesUtil: капремонт будет выгружаться как жилищная услуга. Для выгрузки в ГИС как капремонт установите параметр config.gis.kapremont=1");
+                kapremont = false;
+            }
+        }
+        return kapremont;
+    }
 
 
     /**

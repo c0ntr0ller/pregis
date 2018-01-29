@@ -217,6 +217,11 @@
             <version>2.6.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jtemplate</groupId>
+            <artifactId>jtemplate</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

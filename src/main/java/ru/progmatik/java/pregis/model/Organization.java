@@ -1,11 +1,11 @@
-package ru.progmatik.java.pregis.connectiondb.localdb.organization;
+package ru.progmatik.java.pregis.model;
 
 /**
  * Класс, описывает объект, хранящийся в БД.
  * Данные организации.
  * Будьте внимательны, при вызове метода equals и hashCode переменная id не учитывается.
  */
-public class OrganizationDataSet {
+public class Organization {
 
     private Integer id;
     private String fullName;
@@ -19,8 +19,12 @@ public class OrganizationDataSet {
     private Integer gradId;
     private String description;
 
-    public OrganizationDataSet(Integer id, String fullName, String shortName, String ogrn, String inn, String kpp,
-                               String orgRootEntityGUID, String orgPPAGUID, String role, Integer gradId, String description) {
+    public Organization(){
+
+    }
+
+    public Organization(Integer id, String fullName, String shortName, String ogrn, String inn, String kpp,
+                        String orgRootEntityGUID, String orgPPAGUID, String role, Integer gradId, String description) {
         this.id = id;
         this.fullName = fullName;
         this.shortName = shortName;
@@ -34,8 +38,8 @@ public class OrganizationDataSet {
         this.description = description;
     }
 
-    public OrganizationDataSet(String fullName, String shortName, String ogrn, String inn, String kpp,
-                               String orgRootEntityGUID, String orgPPAGUID, String role, Integer gradId, String description) {
+    public Organization(String fullName, String shortName, String ogrn, String inn, String kpp,
+                        String orgRootEntityGUID, String orgPPAGUID, String role, Integer gradId, String description) {
         this.fullName = fullName;
         this.shortName = shortName;
         this.ogrn = ogrn;
@@ -141,7 +145,7 @@ public class OrganizationDataSet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrganizationDataSet that = (OrganizationDataSet) o;
+        Organization that = (Organization) o;
 
         if (fullName != null ? !fullName.equals(that.fullName) : that.fullName != null) return false;
         if (shortName != null ? !shortName.equals(that.shortName) : that.shortName != null) return false;

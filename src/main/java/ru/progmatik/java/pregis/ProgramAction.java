@@ -40,12 +40,29 @@ public final class ProgramAction {
     private final AnswerProcessing answerProcessing;
     private boolean stateRun;
 
-
     public ProgramAction(final ClientService clientService) {
         this.clientService = clientService;
         this.answerProcessing = new AnswerProcessing(this.clientService);
         this.clientService.setProgramAction(this);
         ConnectionDB.instance().setShutdownDefragToLocalBase();
+    }
+
+    public void fillOrgsMap(){
+        try {
+            final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
+            req.fillOrgsMap();
+            answerProcessing.clearLabelForText();
+        } catch (PreGISException|SQLException e) {
+            answerProcessing.sendErrorToClient("fillOrgsMap: ", "\"Заполнение идентификатора зарегистрированной организации\" ", LOGGER, e);
+            try {
+                // не получилось - вызываем старый метод
+                final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
+                req.exportOrgRegistry();
+            }catch (Exception e2) {
+                answerProcessing.sendErrorToClient("fillOrgsMap: ", "\"Заполнение идентификатора зарегистрированной организации\" ", LOGGER, e2);
+//            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
+            }
+        }
     }
 
     /**
@@ -55,15 +72,21 @@ public final class ProgramAction {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
         answerProcessing.sendMessageToClient("Получение идентификатора зарегистрированной организации...");
-
         try {
-            // answerProcessing.sendMessageToClient("!------ 1");
             final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
-
-            req.exportOrgRegistry();
+            // answerProcessing.sendMessageToClient("!------ 1");
+            // пробуем новый метод
+            req.exportOrgsRegistry();
         } catch (Exception e) {
-            answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации\" ", LOGGER, e);
+            answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации (новый метод)\" ", LOGGER, e);
+            try {
+                // не получилось - вызываем старый метод
+                final ExportOrgRegistry req = new ExportOrgRegistry(answerProcessing);
+                req.exportOrgRegistry();
+            }catch (Exception e2) {
+                answerProcessing.sendErrorToClient("getOrgPPAGUID(): ", "\"Получение идентификатора зарегистрированной организации\" ", LOGGER, e2);
 //            answerProcessing.sendMessageToClient("Более подробно об ошибки: " + e.toString());
+            }
         } finally {
             setStateRunOff(); // взводим флаг в состояние откл.
         }

@@ -13,7 +13,7 @@
 //    @Test
 //    public void getAllOrganizations() throws Exception {
 //        OrganizationDAO dao = new OrganizationDAO();
-//        ArrayList<OrganizationDataSet> allOrganizations = dao.getAllOrganizations();
+//        ArrayList<Organization> allOrganizations = dao.getAllOrganizations();
 //
 //        assertEquals(allOrganizations.get(0).getOrgPPAGUID(), dao.getOrgPPAGUID());
 //

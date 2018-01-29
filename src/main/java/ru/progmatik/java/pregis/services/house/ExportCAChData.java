@@ -7,10 +7,7 @@ import ru.gosuslugi.dom.schema.integration.house_management_service_async.Fault;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementPortsTypeAsync;
 import ru.gosuslugi.dom.schema.integration.house_management_service_async.HouseManagementServiceAsync;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
-import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.OtherFormat;
-import ru.progmatik.java.pregis.other.TextForLog;
-import ru.progmatik.java.pregis.other.UrlLoader;
+import ru.progmatik.java.pregis.other.*;
 import ru.progmatik.java.pregis.services.house_management.HouseManagementAsyncResultWaiter;
 
 import javax.xml.ws.Holder;
@@ -63,7 +60,7 @@ public class ExportCAChData {
 
         ExportCAChRequestCriteriaType exportCAChRequestCriteriaType = new ExportCAChRequestCriteriaType();
         exportCAChRequestCriteriaType.setFIASHouseGuid(fias);
-        exportCAChRequestCriteriaType.setUOGUID(OtherFormat.getOrgPPAGUID());
+        exportCAChRequestCriteriaType.setUOGUID(OrgsSettings.getOrgPPAGUID());
 
         exportCAChRequestCriteriaType.setLastVersionOnly(true);
 
@@ -129,7 +126,7 @@ public class ExportCAChData {
 
     /**
      * Метод выдает мапу с УИДами услуг и самими объектами услуг по дому
-     * @param stateResult Фиас дома
+     * @param curContract текущий контрак дома
      * @return
      * @throws SQLException
      */

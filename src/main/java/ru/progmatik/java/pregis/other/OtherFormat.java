@@ -3,7 +3,6 @@ package ru.progmatik.java.pregis.other;
 import org.apache.commons.codec.digest.DigestUtils;
 import ru.gosuslugi.dom.schema.integration.base.ISRequestHeader;
 import ru.gosuslugi.dom.schema.integration.base.RequestHeader;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -17,6 +16,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
+import static ru.progmatik.java.pregis.other.OrgsSettings.getOrgPPAGUID;
 
 /**
  * Вспомогательный класс, для различных данных.
@@ -172,16 +173,15 @@ public final class OtherFormat {
         return value;
     }
 
-    /**
-     * Метод, получает orgPPAGUID - идентификатор зарегистрированной организации.
-     * @return orgPPAGUID.
-     * @throws SQLException могут возникнуть ошибки во время работы с БД.
-     */
-    public static String getOrgPPAGUID() throws SQLException {
-        final OrganizationDAO dao = new OrganizationDAO();
-        return dao.getOrgPPAGUID();
-    }
-
+//    /**
+//     * Метод, получает orgPPAGUID - идентификатор зарегистрированной организации.
+//     * @return orgPPAGUID.
+//     * @throws SQLException могут возникнуть ошибки во время работы с БД.
+//     */
+//    public static String getOrgPPAGUID() throws SQLException {
+//        return orgPPAGUID;
+//    }
+//
     /**
      * Метод, получает текст и возвращает MD5 его сумму.
      * @param text текст.

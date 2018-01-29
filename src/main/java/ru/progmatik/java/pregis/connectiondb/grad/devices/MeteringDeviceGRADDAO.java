@@ -695,7 +695,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                         null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                     LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
                                     countAdded++;
-                                    answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                     answerProcessing.sendMessageToClient("");
                                 }
                             }
@@ -712,7 +712,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                     null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, true, connectionGRAD)) {
                                 LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
                                 countAdded++;
-                                answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                 answerProcessing.sendMessageToClient("");
                             }
                         }
@@ -728,7 +728,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                         null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                     LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
                                     countAdded++;
-                                    answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                     answerProcessing.sendMessageToClient("");
                                 }
                             }
@@ -744,7 +744,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                                         null, meteringDeviceRootGUID, meteringDeviceVersionGUID, null, false, connectionGRAD)) {
                                     LOGGER.debug("abonId: " + abonId + " meterId: " + meterId);
                                     countAdded++;
-                                    answerProcessing.sendMessageToClient("Дабавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
+                                    answerProcessing.sendMessageToClient("Добавлен прибор учёта в локальную БД, идентификатор ПУ в ГИС ЖКХ: " + meteringDeviceRootGUID + ".");
                                     answerProcessing.sendMessageToClient("");
                                 }
                             }
@@ -1007,7 +1007,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
                 LOGGER.debug("Добавлен ПУ, abinId: " + abonId + " meterId: " + meterId);
                 countSeted++;
                 answerProcessing.sendMessageToClient("");
-                answerProcessing.sendMessageToClient("Дабавлен прибор учёта, Уникальный номер: " + meteringUniqueNumber + " идентификатор: " + meteringVersionGUID);
+                answerProcessing.sendMessageToClient("Добавлен прибор учёта, Уникальный номер: " + meteringUniqueNumber + " идентификатор: " + meteringVersionGUID);
 //                answerProcessing.sendMessageToClient("");
             }
 

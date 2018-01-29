@@ -457,7 +457,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     if (account.getAccountGUID() == null ||
                             !account.getAccountGUID().equalsIgnoreCase(accountFromGISJKH.getAccountGUID())) {
 
-                        setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), null, connection);
+                        setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), accountFromGISJKH.getUnifiedAccountNumber(), connection);
 //                        после 9.0.1.4 переименовали
 
                         return true;

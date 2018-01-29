@@ -2,6 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.localdb.organization;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
+import ru.progmatik.java.pregis.model.Organization;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -54,15 +55,15 @@ public class OrganizationDAO {
     /**
      * Метод, получает из таблицы все записи, формирует их в ArrayList.
      */
-    public ArrayList<OrganizationDataSet> getAllOrganizations() throws SQLException {
+    public ArrayList<Organization> getAllOrganizations() throws SQLException {
 
-        ArrayList<OrganizationDataSet> orgList = new ArrayList<>();
+        ArrayList<Organization> orgList = new ArrayList<>();
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery("SELECT " +
                 "ID, FULL_NAME, SHORT_NAME, OGRN, INN, KPP, ORG_ROOT_ENTITY_GUID, ORG_PPA_GUID, ROLE, GRAD_ID, DESCRIPTION " +
                 "FROM ORGANIZATION")) {
             while (rs.next()) {
-                orgList.add(new OrganizationDataSet(
+                orgList.add(new Organization(
                         rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
                         rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getInt(10), rs.getString(11)));
             }
@@ -77,7 +78,7 @@ public class OrganizationDAO {
      */
     public String getOrgPPAGUID() throws SQLException {
 
-        ArrayList<OrganizationDataSet> organizations = getAllOrganizations();
+        ArrayList<Organization> organizations = getAllOrganizations();
         if (organizations != null) {
             return organizations.get(0).getOrgPPAGUID();
         }
@@ -90,9 +91,9 @@ public class OrganizationDAO {
      *
      * @param dataSet объект для добавления в таблицу БД.
      */
-    public void addOrganization(OrganizationDataSet dataSet) throws SQLException {
+    public void addOrganization(Organization dataSet) throws SQLException {
 
-        OrganizationDataSet foundDataSet = isAddedByOgrn(dataSet);
+        Organization foundDataSet = isAddedByOgrn(dataSet);
 
         if (foundDataSet == null) {
             insertDataSet(dataSet);
@@ -108,10 +109,10 @@ public class OrganizationDAO {
      * @return найденный объект.
      * @throws SQLException
      */
-    private OrganizationDataSet isAddedByOgrn(OrganizationDataSet dataSet) throws SQLException {
-        ArrayList<OrganizationDataSet> organizations = getAllOrganizations();
+    private Organization isAddedByOgrn(Organization dataSet) throws SQLException {
+        ArrayList<Organization> organizations = getAllOrganizations();
         if (organizations != null) {
-            for (OrganizationDataSet organization : organizations) {
+            for (Organization organization : organizations) {
                 if (dataSet.getOgrn().equalsIgnoreCase(organization.getOgrn())) return organization;
             }
         }
@@ -124,7 +125,7 @@ public class OrganizationDAO {
      * @param dataSet объект для добавления.
      * @throws SQLException
      */
-    private void insertDataSet(OrganizationDataSet dataSet) throws SQLException {
+    private void insertDataSet(Organization dataSet) throws SQLException {
 
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement ps = connection.prepareStatement("INSERT INTO ORGANIZATION(" +
@@ -149,7 +150,7 @@ public class OrganizationDAO {
      *
      * @param dataSet объект для обновления.
      */
-    private void updateDataSet(OrganizationDataSet dataSet) throws SQLException {
+    private void updateDataSet(Organization dataSet) throws SQLException {
 
         try (Connection connection = ConnectionDB.instance().getConnectionDB();
              PreparedStatement ps = connection.prepareStatement("UPDATE ORGANIZATION " +

@@ -96,8 +96,8 @@ public class Main {
         WebSocketClientServlet webSocketClientServlet = new WebSocketClientServlet();
         ProgramAction action = new ProgramAction(webSocketClientServlet.getClientService());
 
-        if (OtherFormat.getOrgPPAGUID() == null)
-            action.getOrgPPAGUID();  // Получение orgPPAGUID
+//        if (OtherFormat.getOrgPPAGUID() == null)
+        action.fillOrgsMap();  // Получение orgPPAGUID
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient(action)), "/*");

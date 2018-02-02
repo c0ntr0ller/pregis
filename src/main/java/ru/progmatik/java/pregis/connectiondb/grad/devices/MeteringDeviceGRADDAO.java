@@ -2,12 +2,14 @@ package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISArgumentNotFoundFromBaseException;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.MeteringDeviceID;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -25,10 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Класс, получает данные из  БД ГРАД и формирует объект пригодный для ГИС ЖКХ.
@@ -53,6 +52,8 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
     private static final int COMMISSIONING_DATE = 21;
     private static final int VERIFICATION_DATE = 22;
     private static final int VERIFICATION_INTERVAL = 24;
+    private static final int METERROOTGUID = 31;
+    private static final int METERVERSIONGUID = 32;
 
     private final SimpleDateFormat sDate = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat dateFromSQL = new SimpleDateFormat("yyyy-MM-dd");
@@ -82,6 +83,45 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
         devicesDataLocalDBDAO = new MeteringDevicesDataLocalDBDAO(answerProcessing);
         nsi = new ReferenceNSI(answerProcessing);
     }
+
+    /**
+     * Метод получает все ПУ из Град и возвращает их в виде мапы ИД ПУ- ПУ
+     * @return связанный список ИД ПУ-ПУ
+     * @throws SQLException
+     */
+    public HashMap<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> getMeteringDevicesFromGrad(int houseGradId)
+            throws SQLException, ParseException, PreGISException {
+
+        final HashMap<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> meteringDeviceMap = new HashMap<>();
+
+        try(Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()){
+            //
+            final ArrayList<String[]> exGisPu1 = getExGisPu1(houseGradId, connectionGRAD);
+
+            for(String[] exGisPu1Element: exGisPu1) {
+
+                ImportMeteringDeviceDataRequest.MeteringDevice meteringDevice = new ImportMeteringDeviceDataRequest.MeteringDevice();
+                meteringDevice.setTransportGUID(OtherFormat.getRandomGUID());
+
+                try {
+                    meteringDevice.setDeviceDataToCreate(getMeteringDeviceForCreateElement(houseId, exGisPu1Element, connectionGRAD));
+                } catch (PreGISArgumentNotFoundFromBaseException e) {
+                    if(answerProcessing != null) {answerProcessing.sendMessageToClient("");}
+                    if(answerProcessing != null) {answerProcessing.sendInformationToClientAndLog(e.getMessage(), LOGGER);}
+                    errorState = 0;
+                }
+
+                if(meteringDevice.getDeviceDataToCreate() != null) {
+                    meteringDeviceMap.put(new MeteringDeviceID(exGisPu1Element[METERROOTGUID],
+                                    exGisPu1Element[METERVERSIONGUID],
+                                    Integer.valueOf(exGisPu1Element[METER_ID_PU1])),
+                            meteringDevice);
+                }
+            }
+        }
+        return meteringDeviceMap;
+    }
+
 
     /**
      * Метод, формирует все ПУ для создания в ГИС ЖКХ.
@@ -431,6 +471,27 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
 //            errorState = 0;
         }
         return basicCharacteristics;
+    }
+
+    /**
+     * метод бежит по списку ПУ для занесения в Град и вызывает для каждого активного метод setMeteringDeviceUniqueNumbers
+     * @param devicesToUpdate
+     * @param connectionGRAD
+     * @throws SQLException
+     * @throws PreGISException
+     */
+    public void updateGradMeteringDevices(Map<MeteringDeviceID, ExportMeteringDeviceDataResultType> devicesToUpdate, Connection connectionGRAD) throws SQLException, PreGISException {
+        int countToGrad = 0;
+        try {
+            for (Map.Entry<MeteringDeviceID, ExportMeteringDeviceDataResultType> deviceEntry : devicesToUpdate.entrySet()) {
+                if (deviceEntry.getValue().getStatusRootDoc().equals("Active")) {
+                    setMeteringDeviceUniqueNumbers(deviceEntry.getKey().getMeterGradId(), deviceEntry.getValue().getMeteringDeviceVersionGUID(), deviceEntry.getValue().getMeteringDeviceRootGUID(), connectionGRAD);
+                    countToGrad++;
+                }
+            }
+        }finally {
+            if(countToGrad > 0) answerProcessing.sendMessageToClient("Приборов отмеченов Град: " + countToGrad);
+        }
     }
 
     /**
@@ -1255,7 +1316,7 @@ public class MeteringDeviceGRADDAO implements IMeteringDevices {
             call.setInt(4, ResourcesUtil.instance().getCompanyGradId());
             call.executeQuery();
         } catch (NullPointerException e) {
-            LOGGER.info("Не удалось найти нидентификатор прибора учёта! MeterID: " + meterId +
+            LOGGER.info("Не удалось найти идентификатор прибора учёта! MeterID: " + meterId +
                     ", RootGUID: " + meteringDeviceRootGUID + ", VersionGUID: " + meteringDeviceVersionGUID);
         }
 //        }

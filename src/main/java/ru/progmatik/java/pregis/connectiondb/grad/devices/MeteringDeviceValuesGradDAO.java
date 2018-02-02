@@ -69,7 +69,11 @@ public final class MeteringDeviceValuesGradDAO {
 
             while (rs.next()) {
                 String[] allData = OtherFormat.getAllDataFromString(rs.getString(1));
-                if (allData[0] != null && !allData[0].isEmpty()) {
+                if (allData[0] != null && !allData[0].isEmpty()
+                        && allData[1] != null && !allData[1].isEmpty()
+                        && allData[2] != null && !allData[2].isEmpty()
+                        && allData[3] != null && !allData[3].isEmpty()
+                        && allData[6] != null && !allData[6].isEmpty()) {
                     meteringDeviceValuesMap.put(allData[1],
                             new MeteringDeviceValuesObject(
                                     allData[1],
@@ -78,6 +82,8 @@ public final class MeteringDeviceValuesGradDAO {
                                     allData[5] != null ? new BigDecimal(allData[5]) : null,
                                     dateFromSQL.parse(allData[6]),
                                     referenceNSI.getNsiRef("2", allData[2])));
+                }else{
+                    answerProcessing.sendErrorToClientNotException(String.format("Есть пустые элементы при получении из Град строки %s", rs.getString(1)));
                 }
             }
             rs.close();
@@ -89,9 +95,8 @@ public final class MeteringDeviceValuesGradDAO {
      * Метод, добавляет показания ПУ в БД ГРАДа.
      * @param valuesObject объект содержащий данные показаний ПУ.
      * @param connectionGrad подключение к БД ГРАД.
-     * @throws SQLException
      */
-    public final void setMeteringDeviceValue(MeteringDeviceValuesObject valuesObject, Connection connectionGrad) throws SQLException {
+    public final void setMeteringDeviceValue(MeteringDeviceValuesObject valuesObject, Connection connectionGrad) {
 
         // execute procedure EX_GIS_IND2GRAD(:METERROOTGUID, :METERINGVALUET1, :METERINGVALUET2, :DATEVALUE)
         // Трехтарифных счетчиков у нас нет, поэтому MeteringValueT3 не нужен
@@ -109,6 +114,8 @@ public final class MeteringDeviceValuesGradDAO {
 
             call.executeUpdate();
 
+        }catch (SQLException e){
+            answerProcessing.sendErrorToClientNotException("Ошибка при занесении показаний в БД Град для прибора " + valuesObject.toString() );
         }
     }
 }

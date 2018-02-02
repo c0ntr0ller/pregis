@@ -12,6 +12,7 @@
 package ru.progmatik.java.pregis.connectiondb.grad.house;
 
 import org.apache.log4j.Logger;
+import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.exception.PreGISException;
@@ -89,8 +90,12 @@ public final class HouseGRADDAO {
      * @throws SQLException
      * @throws PreGISException
      */
-    public LinkedHashMap<String, HouseRecord> getHouseRecords(final Integer houseGradId, final Connection connectionGrad) throws SQLException, PreGISException {
+    public LinkedHashMap<String, HouseRecord> getHouseRecords(final Integer houseGradId, Connection connectionGrad) throws SQLException, PreGISException {
         // если список пустой - запрашиваем из БД
+        if(connectionGrad == null){
+            connectionGrad = ConnectionDB.instance().getConnectionDB();
+        }
+
         if (allHouses.isEmpty()) {
             getHouseRecordsFromDB(connectionGrad);
         }

@@ -96,7 +96,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             // архивируем в ГИС
             callImportMeteringDevices(
                     convertMeteringDeviceToArchive ((List<ExportMeteringDeviceDataResultType>) compareDevicesMap.get("archiveGIS")),
-                    entryHouse.getFias(), meteringDeviceGRADDAO, connectionGRAD);
+                    entryHouse.getFias(), meteringDeviceGRADDAO, connectionGRAD, true);
         } catch (SQLException | ParseException | PreGISException | SOAPException | JAXBException | FileNotFoundException e) {
             houseError = -1;
             answerProcessing.sendErrorToClient("Синхронизация ПУ по дому" + entryHouse.getAddresStringShort() + ": ", "\"Синхронизация ПУ\" ", LOGGER, e);
@@ -494,6 +494,23 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
     }
 
     /**
+     * перегруженный метод для совместимости
+     * @param devices
+     * @param fias
+     * @param deviceGRADDAO
+     * @param connectionGRAD
+     * @throws SQLException
+     * @throws FileNotFoundException
+     * @throws SOAPException
+     * @throws JAXBException
+     * @throws PreGISException
+     */
+    private void callImportMeteringDevices(final List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
+                                           final String fias, final IMeteringDevices deviceGRADDAO,
+                                           final Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
+        callImportMeteringDevices(devices, fias, deviceGRADDAO, connectionGRAD, false);
+    }
+    /**
      * Метод, формирует запросы на порции по 20 устройст, ГИС ЖКХ выдаёт ошибки, когда устройств много.
      *
      * @param devices                  - список ПУ.
@@ -507,7 +524,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      */
     private void callImportMeteringDevices(final List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
                                            final String fias, final IMeteringDevices deviceGRADDAO,
-                                           final Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
+                                           final Connection connectionGRAD, boolean archive) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
 
         if (devices != null && devices.size() > 0) {
             int count = 0;
@@ -524,7 +541,9 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 if (result != null && result.getImportResult() != null) {
                     for (ImportResult importResult : result.getImportResult()) {
                         if (importResult != null && importResult.getCommonResult() != null) {
-                            deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
+                            if(!archive) {
+                                deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
+                            }
                             answerProcessing.sendMessageToClient("Кол-во ПУ в результате импорта: " + importResult.getCommonResult().size());
 //                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 //                        answerProcessing.sendMessageToClient("GUID: " + result.getGUID());

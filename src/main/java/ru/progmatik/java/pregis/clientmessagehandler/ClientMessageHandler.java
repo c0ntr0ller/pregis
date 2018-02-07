@@ -58,7 +58,7 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 //                msg.writeTo(System.out);
 //                System.out.println("\n");
 
-                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
+//                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
 //                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
 
 

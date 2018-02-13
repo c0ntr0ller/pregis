@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс, синхронизирует данные о ПУ.
@@ -29,10 +30,13 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
     private static final Logger LOGGER = Logger.getLogger(UpdateAllMeteringDeviceData.class);
     private final AnswerProcessing answerProcessing;
     private final ArrayList<ArchiveData> archiveDataList = new ArrayList<>();
-    private int countAll = 0;
-    private int countAllGisJkh = 0;
-    private int countAdded = 0;
-    private int countUpdate = 0;
+    private int countGrad = 0;
+    private int countGis = 0;
+    private int countAddedGis = 0;
+    private int countAddErrorGis = 0;
+    private int countUpdateGrad = 0;
+    private int countArchiveGis = 0;
+    private int countArchErrorGis = 0;
     private int errorState;
 
     public UpdateAllMeteringDeviceData(final AnswerProcessing answerProcessing) {
@@ -54,23 +58,29 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradId, connectionGRAD);
 
             for (Map.Entry<String, HouseRecord> entryHouse : houseAddedGisJkh.entrySet()) {
-                int curErrorState = syncMeteringDevicesHouse(entryHouse.getValue(), connectionGRAD);
-                if(curErrorState < errorState) errorState = curErrorState;
+                syncMeteringDevicesHouse(entryHouse.getValue());
+                if(errorState < 0) break;
             }
         }
+        showInfo();
         return errorState;
     }
 
-    private int syncMeteringDevicesHouse(HouseRecord entryHouse, Connection connectionGRAD){
+    private void syncMeteringDevicesHouse(HouseRecord entryHouse){
         if (answerProcessing != null) {
+            answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getAddresString());
         }
-        int houseError = 1;
         try {
             final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getGrad_id());
 
             // получаем ПУ из Град
             HashMap<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> devicesGrad = meteringDeviceGRADDAO.getMeteringDevicesFromGrad(entryHouse.getGrad_id());
+            countGrad = devicesGrad.size();
+            if (answerProcessing != null) {
+                answerProcessing.sendMessageToClient("");
+                answerProcessing.sendMessageToClient("Из Град получено приборов: " + devicesGrad.size());
+            }
 
             // получаем ПУ из ГИС ЖКХ
             GetStateResult stateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getFias(), answerProcessing);
@@ -79,7 +89,12 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             List<ExportMeteringDeviceDataResultType> devicesGIS = null;
 
             if (stateResult != null) {
-                devicesGIS = stateResult.getExportMeteringDeviceDataResult();
+                devicesGIS = stateResult.getExportMeteringDeviceDataResult().stream().filter(e->e.getStatusRootDoc().equals("Active")).collect(Collectors.toList());
+                countGis = devicesGIS.size();
+                if (answerProcessing != null) {
+                    answerProcessing.sendMessageToClient("");
+                    answerProcessing.sendMessageToClient("Из ГИС получено активных приборов: " + devicesGIS.size());
+                }
             }
 
             // сравниваем списки и формируем новые. В мапу заносим список 1 - на добавление в ГИС "insertGIS", на изменение/архивацию в ГИС "archiveGIS", на изменение в Град "updateGRAD"
@@ -87,21 +102,22 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
             // -----------------------------------------------------------------------------------------------------
             // расставляем идентификаторы в Град
-            meteringDeviceGRADDAO.updateGradMeteringDevices((Map<MeteringDeviceID, ExportMeteringDeviceDataResultType>) compareDevicesMap.get("updateGRAD"), connectionGRAD);
+            countUpdateGrad = meteringDeviceGRADDAO.updateGradMeteringDevices((Map<MeteringDeviceID, ExportMeteringDeviceDataResultType>) compareDevicesMap.get("updateGRAD"));
 
             // отсылаем новые в ГИС
-            callImportMeteringDevices(new ArrayList<>(((Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice>) (compareDevicesMap.get("insertGIS"))).values()),
-                    entryHouse.getFias(), meteringDeviceGRADDAO, connectionGRAD);
+            callImportMeteringDevices((Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice>) (compareDevicesMap.get("insertGIS")),
+                    entryHouse, meteringDeviceGRADDAO, false);
 
             // архивируем в ГИС
             callImportMeteringDevices(
-                    convertMeteringDeviceToArchive ((List<ExportMeteringDeviceDataResultType>) compareDevicesMap.get("archiveGIS")),
-                    entryHouse.getFias(), meteringDeviceGRADDAO, connectionGRAD, true);
+                    convertMeteringDeviceToArchive ((List<ExportMeteringDeviceDataResultType>) compareDevicesMap.get("archiveGIS"))
+                            .stream()
+                            .collect(Collectors.toMap(e -> new MeteringDeviceID("", e.getDeviceDataToUpdate().getMeteringDeviceVersionGUID(), null), e->e)),
+                    entryHouse, meteringDeviceGRADDAO,true);
         } catch (SQLException | ParseException | PreGISException | SOAPException | JAXBException | FileNotFoundException e) {
-            houseError = -1;
+            errorState = -1;
             answerProcessing.sendErrorToClient("Синхронизация ПУ по дому" + entryHouse.getAddresStringShort() + ": ", "\"Синхронизация ПУ\" ", LOGGER, e);
         }
-        return houseError;
     }
 
     /**
@@ -120,6 +136,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             final List<ExportMeteringDeviceDataResultType> devicesListGIS,
             final HashMap<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> devicesMapGrad){
 
+        if (answerProcessing != null) answerProcessing.sendMessageToClient("Сравнение массивов ПУ, полученных из ГИС и Град");
         Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> insertGISMap = new HashMap<>();
         List<ExportMeteringDeviceDataResultType> archiveGISList = new ArrayList<>();
         Map<MeteringDeviceID, ExportMeteringDeviceDataResultType> updateGRADMap = new HashMap<>();
@@ -152,15 +169,15 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                         }
 
                         // если в Граде у ПУ нет идентификатора ГИС и номера ПУ совпадают - проверяем на совпадение типа и места установки
-                        if ((deviceGradEntry.getKey().getMeteringDeviceRootGUID() == null || deviceGradEntry.getKey().getMeteringDeviceRootGUID().isEmpty())
-                                && basicGISCharacteristics.getMeteringDeviceNumber().equals(basicGRADCharacteristics.getMeteringDeviceNumber())) {
+                        if ( //(deviceGradEntry.getKey().getMeteringDeviceRootGUID() == null || deviceGradEntry.getKey().getMeteringDeviceRootGUID().isEmpty())
+                                basicGISCharacteristics.getMeteringDeviceNumber().equals(basicGRADCharacteristics.getMeteringDeviceNumber())) {
                             // оба тип ПУ ApartmentHouseDevice
                             if (basicGISCharacteristics.getApartmentHouseDevice() != null && basicGRADCharacteristics.getApartmentHouseDevice() != null) {
                                 // и их апартаменты и номер ПУ совпадают
                                 if (basicGISCharacteristics.getApartmentHouseDevice().getAccountGUID().containsAll(basicGRADCharacteristics.getApartmentHouseDevice().getAccountGUID()) &&
                                         basicGRADCharacteristics.getApartmentHouseDevice().getAccountGUID() != null && basicGRADCharacteristics.getApartmentHouseDevice().getAccountGUID().containsAll(basicGISCharacteristics.getApartmentHouseDevice().getAccountGUID())) {
                                     // заносим такой ПУ на обновление в Град
-                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), null), deviceGIS);
+                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), deviceGradEntry.getKey().getMeterGradId()), deviceGIS);
                                     // удаляем из списка ГИС
                                     deviceGISIterator.remove();
                                     // удаляем из списка Град
@@ -177,7 +194,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                                         basicGISCharacteristics.getLivingRoomDevice().getAccountGUID().containsAll(basicGRADCharacteristics.getLivingRoomDevice().getAccountGUID()) &&
                                         basicGRADCharacteristics.getLivingRoomDevice().getAccountGUID() != null && basicGRADCharacteristics.getLivingRoomDevice().getAccountGUID().containsAll(basicGISCharacteristics.getLivingRoomDevice().getAccountGUID())) {
                                     // заносим такой ПУ на обновление в Град
-                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), null), deviceGIS);
+                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), deviceGradEntry.getKey().getMeterGradId()), deviceGIS);
                                     // удаляем из списка ГИС
                                     deviceGISIterator.remove();
                                     // удаляем из списка Град
@@ -194,7 +211,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                                         basicGISCharacteristics.getCollectiveApartmentDevice().getAccountGUID().containsAll(basicGRADCharacteristics.getCollectiveApartmentDevice().getAccountGUID()) &&
                                         basicGRADCharacteristics.getCollectiveApartmentDevice().getAccountGUID() != null && basicGRADCharacteristics.getCollectiveApartmentDevice().getAccountGUID().containsAll(basicGISCharacteristics.getCollectiveApartmentDevice().getAccountGUID())) {
                                     // заносим такой ПУ на обновление в Град
-                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), null), deviceGIS);
+                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), deviceGradEntry.getKey().getMeterGradId()), deviceGIS);
                                     // удаляем из списка ГИС
                                     deviceGISIterator.remove();
                                     // удаляем из списка Град
@@ -210,7 +227,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                                         basicGISCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().containsAll(basicGRADCharacteristics.getNonResidentialPremiseDevice().getAccountGUID()) &&
                                         basicGRADCharacteristics.getNonResidentialPremiseDevice().getAccountGUID() != null && basicGRADCharacteristics.getNonResidentialPremiseDevice().getAccountGUID().containsAll(basicGISCharacteristics.getNonResidentialPremiseDevice().getAccountGUID())) {
                                     // заносим такой ПУ на обновление в Град
-                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), null), deviceGIS);
+                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), deviceGradEntry.getKey().getMeterGradId()), deviceGIS);
                                     // удаляем из списка ГИС
                                     deviceGISIterator.remove();
                                     // удаляем из списка Град
@@ -227,7 +244,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                                         basicGISCharacteristics.getResidentialPremiseDevice().getAccountGUID().containsAll(basicGRADCharacteristics.getResidentialPremiseDevice().getAccountGUID()) &&
                                         basicGRADCharacteristics.getResidentialPremiseDevice().getAccountGUID() != null && basicGRADCharacteristics.getResidentialPremiseDevice().getAccountGUID().containsAll(basicGISCharacteristics.getResidentialPremiseDevice().getAccountGUID())) {
                                     // заносим такой ПУ на обновление в Град
-                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), null), deviceGIS);
+                                    updateGRADMap.put(new MeteringDeviceID(deviceGIS.getMeteringDeviceRootGUID(), deviceGIS.getMeteringDeviceVersionGUID(), deviceGradEntry.getKey().getMeterGradId()), deviceGIS);
                                     // удаляем из списка ГИС
                                     deviceGISIterator.remove();
                                     // удаляем из списка Град
@@ -239,14 +256,25 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                     }
                 }
             }
-            // все что осталось в ПУ из ГИС заносим на удаление в ГИС
+            // все что осталось в ПУ (активные) из ГИС заносим на удаление в ГИС
 
-            archiveGISList.addAll(devicesListGIS);
+            archiveGISList.addAll(devicesListGIS.stream()
+                    .filter(e->e.getStatusRootDoc().equalsIgnoreCase("Active"))
+                    .filter(e->!(e.getBasicChatacteristicts().getRemoteMeteringInfo() != null && e.getBasicChatacteristicts().getCollectiveDevice() != null))
+                    .collect(Collectors.toList()));
+            if(archiveGISList.size() > 0) {
+                if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на архивацию в ГИС: " + archiveGISList.size());
+            }
         }
 
         // все что осталось в ПУ из ГРАД заносим на создание в ГИС
-        if(devicesMapGrad != null) {
+        if(devicesMapGrad != null && devicesMapGrad.size() > 0) {
             insertGISMap.putAll(devicesMapGrad);
+            if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на добавление в ГИС: " + insertGISMap.size());
+        }
+
+        if(updateGRADMap.size() > 0){
+            if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на обновление в Град: " + updateGRADMap.size());
         }
 
         Map<String, Object> resultMap = new LinkedHashMap<>();
@@ -308,6 +336,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * @param fias код дома по ФИАС.
      * @throws SQLException
      */
+    @Deprecated
     public void archiveAllDevices(final String fias) throws SQLException, ParseException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
@@ -327,7 +356,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
                 final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
-                callImportMeteringDevices(toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
+                //callImportMeteringDevices(toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
             }
         }
     }
@@ -343,70 +372,70 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
         errorState = 1;
 
-        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
-            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
-            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradId, connectionGRAD);
-            final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
-
-            for (Map.Entry<String, HouseRecord> entryHouse : houseAddedGisJkh.entrySet()) {
-                if (answerProcessing!= null ) {
-                    answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getValue().getAddresString());
-                }
-                final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue().getGrad_id()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
-
-//                Импортируем ранее загруженные ПУ
-                //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
-
-                GetStateResult getStateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getKey(), answerProcessing);
-                List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList;
-                if(getStateResult != null) {
-                    exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
-                    if (exportMeteringDeviceDataResultList != null) {
-                        meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
-                    }
-                }
-
-                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD); // если добавились новые идентификаторы, нужно исключить их
-
-                countAll += meteringDeviceGRADDAO.getCountAll();
-
-                callImportMeteringDevices(devices, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
-
-//                Повторно загружаем для занесения MeteringDeviceRootGUID.
-                getStateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getKey(), answerProcessing);
-                if(getStateResult != null) {
-                    exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
-                    if (exportMeteringDeviceDataResultList != null) {
-                        meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
-                        for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResultList) {
-                            if (device.getStatusRootDoc().equalsIgnoreCase("Active")) {
-//                            только активные устройства
-                                countAllGisJkh++;
-                            }
-                        }
-//                    все устройства даже архивные
-//                    countAllGisJkh = exportMeteringDeviceDataResult.getMeteringDevice().size();
-                    }
-                }
-
-                if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
-                    archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
-                }
-
-                countUpdate += meteringDeviceGRADDAO.getCountUpdate();
-                countAdded += meteringDeviceGRADDAO.getCountAdded();
-                if (errorState > meteringDeviceGRADDAO.getErrorState()) {
-                    errorState = meteringDeviceGRADDAO.getErrorState();
-                }
-            }
-            showInfo();
-        }
-        final int countRecreate = getCountMeteringDevicesForRecreate();
-//        System.out.println("countRecreate: " + countRecreate);
-        if (countRecreate > 0) {
-            answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " " + getDeviceTag(countRecreate) + " " +
-                    "Желаете добавить эти устройства в архив ГИС ЖКХ и создать повторно?\n", this);
-        }
+//        try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
+//            final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
+//            final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradId, connectionGRAD);
+//            final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
+//
+//            for (Map.Entry<String, HouseRecord> entryHouse : houseAddedGisJkh.entrySet()) {
+//                if (answerProcessing!= null ) {
+//                    answerProcessing.sendMessageToClient("Формирую ПУ для дома: " + entryHouse.getValue().getAddresString());
+//                }
+//                final MeteringDeviceGRADDAO meteringDeviceGRADDAO = new MeteringDeviceGRADDAO(answerProcessing, entryHouse.getValue().getGrad_id()); // создаввать каждый раз новый, беру из БД по одному дому данные и использую каждый раз
+//
+////                Импортируем ранее загруженные ПУ
+//                //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
+//
+//                GetStateResult getStateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getKey(), answerProcessing);
+//                List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList;
+//                if(getStateResult != null) {
+//                    exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
+//                    if (exportMeteringDeviceDataResultList != null) {
+//                        meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
+//                    }
+//                }
+//
+//                java.util.List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = meteringDeviceGRADDAO.getMeteringDevicesForCreate(connectionGRAD); // если добавились новые идентификаторы, нужно исключить их
+//
+//                countAll += meteringDeviceGRADDAO.getCountAll();
+//
+//                //callImportMeteringDevices(devices, entryHouse.getKey(), meteringDeviceGRADDAO, connectionGRAD);
+//
+////                Повторно загружаем для занесения MeteringDeviceRootGUID.
+//                getStateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getKey(), answerProcessing);
+//                if(getStateResult != null) {
+//                    exportMeteringDeviceDataResultList = getStateResult.getExportMeteringDeviceDataResult();
+//                    if (exportMeteringDeviceDataResultList != null) {
+//                        meteringDeviceGRADDAO.checkExportMeteringDevices(exportMeteringDeviceDataResultList, connectionGRAD);
+//                        for (ExportMeteringDeviceDataResultType device : exportMeteringDeviceDataResultList) {
+//                            if (device.getStatusRootDoc().equalsIgnoreCase("Active")) {
+////                            только активные устройства
+//                                countAllGisJkh++;
+//                            }
+//                        }
+////                    все устройства даже архивные
+////                    countAllGisJkh = exportMeteringDeviceDataResult.getMeteringDevice().size();
+//                    }
+//                }
+//
+//                if (!meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap().isEmpty()) {
+//                    archiveDataList.add(new ArchiveData(importMeteringDeviceData, entryHouse.getKey(), meteringDeviceGRADDAO));
+//                }
+//
+//                countUpdate += meteringDeviceGRADDAO.getCountUpdate();
+//                countAdded += meteringDeviceGRADDAO.getCountAdded();
+//                if (errorState > meteringDeviceGRADDAO.getErrorState()) {
+//                    errorState = meteringDeviceGRADDAO.getErrorState();
+//                }
+//            }
+//            showInfo();
+//        }
+//        final int countRecreate = getCountMeteringDevicesForRecreate();
+////        System.out.println("countRecreate: " + countRecreate);
+//        if (countRecreate > 0) {
+//            answerProcessing.showQuestionToClient("Не удалось обновить " + countRecreate + " " + getDeviceTag(countRecreate) + " " +
+//                    "Желаете добавить эти устройства в архив ГИС ЖКХ и создать повторно?\n", this);
+//        }
         return errorState;
     }
 
@@ -447,16 +476,17 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      *
      * @return количество записей готовых для пересоздания.
      */
+    @Deprecated
     private int getCountMeteringDevicesForRecreate() {
         int count = 0;
-        for (ArchiveData data : archiveDataList) {
-            count += data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().size();
-            for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().entrySet()) {
-                answerProcessing.sendMessageToClient("");
-                answerProcessing.sendMessageToClient("ПУ с идентификатором: " +
-                        entry.getKey() + " не удалось обновить.");
-            }
-        }
+//        for (ArchiveData data : archiveDataList) {
+//            count += data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().size();
+//            for (Map.Entry<String, ImportMeteringDeviceDataRequest.MeteringDevice> entry : data.getMeteringDeviceGRADDAO().getDeviceForArchiveAndCreateMap().entrySet()) {
+//                answerProcessing.sendMessageToClient("");
+//                answerProcessing.sendMessageToClient("ПУ с идентификатором: " +
+//                        entry.getKey() + " не удалось обновить.");
+//            }
+//        }
         return count;
     }
 
@@ -465,10 +495,13 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      */
     private void showInfo() {
         answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("Всего активных ПУ найденных в ГИС ЖКХ: " + countAllGisJkh);
-        answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
-        answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdate);
-        answerProcessing.sendMessageToClient("Добавлено в ГИС ЖКХ: " + countAdded);
+        answerProcessing.sendMessageToClient("Из Град получено приборов: " + countGrad);
+        answerProcessing.sendMessageToClient("Из ГИС получено приборов: " + countGis);
+        answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdateGrad);
+        answerProcessing.sendMessageToClient("Отправлено на добавление в ГИС ЖКХ: " + countAddedGis);
+        answerProcessing.sendMessageToClient("Ошибок добавления в ГИС ЖКХ: " + countAddErrorGis);
+        answerProcessing.sendMessageToClient("Отправлено на архивировацию в ГИС ЖКХ: " + countArchiveGis);
+        answerProcessing.sendMessageToClient("Ошибок архивировации в ГИС ЖКХ: " + countArchErrorGis);
     }
 
     /**
@@ -489,31 +522,111 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             throws ParseException, SQLException, PreGISException, FileNotFoundException, SOAPException, JAXBException {
 
         final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, meteringDeviceGRADDAO.getDeviceForArchiveAndCreateMap());
-        callImportMeteringDevices(toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
-        callImportMeteringDevices(toArchive.getListForCreateDevices(), fias, meteringDeviceGRADDAO, connectionGRAD);
+        // callImportMeteringDevices(toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
+        // callImportMeteringDevices(toArchive.getListForCreateDevices(), fias, meteringDeviceGRADDAO, connectionGRAD);
     }
 
     /**
-     * перегруженный метод для совместимости
-     * @param devices
-     * @param fias
-     * @param deviceGRADDAO
-     * @param connectionGRAD
+     * Метод получает набор приборов учета для занесения в ГИС, обрабатывает его и, если необходимо, отсылает в Град на обновление идентификаторов
+     * @param devicesMap - набор приборов учета
+     * @param houseRecord - запись дома
+     * @param meteringDeviceGRADDAO - DAO для обмена по ПУ с Град
+     * @param archive - архивируются ПУ или нет. Есл инет - данные заносятся в Град
      * @throws SQLException
      * @throws FileNotFoundException
      * @throws SOAPException
      * @throws JAXBException
      * @throws PreGISException
      */
-    private void callImportMeteringDevices(final List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
-                                           final String fias, final IMeteringDevices deviceGRADDAO,
-                                           final Connection connectionGRAD) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
-        callImportMeteringDevices(devices, fias, deviceGRADDAO, connectionGRAD, false);
+    private void callImportMeteringDevices(final Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> devicesMap,
+                                           final HouseRecord houseRecord, MeteringDeviceGRADDAO meteringDeviceGRADDAO, boolean archive) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
+        if (devicesMap == null || devicesMap.size() == 0) return;
+        answerProcessing.sendMessageToClient("Вызов импорта для дома " + houseRecord.getAddresStringShort() + ". Кол-во ПУ: "  + devicesMap.size());
+        // создаем список устройств для удобства разделения на небольшие партии
+        List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = new ArrayList<>(devicesMap.values());
+
+        // создаем мапу соответствия TransportID - GradMeterID, для дальнейшей обработки результатов, если не архивируем ПУ.
+        // Делаем на этом уровне, чтобы каждый раз не преобразовывать мапу
+        Map<String, Integer> devicesGradToTransport = null;
+        if(!archive) {
+            devicesGradToTransport = devicesMap.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(e -> e.getValue().getTransportGUID(),
+                            e -> e.getKey().getMeterGradId()));
+            answerProcessing.sendMessageToClient("Приборов на занесение в ГИС: " + devicesMap.size());
+
+        }
+        else{
+            answerProcessing.sendMessageToClient("Приборов на архивацию в ГИС: " + devicesMap.size());
+        }
+
+        int count = 0;
+        while (count < devices.size()) {
+            // answerProcessing.sendMessageToClient("::clearLabelText");
+            GetStateResult result;
+            // разбиваем запрос на пакеты по 20 ПУ
+            if (count + 20 > devices.size()) {
+                result = HomeManagementAsyncPort.callImportMeteringDeviceData(houseRecord.getFias(), devices.subList(count, devices.size()), answerProcessing);
+                count += 20;
+            } else {
+                result = HomeManagementAsyncPort.callImportMeteringDeviceData(houseRecord.getFias(), devices.subList(count, count += 20), answerProcessing);
+            }
+
+            // обрабатываем результат
+            if (result != null && result.getImportResult() != null) {
+                for (ImportResult importResult : result.getImportResult()) {
+                    if (importResult != null && importResult.getCommonResult() != null) {
+                        // выведем ошибки
+                        for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
+                            if (commonResult.getError() != null) {
+                                if (errorState > 0) errorState= 0;
+                                if (!archive) {
+                                    countAddErrorGis++;
+                                }else{
+                                    countArchErrorGis++;
+                                }
+                                showErrorMeteringDevices(commonResult.getTransportGUID(), commonResult.getError().get(0).getErrorCode(),
+                                        commonResult.getError().get(0).getDescription());
+                            }
+                        }
+                        // отсылаем в Град результаты импорта для занесения идентификаторов (если не архивация)
+                        if (!archive) {
+                            meteringDeviceGRADDAO.setMeteringDevices(importResult, devicesGradToTransport);
+
+                            countAddedGis += importResult.getCommonResult().size();
+
+                            if (errorState > meteringDeviceGRADDAO.getErrorState())
+                                errorState = meteringDeviceGRADDAO.getErrorState();
+                        }
+                        else{
+                            countArchiveGis += importResult.getCommonResult().size();
+                        }
+                        answerProcessing.sendMessageToClient("Кол-во ПУ в результате импорта: " + importResult.getCommonResult().size());
+                    }
+                }
+            }
+        }
     }
+
+    /**
+     * Метод, формирует и выводит пользователю информацию об ошибках, которые возвращает ГИС ЖКХ.
+     *
+     * @param transportGUID транспортный идентификатор.
+     * @param errorCode     код ошибки.
+     * @param description   описание ошибки.
+     */
+    private void showErrorMeteringDevices(String transportGUID, String errorCode, String description) {
+        answerProcessing.sendMessageToClient("");
+        if(transportGUID != null && !transportGUID.isEmpty()) answerProcessing.sendMessageToClient("TransportGUID: " + transportGUID);
+        if(errorCode != null && !errorCode.isEmpty()) answerProcessing.sendMessageToClient("Код ошибки: " + errorCode);
+        answerProcessing.sendMessageToClient("Описание ошибки: " + description);
+        errorState = 0;
+    }
+
     /**
      * Метод, формирует запросы на порции по 20 устройст, ГИС ЖКХ выдаёт ошибки, когда устройств много.
      *
-     * @param devices                  - список ПУ.
+     * @param devicesMap                  - мапа ПУ с идентификаторами.
      * @param fias                     - ФИАС дома.
      * @param deviceGRADDAO            - объект для занисения данных в БД.
      * @param connectionGRAD           - подключение к БД ГРАД.
@@ -522,11 +635,13 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * @throws SOAPException
      * @throws JAXBException
      */
-    private void callImportMeteringDevices(final List<ImportMeteringDeviceDataRequest.MeteringDevice> devices,
+    @Deprecated
+    private void callImportMeteringDevices(final Map<String, ImportMeteringDeviceDataRequest.MeteringDevice> devicesMap,
                                            final String fias, final IMeteringDevices deviceGRADDAO,
                                            final Connection connectionGRAD, boolean archive) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
 
-        if (devices != null && devices.size() > 0) {
+        if (devicesMap != null && devicesMap.size() > 0) {
+            List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = new ArrayList<>(devicesMap.values());
             int count = 0;
             while (count < devices.size()) {
                 // answerProcessing.sendMessageToClient("::clearLabelText");
@@ -542,7 +657,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                     for (ImportResult importResult : result.getImportResult()) {
                         if (importResult != null && importResult.getCommonResult() != null) {
                             if(!archive) {
-                                deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD);
+                                deviceGRADDAO.setMeteringDevices(importResult, connectionGRAD, devicesMap);
                             }
                             answerProcessing.sendMessageToClient("Кол-во ПУ в результате импорта: " + importResult.getCommonResult().size());
 //                    for (ImportResult.CommonResult result : importResult.getCommonResult()) {

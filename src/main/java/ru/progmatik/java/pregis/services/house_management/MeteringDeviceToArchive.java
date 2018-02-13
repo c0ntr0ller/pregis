@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Класс, обрабатывает приборы учёта, которые необходимо архивировать, а затем добавить.
  */
-public class MeteringDeviceToArchive implements IMeteringDevices {
+public class MeteringDeviceToArchive{
 
     private static final Logger LOGGER = Logger.getLogger(MeteringDeviceToArchive.class);
 
@@ -184,8 +184,8 @@ public class MeteringDeviceToArchive implements IMeteringDevices {
         meteringDevices.setDeviceDataToUpdate(device);
         meteringDevicesToArchiveLinkedHashMap.put(meteringDevices.getTransportGUID(), meteringDevices);
         answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient("ПУ добавлен для архивирования: " +
-                meteringDevices.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
+//        answerProcessing.sendMessageToClient("ПУ добавлен для архивирования: " +
+//                meteringDevices.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
 
         return meteringDevices;
     }

@@ -180,7 +180,7 @@ public final class ProgramAction {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
             } else if (state == 0) {
                 answerProcessing.sendMessageToClient("");
-                answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация ПУ\" завершилась с ошибками!");
+                answerProcessing.sendErrorToClientNotException("Операция: \"Синхронизация ПУ\" завершилась с некритическими ошибками! Проверьте журнал выполнения");
             } else if (state == 1) {
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendOkMessageToClient("\"Синхронизация ПУ\" успешно выполнена.");

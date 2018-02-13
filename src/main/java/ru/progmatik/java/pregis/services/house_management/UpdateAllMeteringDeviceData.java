@@ -578,7 +578,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                     if (importResult != null && importResult.getCommonResult() != null) {
                         // выведем ошибки
                         for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
-                            if (commonResult.getError() != null) {
+                            if (commonResult.getError() != null && commonResult.getError().size() > 0) {
                                 if (errorState > 0) errorState= 0;
                                 if (!archive) {
                                     countAddErrorGis++;

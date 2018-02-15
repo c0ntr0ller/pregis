@@ -1,6 +1,7 @@
 package ru.progmatik.java.pregis.other;
 
 import com.google.gson.Gson;
+import com.sun.xml.internal.ws.wsdl.parser.InaccessibleWSDLException;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.ErrorMessageType;
 import ru.gosuslugi.dom.schema.integration.base.HeaderType;
@@ -70,7 +71,12 @@ public final class AnswerProcessing {
         sendCommandToClient(CLIENT_SET_FAILED);
         sendMessageToClient("Возникла ошибка!\nОперация " + nameOperation + "прервана!");
         sendMessageToClient("Текст ошибки: " + exception.getMessage());
-        sendMessageToClient("Возникли ошибки! Подробнее смотрите в логе событий.");
+        if(exception.getClass().getSimpleName().equalsIgnoreCase("InaccessibleWSDLException")) {
+            if(!((InaccessibleWSDLException) exception).getErrors().get(0).getMessage().isEmpty()){
+                sendMessageToClient("Причина: " + ((InaccessibleWSDLException) exception).getErrors().get(0).getMessage());
+            }
+        }
+        sendMessageToClient("Подробнее смотрите в логе событий.");
         logger.error(methodName, exception);
     }
 

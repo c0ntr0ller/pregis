@@ -260,7 +260,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
             archiveGISList.addAll(devicesListGIS.stream()
                     .filter(e->e.getStatusRootDoc().equalsIgnoreCase("Active"))
-                    .filter(e->!(e.getBasicChatacteristicts().getRemoteMeteringInfo() != null && e.getBasicChatacteristicts().getCollectiveDevice() != null))
+                    .filter(e->(e.getBasicChatacteristicts().getCollectiveDevice() == null))
                     .collect(Collectors.toList()));
             if(archiveGISList.size() > 0) {
                 if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на архивацию в ГИС: " + archiveGISList.size());

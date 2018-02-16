@@ -14,6 +14,9 @@ import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.soap.SOAPException;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
@@ -21,6 +24,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static javax.xml.datatype.DatatypeConstants.LESSER;
 
 /**
  * Класс, синхронизирует данные о ПУ.
@@ -47,10 +52,9 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
 
 //        return createMeteringDevice(houseGradId);
         return syncMeteringDevices(houseGradId);
-
     }
 
-    public int syncMeteringDevices(final Integer houseGradId) throws SQLException, PreGISException {
+    private int syncMeteringDevices(final Integer houseGradId) throws SQLException, PreGISException {
         errorState = 1;
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
@@ -58,6 +62,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradId, connectionGRAD);
 
             for (Map.Entry<String, HouseRecord> entryHouse : houseAddedGisJkh.entrySet()) {
+                //recreateArchivedODPU(entryHouse.getValue()); // одноразовая функция, используется для восстановления из архива ОДПУ
                 syncMeteringDevicesHouse(entryHouse.getValue());
                 if(errorState < 0) break;
             }
@@ -327,6 +332,123 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 meteringDevices.getDeviceDataToUpdate().getMeteringDeviceVersionGUID());
 
         return meteringDevices;
+    }
+
+    /**
+     * утилитарный метод. восстанавливает все заархивированные ОДПУ в ГИС (пересоздает их с теми же параметрами)
+     * @param entryHouse
+     */
+    private void recreateArchivedODPU(final HouseRecord entryHouse) {
+
+        try{
+        answerProcessing.sendInformationToClientAndLog("Запуск пересоздания ОДПУ по адресу: " + entryHouse.getAddresStringShort(), LOGGER);
+
+        // получаем все ПУ из ГИС
+        GetStateResult stateResult = HomeManagementAsyncPort.callExportMeteringDeviceData(entryHouse.getFias(), answerProcessing);
+
+        List<ExportMeteringDeviceDataResultType> devicesGIS = stateResult.getExportMeteringDeviceDataResult();
+        List<ExportMeteringDeviceDataResultType> devicesArchivedODPU = null;
+
+        if (devicesGIS == null || devicesGIS.size() == 0) {
+            answerProcessing.sendInformationToClientAndLog("Получено ПУ из ГИС: 0, обработка невозможна", LOGGER);
+            return;
+        }
+
+        devicesArchivedODPU = devicesGIS.stream()
+                .filter(e->e.getStatusRootDoc().equalsIgnoreCase("Archival"))
+                .filter(e->e.getBasicChatacteristicts().getCollectiveDevice() != null)
+                .collect(Collectors.toList());
+        answerProcessing.sendInformationToClientAndLog("Получено архивированных ОДПУ: " + devicesArchivedODPU.size(), LOGGER);
+
+        if(devicesArchivedODPU.size() == 0){
+            return;
+        }
+
+        // отбираем из них только заархивированные и коллективные, если таких же нет активных коллективных
+        Iterator<ExportMeteringDeviceDataResultType> iterator = devicesArchivedODPU.iterator();
+
+        while(iterator.hasNext()){
+            ExportMeteringDeviceDataResultType odpu = iterator.next();
+
+            if(odpu.getMunicipalResourceNotEnergy() == null && odpu.getMunicipalResourceEnergy() == null) {
+                iterator.remove();
+                continue;
+            }
+
+            if(odpu.getMunicipalResourceEnergy() != null) {
+                if(devicesGIS.stream()
+                        .filter(e -> !e.getStatusRootDoc().equalsIgnoreCase("Archival")) // не архивный
+                        .filter(e -> e.getBasicChatacteristicts().getCollectiveDevice() != null) // коллективный
+                        .filter(e -> e.getBasicChatacteristicts().getMeteringDeviceNumber().equalsIgnoreCase(odpu.getBasicChatacteristicts().getMeteringDeviceNumber())) // номер совпадает
+                        .filter(e -> e.getMunicipalResourceEnergy() != null) // совпадает MunicipalResourceEnergy
+                        .collect(Collectors.toList()).size() > 0){ // и если размер такого отфильтрованного листа более нуля
+                    // удаляем ОДПУ из списка на восстановление
+                    iterator.remove();
+                }
+                continue;
+            }
+            if(odpu.getMunicipalResourceNotEnergy() != null) {
+                String odpuCode = odpu.getMunicipalResourceNotEnergy().get(0).getMunicipalResource().getCode();
+                if(devicesGIS.stream()
+                        .filter(e -> !e.getStatusRootDoc().equalsIgnoreCase("Archival")) // не архивный
+                        .filter(e -> e.getBasicChatacteristicts().getCollectiveDevice() != null) // коллективный
+                        .filter(e -> e.getBasicChatacteristicts().getMeteringDeviceNumber().equalsIgnoreCase(odpu.getBasicChatacteristicts().getMeteringDeviceNumber())) // номер совпадает
+                        .filter(e -> e.getMunicipalResourceNotEnergy().get(0).getMunicipalResource().getCode().equalsIgnoreCase(odpuCode)) // совпадает код услуги MunicipalResourceNotEnergy
+                        .collect(Collectors.toList()).size() > 0){ // и если размер такого отфильтрованного листа более нуля
+                    // удаляем ОДПУ из списка на восстановление
+                    iterator.remove();
+                }
+            }
+        }
+
+        // преобразуем в ПУ на создание
+        if (devicesArchivedODPU.size() == 0){
+            answerProcessing.sendInformationToClientAndLog("ОДПУ на пересоздание: " + devicesArchivedODPU.size(), LOGGER);
+            return;
+        }
+
+        // создаем ОДПУ в ГИС
+        Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> recreateODPUMap = new HashMap<>();
+        for (ExportMeteringDeviceDataResultType exportDevice : devicesArchivedODPU) {
+            ImportMeteringDeviceDataRequest.MeteringDevice importDevice = new ImportMeteringDeviceDataRequest.MeteringDevice();
+
+            importDevice.setTransportGUID(OtherFormat.getRandomGUID());
+
+            MeteringDeviceFullInformationType deviceFull = new MeteringDeviceFullInformationType();
+            deviceFull.setBasicChatacteristicts(exportDevice.getBasicChatacteristicts());
+
+            XMLGregorianCalendar data = deviceFull.getBasicChatacteristicts().getFirstVerificationDate();
+            if(OtherFormat.getDateForXML(new Date()).compare(data) == LESSER) {
+                DatatypeFactory df = DatatypeFactory.newInstance();
+                data.add(df.newDuration(false, Integer.parseInt(deviceFull.getBasicChatacteristicts().getVerificationInterval().getCode()), 0,0,0,0,0));
+                deviceFull.getBasicChatacteristicts().setFirstVerificationDate(data);
+            }
+
+            if(exportDevice.getMunicipalResourceEnergy() != null) {
+                deviceFull.setMunicipalResourceEnergy(exportDevice.getMunicipalResourceEnergy());
+            }else{
+                deviceFull.getMunicipalResourceNotEnergy().addAll(exportDevice.getMunicipalResourceNotEnergy());
+            }
+
+            if(exportDevice.getLinkedWithMetering() != null) {
+                deviceFull.setLinkedWithMetering(exportDevice.getLinkedWithMetering());
+            }else{
+                deviceFull.setNotLinkedWithMetering(true);
+            }
+
+            importDevice.setDeviceDataToCreate(deviceFull);
+
+            recreateODPUMap.put(new MeteringDeviceID(), importDevice);
+        }
+        callImportMeteringDevices(recreateODPUMap, entryHouse, null,true);
+
+        answerProcessing.sendInformationToClientAndLog("Пересоздание ОДПУ завершено по адресу: " + entryHouse.getAddresStringShort(), LOGGER);
+        } catch (SQLException | PreGISException | SOAPException | JAXBException | FileNotFoundException e) {
+            errorState = -1;
+            answerProcessing.sendErrorToClient("Синхронизация ПУ по дому" + entryHouse.getAddresStringShort() + ": ", "\"Синхронизация ПУ\" ", LOGGER, e);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

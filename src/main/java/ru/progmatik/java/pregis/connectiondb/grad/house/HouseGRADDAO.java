@@ -44,7 +44,7 @@ public final class HouseGRADDAO {
     //    Временные листы, что бы не ходить 2 или более раза за одним и темже в БД
 //    private final ArrayList<String> tempMKD = new ArrayList<>();
 //    private final ArrayList<String> tempJD = new ArrayList<>();
-    private final LinkedHashMap<String, HouseRecord> allHouses = new LinkedHashMap<>();
+//    private final LinkedHashMap<String, HouseRecord> allHouses = new LinkedHashMap<>();
     private final HashMap<Integer, ArrayList<Rooms>> houseRoomsMap = new HashMap<>();
 
     public HouseGRADDAO(final AnswerProcessing answerProcessing) {
@@ -96,9 +96,8 @@ public final class HouseGRADDAO {
             connectionGrad = ConnectionDB.instance().getConnectionDB();
         }
 
-        if (allHouses.isEmpty()) {
-            getHouseRecordsFromDB(connectionGrad);
-        }
+        LinkedHashMap<String, HouseRecord> allHouses = getHouseRecordsFromDB(connectionGrad);
+
         if (houseGradId != null && !allHouses.isEmpty()) {
             for (Map.Entry<String, HouseRecord> entry : allHouses.entrySet()) {
                 if (houseGradId.equals(entry.getValue().getGrad_id())) {
@@ -118,11 +117,12 @@ public final class HouseGRADDAO {
      * @throws SQLException
      * @throws PreGISException
      */
-    private void getHouseRecordsFromDB(final Connection connectionGrad) throws SQLException, PreGISException {
+    private LinkedHashMap<String, HouseRecord> getHouseRecordsFromDB(final Connection connectionGrad) throws SQLException, PreGISException {
         // получем сначала все МКД
         final LinkedHashMap<String, HouseRecord> mapMkd = getAllMkdHouseRecords(connectionGrad);
         // получаем все жилые дома
         final LinkedHashMap<String, HouseRecord> mapJd = getAllJdHouseRecords(connectionGrad);
+        final LinkedHashMap<String, HouseRecord> allHouses = new LinkedHashMap<>();
 
         if (mapMkd != null) {
             allHouses.putAll(mapMkd);
@@ -130,6 +130,7 @@ public final class HouseGRADDAO {
         if (mapJd != null) {
             allHouses.putAll(mapJd);
         }
+        return allHouses;
     }
 
     /**

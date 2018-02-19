@@ -282,7 +282,7 @@ public class MeteringDeviceGRADDAO{
 //            Время и дата снятия показания
 //            device.getMunicipalResourceEnergy().setReadingsSource(); // Кем внесено не обязательно к заполнению
 
-            if (exGisPu1Element[16] != null) {  // Кэффициент трансформации
+            if (exGisPu1Element[METERING_VALUE + 3] != null) {  // Кэффициент трансформации
                 device.getMunicipalResourceEnergy().setTransformationRatio(new BigDecimal(exGisPu1Element[METERING_VALUE + 3]).setScale(7, BigDecimal.ROUND_DOWN));
 //            } else {
 //                device.getMunicipalResourceEnergy().setTransformationRatio(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));

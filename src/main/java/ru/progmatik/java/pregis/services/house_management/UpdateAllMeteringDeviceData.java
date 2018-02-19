@@ -62,7 +62,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(houseGradId, connectionGRAD);
 
             for (Map.Entry<String, HouseRecord> entryHouse : houseAddedGisJkh.entrySet()) {
-                //recreateArchivedODPU(entryHouse.getValue()); // одноразовая функция, используется для восстановления из архива ОДПУ
+//                recreateArchivedODPU(entryHouse.getValue()); // одноразовая функция, используется для восстановления из архива ОДПУ
                 syncMeteringDevicesHouse(entryHouse.getValue());
                 if(errorState < 0) break;
             }

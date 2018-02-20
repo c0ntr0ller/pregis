@@ -298,9 +298,12 @@ public final class AccountGRADDAO {
                 }
 //                    account.setClosed(); // проверить, если в ГИС ЖКХ есть, а в БД ГРАД нет, то установить в ExportAccountData.
                 AccountType.Accommodation accommodation = new AccountType.Accommodation();
-                accommodation.setPremisesGUID(premisesGUID);
+                if(livingRoomGUID == null || livingRoomGUID.isEmpty()) {
+                    accommodation.setPremisesGUID(premisesGUID);
+                }else {
 //                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias()); // Выдаё ошибку, по описанию можно выбирать.
-                accommodation.setLivingRoomGUID(livingRoomGUID); // Идентификатор комнаты
+                    accommodation.setLivingRoomGUID(livingRoomGUID); // Идентификатор комнаты
+                }
                 accommodation.setSharePercent(new BigDecimal(fRoom.getSharePay()).setScale(0, BigDecimal.ROUND_DOWN));
                 if(accommodation.getSharePercent() == null) accommodation.setSharePercent(new BigDecimal(100)); // если ничего не пришло - ставим 100, иначе ГИС выдает ошибку
 

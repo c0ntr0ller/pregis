@@ -15,6 +15,7 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -415,9 +416,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 ) {
             AccountType.Accommodation rAcc = new AccountType.Accommodation();
             rAcc.setFIASHouseGuid(sAcc.getFIASHouseGuid());
-            rAcc.setLivingRoomGUID(sAcc.getLivingRoomGUID());
-            rAcc.setPremisesGUID(sAcc.getPremisesGUID());
+            if(sAcc.getLivingRoomGUID() == null || sAcc.getLivingRoomGUID().isEmpty()){
+                rAcc.setPremisesGUID(sAcc.getPremisesGUID());
+            }else {
+                rAcc.setLivingRoomGUID(sAcc.getLivingRoomGUID());
+            }
             rAcc.setSharePercent(sAcc.getSharePercent());
+            if(rAcc.getSharePercent() == null) rAcc.setSharePercent(new BigDecimal(100)); // если ничего не пришло - ставим 100, иначе ГИС выдает ошибку
             rAccList.add(rAcc);
         }
         return rAccList;

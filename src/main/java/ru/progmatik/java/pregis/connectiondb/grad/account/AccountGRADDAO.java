@@ -307,82 +307,76 @@ public final class AccountGRADDAO {
                 account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
-//                    Сведения о плательщике
-                account.setPayerInfo(new AccountType.PayerInfo());
-                account.getPayerInfo().setInd(new AccountIndType());
 //                    if (basicInformation.getOgrnOrOgrnip() == 0) {
                 if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
                         && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
 
-                    // создаем информацию о плательщике только если есть и Фамилия и Имя
-                    if(basicInformation.getSurname() != null && !basicInformation.getSurname().isEmpty() ){
-                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
-                    }else{
-                        answerProcessing.sendErrorToClientNotException("На лицевом счете " + basicInformation.getNumberLS() + " отсутствует имя!");
-                    }
+//                    Сведения о плательщике
+                    account.setPayerInfo(new AccountType.PayerInfo());
+                    account.getPayerInfo().setInd(new AccountIndType());
 
-                    if (basicInformation.getName() != null && !basicInformation.getName().isEmpty()) {
-                        account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
-                    }else{
-                        answerProcessing.sendErrorToClientNotException("На лицевом счете " + basicInformation.getNumberLS() + " отсутствует имя!");
-                    }
+                    account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+
+                    account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+
                     if (basicInformation.getMiddleName() != null) {
                         account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
                     }
 //                    if (basicInformation.getSnils() != null || !basicInformation.getSnils().trim().isEmpty()) {
 //                        account.getPayerInfo().getInd().setSNILS(basicInformation.getSnils().replaceAll("-", "").replaceAll(" ", ""));
 //                    }
-                }
-
-                if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
-//
-                    account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
-                    if (basicInformation.getTypeDocument() != null) {
-                        account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
-                    }else{
-                        answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательный тип документа! Выставлено значение по-умолчанию 'Паспорт'");
-                        account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(DocumentType.getTypeDocument("паспорт").getTypeDocument()));
-                    }
-
-                    if(basicInformation.getNumberDocumentIdentity() != null && !basicInformation.getNumberDocumentIdentity().isEmpty()) {
-                        account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
-                    }else{
-                        answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательный номер документа! Выставлена строка по-умолчанию 000000");
-                        account.getPayerInfo().getInd().getID().setNumber("000000");
-                    }
 
 
-                    if(basicInformation.getSeriesDocumentIdentity() != null && !basicInformation.getSeriesDocumentIdentity().isEmpty()) {
-                        account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                    }else{
-                        account.getPayerInfo().getInd().getID().setSeries("0000");
-                    }
+                    if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
 
-                    if (basicInformation.getDateDocumentIdentity() != null) {
-                        account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
-                    }else{
-                        answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательная дата выдачи документа! Выставлена дата по-умолчанию 01.01.2017");
-                        account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MM.yyyy")).parse("01.01.2017")));
-                    }
+                        if (basicInformation.getNumberDocumentIdentity() != null) { // будем создавать только если есть номер документа!
+                            account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
 
-                } else {
-//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
-                    if (basicInformation.getOgrnOrOgrnip() > 0) {
-                        ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
+                            if (basicInformation.getTypeDocument() != null) {
+                                account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                            } else {
+                                account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(DocumentType.getTypeDocument("паспорт").getTypeDocument()));
+                            }
 
-                        if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
-                            criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-                        } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
-                            criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                            if (basicInformation.getNumberDocumentIdentity() != null && !basicInformation.getNumberDocumentIdentity().isEmpty()) {
+                                account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                            } else {
+                                account.getPayerInfo().getInd().getID().setNumber("000000");
+                            }
+
+
+                            if (basicInformation.getSeriesDocumentIdentity() != null && !basicInformation.getSeriesDocumentIdentity().isEmpty()) {
+                                account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                            } else {
+                                account.getPayerInfo().getInd().getID().setSeries("0000");
+                            }
+
+                            if (basicInformation.getDateDocumentIdentity() != null) {
+                                account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
+                            } else {
+                                account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MM.yyyy")).parse("01.01.2017")));
+                            }
                         }
+
+                    } else {
+//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
+                        if (basicInformation.getOgrnOrOgrnip() > 0) {
+                            ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
+
+                            if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
+                                criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                            } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
+                                criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+                            }
 //                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
 //                            account.getPayerInfo().setOrg(new RegOrgVersionType());
 //                            account.getPayerInfo().getOrg().setOrgVersionGUID(result.getOrgData().get(0).getOrgVersion().getOrgVersionGUID());
+                        }
                     }
-                }
 
-                if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
-                    account.getPayerInfo().setIsRenter(true); // выдаёт ошибку если указать false
+                    if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
+                        account.getPayerInfo().setIsRenter(true); // выдаёт ошибку если указать false
+                    }
                 }
 
                 account.setAccountNumber(basicInformation.getNumberLS());

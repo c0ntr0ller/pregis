@@ -204,7 +204,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                 // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО) - добавляем на обновление в ГИС
                                 if(entry.getValue().getAccountGUID() != null &&
                                         accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
-                                        entry.getValue().getPayerInfo().getInd() != null && //TODO временная затыка, так как на самом деле мы должны по юрлицам получиьт их GUID и передавать их тоже
+                                        entry.getValue().getPayerInfo() != null && entry.getValue().getPayerInfo().getInd() != null && //TODO временная затыка, так как на самом деле мы должны по юрлицам получиьт их GUID и передавать их тоже
                                         accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
                                         (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
                                                 accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd() == null ||

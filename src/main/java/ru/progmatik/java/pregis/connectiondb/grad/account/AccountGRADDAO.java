@@ -309,16 +309,22 @@ public final class AccountGRADDAO {
 
 //                    Сведения о плательщике
                 account.setPayerInfo(new AccountType.PayerInfo());
+                account.getPayerInfo().setInd(new AccountIndType());
 //                    if (basicInformation.getOgrnOrOgrnip() == 0) {
                 if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
                         && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
 
                     // создаем информацию о плательщике только если есть и Фамилия и Имя
+                    if(basicInformation.getSurname() != null && !basicInformation.getSurname().isEmpty() ){
+                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+                    }else{
+                        answerProcessing.sendErrorToClientNotException("На лицевом счете " + basicInformation.getNumberLS() + " отсутствует имя!");
+                    }
 
-                    account.getPayerInfo().setInd(new AccountIndType());
-                    account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
-                    if (basicInformation.getName() != null) {
+                    if (basicInformation.getName() != null && !basicInformation.getName().isEmpty()) {
                         account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+                    }else{
+                        answerProcessing.sendErrorToClientNotException("На лицевом счете " + basicInformation.getNumberLS() + " отсутствует имя!");
                     }
                     if (basicInformation.getMiddleName() != null) {
                         account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
@@ -345,7 +351,12 @@ public final class AccountGRADDAO {
                         account.getPayerInfo().getInd().getID().setNumber("000000");
                     }
 
-                    account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+
+                    if(basicInformation.getSeriesDocumentIdentity() != null && !basicInformation.getSeriesDocumentIdentity().isEmpty()) {
+                        account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                    }else{
+                        account.getPayerInfo().getInd().getID().setSeries("0000");
+                    }
 
                     if (basicInformation.getDateDocumentIdentity() != null) {
                         account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));

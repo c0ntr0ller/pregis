@@ -351,7 +351,7 @@ public final class AccountGRADDAO {
                         account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
                     }else{
                         answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательная дата выдачи документа! Выставлена дата по-умолчанию 01.01.2017");
-                        account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MMM.yyyy")).parse("01.01.2017")));
+                        account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MM.yyyy")).parse("01.01.2017")));
                     }
 
                 } else {

@@ -329,14 +329,29 @@ public final class AccountGRADDAO {
                 }
 
                 if (basicInformation.getOgrnOrOgrnip() < 999999999999L) {
+//
+                    account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
                     if (basicInformation.getTypeDocument() != null) {
-                        account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
                         account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                    }else{
+                        answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательный тип документа! Выставлено значение по-умолчанию 'Паспорт'");
+                        account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(DocumentType.getTypeDocument("паспорт").getTypeDocument()));
+                    }
+
+                    if(basicInformation.getNumberDocumentIdentity() != null && !basicInformation.getNumberDocumentIdentity().isEmpty()) {
                         account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
-                        account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                        if (basicInformation.getDateDocumentIdentity() != null) {
-                            account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
-                        }
+                    }else{
+                        answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательный номер документа! Выставлена строка по-умолчанию 000000");
+                        account.getPayerInfo().getInd().getID().setNumber("000000");
+                    }
+
+                    account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+
+                    if (basicInformation.getDateDocumentIdentity() != null) {
+                        account.getPayerInfo().getInd().getID().setIssueDate(getCalendar(basicInformation.getDateDocumentIdentity()));
+                    }else{
+                        answerProcessing.sendMessageToClient("В документе(паспорте) квартиросъемщика на лицевом счете " + basicInformation.getNumberLS() + " отсутствует обязательная дата выдачи документа! Выставлена дата по-умолчанию 01.01.2017");
+                        account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MMM.yyyy")).parse("01.01.2017")));
                     }
 
                 } else {

@@ -19,6 +19,7 @@ import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
+import java.util.List;
 
 public class DeviceMeteringAsyncPort {
     private static final Logger LOGGER = Logger.getLogger(DeviceMeteringAsyncPort.class);
@@ -44,6 +45,12 @@ public class DeviceMeteringAsyncPort {
     public static GetStateResult callImportMeteringDeviceValues(ImportMeteringDeviceValuesRequest request, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         DeviceMeteringAsyncPort deviceMeteringAsyncPort = new DeviceMeteringAsyncPort(answerProcessing, "importMeteringDeviceValues");
         return deviceMeteringAsyncPort.interactDeviceMetering(setSignIdImportMeteringHistoryRequest(request));
+    }
+
+
+    public static GetStateResult callImportMeteringDeviceValues(String fias, List<ImportMeteringDeviceValuesRequest.MeteringDevicesValues> devicesValuesList, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
+        DeviceMeteringAsyncPort deviceMeteringAsyncPort = new DeviceMeteringAsyncPort(answerProcessing, "importMeteringDeviceValues");
+        return deviceMeteringAsyncPort.interactDeviceMetering(createImportMeteringHistoryRequest(fias, devicesValuesList));
     }
 
     private GetStateResult interactDeviceMetering(Object requestObject) throws SQLException, PreGISException {
@@ -118,5 +125,12 @@ public class DeviceMeteringAsyncPort {
         request.setVersion(request.getVersion());
 
         return request;
+    }
+
+    private static ImportMeteringDeviceValuesRequest createImportMeteringHistoryRequest(String fias, List<ImportMeteringDeviceValuesRequest.MeteringDevicesValues> devicesValuesList){
+        ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest();
+        request.getMeteringDevicesValues().addAll(devicesValuesList);
+        request.setFIASHouseGuid(fias);
+        return setSignIdImportMeteringHistoryRequest(request);
     }
 }

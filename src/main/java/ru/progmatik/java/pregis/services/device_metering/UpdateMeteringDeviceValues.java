@@ -1,7 +1,6 @@
 package ru.progmatik.java.pregis.services.device_metering;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.device_metering.*;
 import ru.gosuslugi.dom.schema.integration.metering_device_base.ElectricMeteringValueType;
 import ru.gosuslugi.dom.schema.integration.metering_device_base.OneRateMeteringValueType;
@@ -115,8 +114,9 @@ public final class UpdateMeteringDeviceValues {
                                              final HashMap<String, MeteringDeviceValuesObject> meteringDevicesValueFromGISJKH,
                                              final Connection connectionGrad) throws SQLException, DatatypeConfigurationException, PreGISException {
 
-        final ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
-        request.setFIASHouseGuid(fias);
+//        final ImportMeteringDeviceValuesRequest request = new ImportMeteringDeviceValuesRequest(); // для отправки в ГИС ЖКХ
+//        request.setFIASHouseGuid(fias);
+        List<ImportMeteringDeviceValuesRequest.MeteringDevicesValues> devicesValuesList = new ArrayList<>();
 
         for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
             if (entry.getKey() != null) {
@@ -165,7 +165,7 @@ public final class UpdateMeteringDeviceValues {
                             devicesValues.setOneRateDeviceValue(deviceValue);
                         }
 
-                        request.getMeteringDevicesValues().add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
+                        devicesValuesList.add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
                         addedValueToGISJKH++;
 
                     } else if (valuesObject.getMeteringValue().compareTo(entry.getValue().getMeteringValue()) > 0) { // если показания ПУ больше в ГИС ЖКХ, заносим в ГРАД.
@@ -181,25 +181,55 @@ public final class UpdateMeteringDeviceValues {
             }
         }
 
-        if (request.getMeteringDevicesValues().size() > 0) { // если есть показания для отправки в ГИС ЖКХ
+        if (devicesValuesList.size() > 0) { // если есть показания для отправки в ГИС ЖКХ
 
-            final GetStateResult result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(request, answerProcessing);
+//            int count = 0;
+//            while (count < devicesValuesList.size()) {
+//                // answerProcessing.sendMessageToClient("::clearLabelText");
+//                GetStateResult result;
+//                // разбиваем запрос на пакеты по 100 ПУ
+//                if (count + 500 > devicesValuesList.size()) {
+//                    result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(fias, devicesValuesList.subList(count, devicesValuesList.size()), answerProcessing);
+//                    count += 500;
+//                } else {
+//                    result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(fias, devicesValuesList.subList(count, count += 500), answerProcessing);
+//                }
+//
+//                // обрабатываем результат
+//                if (result != null && result.getImportResult() != null && result.getImportResult().size() > 0){ // если есть ответ от ГИС ЖКХ
+//                    for (CommonResultType resultType : result.getImportResult()) { // смотрим каждый элемент
+//                        if (resultType.getError().size() > 0) { // если есть ошибки
+//                            for (CommonResultType.Error error : resultType.getError()) {
+//                                showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
+//                            }
+////                        } else {
+////                            answerProcessing.sendMessageToClient("");
+////                            answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. " +
+////                                    "идентификатор ПУ: " + resultType.getGUID());
+//                        }
+//                    }
+//                } else {
+//                    setErrorStatus(-1);
+//                }
+//            }
 
-            if (result != null && result.getImportResult() != null && result.getImportResult().size() > 0){ // если есть ответ от ГИС ЖКХ
-                for (CommonResultType resultType : result.getImportResult()) { // смотрим каждый элемент
-                    if (resultType.getError().size() > 0) { // если есть ошибки
-                        for (CommonResultType.Error error : resultType.getError()) {
-                            showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
-                        }
-                    } else {
-                        answerProcessing.sendMessageToClient("");
-                        answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. " +
-                                "идентификатор ПУ: " + resultType.getGUID());
-                    }
-                }
-            } else {
-                setErrorStatus(-1);
-            }
+//            final GetStateResult result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(request, answerProcessing);
+//
+//            if (result != null && result.getImportResult() != null && result.getImportResult().size() > 0){ // если есть ответ от ГИС ЖКХ
+//                for (CommonResultType resultType : result.getImportResult()) { // смотрим каждый элемент
+//                    if (resultType.getError().size() > 0) { // если есть ошибки
+//                        for (CommonResultType.Error error : resultType.getError()) {
+//                            showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
+//                        }
+//                    } else {
+//                        answerProcessing.sendMessageToClient("");
+//                        answerProcessing.sendMessageToClient("Обновлены показания прибора учёта. " +
+//                                "идентификатор ПУ: " + resultType.getGUID());
+//                    }
+//                }
+//            } else {
+//                setErrorStatus(-1);
+//            }
 //            } else {
 //                answerProcessing.sendMessageToClient("");
 //                answerProcessing.sendMessageToClient("Не найдены показания приборов учёта для обновления.");

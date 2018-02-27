@@ -622,8 +622,8 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         answerProcessing.sendMessageToClient("Обновлено в ГРАД: " + countUpdateGrad);
         answerProcessing.sendMessageToClient("Отправлено на добавление в ГИС ЖКХ: " + countAddedGis);
         answerProcessing.sendMessageToClient("Ошибок добавления в ГИС ЖКХ: " + countAddErrorGis);
-        answerProcessing.sendMessageToClient("Отправлено на архивировацию в ГИС ЖКХ: " + countArchiveGis);
-        answerProcessing.sendMessageToClient("Ошибок архивировации в ГИС ЖКХ: " + countArchErrorGis);
+        answerProcessing.sendMessageToClient("Отправлено на архивацию в ГИС ЖКХ: " + countArchiveGis);
+        answerProcessing.sendMessageToClient("Ошибок архивации в ГИС ЖКХ: " + countArchErrorGis);
     }
 
     /**

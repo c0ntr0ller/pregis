@@ -41,6 +41,9 @@ public class ConnectionBaseGRAD implements AutoCloseable {
      */
     public Connection getConnection() throws SQLException {
 
+        // изза больших таймаутов будем ВСЕГДА закрывать соединение, так как постоянно протухает соединение, пока отвечает ГИС
+        if (connection != null) connection.close();
+
         if (connection == null || connection.isClosed()) {
             try {
                 Class.forName("org.firebirdsql.jdbc.FBDriver");

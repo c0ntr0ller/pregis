@@ -17,7 +17,6 @@ import ru.progmatik.java.pregis.other.TextForLog;
 import ru.progmatik.java.pregis.other.UrlLoader;
 
 import javax.xml.ws.Holder;
-import java.sql.SQLException;
 
 public class OrgRegistryAsyncPort {
     private static final Logger LOGGER = Logger.getLogger(OrgRegistryAsyncPort.class);
@@ -41,12 +40,12 @@ public class OrgRegistryAsyncPort {
         OtherFormat.setPortSettings(service, port);
     }
 
-    public static GetStateResult callExportOrgRegistry(ExportOrgRegistryRequest request, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
+    public static GetStateResult callExportOrgRegistry(ExportOrgRegistryRequest request, AnswerProcessing answerProcessing) throws PreGISException {
         OrgRegistryAsyncPort orgRegistryAsyncPort = new OrgRegistryAsyncPort(answerProcessing, "ExportOrgRegistry");
         return orgRegistryAsyncPort.interactOrgRegistry(request);
     }
 
-    private GetStateResult interactOrgRegistry(Object requestObject) throws SQLException, PreGISException {
+    private GetStateResult interactOrgRegistry(Object requestObject) throws PreGISException {
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         ISRequestHeader requestHeader = OtherFormat.getISRequestHeader();

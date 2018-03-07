@@ -44,13 +44,13 @@ public final class PaymentDocumentGradDAO {
         return year;
     }
 
-    public PaymentDocumentGradDAO(AnswerProcessing answerProcessing, Connection connectionGrad) throws SQLException {
+    public PaymentDocumentGradDAO(AnswerProcessing answerProcessing) throws SQLException {
         if(answerProcessing != null) {
             this.answerProcessing = answerProcessing;
         }else{
             this.answerProcessing = new AnswerProcessing();
         }
-        this.connectionGrad = connectionGrad;
+//        this.connectionGrad = connectionGrad;
         getGradClosedPeriod();
     }
 
@@ -59,18 +59,20 @@ public final class PaymentDocumentGradDAO {
      * метод временный, потом будем спрашивать у пользователя
      */
     private void getGradClosedPeriod() throws SQLException {
-        try (Statement statement = connectionGrad.createStatement()) {
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            try (Statement statement = connection.createStatement()) {
 
-            ResultSet rs = statement.executeQuery("select RMONTH, RYEAR from EX_GIS_PERIOD(null)");
-            if(rs.next()&& rs.getInt(1) > 0 && rs.getInt(2) > 0) {
-                this.month = rs.getInt(1);
-                this.year = rs.getShort(2);
-            }else{
-                Date date = new Date(System.currentTimeMillis());
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                this.month = cal.get(Calendar.MONTH);
-                this.year = (short) cal.get(Calendar.YEAR);
+                ResultSet rs = statement.executeQuery("select RMONTH, RYEAR from EX_GIS_PERIOD(null)");
+                if (rs.next() && rs.getInt(1) > 0 && rs.getInt(2) > 0) {
+                    this.month = rs.getInt(1);
+                    this.year = rs.getShort(2);
+                } else {
+                    Date date = new Date(System.currentTimeMillis());
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(date);
+                    this.month = cal.get(Calendar.MONTH);
+                    this.year = (short) cal.get(Calendar.YEAR);
+                }
             }
         }
     }
@@ -761,19 +763,20 @@ public final class PaymentDocumentGradDAO {
             return null;
         }
         HashMap<String, String> accountNLSMap = new HashMap<>();
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            String sqlRequest = "select a.g_licschet, a.address_short\n" +
+                    "from v_abons a\n" +
+                    "join abonents2traits a2t on a2t.abonent_id = a.id\n" +
+                    "join abonent_traits t on t.id = a2t.traits_id\n" +
+                    "where t.code = 'ACCOUNTGUID'\n" +
+                    "  and a2t.traits_value = '" + GUID + "'";
 
-        String sqlRequest = "select a.g_licschet, a.address_short\n" +
-                "from v_abons a\n" +
-                "join abonents2traits a2t on a2t.abonent_id = a.id\n" +
-                "join abonent_traits t on t.id = a2t.traits_id\n" +
-                "where t.code = 'ACCOUNTGUID'\n" +
-                "  and a2t.traits_value = '" + GUID + "'";
-
-        try (Statement cstmt = connectionGrad.createStatement()) { // После использования должны все соединения закрыться
-            ResultSet resultSet = cstmt.executeQuery(sqlRequest);
-            resultSet.next();
-            accountNLSMap.put(resultSet.getString(1), resultSet.getString(2));
-            resultSet.close();
+            try (Statement cstmt = connection.createStatement()) { // После использования должны все соединения закрыться
+                ResultSet resultSet = cstmt.executeQuery(sqlRequest);
+                resultSet.next();
+                accountNLSMap.put(resultSet.getString(1), resultSet.getString(2));
+                resultSet.close();
+            }
         }
         return accountNLSMap;
     }

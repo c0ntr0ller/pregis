@@ -89,7 +89,7 @@ public class UpdateBills {
      */
     private void sendPaymentDocumentsHouse(final String fias, final HouseRecord houseGrad, final Connection connectionGrad) throws SQLException, ParseException, PreGISException {
 
-        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing, connectionGrad);
+        final PaymentDocumentGradDAO pdGradDao = new PaymentDocumentGradDAO(answerProcessing);
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Обработка дома : " + houseGrad.getAddresString());

@@ -545,7 +545,7 @@ public class UpdateBills {
         return null;
     }
 
-    private boolean generateNewDocuments(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws PreGISException {
+    private boolean generateNewDocuments(final int houseGradId, final PaymentDocumentGradDAO pdGradDao) throws PreGISException, SQLException {
         answerProcessing.sendMessageToClient("Формируются платежные документы по дому в ГРАД");
         // Генерация документов на стороне БД. Если успешно - создаем списки документов
         boolean result = pdGradDao.generatePaymentDocuments(houseGradId);
@@ -599,14 +599,16 @@ public class UpdateBills {
      * @throws SQLException
      */
     private void setResultFromGisJkh(List<ImportPaymentDocumentRequest.PaymentDocument> paymentDocuments, CommonResultType resultType, final PaymentDocumentGradDAO pdGradDao) throws SQLException {
-        for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
-            if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
-                pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType);
-                addedGisJkhCount++;
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            for (ImportPaymentDocumentRequest.PaymentDocument entry : paymentDocuments) {
+                if (entry.getTransportGUID().equalsIgnoreCase(resultType.getTransportGUID())) {
+                    pdGradDao.addPaymentDocumentRegistryItem(entry.getPaymentDocumentNumber(), resultType, connection);
+                    addedGisJkhCount++;
 //                answerProcessing.sendMessageToClient("");
 //                answerProcessing.sendMessageToClient("GUID: " + resultType.getGUID());
 //                answerProcessing.sendMessageToClient("UniqueNumber: " + resultType.getUniqueNumber());
 //                answerProcessing.sendMessageToClient("TransportGUID: " + resultType.getTransportGUID());
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.bills.*;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
+import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice01;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Invoice02;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
@@ -80,20 +81,21 @@ public final class PaymentDocumentGradDAO {
      * @param houseGradID          идентификатор дома в БД ГРАДа
      */
 
-    public boolean generatePaymentDocuments(final Integer houseGradID) throws PreGISException {
-        try {
-            CallableStatement callableStatement = connectionGrad.prepareCall("execute procedure EX_GIS_INVOICE_FILL(?, ?, ?, ?, null)");
-            callableStatement.setInt(1, this.getMonth());
-            callableStatement.setShort(2, this.getYear());
-            callableStatement.setInt(3, ResourcesUtil.instance().getCompanyGradId());
-            callableStatement.setInt(4, houseGradID);
-            callableStatement.execute();
-        }catch(SQLException e){
-            answerProcessing.sendInformationToClientAndLog("Не удалось сгенерировать ЕПД по дому " +  houseGradID, LOGGER);
-            answerProcessing.sendInformationToClientAndLog(e.getMessage(), LOGGER);
-            return false;
+    public boolean generatePaymentDocuments(final Integer houseGradID) throws PreGISException, SQLException {
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            try (CallableStatement callableStatement = connection.prepareCall("execute procedure EX_GIS_INVOICE_FILL(?, ?, ?, ?, null)")) {
+                callableStatement.setInt(1, this.getMonth());
+                callableStatement.setShort(2, this.getYear());
+                callableStatement.setInt(3, ResourcesUtil.instance().getCompanyGradId());
+                callableStatement.setInt(4, houseGradID);
+                callableStatement.execute();
+                return true;
+            } catch (SQLException e) {
+                answerProcessing.sendInformationToClientAndLog("Не удалось сгенерировать ЕПД по дому " + houseGradID, LOGGER);
+                answerProcessing.sendInformationToClientAndLog(e.getMessage(), LOGGER);
+                return false;
+            }
         }
-        return true;
     }
 
     public HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> getPaymentInformationMap(final Integer houseGradID)
@@ -101,22 +103,24 @@ public final class PaymentDocumentGradDAO {
 
         HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = new HashMap<>();
 
-        try (Statement statement = connectionGrad.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT RPAYEE_ID, RBANK_ACCOUNT, RBIK FROM EX_GIS_INVOCE03(" + month + "," + year + "," + houseGradID + ")");
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            try (Statement statement = connection.createStatement()) {
+                ResultSet rs = statement.executeQuery("SELECT RPAYEE_ID, RBANK_ACCOUNT, RBIK FROM EX_GIS_INVOCE03(" + month + "," + year + "," + houseGradID + ")");
 
-            while (rs.next()) {
-                if (rs.getString("RBANK_ACCOUNT") != null && rs.getString("RBIK") != null) {
+                while (rs.next()) {
+                    if (rs.getString("RBANK_ACCOUNT") != null && rs.getString("RBIK") != null) {
 
-                    ImportPaymentDocumentRequest.PaymentInformation paymentInformation = new ImportPaymentDocumentRequest.PaymentInformation();
-                    paymentInformation.setTransportGUID(OtherFormat.getRandomGUID());
-                    paymentInformation.setOperatingAccountNumber(rs.getString("RBANK_ACCOUNT"));
-                    paymentInformation.setBankBIK(rs.getString("RBIK"));
+                        ImportPaymentDocumentRequest.PaymentInformation paymentInformation = new ImportPaymentDocumentRequest.PaymentInformation();
+                        paymentInformation.setTransportGUID(OtherFormat.getRandomGUID());
+                        paymentInformation.setOperatingAccountNumber(rs.getString("RBANK_ACCOUNT"));
+                        paymentInformation.setBankBIK(rs.getString("RBIK"));
 
-                    paymentInformationMap.put(rs.getInt("RPAYEE_ID"), paymentInformation);
+                        paymentInformationMap.put(rs.getInt("RPAYEE_ID"), paymentInformation);
+                    }
                 }
-            }
-            if (!rs.isClosed()) {
-                rs.close();
+                if (!rs.isClosed()) {
+                    rs.close();
+                }
             }
         }
         if (paymentInformationMap.size() < 1) {
@@ -510,19 +514,20 @@ public final class PaymentDocumentGradDAO {
             throws SQLException, PreGISException, ParseException {
 
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            try (Statement statement = connection.createStatement()) {
+                ResultSet rs = statement.executeQuery("SELECT RPAYMENTDOCUMENTID FROM EX_GIS_INVOCE_WITHDRAW(" +
+                        month + ", " +
+                        year + ", " +
+                        "null, " +
+                        houseGradID + ", null)");
 
-        try (Statement statement = connectionGrad.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT RPAYMENTDOCUMENTID FROM EX_GIS_INVOCE_WITHDRAW(" +
-                    month + ", " +
-                    year + ", " +
-                    "null, " +
-                    houseGradID + ", null)");
-
-            while (rs.next()) {
-                ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
-                withdrawPaymentDocument.setPaymentDocumentID(rs.getString("RPAYMENTDOCUMENTID"));
-                withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
-                paymentDocumentWithdrawArray.add(withdrawPaymentDocument);
+                while (rs.next()) {
+                    ImportPaymentDocumentRequest.WithdrawPaymentDocument withdrawPaymentDocument = new ImportPaymentDocumentRequest.WithdrawPaymentDocument();
+                    withdrawPaymentDocument.setPaymentDocumentID(rs.getString("RPAYMENTDOCUMENTID"));
+                    withdrawPaymentDocument.setTransportGUID(OtherFormat.getRandomGUID());
+                    paymentDocumentWithdrawArray.add(withdrawPaymentDocument);
+                }
             }
         }
         return paymentDocumentWithdrawArray;
@@ -609,32 +614,34 @@ public final class PaymentDocumentGradDAO {
     private HashMap<String, Invoice01> getAccountMap(final Integer houseGradID) throws SQLException, PreGISException {
         HashMap<String, Invoice01> accountsMap = new HashMap<>();
 
-        try(Statement accountStatement = connectionGrad.createStatement()) {
-            String sqlQuery = String.format("select raccountguid, rpd_type, rpd_no, rsq_total, " +
-                            "rsq_live, rsq_heat, rtencount, rdebt, ravans, rpays_advance, " +
-                            "rbik, rbank_account, rnls, raddress from ex_gis_invoce01(%d, %s, %d, %d, null)",
-                    month, year, ResourcesUtil.instance().getCompanyGradId(), houseGradID);
-            ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            try (Statement accountStatement = connection.createStatement()) {
+                String sqlQuery = String.format("select raccountguid, rpd_type, rpd_no, rsq_total, " +
+                                "rsq_live, rsq_heat, rtencount, rdebt, ravans, rpays_advance, " +
+                                "rbik, rbank_account, rnls, raddress from ex_gis_invoce01(%d, %s, %d, %d, null)",
+                        month, year, ResourcesUtil.instance().getCompanyGradId(), houseGradID);
+                ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
 
 
-            while (accountsResultSet.next()) {
-                Invoice01 invoce01 = new Invoice01();
-                invoce01.setAccountguid(accountsResultSet.getString("raccountguid"));
-                invoce01.setAccountNLS(accountsResultSet.getString("rnls"));
-                invoce01.setAddress(accountsResultSet.getString("raddress"));
-                invoce01.setPd_type(accountsResultSet.getString("rpd_type"));
-                invoce01.setPd_no(accountsResultSet.getString("rpd_no"));
-                invoce01.setSq_total(accountsResultSet.getBigDecimal("rsq_total"));
-                invoce01.setSq_live(accountsResultSet.getBigDecimal("rsq_live"));
-                invoce01.setSq_heat(accountsResultSet.getBigDecimal("rsq_heat"));
-                invoce01.setTencount(accountsResultSet.getByte("rtencount"));
-                invoce01.setDebt(accountsResultSet.getDouble("rdebt"));
-                invoce01.setAvans(accountsResultSet.getDouble("ravans"));
-                invoce01.setPays_advance(accountsResultSet.getDouble("rpays_advance"));
-                invoce01.setBik(accountsResultSet.getString("rbik"));
-                invoce01.setBank_account(accountsResultSet.getString("rbank_account"));
+                while (accountsResultSet.next()) {
+                    Invoice01 invoce01 = new Invoice01();
+                    invoce01.setAccountguid(accountsResultSet.getString("raccountguid"));
+                    invoce01.setAccountNLS(accountsResultSet.getString("rnls"));
+                    invoce01.setAddress(accountsResultSet.getString("raddress"));
+                    invoce01.setPd_type(accountsResultSet.getString("rpd_type"));
+                    invoce01.setPd_no(accountsResultSet.getString("rpd_no"));
+                    invoce01.setSq_total(accountsResultSet.getBigDecimal("rsq_total"));
+                    invoce01.setSq_live(accountsResultSet.getBigDecimal("rsq_live"));
+                    invoce01.setSq_heat(accountsResultSet.getBigDecimal("rsq_heat"));
+                    invoce01.setTencount(accountsResultSet.getByte("rtencount"));
+                    invoce01.setDebt(accountsResultSet.getDouble("rdebt"));
+                    invoce01.setAvans(accountsResultSet.getDouble("ravans"));
+                    invoce01.setPays_advance(accountsResultSet.getDouble("rpays_advance"));
+                    invoce01.setBik(accountsResultSet.getString("rbik"));
+                    invoce01.setBank_account(accountsResultSet.getString("rbank_account"));
 
-                accountsMap.put(invoce01.getPd_no(), invoce01);
+                    accountsMap.put(invoce01.getPd_no(), invoce01);
+                }
             }
         }
         return  accountsMap;
@@ -643,82 +650,84 @@ public final class PaymentDocumentGradDAO {
     private HashMap<String, ArrayList<Invoice02>> getChargesMap(final Integer houseGradID) throws SQLException, PreGISException {
         HashMap<String, ArrayList<Invoice02>> chargesMap = new HashMap<>();
 
-        try(Statement chargesStatement = connectionGrad.createStatement()) {
-            ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
-                    "rgis_service, " +
-                    "ripu, " +
-                    "ramount_personal, " +
-                    "rodn_pu, " +
-                    "ramount_shared, " +
-                    "rtariff, " +
-                    "rrepays, " +
-                    "rexempts, " +
-                    "rcharge_legend, " +
-                    "rnorm_personal, " +
-                    "rnorm_shared, " +
-                    "rmeters_personal, " +
-                    "rmeters_shared, " +
-                    "rsumm_amount_personal, " +
-                    "rsumm_amount_shared, " +
-                    "rrepays_text, " +
-                    "rrepays_sum, " +
-                    "rrassroch_current, " +
-                    "rrassroch_other, " +
-                    "rrassroch_percentsum, " +
-                    "rrassroch_percent, " +
-                    "rforpay, " +
-                    "rgis_service_uiid," +
-                    "rgis_service_code," +
-                    "rgis_service_code_parent," +
-                    "rcharge_total," +
-                    "rpayee_id " +
-                    "from ex_gis_invoce02(" + month + ", " +
-                    year + ", " +
-                    ResourcesUtil.instance().getCompanyGradId() + ", " +
-                    houseGradID + ", null)");
+        try(Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+            try (Statement chargesStatement = connection.createStatement()) {
+                ResultSet charges = chargesStatement.executeQuery("select rpd_no, " +
+                        "rgis_service, " +
+                        "ripu, " +
+                        "ramount_personal, " +
+                        "rodn_pu, " +
+                        "ramount_shared, " +
+                        "rtariff, " +
+                        "rrepays, " +
+                        "rexempts, " +
+                        "rcharge_legend, " +
+                        "rnorm_personal, " +
+                        "rnorm_shared, " +
+                        "rmeters_personal, " +
+                        "rmeters_shared, " +
+                        "rsumm_amount_personal, " +
+                        "rsumm_amount_shared, " +
+                        "rrepays_text, " +
+                        "rrepays_sum, " +
+                        "rrassroch_current, " +
+                        "rrassroch_other, " +
+                        "rrassroch_percentsum, " +
+                        "rrassroch_percent, " +
+                        "rforpay, " +
+                        "rgis_service_uiid," +
+                        "rgis_service_code," +
+                        "rgis_service_code_parent," +
+                        "rcharge_total," +
+                        "rpayee_id " +
+                        "from ex_gis_invoce02(" + month + ", " +
+                        year + ", " +
+                        ResourcesUtil.instance().getCompanyGradId() + ", " +
+                        houseGradID + ", null)");
 
-            while (charges.next()) {
-                Invoice02 invoice02 = new Invoice02();
-                invoice02.setPd_no(charges.getString("rpd_no"));
-                invoice02.setGis_service(charges.getString("rgis_service"));
-                invoice02.setGis_service_uiid(charges.getString("rgis_service_uiid"));
-                invoice02.setIpu(charges.getString("ripu"));
-                invoice02.setAmount_personal(charges.getDouble("ramount_personal"));
-                invoice02.setOdn_pu(charges.getString("rodn_pu"));
-                invoice02.setAmount_shared(charges.getDouble("ramount_shared"));
-                invoice02.setTariff(charges.getBigDecimal("rtariff"));
-                invoice02.setRepays(charges.getBigDecimal("rrepays"));
-                invoice02.setExempts(charges.getBigDecimal("rexempts"));
-                invoice02.setCharge_legend(charges.getString("rcharge_legend"));
-                invoice02.setNorm_personal(charges.getDouble("rnorm_personal"));
-                invoice02.setNorm_shared(charges.getDouble("rnorm_shared"));
-                invoice02.setMeters_personal(charges.getString("rmeters_personal"));
-                invoice02.setMeters_shared(charges.getString("rmeters_shared"));
-                invoice02.setSumm_amount_personal(charges.getDouble("rsumm_amount_personal"));
-                invoice02.setSumm_amount_shared(charges.getDouble("rsumm_amount_shared"));
-                invoice02.setRepays_text(charges.getString("rrepays_text"));
-                invoice02.setRepays_sum(charges.getBigDecimal("rrepays_sum"));
-                invoice02.setRassroch_current(charges.getDouble("rrassroch_current"));
-                invoice02.setRassroch_other(charges.getDouble("rrassroch_other"));
-                invoice02.setRassroch_percentsum(charges.getDouble("rrassroch_percentsum"));
-                invoice02.setRassroch_percent(charges.getDouble("rrassroch_percent"));
-                invoice02.setForpay(charges.getBigDecimal("rforpay"));
-                invoice02.setCode(charges.getString("rgis_service_code"));
-                invoice02.setCode_parent(charges.getString("rgis_service_code_parent"));
-                invoice02.setCharge_total(charges.getBigDecimal("rcharge_total"));
-                invoice02.setPayee_id(charges.getInt("rpayee_id"));
+                while (charges.next()) {
+                    Invoice02 invoice02 = new Invoice02();
+                    invoice02.setPd_no(charges.getString("rpd_no"));
+                    invoice02.setGis_service(charges.getString("rgis_service"));
+                    invoice02.setGis_service_uiid(charges.getString("rgis_service_uiid"));
+                    invoice02.setIpu(charges.getString("ripu"));
+                    invoice02.setAmount_personal(charges.getDouble("ramount_personal"));
+                    invoice02.setOdn_pu(charges.getString("rodn_pu"));
+                    invoice02.setAmount_shared(charges.getDouble("ramount_shared"));
+                    invoice02.setTariff(charges.getBigDecimal("rtariff"));
+                    invoice02.setRepays(charges.getBigDecimal("rrepays"));
+                    invoice02.setExempts(charges.getBigDecimal("rexempts"));
+                    invoice02.setCharge_legend(charges.getString("rcharge_legend"));
+                    invoice02.setNorm_personal(charges.getDouble("rnorm_personal"));
+                    invoice02.setNorm_shared(charges.getDouble("rnorm_shared"));
+                    invoice02.setMeters_personal(charges.getString("rmeters_personal"));
+                    invoice02.setMeters_shared(charges.getString("rmeters_shared"));
+                    invoice02.setSumm_amount_personal(charges.getDouble("rsumm_amount_personal"));
+                    invoice02.setSumm_amount_shared(charges.getDouble("rsumm_amount_shared"));
+                    invoice02.setRepays_text(charges.getString("rrepays_text"));
+                    invoice02.setRepays_sum(charges.getBigDecimal("rrepays_sum"));
+                    invoice02.setRassroch_current(charges.getDouble("rrassroch_current"));
+                    invoice02.setRassroch_other(charges.getDouble("rrassroch_other"));
+                    invoice02.setRassroch_percentsum(charges.getDouble("rrassroch_percentsum"));
+                    invoice02.setRassroch_percent(charges.getDouble("rrassroch_percent"));
+                    invoice02.setForpay(charges.getBigDecimal("rforpay"));
+                    invoice02.setCode(charges.getString("rgis_service_code"));
+                    invoice02.setCode_parent(charges.getString("rgis_service_code_parent"));
+                    invoice02.setCharge_total(charges.getBigDecimal("rcharge_total"));
+                    invoice02.setPayee_id(charges.getInt("rpayee_id"));
 
-                if (invoice02.getCode() == null) {
-                    throw new PreGISException("Отсутствует код услуги ГИС!");
+                    if (invoice02.getCode() == null) {
+                        throw new PreGISException("Отсутствует код услуги ГИС!");
+                    }
+
+                    ArrayList<Invoice02> invoceList = chargesMap.get(invoice02.getPd_no());
+
+                    if (invoceList == null) {
+                        invoceList = new ArrayList<Invoice02>();
+                        chargesMap.put(invoice02.getPd_no(), invoceList);
+                    }
+                    invoceList.add(invoice02);
                 }
-
-                ArrayList<Invoice02> invoceList = chargesMap.get(invoice02.getPd_no());
-
-                if (invoceList == null) {
-                    invoceList = new ArrayList<Invoice02>();
-                    chargesMap.put(invoice02.getPd_no(), invoceList);
-                }
-                invoceList.add(invoice02);
             }
         }
         return chargesMap;
@@ -728,11 +737,12 @@ public final class PaymentDocumentGradDAO {
      * Метод устанавливает
      * @param paymentDocumentNumber - номер ЕПД в Град
      * @param resultType - результат с присвоенными ГИС идентификаторами
+     * @param connection - соединение с БД. Передается, так как при обработке пакета данных выгоднее переиспользовать соединение, а не открывать его заново
      */
     public void addPaymentDocumentRegistryItem(final String paymentDocumentNumber,
-                                               final CommonResultType resultType){
-        try {
-            connectionGrad.createStatement().execute(String.format("update EX_GIS_INVOCES set RPD_GIS_NO = '%s', GISUNIQUENUMBER = '%s' where RPD_NO = '%s'", resultType.getGUID(), resultType.getUniqueNumber(), paymentDocumentNumber));
+                                               final CommonResultType resultType, Connection connection){
+        try (Statement statement = connection.createStatement()){
+            statement.execute(String.format("update EX_GIS_INVOCES set RPD_GIS_NO = '%s', GISUNIQUENUMBER = '%s' where RPD_NO = '%s'", resultType.getGUID(), resultType.getUniqueNumber(), paymentDocumentNumber));
         }catch(SQLException e){
             answerProcessing.sendInformationToClientAndLog("Не удалось выставить идентификаторы из ГИС ЖКХ документу с номером  " +  paymentDocumentNumber + "; " + e.getMessage(), LOGGER);
         }

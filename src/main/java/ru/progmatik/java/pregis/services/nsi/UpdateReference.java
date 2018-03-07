@@ -27,12 +27,12 @@ package ru.progmatik.java.pregis.services.nsi;
  */
 
 import org.apache.log4j.Logger;
+import ru.gosuslugi.dom.schema.integration.nsi.ExportNsiItemResult;
 import ru.gosuslugi.dom.schema.integration.nsi.ExportNsiPagingItemResult;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementNsiRefFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementStringFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementType;
-import ru.gosuslugi.dom.schema.integration.nsi.ExportNsiItemResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
@@ -169,7 +169,7 @@ public class UpdateReference {
 
             checkElementInBase(nsiElements, mapNsiWithCodeNsi);
 
-            if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
+            if (!listForAdd.isEmpty()) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
 
                 answerProcessing.sendMessageToClient("Загружаю дополнительные справочники...");
                 final ArrayList<ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult> nsiItemResults = loadOtherNsi();
@@ -228,7 +228,7 @@ public class UpdateReference {
                     }
                 }
 
-                if (listForAdd.size() > 0) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
+                if (!listForAdd.isEmpty()) { // если есть элементы для добавления, только тогда запустим формирование объекта пригодного для сохранения в БД.
 
                     answerProcessing.sendMessageToClient("Обновляю справочники в БД...");
                     addItemsInDB(mapNsiWithCodeNsi, nsiDataSet.getCode(), null, connectionGrad);
@@ -387,7 +387,7 @@ public class UpdateReference {
         getCodeNsiItem(listForAdd);
         final ArrayList<ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult> nsiItemResults = new ArrayList<>();
 
-        if (codeNsiItemsSet.size() > 0) {
+        if (!codeNsiItemsSet.isEmpty()) {
             final ExportNsiItem exportNsiItem = new ExportNsiItem(answerProcessing);
             for (BigInteger codeNsi : codeNsiItemsSet) {
                 nsiItemResults.add(exportNsiItem.callExportNsiItem(NsiListGroupEnum.NSI, codeNsi));

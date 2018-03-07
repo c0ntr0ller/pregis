@@ -125,7 +125,7 @@ public final class PaymentDocumentGradDAO {
                 }
             }
         }
-        if (paymentInformationMap.size() < 1) {
+        if (paymentInformationMap.isEmpty()) {
             answerProcessing.sendInformationToClientAndLog("Не удалось получить реквизиты из процедуры EX_GIS_INVOCE03 по дому Град ИД " + houseGradID, LOGGER);
         }
         return paymentInformationMap;
@@ -150,7 +150,7 @@ public final class PaymentDocumentGradDAO {
         HashMap<String, Invoice01> invocesMapGrad = getAccountMap(houseGradID);
 
         // если нечего посылать - возвращаем пусто
-        if (invocesMapGrad == null || invocesMapGrad.size() == 0){
+        if (invocesMapGrad == null || invocesMapGrad.isEmpty()){
             return null;
         }
 
@@ -158,7 +158,7 @@ public final class PaymentDocumentGradDAO {
         HashMap<String, ArrayList<Invoice02>> chargesMapGrad = getChargesMap(houseGradID);
 
         // если нечего посылать - возвращаем пусто
-        if (chargesMapGrad == null || chargesMapGrad.size() == 0){
+        if (chargesMapGrad == null || chargesMapGrad.isEmpty()){
             return null;
         }
 
@@ -167,7 +167,7 @@ public final class PaymentDocumentGradDAO {
             // выделяем начисления данного ЛС
             ArrayList<Invoice02> accountCharges = chargesMapGrad.get(invoceGrad.getValue().getPd_no());
             // если начислений нет - не отсылаем этот адрес, переходим к другому
-            if (accountCharges == null || accountCharges.size() == 0) continue;
+            if (accountCharges == null || accountCharges.isEmpty()) continue;
 
             // GUID абонента проверяем
             if(invoceGrad.getValue().getAccountguid() == null || invoceGrad.getValue().getAccountguid().equals("")){

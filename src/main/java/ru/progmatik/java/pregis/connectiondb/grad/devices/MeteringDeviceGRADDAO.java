@@ -479,7 +479,7 @@ public class MeteringDeviceGRADDAO{
      * @throws PreGISException
      */
     public int updateGradMeteringDevices(Map<MeteringDeviceID, ExportMeteringDeviceDataResultType> devicesToUpdate) throws SQLException, PreGISException {
-        if(devicesToUpdate == null || devicesToUpdate.size() == 0) return 0;
+        if(devicesToUpdate == null || devicesToUpdate.isEmpty()) return 0;
 
         int countToGrad = 0;
         try(Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()){
@@ -994,7 +994,7 @@ public class MeteringDeviceGRADDAO{
             return;
         }
 
-        if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
+        if ((importResult.getCommonResult() != null) && !(importResult.getCommonResult().isEmpty())) {
 
             try(Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()){
                 // бежим по результатам импорта в ГИС
@@ -1004,7 +1004,7 @@ public class MeteringDeviceGRADDAO{
                     if(devicesMap.containsKey(result.getTransportGUID())) {
 
                         // если занеслось в ГИС без ошибок
-                        if (result.getError() == null || result.getError().size() == 0) {
+                        if (result.getError() == null || result.getError().isEmpty()) {
 
                             // выставляем в Град идентификаторы ПУ
                             setMeteringDeviceUniqueNumbers(devicesMap.get(result.getTransportGUID()),

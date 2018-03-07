@@ -102,10 +102,10 @@ public class MeteringDeviceToArchive{
      */
     public void setMeteringDevices(ImportResult importResult, Connection connectionGrad) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
 
-        if (importResult.getCommonResult() != null && importResult.getCommonResult().size() > 0) {
+        if (importResult.getCommonResult() != null && !importResult.getCommonResult().isEmpty()) {
             for (ImportResult.CommonResult result : importResult.getCommonResult()) {
 
-                if (result.getError() == null || result.getError().size() == 0) {
+                if (result.getError() == null || result.getError().isEmpty()) {
                     setMeteringDevices(result.getImportMeteringDevice().getMeteringDeviceGUID(),
                             result.getTransportGUID(), connectionGrad);
                 } else {
@@ -118,7 +118,7 @@ public class MeteringDeviceToArchive{
             ru.gosuslugi.dom.schema.integration.base.ImportResult castResult = graddao.getImportResultLastFromDataBase();
             for (CommonResultType resultType : castResult.getCommonResult()) {
 
-                if (resultType.getError() == null || resultType.getError().size() == 0) {
+                if (resultType.getError() == null || resultType.getError().isEmpty()) {
                     LOGGER.debug("Active: base.ImportResult.");
 //                Этот объект вместо getGuid содержит meteringVersionGUID.
                     setMeteringDevices(resultType.getGUID(), resultType.getTransportGUID(), connectionGrad);

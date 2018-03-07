@@ -145,7 +145,7 @@ public final class HouseGRADDAO {
 
         final List<String> allListHouseData = getMKDHousesFromGrad(connectionGrad);
         final LinkedHashMap<String, HouseRecord> mapMkd = new LinkedHashMap<>();
-        if (allListHouseData.size() > 0) {
+        if (!allListHouseData.isEmpty()) {
             for (String itemListHouse : allListHouseData) {
                 if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
                     String[] houseAllData = getAllData(itemListHouse);
@@ -167,9 +167,9 @@ public final class HouseGRADDAO {
                 }
             }
         }
-        if (mapMkd.size() == 0)
+        if (mapMkd.isEmpty()) {
             return null;
-        else {
+        } else {
             return mapMkd;
         }
     }
@@ -186,7 +186,7 @@ public final class HouseGRADDAO {
 
         final ArrayList<String> allListHouseData = getJdHousesFromGrad(connectionGrad);
         final LinkedHashMap<String, HouseRecord> mapJd = new LinkedHashMap<>();
-        if (allListHouseData.size() > 1) { // Если в листе вообще есть данные тогда
+        if (!allListHouseData.isEmpty()) { // Если в листе вообще есть данные тогда
             for (String itemListHouse : allListHouseData) {
                 if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
                     String[] houseAllData = getAllData(itemListHouse);
@@ -209,7 +209,7 @@ public final class HouseGRADDAO {
             }
         } else return null; // если в листе нет данных вернем null
 
-        if (mapJd.size() == 0)
+        if (mapJd.isEmpty())
             return null;
         else {
             return mapJd;
@@ -251,7 +251,7 @@ public final class HouseGRADDAO {
             }
         }
 
-        if (mapAllHouseWithIdGis.size() == 0)
+        if (mapAllHouseWithIdGis.isEmpty())
             return null;
         else
             return mapAllHouseWithIdGis;
@@ -312,7 +312,7 @@ public final class HouseGRADDAO {
 
         final List<Integer> abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, isResidential, connectionGrad);
 
-        if (abonentId != null && abonentId.size() > 0) {
+        if (abonentId != null && !abonentId.isEmpty()) {
             // ИД дома(:building_id),
             // ИД абонента(:abon_id),
             // ИД прибора учета(:meter_id),
@@ -417,7 +417,7 @@ public final class HouseGRADDAO {
 
         final List<Integer> abonentId = findAbonId(idHouse, apartmentNumber, roomNumber, isResidential);
 
-        if ((abonentId == null || abonentId.size() == 0) && roomNumber == null) {
+        if (((abonentId == null) || abonentId.isEmpty()) && (roomNumber == null)) {
             answerProcessing.sendMessageToClient(String.format("ИД абонента для помещения: %s не найден! ИД дома: %d", apartmentNumber, idHouse)); //!!!------
 //            throw new PreGISException(String.format("ИД абонента для помещения: %s не найден! ИД дома: %d", apartmentNumber, idHouse));
         } else if ((abonentId == null || abonentId.size() == 0)) {
@@ -461,8 +461,8 @@ public final class HouseGRADDAO {
                 }
             }
         }
-        if (abonIDs.size() == 0) {// если ничего не нашли
-            if (wasApartmentNumber.size() > 0){// но стаким номером квартиры всетаки был
+        if (abonIDs.isEmpty()) {// если ничего не нашли
+            if (!wasApartmentNumber.isEmpty()){// но стаким номером квартиры всетаки был
                 abonIDs.addAll(wasApartmentNumber);
                 return abonIDs;
             }

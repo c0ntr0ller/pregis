@@ -595,7 +595,7 @@ public final class ProgramAction {
                 }
             }
             // если домов с HOUSEUNIQNUM нет вообще - добавляем ВСЕ дома, это нужно дя первого обмена
-            if (listHouseModalWindow.size() == 0) {
+            if (listHouseModalWindow.isEmpty()) {
                 if (houseAddedGisJkh != null && !houseAddedGisJkh.isEmpty()) {
                     for (Map.Entry<String, HouseRecord> entry : houseAddedGisJkh.entrySet()) {
                             listHouseModalWindow.add(new ValueJSON(
@@ -605,7 +605,7 @@ public final class ProgramAction {
                 }
             }
 
-            if (listHouseModalWindow.size() > 0) {
+            if (!listHouseModalWindow.isEmpty()) {
                 answerProcessing.showHouseListModalWindow(listHouseModalWindow);
             } else {
                 setStateRunOn();

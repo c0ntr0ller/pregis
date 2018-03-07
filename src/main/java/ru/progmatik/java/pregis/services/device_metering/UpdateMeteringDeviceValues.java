@@ -182,7 +182,7 @@ public final class UpdateMeteringDeviceValues {
             }
         }
 
-        if (devicesValuesList.size() > 0) { // если есть показания для отправки в ГИС ЖКХ
+        if (!devicesValuesList.isEmpty()) { // если есть показания для отправки в ГИС ЖКХ
 
             int count = 0;
             while (count < devicesValuesList.size()) {
@@ -197,9 +197,9 @@ public final class UpdateMeteringDeviceValues {
                 }
 
                 // обрабатываем результат
-                if (result != null && result.getImportResult() != null && result.getImportResult().size() > 0){ // если есть ответ от ГИС ЖКХ
+                if (result != null && result.getImportResult() != null && !result.getImportResult().isEmpty()){ // если есть ответ от ГИС ЖКХ
                     for (CommonResultType resultType : result.getImportResult()) { // смотрим каждый элемент
-                        if (resultType.getError().size() > 0) { // если есть ошибки
+                        if (!resultType.getError().isEmpty()) { // если есть ошибки
                             for (CommonResultType.Error error : resultType.getError()) {
                                 showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
                             }
@@ -287,7 +287,7 @@ public final class UpdateMeteringDeviceValues {
             nsiList.add(nsiRef);
         }
 
-        if (nsiList.size() == 0){
+        if (nsiList.isEmpty()){
             answerProcessing.sendErrorToClientNotException("Не загружен справочник типов ПУ, обмен невозможен");
             return null;
         }

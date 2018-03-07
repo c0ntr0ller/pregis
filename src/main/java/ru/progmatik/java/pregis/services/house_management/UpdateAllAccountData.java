@@ -88,7 +88,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         errorState = 0;
                     } else if (stateResult.getErrorMessage() != null && stateResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
                         checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue().getGrad_id(), connectionGRAD);
-                    } else if(stateResult.getErrorMessage() != null || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0){
+                    } else if((stateResult.getErrorMessage() != null) || (stateResult.getExportAccountResult() == null) || stateResult.getExportAccountResult().isEmpty()){
                         errorState = 0;
                     }else {
                         countAllGisJkh += stateResult.getExportAccountResult().size();
@@ -250,7 +250,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 }
             }
         }
-        if (accountDataMap.size() > 0) {
+        if (!accountDataMap.isEmpty()) {
             sendAccountDataToGISJKH(accountDataMap, houseId, connection);
         } else {
             answerProcessing.sendMessageToClient("");
@@ -523,7 +523,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 for (ImportResult importResult : result.getImportResult()) {
                     for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
 
-                        if (commonResult.getError() == null || commonResult.getError().size() == 0) {
+                        if (commonResult.getError() == null || commonResult.getError().isEmpty()) {
                             countAdded++;
                             setAccountToBase(houseId,
                                     accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
@@ -592,7 +592,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      */
     private void closeAccountData(ArrayList<ImportAccountRequest.Account> listForClose) {
 
-        if (listForClose.size() > 0) {
+        if (!listForClose.isEmpty()) {
 
             answerProcessing.sendMessageToClient("Закрытие ЛС...");
             // ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
@@ -613,7 +613,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                     for (ImportResult importResult : result.getImportResult()) {
                         for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
-                            if (commonResult.getError() == null || commonResult.getError().size() == 0) {
+                            if (commonResult.getError() == null || commonResult.getError().isEmpty()) {
                                 answerProcessing.sendMessageToClient("");
                                 answerProcessing.sendMessageToClient(String.format("Уникальный номер абонента ГИС ЖКХ: %s, успешно закрыт.", commonResult.getUniqueNumber()));
                             } else {

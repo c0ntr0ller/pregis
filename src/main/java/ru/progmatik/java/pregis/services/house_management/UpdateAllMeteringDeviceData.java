@@ -267,18 +267,18 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                     .filter(e->e.getStatusRootDoc().equalsIgnoreCase("Active"))
                     .filter(e->(e.getBasicChatacteristicts().getCollectiveDevice() == null))
                     .collect(Collectors.toList()));
-            if(archiveGISList.size() > 0) {
+            if(!archiveGISList.isEmpty()) {
                 if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на архивацию в ГИС: " + archiveGISList.size());
             }
         }
 
         // все что осталось в ПУ из ГРАД заносим на создание в ГИС
-        if(devicesMapGrad != null && devicesMapGrad.size() > 0) {
+        if(devicesMapGrad != null && !devicesMapGrad.isEmpty()) {
             insertGISMap.putAll(devicesMapGrad);
             if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на добавление в ГИС: " + insertGISMap.size());
         }
 
-        if(updateGRADMap.size() > 0){
+        if(!updateGRADMap.isEmpty()){
             if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на обновление в Град: " + updateGRADMap.size());
         }
 
@@ -349,7 +349,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         List<ExportMeteringDeviceDataResultType> devicesGIS = stateResult.getExportMeteringDeviceDataResult();
         List<ExportMeteringDeviceDataResultType> devicesArchivedODPU = null;
 
-        if (devicesGIS == null || devicesGIS.size() == 0) {
+        if (devicesGIS == null || devicesGIS.isEmpty()) {
             answerProcessing.sendInformationToClientAndLog("Получено ПУ из ГИС: 0, обработка невозможна", LOGGER);
             return;
         }
@@ -360,7 +360,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 .collect(Collectors.toList());
         answerProcessing.sendInformationToClientAndLog("Получено архивированных ОДПУ: " + devicesArchivedODPU.size(), LOGGER);
 
-        if(devicesArchivedODPU.size() == 0){
+        if(devicesArchivedODPU.isEmpty()){
             return;
         }
 
@@ -402,7 +402,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         }
 
         // преобразуем в ПУ на создание
-        if (devicesArchivedODPU.size() == 0){
+        if (!devicesArchivedODPU.isEmpty()){
             answerProcessing.sendInformationToClientAndLog("ОДПУ на пересоздание: " + devicesArchivedODPU.size(), LOGGER);
             return;
         }
@@ -466,7 +466,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
             //final ExportMeteringDeviceData exportMeteringDeviceData = new ExportMeteringDeviceData(answerProcessing);
             List<ExportMeteringDeviceDataResultType> exportMeteringDeviceDataResultList =  HomeManagementAsyncPort.callExportMeteringDeviceData(fias,answerProcessing).getExportMeteringDeviceDataResult();
 
-            if (exportMeteringDeviceDataResultList != null && exportMeteringDeviceDataResultList.size() > 0) {
+            if (exportMeteringDeviceDataResultList != null && !exportMeteringDeviceDataResultList.isEmpty()) {
                 final LinkedHashMap<String, ImportMeteringDeviceDataRequest.MeteringDevice> deviceForArchive = new LinkedHashMap<>();
 
                 for (ExportMeteringDeviceDataResultType resultType : exportMeteringDeviceDataResultList) {
@@ -662,7 +662,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      */
     private void callImportMeteringDevices(final Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> devicesMap,
                                            final HouseRecord houseRecord, MeteringDeviceGRADDAO meteringDeviceGRADDAO, boolean archive) throws SQLException, FileNotFoundException, SOAPException, JAXBException, PreGISException {
-        if (devicesMap == null || devicesMap.size() == 0) return;
+        if (devicesMap == null || devicesMap.isEmpty()) return;
         answerProcessing.sendMessageToClient("Вызов импорта для дома " + houseRecord.getAddresStringShort() + ". Кол-во ПУ: "  + devicesMap.size());
         // создаем список устройств для удобства разделения на небольшие партии
         List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = new ArrayList<>(devicesMap.values());

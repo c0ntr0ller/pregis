@@ -4,7 +4,9 @@ import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.model.Organization;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -57,18 +59,19 @@ public class OrganizationDAO {
      */
     public ArrayList<Organization> getAllOrganizations() throws SQLException {
 
-        ArrayList<Organization> orgList = new ArrayList<>();
-        try (Connection connection = ConnectionDB.instance().getConnectionDB();
-             Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery("SELECT " +
-                "ID, FULL_NAME, SHORT_NAME, OGRN, INN, KPP, ORG_ROOT_ENTITY_GUID, ORG_PPA_GUID, ROLE, GRAD_ID, DESCRIPTION " +
-                "FROM ORGANIZATION")) {
-            while (rs.next()) {
-                orgList.add(new Organization(
-                        rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-                        rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getInt(10), rs.getString(11)));
-            }
-        }
-        return orgList.size() > 0 ? orgList : null;
+//        ArrayList<Organization> orgList = new ArrayList<>();
+//        try (Connection connection = ConnectionDB.instance().getConnectionDB();
+//             Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery("SELECT " +
+//                "ID, FULL_NAME, SHORT_NAME, OGRN, INN, KPP, ORG_ROOT_ENTITY_GUID, ORG_PPA_GUID, ROLE, GRAD_ID, DESCRIPTION " +
+//                "FROM ORGANIZATION")) {
+//            while (rs.next()) {
+//                orgList.add(new Organization(
+//                        rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+//                        rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getInt(10), rs.getString(11)));
+//            }
+//        }
+//        return orgList.size() > 0 ? orgList : null;
+        return null;
     }
 
     /**
@@ -78,10 +81,10 @@ public class OrganizationDAO {
      */
     public String getOrgPPAGUID() throws SQLException {
 
-        ArrayList<Organization> organizations = getAllOrganizations();
-        if (organizations != null) {
-            return organizations.get(0).getOrgPPAGUID();
-        }
+//        ArrayList<Organization> organizations = getAllOrganizations();
+//        if (organizations != null) {
+//            return organizations.get(0).getOrgPPAGUID();
+//        }
         return null;
     }
 
@@ -110,12 +113,12 @@ public class OrganizationDAO {
      * @throws SQLException
      */
     private Organization isAddedByOgrn(Organization dataSet) throws SQLException {
-        ArrayList<Organization> organizations = getAllOrganizations();
-        if (organizations != null) {
-            for (Organization organization : organizations) {
-                if (dataSet.getOgrn().equalsIgnoreCase(organization.getOgrn())) return organization;
-            }
-        }
+//        ArrayList<Organization> organizations = getAllOrganizations();
+//        if (organizations != null) {
+//            for (Organization organization : organizations) {
+//                if (dataSet.getOgrn().equalsIgnoreCase(organization.getOgrn())) return organization;
+//            }
+//        }
         return null;
     }
 

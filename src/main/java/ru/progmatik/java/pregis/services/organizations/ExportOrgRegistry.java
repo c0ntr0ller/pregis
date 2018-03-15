@@ -5,7 +5,6 @@ import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportO
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.ExportOrgRegistryResultType;
 import ru.gosuslugi.dom.schema.integration.organizations_registry_common.GetStateResult;
 import ru.progmatik.java.pregis.connectiondb.grad.organization.OrganizationGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.localdb.organization.OrganizationDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.model.Organization;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -14,6 +13,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -71,7 +71,7 @@ public class ExportOrgRegistry {
         GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(null), answerProcessing);
         if(result.getExportOrgRegistryResult() != null && result.getExportOrgRegistryResult().size() > 0){
 
-            final OrganizationDAO organizationDAO = new OrganizationDAO();
+            // final OrganizationDAO organizationDAO = new OrganizationDAO();
 
             ExportOrgRegistryResultType exportOrgRegistryResult = result.getExportOrgRegistryResult().get(0); // пока берем первую, надо переделать для РКЦ
             Organization dataSet = new Organization(
@@ -87,7 +87,7 @@ public class ExportOrgRegistry {
                     exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID()); // Примечание
 
 
-            organizationDAO.addOrganization(dataSet);
+            // organizationDAO.addOrganization(dataSet);
             OrganizationGRADDAO.setOrgToGrad(dataSet, answerProcessing);
 
             HashMap<Integer, Organization> orgsMap = new HashMap<>();
@@ -196,5 +196,40 @@ public class ExportOrgRegistry {
             OrganizationGRADDAO.setOrgListToGrad(orgs, answerProcessing);
             OrgsSettings.setOrgsMap(orgs);
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Map<String, Organization> getOrgsVersionFromGis(List<String> ogrnList){
+        Map<String, Organization> ogrn2Org = new HashMap<>();
+
+
+        for(String ogrn:ogrnList){
+            try {
+
+                GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(ogrn), answerProcessing);
+
+                ExportOrgRegistryResultType exportOrgRegistryResult = result.getExportOrgRegistryResult().get(0);
+                if (!exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID().isEmpty()) {
+                    Organization organization = new Organization();
+                    organization.setFullName(exportOrgRegistryResult.getOrgVersion().getLegal().getFullName());
+                    organization.setShortName(exportOrgRegistryResult.getOrgVersion().getLegal().getShortName());
+                    organization.setInn(exportOrgRegistryResult.getOrgVersion().getLegal().getINN());
+                    organization.setKpp(exportOrgRegistryResult.getOrgVersion().getLegal().getKPP());
+                    organization.setOrgRootEntityGUID(exportOrgRegistryResult.getOrgRootEntityGUID());
+                    organization.setOrgPPAGUID(exportOrgRegistryResult.getOrgPPAGUID());
+                    organization.setRole(String.join(",", exportOrgRegistryResult.getOrganizationRoles().stream().map(NsiRef::getName).collect(Collectors.toList())));
+                    organization.setOrgVersionGUID(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID());
+                    organization.setDescription(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID()); // Примечание
+
+                    ogrn2Org.put(ogrn, organization);
+                }
+            } catch (PreGISException e) {
+                answerProcessing.sendErrorToClientNotException("ГИС ЖКХ не вернула идентификаторы организаций!");
+            }
+        }
+        return ogrn2Org;
     }
 }

@@ -99,7 +99,7 @@ public class BasicInformation {
      * Целочисленное поле строго 13 или 15 символов, обязательное поле,
      * если потребитель - индивидуальный предприниматель или юридическое лицо
      */
-    private long ogrnOrOgrnip;
+    private String ogrnOrOgrnip;
 
     /**
      * КПП нанимателя (для ОП).
@@ -107,7 +107,7 @@ public class BasicInformation {
      * Целочисленное поле строго 9 символов, обязательное поле,
      * если наниматель – обособленное подразделение юридического лица.
      */
-    private int kpp;
+    private String kpp;
 
     /**
      * Общая площадь, кв. м.
@@ -144,6 +144,36 @@ public class BasicInformation {
      * Цифровое поле, до 4 символов.
      */
     private int amountLiving;
+
+    /**
+     * ИД помещения ГИС
+     */
+    private String premisesGUID;
+    /**
+     * ИД комнаты ГИС
+     */
+    private String livingRoomGUID;
+
+    /**
+     * Идентификатор ЛС в ГИС ЖКХ
+     */
+    private String accountGUID;
+
+    /**
+     * Единый лицевой счет ГИС
+     */
+    private String unifiedAccountNumber;
+
+    /**
+     * Идентификатор жилищно-коммунальной услуги (на самом деле это ЛС для конкретной организации, так как Ланит уроды)
+     */
+    private String serviceID;
+
+    /**
+     * Идентификатор версии записи в реестре организаций ГИС
+     */
+    private String orgVersionGUID;
+
 
     /**
      * Получить номер ЛС (иной идентификатор потребителя).
@@ -359,7 +389,7 @@ public class BasicInformation {
      * Целочисленное поле строго 13 или 15 символов, обязательное поле,
      * если потребитель - индивидуальный предприниматель или юридическое лицо
      */
-    public long getOgrnOrOgrnip() {
+    public String getOgrnOrOgrnip() {
         return ogrnOrOgrnip;
     }
 
@@ -369,7 +399,7 @@ public class BasicInformation {
      * Целочисленное поле строго 13 или 15 символов, обязательное поле,
      * если потребитель - индивидуальный предприниматель или юридическое лицо
      */
-    public void setOgrnOrOgrnip(long ogrnOrOgrnip) {
+    public void setOgrnOrOgrnip(String ogrnOrOgrnip) {
         this.ogrnOrOgrnip = ogrnOrOgrnip;
     }
 
@@ -379,7 +409,7 @@ public class BasicInformation {
      * Целочисленное поле строго 9 символов, обязательное поле,
      * если наниматель – обособленное подразделение юридического лица.
      */
-    public int getKpp() {
+    public String getKpp() {
         return kpp;
     }
 
@@ -389,7 +419,7 @@ public class BasicInformation {
      * Целочисленное поле строго 9 символов, обязательное поле,
      * если наниматель – обособленное подразделение юридического лица.
      */
-    public void setKpp(int kpp) {
+    public void setKpp(String kpp) {
         this.kpp = kpp;
     }
 
@@ -483,4 +513,51 @@ public class BasicInformation {
         this.gradID = gradID;
     }
 
+    public String getPremisesGUID() {
+        return premisesGUID;
+    }
+
+    public void setPremisesGUID(String premisesGUID) {
+        this.premisesGUID = premisesGUID;
+    }
+
+    public String getLivingRoomGUID() {
+        return livingRoomGUID;
+    }
+
+    public void setLivingRoomGUID(String livingRoomGUID) {
+        this.livingRoomGUID = livingRoomGUID;
+    }
+
+    public String getAccountGUID() {
+        return accountGUID;
+    }
+
+    public void setAccountGUID(String accountGUID) {
+        this.accountGUID = accountGUID;
+    }
+
+    public String getUnifiedAccountNumber() {
+        return unifiedAccountNumber;
+    }
+
+    public void setUnifiedAccountNumber(String unifiedAccountNumber) {
+        this.unifiedAccountNumber = unifiedAccountNumber;
+    }
+
+    public String getServiceID() {
+        return serviceID;
+    }
+
+    public void setServiceID(String serviceID) {
+        this.serviceID = serviceID;
+    }
+
+    public String getOrgVersionGUID() {
+        return orgVersionGUID;
+    }
+
+    public void setOrgVersionGUID(String orgVersionGUID) {
+        this.orgVersionGUID = orgVersionGUID;
+    }
 }

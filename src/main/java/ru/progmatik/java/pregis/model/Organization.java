@@ -18,13 +18,14 @@ public class Organization {
     private String role;
     private Integer gradId;
     private String description;
+    private String orgVersionGUID;
 
     public Organization(){
 
     }
 
     public Organization(Integer id, String fullName, String shortName, String ogrn, String inn, String kpp,
-                        String orgRootEntityGUID, String orgPPAGUID, String role, Integer gradId, String description) {
+                        String orgRootEntityGUID, String orgPPAGUID, String role, Integer gradId, String description, String orgVersionGUID) {
         this.id = id;
         this.fullName = fullName;
         this.shortName = shortName;
@@ -36,6 +37,7 @@ public class Organization {
         this.role = role;
         this.gradId = gradId;
         this.description = description;
+        this.orgVersionGUID = orgVersionGUID;
     }
 
     public Organization(String fullName, String shortName, String ogrn, String inn, String kpp,
@@ -140,6 +142,14 @@ public class Organization {
         this.description = description;
     }
 
+    public String getOrgVersionGUID() {
+        return orgVersionGUID;
+    }
+
+    public void setOrgVersionGUID(String orgVersionGUID) {
+        this.orgVersionGUID = orgVersionGUID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -157,6 +167,7 @@ public class Organization {
         if (orgPPAGUID != null ? !orgPPAGUID.equals(that.orgPPAGUID) : that.orgPPAGUID != null) return false;
         if (role != null ? !role.equals(that.role) : that.role != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (orgVersionGUID != null ? !orgVersionGUID.equals(that.orgVersionGUID) : that.orgVersionGUID != null) return false;
         return gradId != null ? gradId.equals(that.gradId) : that.gradId == null;
 
     }
@@ -173,6 +184,7 @@ public class Organization {
         result = 31 * result + (role != null ? role.hashCode() : 0);
         result = 31 * result + (gradId != null ? gradId.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (orgVersionGUID != null ? orgVersionGUID.hashCode() : 0);
         return result;
     }
 }

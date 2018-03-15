@@ -3,22 +3,29 @@ package ru.progmatik.java.pregis.services.house_management;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.gosuslugi.dom.schema.integration.individual_registry_base.ID;
+import ru.gosuslugi.dom.schema.integration.organizations_registry_base.RegOrgVersionType;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.Organization;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,8 +87,14 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     }
 
 //                    final GetStateResult stateResult = accountData.callExportAccountData(itemHouse.getKey());
+
+                    final LinkedHashMap<BasicInformation, ImportAccountRequest.Account> accountListFromGrad = new LinkedHashMap<>();
+                    // получаем лицеваые из Град
+                    getAccountsFromGrad(itemHouse.getValue().getGrad_id(), connectionGRAD, accountListFromGrad);
+
+                    // получаем лицевые из ГИС
                     final GetStateResult stateResult = HomeManagementAsyncPort.callExportAccountData(itemHouse.getKey(), answerProcessing);
-                    final LinkedHashMap<BasicInformation, ImportAccountRequest.Account> accountListFromGrad = getAccountsFromGrad(itemHouse.getValue().getGrad_id(), connectionGRAD);
+
                     countAll += accountListFromGrad.size();
 
                     if (stateResult == null){ // || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
@@ -109,8 +122,10 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         // лицевые на закрытие обрабатываются после ответа пользователя в go()
         if (accountsForCloseList.size() > 0) {
             setErrorState(0);
-            answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +
-                    "), которые дублируются. Желаете их закрыть?\n", this);
+            if (answerProcessing != null) {
+                answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +
+                        "), которые дублируются. Желаете их закрыть?\n", this);
+            }
         }
 
         return errorState;
@@ -202,10 +217,10 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                     addEntryToGISMap(accountDataMap, entry.getValue());
                                 }
                             }else{
-                                // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО) - добавляем на обновление в ГИС
+                                // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО или по орагнизации) - добавляем на обновление в ГИС
                                 if(entry.getValue().getAccountGUID() != null &&
                                         accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
-                                        entry.getValue().getPayerInfo() != null && entry.getValue().getPayerInfo().getInd() != null && //TODO временная затыка, так как на самом деле мы должны по юрлицам получиьт их GUID и передавать их тоже
+                                        entry.getValue().getPayerInfo() != null && entry.getValue().getPayerInfo().getInd() != null && // по частникам
                                         accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
                                         (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
                                                 accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd() == null ||
@@ -220,10 +235,25 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                                         entry.getValue().getPayerInfo().getInd().getPatronymic())
                                                 )
 
-                                        )
-                                        )
+                                        ))
                                 {
                                     addEntryToGISMap(accountDataMap, entry.getValue());
+                                }else{
+                                    if(entry.getValue().getAccountGUID() != null && //
+                                            accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
+                                            entry.getValue().getPayerInfo() != null &&
+                                            entry.getValue().getPayerInfo().getOrg() != null && //по юрлицам
+                                            accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
+                                            (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
+                                                    accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getOrg() == null ||
+                                                    accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getOrg().getOrgVersionGUID() == null ||
+                                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getOrg().getOrgVersionGUID().equalsIgnoreCase(
+                                                            entry.getValue().getPayerInfo().getOrg().getOrgVersionGUID())
+
+                                            ))
+                                    {
+                                        addEntryToGISMap(accountDataMap, entry.getValue());
+                                    }
                                 }
                             }
 
@@ -360,7 +390,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         accountClose.setTotalSquare(account.getTotalSquare());
 //        accountClose.setResidentialSquare(account.getResidentialSquare());
 //        accountClose.setHeatedArea(account.getHeatedArea());
-        accountGRADDAO.setIsAccount(accountClose);
+        AccountGRADDAO.setIsAccount(accountClose);
 
         answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient(message + "; ЛС " + account.getAccountNumber());
@@ -550,9 +580,9 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param houseId       ид дома в БД.
      * @param accountNumber номер ЛС.
      */
-    private void removeAccount(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException {
+    private void removeAccount(Integer houseId, String accountNumber, Connection connection) throws ParseException, SQLException, PreGISException {
         try (Connection connectionLocal = ConnectionDB.instance().getConnectionDB()) {
-            accountGRADDAO.addAccountForRemove(houseId, accountNumber, connectionLocal, connection);
+            AccountGRADDAO.addAccountForRemove(houseId, accountNumber, connectionLocal, connection, answerProcessing);
             countRemove++;
         }
     }
@@ -567,7 +597,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      */
     private void setAccountToBase(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber, Connection connection) throws ParseException, SQLException, PreGISException {
 
-        if (accountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, connection)) {
+        if (AccountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, connection, answerProcessing)) {
 //            answerProcessing.sendMessageToClient("");
 
 //            if (accountGUID != null && accountUniqueNumber != null) {
@@ -661,11 +691,236 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      * @throws PreGISException
      */
-    private LinkedHashMap<BasicInformation, ImportAccountRequest.Account> getAccountsFromGrad(final int houseId,
-                                                                                              final Connection connectionGrad)
+    private void getAccountsFromGrad(final int houseId,
+                                      final Connection connectionGrad,
+                                      final LinkedHashMap<BasicInformation, ImportAccountRequest.Account> mapAccount)
             throws ParseException, SQLException, PreGISException {
 
-        return accountGRADDAO.getAccountMapFromGrad(houseId, connectionGrad, null);
+
+        answerProcessing.sendMessageToClient("");
+        answerProcessing.sendMessageToClient("Формирую данные...");
+        final ArrayList<BasicInformation> basicInformationList = AccountGRADDAO.getBasicInformation(houseId, connectionGrad, answerProcessing);
+
+        LinkedHashMap<String, Rooms> roomsList = AccountGRADDAO.getRoomsMaps(houseId, connectionGrad);
+
+        //        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
+        final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
+//        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
+
+//        LinkedHashMap<BasicInformation, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
+
+        if (basicInformationList == null || roomsList == null) {
+            answerProcessing.sendInformationToClientAndLog("Не найдены лицевые счета для дома с ИД: " + houseId + ".", LOGGER);
+            return;
+        }
+
+        // получаем инфу из ГИС с идентификаторами организаций
+        obtainOrgsVersionsIds(basicInformationList, connectionGrad);
+
+        for (BasicInformation basicInformation : basicInformationList) {
+            int count = 0;
+            // for (int i = 0; i < roomsList.size(); i++) {
+
+//                Формируем объект пригодный для импорта в ГИС ЖКХ.
+//                По необходимости в дальнейшем нужно присвоить перед отправкой:
+//                - если новый счет указать TransportGUID, удалить если есть AccountGUID.
+//                - если счет к закрытию указать AccountGUID и isClosed.
+
+            Rooms fRoom = roomsList.get(basicInformation.getNumberLS());
+            String premisesGUID = null;
+            String livingRoomGUID = null;
+            if (fRoom != null) {
+                // заранее получаем premisesGUID и livingRoomGUID, если не заданы - вообще не добавляем объект, потому что вызовет ошибку
+                premisesGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "PREMISESGUID", connectionGrad);
+                livingRoomGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "LIVINGROOMGUID", connectionGrad);
+
+// дублирование сообщения ниже                if (premisesGUID == null && livingRoomGUID == null) {
+//                    answerProcessing.sendInformationToClientAndLog("Для абонента ГРАД ИД "
+//                            + basicInformation.getNumberLS() + " не найдено идентификатора помещения или комнаты", LOGGER);
+//                }
+            }
+            if (fRoom != null && !(premisesGUID == null && livingRoomGUID == null)
+                    && (basicInformation.getOgrnOrOgrnip().isEmpty() || // или частное лицо
+                        (!basicInformation.getOgrnOrOgrnip().isEmpty() && !basicInformation.getOrgVersionGUID().isEmpty())) // или есть идентификатор
+                    ) {
+// debug                    answerProcessing.sendMessageToClient(basicInformation.getNumberLS() + " found!");
+                ImportAccountRequest.Account account = new ImportAccountRequest.Account();
+//                    account.setCreationDate(OtherFormat.getDateNow()); // может без даты можно? добавил при отправки нового счета
+                account.setLivingPersonsNumber(basicInformation.getAmountLiving());
+                account.setTotalSquare(new BigDecimal(basicInformation.getTotalArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                account.setResidentialSquare(new BigDecimal(basicInformation.getLivingSpace()).setScale(2, BigDecimal.ROUND_DOWN));
+                if (basicInformation.getHeadtedArea() > 0.0) {
+                    account.setHeatedArea(new BigDecimal(basicInformation.getHeadtedArea()).setScale(2, BigDecimal.ROUND_DOWN));
+                }
+//                    account.setClosed(); // проверить, если в ГИС ЖКХ есть, а в БД ГРАД нет, то установить в ExportAccountData.
+                AccountType.Accommodation accommodation = new AccountType.Accommodation();
+                if(livingRoomGUID == null || livingRoomGUID.isEmpty()) {
+                    accommodation.setPremisesGUID(premisesGUID);
+                }else {
+//                    accommodation.setFIASHouseGuid(roomsList.get(i).getFias()); // Выдаё ошибку, по описанию можно выбирать.
+                    accommodation.setLivingRoomGUID(livingRoomGUID); // Идентификатор комнаты
+                }
+                accommodation.setSharePercent(new BigDecimal(fRoom.getSharePay()).setScale(0, BigDecimal.ROUND_DOWN));
+                if(accommodation.getSharePercent() == null) accommodation.setSharePercent(new BigDecimal(100)); // если ничего не пришло - ставим 100, иначе ГИС выдает ошибку
+
+                account.getAccommodation().add(accommodation);
+//                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
+
+//                    Сведения о плательщике
+                account.setPayerInfo(new AccountType.PayerInfo());
+
+                if (basicInformation.getOgrnOrOgrnip().isEmpty()) { // частное лицо (не юр и не ИП)
+                    account.getPayerInfo().setInd(new AccountIndType());
+
+                    if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
+                            && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
+
+                        account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
+
+                        account.getPayerInfo().getInd().setFirstName(basicInformation.getName());
+
+                        if (basicInformation.getMiddleName() != null) {
+                            account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
+                        }
+                    }
+
+                    if (basicInformation.getNumberDocumentIdentity() != null) { // будем создавать только если есть номер документа!
+                        account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
+
+                        if (basicInformation.getTypeDocument() != null) {
+                            account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                        } else {
+                            account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(DocumentType.getTypeDocument("паспорт").getTypeDocument()));
+                        }
+
+                        if (basicInformation.getNumberDocumentIdentity() != null && !basicInformation.getNumberDocumentIdentity().isEmpty()) {
+                            account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                        } else {
+                            account.getPayerInfo().getInd().getID().setNumber("000000");
+                        }
+
+
+                        if (basicInformation.getSeriesDocumentIdentity() != null && !basicInformation.getSeriesDocumentIdentity().isEmpty()) {
+                            account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                        } else {
+                            account.getPayerInfo().getInd().getID().setSeries("0000");
+                        }
+
+                        if (basicInformation.getDateDocumentIdentity() != null) {
+                            account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML(basicInformation.getDateDocumentIdentity()));
+                        } else {
+                            account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MM.yyyy")).parse("01.01.2017")));
+                        }
+                    }
+
+                } else {
+                    account.getPayerInfo().setOrg(new RegOrgVersionType());
+                    account.getPayerInfo().getOrg().setOrgVersionGUID(basicInformation.getOrgVersionGUID());
+//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
+//                        if (basicInformation.getOgrnOrOgrnip() > 0) {
+//                            ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
+//
+//                            if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
+//                                criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+//                            } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
+//                                criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
+//                            }
+//                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
+                }
+
+                if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
+                    account.getPayerInfo().setIsRenter(true); // выдаёт ошибку если указать false
+                }
+
+
+                account.setAccountNumber(basicInformation.getNumberLS());
+                account.setAccountGUID(AccountGRADDAO.getAccountGUIDFromBase(basicInformation.getGradID(), connectionGrad));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                AccountGRADDAO.setIsAccount(account);
+                account.setCreationDate(OtherFormat.getDateNow());
+
+                //if (account.getAccountGUID() != null && !account.getAccountGUID().equals("")) {
+                mapAccount.put(basicInformation, account);
+
+                count++;
+                //}
+//                    roomsList.remove(i);
+                // i--;
+//                }
+            }
+            if (count == 1) {
+                continue;
+            } else if (count == 0) {
+                String notFound = "Отсутствует";
+
+                StringBuilder builder = new StringBuilder();
+                builder.append(basicInformation.getSurname());
+                builder.append(" ");
+                builder.append(basicInformation.getName());
+                builder.append(" ");
+                builder.append(basicInformation.getMiddleName());
+                builder.append(" ");
+
+                String fio = builder.toString().replaceAll("null", "").trim();
+                fio = fio.isEmpty() ? notFound : fio;
+
+                if (basicInformation.getTypeDocument() == null || basicInformation.getTypeDocument().getTypeDocument() == null || basicInformation.getNumberDocumentIdentity() == null) {
+                    answerProcessing.sendInformationToClientAndLog(String.format(
+                            "\nДля абонента с ФИО: %s,\nНомер счета: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
+                            fio, basicInformation.getNumberLS()), LOGGER);
+                } else {
+                    answerProcessing.sendInformationToClientAndLog(String.format(
+                            "\nДля абонента с ФИО: %s,\nНомер счета: %s,\nТип документа: %s,\nНомер документа: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
+                            fio, basicInformation.getNumberLS(), basicInformation.getTypeDocument().getTypeDocument(), basicInformation.getNumberDocumentIdentity()), LOGGER);
+                }
+
+            } else if (count >= 2) {
+                answerProcessing.sendInformationToClientAndLog("Для счета - "
+                        + basicInformation.getNumberLS() + " найдено более одного соответствия в базе данных.", LOGGER);
+            }
+        }
+        return;
+    }
+
+    /** получаем инфу из ГИС с идентификаторами организаций
+     *
+     * @param basicInformationList - список информации об абонентах, полученных из Град, в котором необходимо установить значения
+     */
+    private void obtainOrgsVersionsIds(ArrayList<BasicInformation> basicInformationList, Connection connectionGrad) throws PreGISException {
+
+        // список организаций без идентификаторов ГИС
+        List<BasicInformation> basicInformationWOversionIDS = basicInformationList.stream()
+                .filter(e -> !e.getOgrnOrOgrnip().isEmpty() && e.getOrgVersionGUID().isEmpty())
+                .collect(Collectors.toList());
+
+        if(!basicInformationWOversionIDS.isEmpty()) {
+            List<String> orgsWOversionIDs = basicInformationWOversionIDS.stream()
+                    .map(BasicInformation::getOgrnOrOgrnip)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            answerProcessing.sendMessageToClient("Имеются абоненты, принадлежащие юр.лицам без идентификаторов. Производится запрос идентификаторов в ГИС");
+
+            final ExportOrgRegistry exportOrgRegistry = new ExportOrgRegistry(answerProcessing);
+            Map<String, Organization> ogrn2Org = exportOrgRegistry.getOrgsVersionFromGis(orgsWOversionIDs);
+
+            if(ogrn2Org.isEmpty()){
+                answerProcessing.sendMessageToClient("Информация по юр.лицам без идентификаторов не получена!");
+            }else {
+                answerProcessing.sendMessageToClient("Обновляется информация в Град по юр.лицам без идентификаторов");
+            }
+
+            for (BasicInformation basicInformation : basicInformationWOversionIDS) {
+
+                String versionId = ogrn2Org.get(basicInformation.getOgrnOrOgrnip()).getOrgVersionGUID();
+
+                if(versionId != null && !versionId.isEmpty()){
+                    // обновляем инофрмацию об абоненте в памяти
+                    basicInformation.setOrgVersionGUID(versionId);
+                    // заносим в Град
+                    AccountGRADDAO.setOrgVersionGUID(basicInformation.getGradID(), versionId, connectionGrad, answerProcessing);
+                }
+            }
+        }
     }
 
     @Override

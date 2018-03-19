@@ -60,7 +60,19 @@ public class ClientMessageHandler implements SOAPHandler<SOAPMessageContext> {
 
 //                msg = requestSiginet.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
 //                deleteNamespace.removeNamespace(msg.getSOAPPart().getEnvelope().getOwnerDocument()); // разные методы форматирования
+//                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + "tmp1.xml")) {
+//                    msg.writeTo(outputStream);
+//                    outputStream.flush();
+//                    outputStream.close();
+//                }
 
+                msg = RequestSiginet.toPrettyXmlString(4, msg.getSOAPPart().getEnvelope().getOwnerDocument());
+
+//                try (FileOutputStream outputStream = new FileOutputStream(SAVE_FOLDER + File.separator + "tmp2.xml")) {
+//                    msg.writeTo(outputStream);
+//                    outputStream.flush();
+//                    outputStream.close();
+//                }
 
                 if (isSignIDState(msg)) {
 //                    Подпись с помощью BouncyCastle

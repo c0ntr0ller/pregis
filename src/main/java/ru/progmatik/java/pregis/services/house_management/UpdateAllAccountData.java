@@ -731,8 +731,14 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             String livingRoomGUID = null;
             if (fRoom != null) {
                 // заранее получаем premisesGUID и livingRoomGUID, если не заданы - вообще не добавляем объект, потому что вызовет ошибку
-                premisesGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "PREMISESGUID", connectionGrad);
-                livingRoomGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "LIVINGROOMGUID", connectionGrad);
+                if(basicInformation.getPremisesGUID().isEmpty()) {
+                    premisesGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "PREMISESGUID", connectionGrad);
+                }else{
+                    premisesGUID = basicInformation.getPremisesGUID();
+                }
+
+                livingRoomGUID = basicInformation.getLivingRoomGUID();
+                // livingRoomGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "LIVINGROOMGUID", connectionGrad);
 
 // дублирование сообщения ниже                if (premisesGUID == null && livingRoomGUID == null) {
 //                    answerProcessing.sendInformationToClientAndLog("Для абонента ГРАД ИД "
@@ -782,34 +788,35 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         if (basicInformation.getMiddleName() != null) {
                             account.getPayerInfo().getInd().setPatronymic(basicInformation.getMiddleName());
                         }
-                    }
-
-                    if (basicInformation.getNumberDocumentIdentity() != null) { // будем создавать только если есть номер документа!
-                        account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
-
-                        if (basicInformation.getTypeDocument() != null) {
-                            account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
-                        } else {
-                            account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(DocumentType.getTypeDocument("паспорт").getTypeDocument()));
-                        }
-
-                        if (basicInformation.getNumberDocumentIdentity() != null && !basicInformation.getNumberDocumentIdentity().isEmpty()) {
-                            account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
-                        } else {
-                            account.getPayerInfo().getInd().getID().setNumber("000000");
-                        }
 
 
-                        if (basicInformation.getSeriesDocumentIdentity() != null && !basicInformation.getSeriesDocumentIdentity().isEmpty()) {
-                            account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
-                        } else {
-                            account.getPayerInfo().getInd().getID().setSeries("0000");
-                        }
+                        if (basicInformation.getNumberDocumentIdentity() != null) { // будем создавать только если есть номер документа!
+                            account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
 
-                        if (basicInformation.getDateDocumentIdentity() != null) {
-                            account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML(basicInformation.getDateDocumentIdentity()));
-                        } else {
-                            account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MM.yyyy")).parse("01.01.2017")));
+                            if (basicInformation.getTypeDocument() != null) {
+                                account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(basicInformation.getTypeDocument().getTypeDocument()));
+                            } else {
+                                account.getPayerInfo().getInd().getID().setType(nsi.getTypeDocumentNsiRef(DocumentType.getTypeDocument("паспорт").getTypeDocument()));
+                            }
+
+                            if (basicInformation.getNumberDocumentIdentity() != null && !basicInformation.getNumberDocumentIdentity().isEmpty()) {
+                                account.getPayerInfo().getInd().getID().setNumber(basicInformation.getNumberDocumentIdentity());
+                            } else {
+                                account.getPayerInfo().getInd().getID().setNumber("000000");
+                            }
+
+
+                            if (basicInformation.getSeriesDocumentIdentity() != null && !basicInformation.getSeriesDocumentIdentity().isEmpty()) {
+                                account.getPayerInfo().getInd().getID().setSeries(basicInformation.getSeriesDocumentIdentity());
+                            } else {
+                                account.getPayerInfo().getInd().getID().setSeries("0000");
+                            }
+
+                            if (basicInformation.getDateDocumentIdentity() != null) {
+                                account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML(basicInformation.getDateDocumentIdentity()));
+                            } else {
+                                account.getPayerInfo().getInd().getID().setIssueDate(OtherFormat.getDateForXML((new SimpleDateFormat("dd.MM.yyyy")).parse("01.01.2017")));
+                            }
                         }
                     }
 
@@ -834,7 +841,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
 
                 account.setAccountNumber(basicInformation.getNumberLS());
-                account.setAccountGUID(AccountGRADDAO.getAccountGUIDFromBase(basicInformation.getGradID(), connectionGrad));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                if(basicInformation.getAccountGUID().isEmpty()) {
+                    account.setAccountGUID(AccountGRADDAO.getAccountGUIDFromBase(basicInformation.getGradID(), connectionGrad));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
+                }else{
+                    account.setAccountGUID(basicInformation.getAccountGUID());
+                }
                 AccountGRADDAO.setIsAccount(account);
                 account.setCreationDate(OtherFormat.getDateNow());
 

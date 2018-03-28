@@ -338,6 +338,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      * утилитарный метод. восстанавливает все заархивированные ОДПУ в ГИС (пересоздает их с теми же параметрами)
      * @param entryHouse
      */
+    @Deprecated
     private void recreateArchivedODPU(final HouseRecord entryHouse) {
 
         try{
@@ -478,7 +479,16 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 final ImportMeteringDeviceData importMeteringDeviceData = new ImportMeteringDeviceData(answerProcessing);
 
                 final MeteringDeviceToArchive toArchive = new MeteringDeviceToArchive(answerProcessing, deviceForArchive);
-                //callImportMeteringDevices(toArchive.addMeteringDeviceToArchive(), fias, toArchive, connectionGRAD);
+
+                // архивируем в ГИС
+                callImportMeteringDevices(
+                        convertMeteringDeviceToArchive (exportMeteringDeviceDataResultList)
+                                .stream()
+                                .collect(Collectors.toMap(e -> new MeteringDeviceID("", e.getDeviceDataToUpdate().getMeteringDeviceVersionGUID(), null), e->e)),
+                        new HouseRecord(fias, null, fias, fias, fias),
+                        null,true);
+
+                //callImportMeteringDevices(toArchive.addMeteringDeviceToArchive(), new HouseRecord(fias, null, fias,fias,null), null, toArchive);
             }
         }
     }

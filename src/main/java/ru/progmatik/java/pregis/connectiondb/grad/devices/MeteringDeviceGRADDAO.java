@@ -358,14 +358,14 @@ public class MeteringDeviceGRADDAO{
 
 //          Характеристики поверки  Дата первичной поверки
 //        в 9.0 поменяли на "Дата последней поверки", поле стало не обязательным
-        if (exGisPu1Element[VERIFICATION_DATE] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
-            basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
-        } else if (exGisPu1Element[VERIFICATION_DATE] == null) { // ГИС ЖКХ выдаёт ошибку, если не указана дата, хотя не обязательна
-//            Берем дату ввода в эксплуатацию
-            basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
-        }
+// стал необязательным        if (exGisPu1Element[VERIFICATION_DATE] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
+//            basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
+//        } else if (exGisPu1Element[VERIFICATION_DATE] == null) { // ГИС ЖКХ выдаёт ошибку, если не указана дата, хотя не обязательна
+////            Берем дату ввода в эксплуатацию
+//            basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
+//        }
 //            Межповерочный интервал (НСИ 16) стал необязательным
-        basicCharacteristics.setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
+// стал необязательным        basicCharacteristics.setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
 
 //        Дата опломбирования ПУ заводом-изготовителем (обязательно для заполнения при импорте), обязательное, ГРАД возвращает путое значение
         if (exGisPu1Element[20] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[20]).getTime()) {

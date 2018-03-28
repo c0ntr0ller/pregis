@@ -252,15 +252,17 @@ public final class ProgramAction {
             final int state = deviceValues.updateAllMeteringDeviceValues(checkHouseGradId(houseGradID));
             if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");
-            } else if (state == 0) {
-                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" завершилась с ошибками!");
             } else {
                 answerProcessing.sendMessageToClient("");
-                answerProcessing.sendMessageToClient("Итого обновлено показаний ПУ:");
+                answerProcessing.sendMessageToClient("Итого передано показаний ПУ:");
                 answerProcessing.sendMessageToClient("Град: " + deviceValues.getAddedValueToGrad());
                 answerProcessing.sendMessageToClient("ГИС ЖКХ: " + deviceValues.getAddedValueToGISJKH());
                 answerProcessing.sendMessageToClient("");
-                answerProcessing.sendOkMessageToClient("\"Получение показаний ПУ\" успешно выполнено.");
+                if (state == 0) {
+                    answerProcessing.sendErrorToClientNotException("Возникли ошибки!\nОперация: \"Синхронизация показаний ПУ\" завершилась с ошибками!");
+                } else {
+                    answerProcessing.sendOkMessageToClient("\"Получение показаний ПУ\" успешно выполнено.");
+                }
             }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("getExportMeteringDeviceHistory(): ", "", LOGGER, e);

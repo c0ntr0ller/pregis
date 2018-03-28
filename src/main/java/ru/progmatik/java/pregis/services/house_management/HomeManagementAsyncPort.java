@@ -37,10 +37,13 @@ public class HomeManagementAsyncPort {
             this.answerProcessing = new AnswerProcessing();
         }
 
+        if(answerProcessing != null) {
+            this.answerProcessing.sendMessageToClient("");
+            this.answerProcessing.sendMessageToClient("Открытие и настройка порта homeManagementAsync");
+        }
+
         HouseManagementServiceAsync service = UrlLoader.instance().getUrlMap().get("homeManagementAsync") == null ? new HouseManagementServiceAsync()
                 : new HouseManagementServiceAsync(UrlLoader.instance().getUrlMap().get("homeManagementAsync"));
-
-        if(answerProcessing != null) this.answerProcessing.sendMessageToClient("Открытие и настройка порта homeManagementAsync");
 
         port = service.getHouseManagementPortAsync();
 

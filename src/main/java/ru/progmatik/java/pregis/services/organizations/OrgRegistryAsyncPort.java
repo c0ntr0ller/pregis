@@ -41,6 +41,7 @@ public class OrgRegistryAsyncPort {
     }
 
     public static GetStateResult callExportOrgRegistry(ExportOrgRegistryRequest request, AnswerProcessing answerProcessing) throws PreGISException {
+        if(request == null) return null;
         OrgRegistryAsyncPort orgRegistryAsyncPort = new OrgRegistryAsyncPort(answerProcessing, "ExportOrgRegistry");
         return orgRegistryAsyncPort.interactOrgRegistry(request);
     }

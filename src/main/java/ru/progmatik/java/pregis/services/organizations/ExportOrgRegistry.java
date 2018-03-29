@@ -38,8 +38,18 @@ public class ExportOrgRegistry {
     private ExportOrgRegistryRequest getExportOrgRegistryRequest(String ogrn) throws PreGISException {
 
         ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
-        if(ogrn == null || ogrn.isEmpty()) ogrn = ResourcesUtil.instance().getOGRNCompany();
-        criteria.setOGRN(ogrn);
+        if(ogrn == null || ogrn.isEmpty()) {
+            ogrn = ResourcesUtil.instance().getOGRNCompany();
+        }
+
+        if(ogrn.length() == 13) {
+            criteria.setOGRN(ogrn);
+        }else if(ogrn.length() == 15){
+            criteria.setOGRNIP(ogrn);
+        }else{
+            answerProcessing.sendErrorToClientNotException("Неверная длина строки ОГРН/ОГРНИП");
+            return null;
+        }
 
         ExportOrgRegistryRequest exportOrgRegistryRequest = new ExportOrgRegistryRequest();
         exportOrgRegistryRequest.setId("signed-data-container");
@@ -69,7 +79,7 @@ public class ExportOrgRegistry {
      */
     public void exportOrgRegistry() throws PreGISException, SQLException {
         GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(null), answerProcessing);
-        if(result.getExportOrgRegistryResult() != null && result.getExportOrgRegistryResult().size() > 0){
+        if(result != null && result.getExportOrgRegistryResult() != null && result.getExportOrgRegistryResult().size() > 0){
 
             // final OrganizationDAO organizationDAO = new OrganizationDAO();
 
@@ -171,7 +181,7 @@ public class ExportOrgRegistry {
                 answerProcessing.sendOkMessageToClient(String.format("Запрос идентификатора организации %s в ГИС ЖКХ", organization.getFullName()));
                 GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(organization.getOgrn()), answerProcessing);
 
-                if(result.getExportOrgRegistryResult() != null && result.getExportOrgRegistryResult().size() > 0) {
+                if(result != null && result.getExportOrgRegistryResult() != null && result.getExportOrgRegistryResult().size() > 0) {
                     ExportOrgRegistryResultType exportOrgRegistryResult = result.getExportOrgRegistryResult().get(0);
 
                     organization.setFullName(exportOrgRegistryResult.getOrgVersion().getLegal().getFullName());
@@ -183,7 +193,7 @@ public class ExportOrgRegistry {
                     organization.setRole(String.join(",", exportOrgRegistryResult.getOrganizationRoles().stream().map(NsiRef::getName).collect(Collectors.toList())));
                     organization.setDescription(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID()); // Примечание
                 }else{
-                    throw new PreGISException(String.format("ГИС ЖКХ не вернул информацию по организации с ОГРН %s", organization.getOgrn()));
+                    throw new PreGISException(String.format("Не удалось получить информацию по организации с ОГРН %s", organization.getOgrn()));
                 }
             }
             else{
@@ -207,28 +217,44 @@ public class ExportOrgRegistry {
 
 
         for(String ogrn:ogrnList){
-            try {
+            if(ogrn.length() == 13 || ogrn.length() == 15) {
+                try {
 
-                GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(ogrn), answerProcessing);
+                    GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(ogrn), answerProcessing);
 
-                ExportOrgRegistryResultType exportOrgRegistryResult = result.getExportOrgRegistryResult().get(0);
-                if (!exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID().isEmpty()) {
-                    Organization organization = new Organization();
-                    organization.setFullName(exportOrgRegistryResult.getOrgVersion().getLegal().getFullName());
-                    organization.setShortName(exportOrgRegistryResult.getOrgVersion().getLegal().getShortName());
-                    organization.setInn(exportOrgRegistryResult.getOrgVersion().getLegal().getINN());
-                    organization.setKpp(exportOrgRegistryResult.getOrgVersion().getLegal().getKPP());
-                    organization.setOrgRootEntityGUID(exportOrgRegistryResult.getOrgRootEntityGUID());
-                    organization.setOrgPPAGUID(exportOrgRegistryResult.getOrgPPAGUID());
-                    organization.setRole(String.join(",", exportOrgRegistryResult.getOrganizationRoles().stream().map(NsiRef::getName).collect(Collectors.toList())));
-                    organization.setOrgVersionGUID(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID());
-                    organization.setDescription(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID()); // Примечание
+                    if (result != null) {
+                        ExportOrgRegistryResultType exportOrgRegistryResult = result.getExportOrgRegistryResult().get(0);
+                        if (!exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID().isEmpty()) {
+                            Organization organization = new Organization();
+                            if(exportOrgRegistryResult.getOrgVersion().getLegal() != null) {
+                                organization.setFullName(exportOrgRegistryResult.getOrgVersion().getLegal().getFullName());
+                                organization.setShortName(exportOrgRegistryResult.getOrgVersion().getLegal().getShortName());
+                                organization.setInn(exportOrgRegistryResult.getOrgVersion().getLegal().getINN());
+                                organization.setKpp(exportOrgRegistryResult.getOrgVersion().getLegal().getKPP());
+                            }
+                            if(exportOrgRegistryResult.getOrgVersion().getEntrp() != null) {
+                                organization.setFullName(exportOrgRegistryResult.getOrgVersion().getEntrp().getSurname() + " " + exportOrgRegistryResult.getOrgVersion().getEntrp().getFirstName() + " " + exportOrgRegistryResult.getOrgVersion().getEntrp().getPatronymic());
+                                organization.setShortName(exportOrgRegistryResult.getOrgVersion().getEntrp().getSurname() + " " + exportOrgRegistryResult.getOrgVersion().getEntrp().getFirstName().substring(0, 1) + "." + exportOrgRegistryResult.getOrgVersion().getEntrp().getPatronymic().substring(0, 1) + ".");
+                                organization.setInn(exportOrgRegistryResult.getOrgVersion().getEntrp().getINN());
+                            }
+                            organization.setOrgRootEntityGUID(exportOrgRegistryResult.getOrgRootEntityGUID());
+                            organization.setOrgPPAGUID(exportOrgRegistryResult.getOrgPPAGUID());
+                            if(exportOrgRegistryResult.getOrganizationRoles() != null) {
+                                organization.setRole(String.join(",", exportOrgRegistryResult.getOrganizationRoles().stream().map(NsiRef::getName).collect(Collectors.toList())));
+                            }
+                            organization.setOrgVersionGUID(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID());
+                            organization.setDescription(exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID()); // Примечание
 
-                    ogrn2Org.put(ogrn, organization);
+                            ogrn2Org.put(ogrn, organization);
+                        }
+                    }
+                } catch (PreGISException e) {
+                    answerProcessing.sendErrorToClientNotException("ГИС ЖКХ не вернула идентификаторы организаций!");
                 }
-            } catch (PreGISException e) {
-                answerProcessing.sendErrorToClientNotException("ГИС ЖКХ не вернула идентификаторы организаций!");
+            }else{
+                answerProcessing.sendErrorToClientNotException(String.format("Неверная длина ОГРН/ОГРНИП %s", ogrn));
             }
+
         }
         return ogrn2Org;
     }

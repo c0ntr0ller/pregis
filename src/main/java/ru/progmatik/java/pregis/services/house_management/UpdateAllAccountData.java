@@ -41,7 +41,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
     private static final int ACCOUNT_COUNTER_FOR_REQUEST = 25;
     private final AnswerProcessing answerProcessing;
     private final AccountGRADDAO accountGRADDAO;
-    private final ArrayList<ImportAccountRequest.Account> accountsForCloseList = new ArrayList<>();
+//    private final ArrayList<ImportAccountRequest.Account> accountsForCloseList = new ArrayList<>();
     private final ArrayList<ImportAccountRequest.Account> accountsNotFoundCloseList = new ArrayList<>();
     private int countAll;
     private int countAllGisJkh;
@@ -120,13 +120,14 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             }
         }
         // лицевые на закрытие обрабатываются после ответа пользователя в go()
-        if (accountsForCloseList.size() > 0) {
-            setErrorState(0);
-            if (answerProcessing != null) {
-                answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +
-                        "), которые дублируются. Желаете их закрыть?\n", this);
-            }
-        }
+// изменили - теперь пользователя не спрашиваем, так как процесс останавливается пока он не ответит
+//       if (accountsForCloseList.size() > 0) {
+//            setErrorState(0);
+//            if (answerProcessing != null) {
+//                answerProcessing.showQuestionToClient("В ГИС ЖКХ найдены лицевые счета клиентов (" + accountsForCloseList.size() +
+//                        "), которые дублируются. Желаете их закрыть?\n", this);
+//            }
+//        }
 
         return errorState;
     }
@@ -142,8 +143,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             answerProcessing.sendMessageToClient("Всего обработано записей: " + countAll + "\nИз них:");
             answerProcessing.sendMessageToClient("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
             answerProcessing.sendMessageToClient("Лицевых счетов помечено на удаление: " + countRemove);
-            answerProcessing.sendMessageToClient("Лицевых счетов добавлено в ГИС ЖКХ: " + countAdded);
-            answerProcessing.sendMessageToClient("Идентификаторов добавлено в ГРАД: " + countAddedToGRAD);
+            answerProcessing.sendMessageToClient("Лицевых счетов отправлено в ГИС ЖКХ: " + countAdded);
+            answerProcessing.sendMessageToClient("Идентификаторов отправлено в ГРАД: " + countAddedToGRAD);
         }
         LOGGER.debug("Всего лицевых счетов найдено в ГИС ЖКХ: " + countAllGisJkh);
         LOGGER.debug("Обработано записей - " + countAll);
@@ -166,58 +167,59 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * Заносит идентификаторы в БД и передаёт в ГИС ЖКХ новые данные.
      *
      * @param accountsListFromGISJKH полученный список абонентов из ГИС ЖКХ.
-     * @param accountListFromGrad    список абонентов из БД ГРАД.
+     * @param accountsMapFromGrad    список абонентов из БД ГРАД.
      * @param houseId                идентификатор дома в БД ГРАД
      * @param connection             подключение к БД ГРАД.
      */
     private void checkAndSendAccountData(final List<ExportAccountResultType> accountsListFromGISJKH,
-                                         final LinkedHashMap<BasicInformation,ImportAccountRequest.Account> accountListFromGrad,
+                                         final LinkedHashMap<BasicInformation,ImportAccountRequest.Account> accountsMapFromGrad,
                                          final Integer houseId, final Connection connection) throws SQLException, PreGISException, ParseException {
 
-        // для удобства создаем мапу с лицевыми счетами из ГИС. Ключ - ЛС из Града
-        final LinkedHashMap<String, ExportAccountResultType> accountsMapFromGISJKH = new LinkedHashMap<>();
-        if(accountsListFromGISJKH != null) {
-            for (ExportAccountResultType exportAccountResultType : accountsListFromGISJKH) {
-                if(exportAccountResultType.getClosed() == null)
-                    accountsMapFromGISJKH.put(exportAccountResultType.getAccountNumber(), exportAccountResultType);
-            }
-        }
-//        Ключ - TransportGUID, значение - Account
-        final LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap = new LinkedHashMap<>();
+        // для удобства поиска создаем мапу с лицевыми счетами из ГИС. Ключ - ЛС из Града
+        Map<String, ExportAccountResultType> accountsMapFromGISJKH = new LinkedHashMap<>();
 
-// TODO: проверить как заносятся закрытые ЛС
+        // мапа для создаваемых/обнвляемых ЛС. Ключ - TransportGUID, значение - Account
+        final LinkedHashMap<String, ImportAccountRequest.Account> accountsCreateMap = new LinkedHashMap<>();
+
+        // массив счетов на закрытие в ГИС
+        ArrayList<ImportAccountRequest.Account> accountsForCloseList = new ArrayList<>();
+
+        // если в ГИС есть что-то - начинаем сравниваьт с данными Град
         if (accountsListFromGISJKH != null) {
-            // сначала находим дубликаты только в ГИС с одинаковым ЛС
-            checkDuplicateAccountDataGisJkh(accountsListFromGISJKH);
+            // сначала находим дубликаты только в ГИС с одинаковым ЛС, лишние закрываем
+            checkDuplicateAccountDataGisJkh(accountsListFromGISJKH, accountsForCloseList);
 
-            checkIncorrectAccountGisJkh(accountsListFromGISJKH, accountListFromGrad);
+            checkIncorrectAccountGisJkh(accountsListFromGISJKH, accountsMapFromGrad);
+
+            // заполняем мапу с данными ГИС, чтобы было удобно искать. Все что в ней останется после сравнения с Град, подлежит закрытию
+            accountsMapFromGISJKH = accountsListFromGISJKH
+                    .stream()
+                    .filter(e->e.getClosed() == null)
+                    .collect(Collectors.toMap(ExportAccountResultType::getAccountNumber, e->e));
 
             // бежим по ЛС из Града
-            for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
+            for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountsMapFromGrad.entrySet()) {
                 // если еще не входит в список на закрытие
-                if (!isInClosedAccountList(entry.getKey().getNumberLS())) {
+                if (!isInClosedAccountList(entry.getValue().getAccountNumber(), accountsForCloseList)) {
                     // получаем ACCOUNTUNIQNUM абонента
 //                    final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
                     if(entry.getKey().getGradID() > 0) {
                         // final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(abonId, connection);
 
+                        // если есть в ГИС с таким лицевым счетом
                         if(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null) {
-                            // если в Граде у абонента ACCOUNTGUID тоже пустой
+                            // если в Граде у абонента ACCOUNTGUID пустой
                             if (entry.getValue().getAccountGUID() == null ||
                                     // или при одинаковом ЛС разные GUID
-                                    (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
-                                            !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID())
-                                    )
-                                    ) {
-
-                                // проверяем и впытаемся занести его ACCOUNTGUID в БД. если не занесли
+                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID())) {
+                                // проверяем и впытаемся занести его ACCOUNTGUID в БД
                                 if (!checkAccountDataIsAddedGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
-                                        houseId, null, connection)) {
-
-                                    addEntryToGISMap(accountDataMap, entry.getValue());
+                                        houseId, connection)) {
+                                    // если не занесли - просто сообщим об этом юзеру addEntryToGISMap(accountsCreateMap, entry.getValue());
+                                    answerProcessing.sendMessageToClient(String.format("Не удалось обновить идентификаторы ГИС абонента в Град, ЛС: %s", entry.getKey().getNumberLS()));
                                 }
                             }else{
-                                // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО или по орагнизации) - добавляем на обновление в ГИС
+                                // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО или по организации) - добавляем на обновление в ГИС
                                 if(entry.getValue().getAccountGUID() != null &&
                                         accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
                                         entry.getValue().getPayerInfo() != null && entry.getValue().getPayerInfo().getInd() != null && // по частникам
@@ -237,7 +239,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                                         ))
                                 {
-                                    addEntryToGISMap(accountDataMap, entry.getValue());
+                                    addEntryToGISMap(accountsCreateMap, entry.getValue());
                                 }else{
                                     if(entry.getValue().getAccountGUID() != null && //
                                             accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
@@ -252,20 +254,21 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                                             ))
                                     {
-                                        addEntryToGISMap(accountDataMap, entry.getValue());
+                                        addEntryToGISMap(accountsCreateMap, entry.getValue());
                                     }
                                 }
                             }
-
+                            // убираем из мапы ГИС, так как он у нас есть уже в ГИС и будет просто обновлен, если что-от не совпадает
+                            accountsMapFromGISJKH.remove(entry.getValue().getAccountNumber());
                         }else {
-                            addEntryToGISMap(accountDataMap, entry.getValue());
+                            addEntryToGISMap(accountsCreateMap, entry.getValue());
                         }
                     }
                 }
             }
         } else {// если в ГИС ничего нет - всё просто добавляем
-            for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountListFromGrad.entrySet()) {
-                if (!isInClosedAccountList(entry.getKey().getNumberLS())) {
+            for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountsMapFromGrad.entrySet()) {
+                if (!isInClosedAccountList(entry.getKey().getNumberLS(), accountsForCloseList)) {
                     if(entry.getValue().getAccountGUID() == null) {
 //                        final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
                         if(entry.getKey().getGradID() > 0) {
@@ -273,18 +276,45 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //
 //                            if (accountGUIDFromBase == null) {
 //
-                            addEntryToGISMap(accountDataMap, entry.getValue());
+                            addEntryToGISMap(accountsCreateMap, entry.getValue());
 //                            }
                         }
                     }
                 }
             }
         }
-        if (!accountDataMap.isEmpty()) {
-            sendAccountDataToGISJKH(accountDataMap, houseId, connection);
-        } else {
+        // если есть счета на создание/обновление в ГИС - отсылаем их в гис
+        if (!accountsCreateMap.isEmpty()) {
             answerProcessing.sendMessageToClient("");
-            answerProcessing.sendMessageToClient("Не найдены лицевые счета для выгрузки в ГИС ЖКХ.");
+            answerProcessing.sendMessageToClient("Счетов для создания/обновления в ГИС ЖКХ:" + accountsCreateMap.size());
+            sendAccountDataToGISJKH(accountsCreateMap, houseId, connection);
+        }
+
+        // если в мапе ГИС остались ЛС - значит их у нас нет и мы их отправляем на закрытие
+        if(!accountsMapFromGISJKH.isEmpty()){
+            for(ExportAccountResultType accountForClose: accountsMapFromGISJKH.values()){
+                addAccountDataForClose(accountForClose,
+                        "Изменение реквизитов лицевого счета",
+                        "Абонент закрыт в ИС предприятия",
+                        accountsForCloseList);
+            }
+        }
+
+        if(!accountsForCloseList.isEmpty()) {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Счетов для закрытия в ГИС ЖКХ:" + accountsForCloseList.size());
+
+//            Map<String, ImportAccountRequest.Account> accountsForCloseMap = new LinkedHashMap<>();
+//            for(ImportAccountRequest.Account accountForClose :accountsForCloseList){
+//                addEntryToGISMap(accountsForCloseMap, accountForClose);
+//            }
+            sendAccountDataToGISJKH(accountsForCloseList.stream().collect(Collectors.toMap(e->e.getTransportGUID(), e->e)), houseId, connection);
+
+        }
+
+        if(accountsCreateMap.isEmpty() && accountsForCloseList.isEmpty()) {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Счетов для выгрузки в ГИС ЖКХ нет.");
         }
 
     }
@@ -294,7 +324,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param accountDataMap ссылка на мапу для отсылки в ГИС
      * @param entryValue инфа по абоненту
      */
-    private void addEntryToGISMap(LinkedHashMap<String, ImportAccountRequest.Account> accountDataMap, ImportAccountRequest.Account entryValue){
+    private void addEntryToGISMap(Map<String, ImportAccountRequest.Account> accountDataMap, ImportAccountRequest.Account entryValue){
         final String transportGUID = OtherFormat.getRandomGUID();
         entryValue.setTransportGUID(transportGUID);
         accountDataMap.put(transportGUID, entryValue);
@@ -307,7 +337,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws PreGISException
      * @throws SQLException
      */
-    private void checkDuplicateAccountDataGisJkh(final List<ExportAccountResultType> exportAccountResult) throws PreGISException, SQLException {
+    private void checkDuplicateAccountDataGisJkh(final List<ExportAccountResultType> exportAccountResult, ArrayList<ImportAccountRequest.Account> accountsForCloseList) throws PreGISException, SQLException {
         for (int i = 0; i < exportAccountResult.size(); i++) {
 
             String ar1 = exportAccountResult.get(i).getAccountNumber();
@@ -320,7 +350,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         ar1.equalsIgnoreCase(ar2) &&
                         (exportAccountResult.get(i).getClosed() == null && exportAccountResult.get(j).getClosed() == null)) {
 
-                    addAccountDataForClose(exportAccountResult.get(j), "Изменение реквизитов лицевого счета", "Абонент продублирован в ГИС");
+                    addAccountDataForClose(exportAccountResult.get(j), "Изменение реквизитов лицевого счета", "Абонент продублирован в ГИС", accountsForCloseList);
                 }
             }
         }
@@ -349,14 +379,16 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @return true - если абонент найден в списке и выгружать его не стоит в ГИС ЖКХ,
      * false - абонент не найден в списке дубликатов ГИС ЖКХ.
      */
-    private boolean isInClosedAccountList(final String accountNumber) {
+    private boolean isInClosedAccountList(final String accountNumber, ArrayList<ImportAccountRequest.Account> accountsForCloseList) {
 
-        for (ImportAccountRequest.Account account : accountsForCloseList) {
-            if (accountNumber.equalsIgnoreCase(account.getAccountNumber())) {
-                return true;
-            }
-        }
-        return false;
+        return !accountsForCloseList.stream().filter(e->e.getAccountNumber().equalsIgnoreCase(accountNumber)).collect(Collectors.toList()).isEmpty();
+
+//        for (ImportAccountRequest.Account account : accountsForCloseList) {
+//            if (accountNumber.equalsIgnoreCase(account.getAccountNumber())) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     /**
@@ -365,14 +397,23 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param account данные абонента.
      * @throws PreGISException возникнит ошибка, если не удастся загрузить справочник из ГИС ЖКХ.
      */
-    private void addAccountDataForClose(final ExportAccountResultType account, final String nameElement, final String message) throws SQLException, PreGISException {
+    private void addAccountDataForClose(final ExportAccountResultType account, final String nameElement, final String message, ArrayList<ImportAccountRequest.Account> accountsForCloseList) throws SQLException, PreGISException {
 
-        for (ImportAccountRequest.Account accountItem : accountsForCloseList) {
-            if (account.getAccountGUID().equalsIgnoreCase(accountItem.getAccountGUID())) {
-
-                return;
-            }
+        if(account.getClosed() != null){
+            return;
         }
+        // если уже входит в список на закрытие - ничего не делаем
+        if(!accountsForCloseList.stream().filter(e->e.getAccountGUID().equalsIgnoreCase(account.getAccountGUID())).collect(Collectors.toList()).isEmpty()) {
+            return;
+        }
+            //     старый код
+        // for (ImportAccountRequest.Account accountItem : accountsForCloseList) {
+//            if (account.getAccountGUID().equalsIgnoreCase(accountItem.getAccountGUID())) {
+//
+//                return;
+//            }
+//        }
+
 // "Изменение реквизитов лицевого счета"
         final ReferenceNSI referenceNSI = new ReferenceNSI(answerProcessing);
 
@@ -381,7 +422,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         accountClose.setClosed(new ClosedAccountAttributesType());
         accountClose.getClosed().setCloseDate(OtherFormat.getDateNow());
         accountClose.getClosed().setCloseReason(referenceNSI.getNsiRef("22", nameElement));
-        accountClose.getClosed().setDescription("Данные признаны неверными.");
+        accountClose.getClosed().setDescription(message);
         accountClose.setCreationDate(account.getCreationDate());
         accountClose.setAccountNumber(account.getAccountNumber());
         accountClose.getAccommodation().addAll(convertAccommodation(account.getAccommodation()));
@@ -392,8 +433,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //        accountClose.setHeatedArea(account.getHeatedArea());
         AccountGRADDAO.setIsAccount(accountClose);
 
-        answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient(message + "; ЛС " + account.getAccountNumber());
+//        answerProcessing.sendMessageToClient("");
+//        answerProcessing.sendMessageToClient(message + "; ЛС " + account.getAccountNumber());
 
         accountsForCloseList.add(accountClose);
     }
@@ -412,8 +453,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         
         AccountIndExportType sInd = sPayer.getInd();
         AccountIndExportType.ID sID = null;
-        
-        if (sInd != null) {
+
+
+        if (sInd != null &&
+                sInd.getFirstName() != null && !sInd.getFirstName().isEmpty() &&
+                sInd.getSurname() != null && !sInd.getSurname().isEmpty()) {
             sID = sPayer.getInd().getID();
             if(sID != null) {
                 rID.setIssueDate(sID.getIssueDate());
@@ -470,7 +514,6 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
     private boolean checkAccountDataIsAddedGrad(final ExportAccountResultType accountFromGISJKH,
                                                 final ImportAccountRequest.Account account,
                                                 final Integer houseId,
-                                                final String uniqueNumberFromDB,
                                                 final Connection connection)
             throws ParseException, SQLException, PreGISException {
 
@@ -485,26 +528,27 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //                String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(
 //                        accountGRADDAO.getAbonentIdFromGrad(houseId, account.getAccountNumber(), connection), connection);
 
-                if (uniqueNumberFromDB != null &&
-                        uniqueNumberFromDB.equalsIgnoreCase(accountFromGISJKH.getUnifiedAccountNumber())) { // Если есть уникальный идентификатор, сравниваем м ним
+                //! закомментарил всё, так как все равно одинаково вызывается setAccountToBase, а removeAccount уже не используется
+//                if (uniqueNumberFromDB != null &&
+//                        uniqueNumberFromDB.equalsIgnoreCase(accountFromGISJKH.getUnifiedAccountNumber())) { // Если есть уникальный идентификатор, сравниваем м ним
+////
+////                    Всё просто, если есть уникальный идентификатор, то заносим AccountGUID
+//                    if (account.getAccountGUID() == null ||
+//                            !account.getAccountGUID().equalsIgnoreCase(accountFromGISJKH.getAccountGUID())) {
 //
-//                    Всё просто, если есть уникальный идентификатор, то заносим AccountGUID
-                    if (account.getAccountGUID() == null ||
-                            !account.getAccountGUID().equalsIgnoreCase(accountFromGISJKH.getAccountGUID())) {
-
-                        setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), accountFromGISJKH.getUnifiedAccountNumber(), connection);
-//                        после 9.0.1.4 переименовали
-
-                        return true;
-//                    accountListFromGrad.remove(accountFromGISJKH.getAccountNumber()); // удалим найденные счета из списка
+//                        setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), accountFromGISJKH.getUnifiedAccountNumber(), connection);
+////                        после 9.0.1.4 переименовали
+//
+//                        return true;
+////                    accountListFromGrad.remove(accountFromGISJKH.getAccountNumber()); // удалим найденные счета из списка
+////                    }
+////                } else { // если нет записи в БД, значит счет закрыт надо закрыть в ГИС ЖКХ, для этого добавим в таблицу для удаления потом закроем все не найденные счита в БД.
+////                    removeAccount(houseId, accountFromGISJKH.getAccountNumber(), connection);
 //                    }
-//                } else { // если нет записи в БД, значит счет закрыт надо закрыть в ГИС ЖКХ, для этого добавим в таблицу для удаления потом закроем все не найденные счита в БД.
-//                    removeAccount(houseId, accountFromGISJKH.getAccountNumber(), connection);
-                    }
-                } else { // Если нет уникального идентификатора, заносим всё на честное слово
+//                } else { // Если нет уникального идентификатора, заносим всё на честное слово
                     setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), accountFromGISJKH.getUnifiedAccountNumber(), connection);
                     return true;
-                }
+//                }
             }
         }
 
@@ -521,7 +565,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      * @throws ParseException
      */
-    private void sendAccountDataToGISJKH(final LinkedHashMap<String, ImportAccountRequest.Account> accountDataFromGrad,
+    private void sendAccountDataToGISJKH(final Map<String, ImportAccountRequest.Account> accountDataFromGrad,
                                          final Integer houseId,
                                          final Connection connection) throws PreGISException, SQLException, ParseException {
 
@@ -622,56 +666,56 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      */
     private void closeAccountData(ArrayList<ImportAccountRequest.Account> listForClose) {
 
-        if (!listForClose.isEmpty()) {
-
-            answerProcessing.sendMessageToClient("Закрытие ЛС...");
-            // ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
-            GetStateResult result;
-            int count = 0;
-
-            while (count < listForClose.size()) {
-
-                answerProcessing.sendMessageToClient("::clearLabelText");
-
-                try {
-                    if (count + 5 > listForClose.size()) {
-                        result = HomeManagementAsyncPort.callImportAccountData(listForClose.subList(count, listForClose.size()), answerProcessing);
-                        count += 5;
-                    } else {
-                        result = HomeManagementAsyncPort.callImportAccountData(listForClose.subList(count, count += 5), answerProcessing);
-                    }
-
-                    for (ImportResult importResult : result.getImportResult()) {
-                        for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
-                            if (commonResult.getError() == null || commonResult.getError().isEmpty()) {
-                                answerProcessing.sendMessageToClient("");
-                                answerProcessing.sendMessageToClient(String.format("Уникальный номер абонента ГИС ЖКХ: %s, успешно закрыт.", commonResult.getUniqueNumber()));
-                            } else {
-                                answerProcessing.sendMessageToClient("");
-                                answerProcessing.sendMessageToClient("Код ошибки: " + commonResult.getError().get(0).getErrorCode());
-                                answerProcessing.sendMessageToClient("Описание ошибки: " + commonResult.getError().get(0).getDescription());
-                                setErrorState(0);
-                            }
-                        }
-                    }
-
-                } catch (SQLException | PreGISException e) {
-                    answerProcessing.sendErrorToClient("Закрытие ЛС", "\"Закрытие ЛС\"", LOGGER, e);
-                }
-
-            }
-            accountsForCloseList.clear();
-        }
-        if (errorState == -1) {
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Закрытие ЛС\" прервана!");
-        } else if (errorState == 0) {
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendErrorToClientNotException("Операция: \"Закрытие ЛС\" завершилась с ошибками!");
-        } else if (errorState == 1) {
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendOkMessageToClient("\"Закрытие ЛС\" успешно выполнено.");
-        }
+//        if (!listForClose.isEmpty()) {
+//
+//            answerProcessing.sendMessageToClient("Закрытие ЛС...");
+//            // ImportAccountData sendAccountToGis = new ImportAccountData(answerProcessing);
+//            GetStateResult result;
+//            int count = 0;
+//
+//            while (count < listForClose.size()) {
+//
+//                answerProcessing.sendMessageToClient("::clearLabelText");
+//
+//                try {
+//                    if (count + 5 > listForClose.size()) {
+//                        result = HomeManagementAsyncPort.callImportAccountData(listForClose.subList(count, listForClose.size()), answerProcessing);
+//                        count += 5;
+//                    } else {
+//                        result = HomeManagementAsyncPort.callImportAccountData(listForClose.subList(count, count += 5), answerProcessing);
+//                    }
+//
+//                    for (ImportResult importResult : result.getImportResult()) {
+//                        for (ImportResult.CommonResult commonResult : importResult.getCommonResult()) {
+//                            if (commonResult.getError() == null || commonResult.getError().isEmpty()) {
+//                                answerProcessing.sendMessageToClient("");
+//                                answerProcessing.sendMessageToClient(String.format("Уникальный номер абонента ГИС ЖКХ: %s, успешно закрыт.", commonResult.getUniqueNumber()));
+//                            } else {
+//                                answerProcessing.sendMessageToClient("");
+//                                answerProcessing.sendMessageToClient("Код ошибки: " + commonResult.getError().get(0).getErrorCode());
+//                                answerProcessing.sendMessageToClient("Описание ошибки: " + commonResult.getError().get(0).getDescription());
+//                                setErrorState(0);
+//                            }
+//                        }
+//                    }
+//
+//                } catch (SQLException | PreGISException e) {
+//                    answerProcessing.sendErrorToClient("Закрытие ЛС", "\"Закрытие ЛС\"", LOGGER, e);
+//                }
+//
+//            }
+//            accountsForCloseList.clear();
+//        }
+//        if (errorState == -1) {
+//            answerProcessing.sendMessageToClient("");
+//            answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Закрытие ЛС\" прервана!");
+//        } else if (errorState == 0) {
+//            answerProcessing.sendMessageToClient("");
+//            answerProcessing.sendErrorToClientNotException("Операция: \"Закрытие ЛС\" завершилась с ошибками!");
+//        } else if (errorState == 1) {
+//            answerProcessing.sendMessageToClient("");
+//            answerProcessing.sendOkMessageToClient("\"Закрытие ЛС\" успешно выполнено.");
+//        }
     }
 
     private void setErrorState(int errorState) {
@@ -745,7 +789,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //                            + basicInformation.getNumberLS() + " не найдено идентификатора помещения или комнаты", LOGGER);
 //                }
             }
-            if (fRoom != null && !(premisesGUID == null && livingRoomGUID == null)
+            if (fRoom != null
+                    && !((premisesGUID == null || premisesGUID.isEmpty()) && (livingRoomGUID == null || livingRoomGUID.isEmpty())) // помещение или комната ОБЯЗАНЫ БЫТЬ!
                     && (basicInformation.getOgrnOrOgrnip().isEmpty() || // или частное лицо
                         (!basicInformation.getOgrnOrOgrnip().isEmpty() && !basicInformation.getOrgVersionGUID().isEmpty())) // или есть идентификатор
                     ) {
@@ -776,10 +821,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 account.setPayerInfo(new AccountType.PayerInfo());
 
                 if (basicInformation.getOgrnOrOgrnip().isEmpty()) { // частное лицо (не юр и не ИП)
-                    account.getPayerInfo().setInd(new AccountIndType());
 
                     if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
                             && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
+
+                        account.getPayerInfo().setInd(new AccountIndType());
 
                         account.getPayerInfo().getInd().setSurname(basicInformation.getSurname());
 
@@ -791,6 +837,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
 
                         if (basicInformation.getNumberDocumentIdentity() != null) { // будем создавать только если есть номер документа!
+
                             account.getPayerInfo().getInd().setID(new ID()); // подгрузить справочник NSI 95
 
                             if (basicInformation.getTypeDocument() != null) {
@@ -874,15 +921,15 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 String fio = builder.toString().replaceAll("null", "").trim();
                 fio = fio.isEmpty() ? notFound : fio;
 
-                if (basicInformation.getTypeDocument() == null || basicInformation.getTypeDocument().getTypeDocument() == null || basicInformation.getNumberDocumentIdentity() == null) {
+//                if (basicInformation.getTypeDocument() == null || basicInformation.getTypeDocument().getTypeDocument() == null || basicInformation.getNumberDocumentIdentity() == null) {
+//                    answerProcessing.sendInformationToClientAndLog(String.format(
+//                            "\nДля абонента с ФИО: %s,\nНомер счета: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
+//                            fio, basicInformation.getNumberLS()), LOGGER);
+//                } else {
                     answerProcessing.sendInformationToClientAndLog(String.format(
-                            "\nДля абонента с ФИО: %s,\nНомер счета: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
-                            fio, basicInformation.getNumberLS()), LOGGER);
-                } else {
-                    answerProcessing.sendInformationToClientAndLog(String.format(
-                            "\nДля абонента с ФИО: %s,\nНомер счета: %s,\nТип документа: %s,\nНомер документа: %s.\nНе удалось найти соответствие \"Помещение\" в базе данных.",
-                            fio, basicInformation.getNumberLS(), basicInformation.getTypeDocument().getTypeDocument(), basicInformation.getNumberDocumentIdentity()), LOGGER);
-                }
+                            "\nДля абонента с ФИО: %s, ЛС: %s, ИД Град: %s не удалось найти соответствие \"Помещение\" в базе данных.",
+                            fio, basicInformation.getNumberLS(), basicInformation.getGradID()), LOGGER);
+//                }
 
             } else if (count >= 2) {
                 answerProcessing.sendInformationToClientAndLog("Для счета - "
@@ -936,11 +983,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
     @Override
     public void go() {
-        closeAccountData(accountsForCloseList);
+//        closeAccountData(accountsForCloseList);
     }
 
     @Override
     public void stop() {
-        accountsForCloseList.clear();
+//        accountsForCloseList.clear();
     }
 }

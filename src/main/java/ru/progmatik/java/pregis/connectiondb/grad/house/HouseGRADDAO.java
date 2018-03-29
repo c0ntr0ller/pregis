@@ -332,10 +332,12 @@ public final class HouseGRADDAO {
     //                System.err.println("Apartment code return: " + codeReturn);
                 }
             }
-        } else {
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendMessageToClient("Не удалось найти ID абонента в БД ГРАД, запись пропущена. Кв № = " + apartmentNumber + "; ");
         }
+// дублирование сообщения
+//      else {
+//            answerProcessing.sendMessageToClient("");
+//            answerProcessing.sendMessageToClient("Не удалось найти ID абонента в БД ГРАД, запись пропущена. Кв № = " + apartmentNumber + "; ");
+//        }
     }
 
     /**

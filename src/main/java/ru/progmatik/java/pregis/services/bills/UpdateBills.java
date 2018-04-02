@@ -1,14 +1,11 @@
 package ru.progmatik.java.pregis.services.bills;
 
 import org.apache.log4j.Logger;
-import ru.gosuslugi.dom.schema.integration.base.Attachment;
-import ru.gosuslugi.dom.schema.integration.base.AttachmentType;
 import ru.gosuslugi.dom.schema.integration.base.CommonResultType;
 import ru.gosuslugi.dom.schema.integration.bills.*;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountIndividualServicesResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportAccountResultType;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportCAChResultType;
-import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountIndividualServicesRequest;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiRef;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.bills.PaymentDocumentGradDAO;
@@ -328,7 +325,7 @@ public class UpdateBills {
                                          final XMLGregorianCalendar endDate) throws SQLException {
 
         // если у абонента уже есть такая услуга - ничего не делаем
-        if(accountContainsService(chargeInfo, accountGUID)) return;
+/*        if(accountContainsService(chargeInfo, accountGUID)) return;
 
         // собираем запрос на добавление услуги
         ImportAccountIndividualServicesRequest.IndividualService individualService = new ImportAccountIndividualServicesRequest.IndividualService();
@@ -352,7 +349,7 @@ public class UpdateBills {
 
         // отсылаем запрос на добавление услуги. результат нас особо не интересует
         AccountIndividualServicesPort accountIndividualServicesPort = new AccountIndividualServicesPort(answerProcessing);
-        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult StateResult = accountIndividualServicesPort.callImportAccountIndividualServices(request);
+        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult StateResult = accountIndividualServicesPort.callImportAccountIndividualServices(request);*/
     }
 
     /**

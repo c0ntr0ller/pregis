@@ -104,7 +104,6 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     } else if((stateResult.getErrorMessage() != null) || (stateResult.getExportAccountResult() == null) || stateResult.getExportAccountResult().isEmpty()){
                         errorState = 0;
                     }else {
-                        countAllGisJkh += stateResult.getExportAccountResult().size();
     //                    List<ExCportAccountResultType> accountsListFromGISJKH = exportAccountResult.getAccounts();
     ////                    ГИС ЖКХ отдаёт ответ по 50 ЛС.
     //                    while (countAllGisJkh % 50 == 0) {
@@ -196,6 +195,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     .stream()
                     .filter(e->e.getClosed() == null)
                     .collect(Collectors.toMap(ExportAccountResultType::getAccountNumber, e->e));
+
+            countAllGisJkh += accountsListFromGISJKH.size();
 
             // бежим по ЛС из Града
             for (Map.Entry<BasicInformation, ImportAccountRequest.Account> entry : accountsMapFromGrad.entrySet()) {
@@ -338,6 +339,9 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @throws SQLException
      */
     private void checkDuplicateAccountDataGisJkh(final List<ExportAccountResultType> exportAccountResult, ArrayList<ImportAccountRequest.Account> accountsForCloseList) throws PreGISException, SQLException {
+
+        List<ExportAccountResultType> listForClose = new ArrayList<>();
+        int indexForClose = 0;
         for (int i = 0; i < exportAccountResult.size(); i++) {
 
             String ar1 = exportAccountResult.get(i).getAccountNumber();
@@ -346,13 +350,29 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                 String ar2 = exportAccountResult.get(j).getAccountNumber();
 
-                if (ar1 != null && ar2 != null && !exportAccountResult.get(i).getAccountGUID().equals(exportAccountResult.get(j).getAccountGUID()) &&
+                if (ar1 != null && ar2 != null &&
+                        !exportAccountResult.get(i).getAccountGUID().equals(exportAccountResult.get(j).getAccountGUID()) &&
                         ar1.equalsIgnoreCase(ar2) &&
                         (exportAccountResult.get(i).getClosed() == null && exportAccountResult.get(j).getClosed() == null)) {
 
-                    addAccountDataForClose(exportAccountResult.get(j), "Изменение реквизитов лицевого счета", "Абонент продублирован в ГИС", accountsForCloseList);
+                    if(exportAccountResult.get(j).getCreationDate().toGregorianCalendar()
+                            .compareTo(exportAccountResult.get(i).getCreationDate().toGregorianCalendar()) < 0){
+                        indexForClose = j;
+                    }else{
+                        indexForClose = i;
+                    }
+
+                    if(listForClose.indexOf(exportAccountResult.get(indexForClose)) == -1) {
+                        listForClose.add(exportAccountResult.get(indexForClose));
+
+                        answerProcessing.sendMessageToClient(String.format("Номер лицевого счета %s продублирован в ГИС ЖКХ, более старый будет закрыт.", exportAccountResult.get(j).getAccountNumber()));
+                        addAccountDataForClose(exportAccountResult.get(indexForClose), "Изменение реквизитов лицевого счета", "Абонент продублирован в ГИС", accountsForCloseList);
+                    }
                 }
             }
+        }
+        if(!listForClose.isEmpty()){
+            exportAccountResult.removeAll(listForClose);
         }
     }
 
@@ -817,13 +837,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
-//                    Сведения о плательщике
-                account.setPayerInfo(new AccountType.PayerInfo());
-
                 if (basicInformation.getOgrnOrOgrnip().isEmpty()) { // частное лицо (не юр и не ИП)
 
                     if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
                             && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
+
+                        // Сведения о плательщике
+                        account.setPayerInfo(new AccountType.PayerInfo());
 
                         account.getPayerInfo().setInd(new AccountIndType());
 
@@ -868,18 +888,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     }
 
                 } else {
-                    account.getPayerInfo().setOrg(new RegOrgVersionType());
-                    account.getPayerInfo().getOrg().setOrgVersionGUID(basicInformation.getOrgVersionGUID());
-//                        Есть возможность указать на VersionGUID из реестра организаций, вот только где его взять?
-//                        if (basicInformation.getOgrnOrOgrnip() > 0) {
-//                            ExportOrgRegistryRequest.SearchCriteria criteria = new ExportOrgRegistryRequest.SearchCriteria();
-//
-//                            if (basicInformation.getOgrnOrOgrnip() < 10000000000000L && basicInformation.getOgrnOrOgrnip() > 999999999999L) {
-//                                criteria.setOGRN(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-//                            } else if (basicInformation.getOgrnOrOgrnip() > 99999999999999L) {
-//                                criteria.setOGRNIP(String.valueOf(basicInformation.getOgrnOrOgrnip()));
-//                            }
-//                            ExportOrgRegistryResult result = orgRegistry.callExportOrgRegistry(orgRegistry.getExportOrgRegistryRequest(criteria));
+                    // заносим плательщика с ОГРН, только если у него есть OrgVersionGUID
+                    if (basicInformation.getOrgVersionGUID() != null && !basicInformation.getOrgVersionGUID().isEmpty()) {
+                        // Сведения о плательщике
+                        account.setPayerInfo(new AccountType.PayerInfo());
+                        account.getPayerInfo().setOrg(new RegOrgVersionType());
+                        account.getPayerInfo().getOrg().setOrgVersionGUID(basicInformation.getOrgVersionGUID());
+                    }
                 }
 
                 if (basicInformation.getEmployer() == AnswerYesOrNo.YES) {
@@ -962,20 +977,21 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             Map<String, Organization> ogrn2Org = exportOrgRegistry.getOrgsVersionFromGis(orgsWOversionIDs);
 
             if(ogrn2Org.isEmpty()){
-                answerProcessing.sendMessageToClient("Информация по юр.лицам без идентификаторов не получена!");
+                answerProcessing.sendMessageToClient("\nИнформация по юр.лицам без идентификаторов не получена!");
             }else {
-                answerProcessing.sendMessageToClient("Обновляется информация в Град по юр.лицам без идентификаторов");
-            }
+                answerProcessing.sendMessageToClient("\nОбновляется информация в Град по юр.лицам без идентификаторов");
 
-            for (BasicInformation basicInformation : basicInformationWOversionIDS) {
 
-                String versionId = ogrn2Org.get(basicInformation.getOgrnOrOgrnip()).getOrgVersionGUID();
+                for (BasicInformation basicInformation : basicInformationWOversionIDS) {
 
-                if(versionId != null && !versionId.isEmpty()){
-                    // обновляем инофрмацию об абоненте в памяти
-                    basicInformation.setOrgVersionGUID(versionId);
-                    // заносим в Град
-                    AccountGRADDAO.setOrgVersionGUID(basicInformation.getGradID(), versionId, connectionGrad, answerProcessing);
+                    String versionId = ogrn2Org.get(basicInformation.getOgrnOrOgrnip()).getOrgVersionGUID();
+
+                    if (versionId != null && !versionId.isEmpty()) {
+                        // обновляем инофрмацию об абоненте в памяти
+                        basicInformation.setOrgVersionGUID(versionId);
+                        // заносим в Град
+                        AccountGRADDAO.setOrgVersionGUID(basicInformation.getGradID(), versionId, connectionGrad, answerProcessing);
+                    }
                 }
             }
         }

@@ -59,7 +59,7 @@ public class LoginClient extends HttpServlet {
         Map<String, Object> pageVariables = new HashMap<>();
         pageVariables.put("errorMessage", errorMessage);
 
-        if (!errorMessage.isEmpty())
+        if (errorMessage != null && !errorMessage.isEmpty())
             LOGGER.error("ErrorPage: " + errorMessage);
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(statusCode);

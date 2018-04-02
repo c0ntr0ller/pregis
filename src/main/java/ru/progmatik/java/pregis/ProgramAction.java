@@ -305,7 +305,7 @@ public final class ProgramAction {
         try {  // такая проверка, что указали точно число.
             final int code = Integer.valueOf(codeNsiItem);
         } catch (NumberFormatException ext) {
-            if (codeNsiItem.isEmpty()) {
+            if (codeNsiItem == null || codeNsiItem.isEmpty()) {
                 answerProcessing.sendMessageToClient("Не указан код справочника: " +
                         "\nУкажите пожалуйста код справочника.\nЗапрос прерван!");
             } else {
@@ -589,7 +589,7 @@ public final class ProgramAction {
 
             if (houseAddedGisJkh != null && !houseAddedGisJkh.isEmpty()) {
                 for (Map.Entry<String, HouseRecord> entry : houseAddedGisJkh.entrySet()) {
-                    if (!entry.getValue().getHouseUniqNum().isEmpty()) {
+                    if (entry.getValue().getHouseUniqNum() != null && !entry.getValue().getHouseUniqNum().isEmpty()) {
                         listHouseModalWindow.add(new ValueJSON(
                                 entry.getValue().getGrad_id().toString(),
                                 entry.getValue().getAddresStringShort()));

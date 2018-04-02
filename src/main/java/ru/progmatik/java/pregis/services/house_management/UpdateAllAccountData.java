@@ -795,7 +795,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             String livingRoomGUID = null;
             if (fRoom != null) {
                 // заранее получаем premisesGUID и livingRoomGUID, если не заданы - вообще не добавляем объект, потому что вызовет ошибку
-                if(basicInformation.getPremisesGUID().isEmpty()) {
+                if(basicInformation.getPremisesGUID() != null && basicInformation.getPremisesGUID().isEmpty()) {
                     premisesGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "PREMISESGUID", connectionGrad);
                 }else{
                     premisesGUID = basicInformation.getPremisesGUID();
@@ -811,8 +811,8 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             }
             if (fRoom != null
                     && !((premisesGUID == null || premisesGUID.isEmpty()) && (livingRoomGUID == null || livingRoomGUID.isEmpty())) // помещение или комната ОБЯЗАНЫ БЫТЬ!
-                    && (basicInformation.getOgrnOrOgrnip().isEmpty() || // или частное лицо
-                        (!basicInformation.getOgrnOrOgrnip().isEmpty() && !basicInformation.getOrgVersionGUID().isEmpty())) // или есть идентификатор
+                    && ((basicInformation.getOgrnOrOgrnip() == null || basicInformation.getOgrnOrOgrnip().isEmpty()) || // или частное лицо
+                        (!(basicInformation.getOgrnOrOgrnip() == null || basicInformation.getOgrnOrOgrnip().isEmpty()) && !(basicInformation.getOrgVersionGUID() == null || basicInformation.getOrgVersionGUID().isEmpty()))) // или есть идентификатор
                     ) {
 // debug                    answerProcessing.sendMessageToClient(basicInformation.getNumberLS() + " found!");
                 ImportAccountRequest.Account account = new ImportAccountRequest.Account();
@@ -837,7 +837,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
-                if (basicInformation.getOgrnOrOgrnip().isEmpty()) { // частное лицо (не юр и не ИП)
+                if (basicInformation.getOgrnOrOgrnip() == null || basicInformation.getOgrnOrOgrnip().isEmpty()) { // частное лицо (не юр и не ИП)
 
                     if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
                             && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
@@ -903,7 +903,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
 
                 account.setAccountNumber(basicInformation.getNumberLS());
-                if(basicInformation.getAccountGUID().isEmpty()) {
+                if(basicInformation.getAccountGUID() == null || basicInformation.getAccountGUID().isEmpty()) {
                     account.setAccountGUID(AccountGRADDAO.getAccountGUIDFromBase(basicInformation.getGradID(), connectionGrad));  // добавляется, если счет будет изменен или закрыт, если этого не будет перед отправкой затереть.
                 }else{
                     account.setAccountGUID(basicInformation.getAccountGUID());
@@ -962,7 +962,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
         // список организаций без идентификаторов ГИС
         List<BasicInformation> basicInformationWOversionIDS = basicInformationList.stream()
-                .filter(e -> !e.getOgrnOrOgrnip().isEmpty() && e.getOrgVersionGUID().isEmpty())
+                .filter(e -> !(e.getOgrnOrOgrnip() == null || e.getOgrnOrOgrnip().isEmpty()) && (e.getOrgVersionGUID() == null || e.getOrgVersionGUID().isEmpty()))
                 .collect(Collectors.toList());
 
         if(!basicInformationWOversionIDS.isEmpty()) {

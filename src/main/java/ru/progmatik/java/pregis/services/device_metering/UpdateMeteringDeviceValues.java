@@ -199,7 +199,7 @@ public final class UpdateMeteringDeviceValues {
                 // обрабатываем результат
                 if (result != null && result.getImportResult() != null && !result.getImportResult().isEmpty()){ // если есть ответ от ГИС ЖКХ
                     for (CommonResultType resultType : result.getImportResult()) { // смотрим каждый элемент
-                        if (!resultType.getError().isEmpty()) { // если есть ошибки
+                        if (resultType.getError() != null && !resultType.getError().isEmpty()) { // если есть ошибки
                             for (CommonResultType.Error error : resultType.getError()) {
                                 showErrorMeteringDevices(resultType.getTransportGUID(), error.getErrorCode(), error.getDescription());
                             }

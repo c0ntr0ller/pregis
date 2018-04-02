@@ -361,7 +361,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 .collect(Collectors.toList());
         answerProcessing.sendInformationToClientAndLog("Получено архивированных ОДПУ: " + devicesArchivedODPU.size(), LOGGER);
 
-        if(devicesArchivedODPU.isEmpty()){
+        if(devicesArchivedODPU == null || devicesArchivedODPU.isEmpty()){
             return;
         }
 
@@ -403,7 +403,7 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         }
 
         // преобразуем в ПУ на создание
-        if (!devicesArchivedODPU.isEmpty()){
+        if (devicesArchivedODPU != null && !devicesArchivedODPU.isEmpty()){
             answerProcessing.sendInformationToClientAndLog("ОДПУ на пересоздание: " + devicesArchivedODPU.size(), LOGGER);
             return;
         }

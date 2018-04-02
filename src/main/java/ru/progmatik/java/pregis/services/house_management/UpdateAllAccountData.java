@@ -984,13 +984,15 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                 for (BasicInformation basicInformation : basicInformationWOversionIDS) {
 
-                    String versionId = ogrn2Org.get(basicInformation.getOgrnOrOgrnip()).getOrgVersionGUID();
+                    if(basicInformation.getOgrnOrOgrnip() != null && ogrn2Org.get(basicInformation.getOgrnOrOgrnip()) != null) { // могло и не обновиться
+                        String versionId = ogrn2Org.get(basicInformation.getOgrnOrOgrnip()).getOrgVersionGUID();
 
-                    if (versionId != null && !versionId.isEmpty()) {
-                        // обновляем инофрмацию об абоненте в памяти
-                        basicInformation.setOrgVersionGUID(versionId);
-                        // заносим в Град
-                        AccountGRADDAO.setOrgVersionGUID(basicInformation.getGradID(), versionId, connectionGrad, answerProcessing);
+                        if (versionId != null && !versionId.isEmpty()) {
+                            // обновляем инофрмацию об абоненте в памяти
+                            basicInformation.setOrgVersionGUID(versionId);
+                            // заносим в Град
+                            AccountGRADDAO.setOrgVersionGUID(basicInformation.getGradID(), versionId, connectionGrad, answerProcessing);
+                        }
                     }
                 }
             }

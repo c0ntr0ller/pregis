@@ -795,7 +795,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             String livingRoomGUID = null;
             if (fRoom != null) {
                 // заранее получаем premisesGUID и livingRoomGUID, если не заданы - вообще не добавляем объект, потому что вызовет ошибку
-                if(basicInformation.getPremisesGUID() != null && basicInformation.getPremisesGUID().isEmpty()) {
+                if(basicInformation.getPremisesGUID() == null || basicInformation.getPremisesGUID().isEmpty()) {
                     premisesGUID = AccountGRADDAO.getBuildingIdentifiersFromBase(basicInformation.getGradID(), "PREMISESGUID", connectionGrad);
                 }else{
                     premisesGUID = basicInformation.getPremisesGUID();

@@ -222,7 +222,7 @@ public class ExportOrgRegistry {
 
                     GetStateResult result = OrgRegistryAsyncPort.callExportOrgRegistry(getExportOrgRegistryRequest(ogrn), answerProcessing);
 
-                    if (result != null) {
+                    if (result != null && result.getExportOrgRegistryResult() != null && !result.getExportOrgRegistryResult().isEmpty()) {
                         ExportOrgRegistryResultType exportOrgRegistryResult = result.getExportOrgRegistryResult().get(0);
                         if (!exportOrgRegistryResult.getOrgVersion().getOrgVersionGUID().isEmpty()) {
                             Organization organization = new Organization();
@@ -249,7 +249,7 @@ public class ExportOrgRegistry {
                         }
                     }
                 } catch (PreGISException e) {
-                    answerProcessing.sendErrorToClientNotException("ГИС ЖКХ не вернула идентификаторы организаций!");
+                    answerProcessing.sendErrorToClientNotException(String.format("ГИС ЖКХ не вернула идентификатор организации/ИП с ОГРН/ОГРНИП %s!", ogrn));
                 }
             }else{
                 answerProcessing.sendErrorToClientNotException(String.format("Неверная длина ОГРН/ОГРНИП %s", ogrn));

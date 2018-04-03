@@ -18,6 +18,7 @@ import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -185,15 +186,16 @@ public final class UpdateMeteringDeviceValues {
         if (!devicesValuesList.isEmpty()) { // если есть показания для отправки в ГИС ЖКХ
 
             int count = 0;
+            final int chunk = ResourcesUtil.instance().getMaxRequestSize();
             while (count < devicesValuesList.size()) {
                 // answerProcessing.sendMessageToClient("::clearLabelText");
                 GetStateResult result;
                 // разбиваем запрос на пакеты по 100 ПУ
-                if (count + 500 > devicesValuesList.size()) {
+                if (count + chunk > devicesValuesList.size()) {
                     result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(fias, devicesValuesList.subList(count, devicesValuesList.size()), answerProcessing);
-                    count += 500;
+                    count += chunk;
                 } else {
-                    result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(fias, devicesValuesList.subList(count, count += 500), answerProcessing);
+                    result = DeviceMeteringAsyncPort.callImportMeteringDeviceValues(fias, devicesValuesList.subList(count, count += chunk), answerProcessing);
                 }
 
                 // обрабатываем результат

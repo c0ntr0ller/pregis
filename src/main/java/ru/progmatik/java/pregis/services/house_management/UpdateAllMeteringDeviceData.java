@@ -11,6 +11,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.model.MeteringDeviceID;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
 import javax.xml.bind.JAXBException;
@@ -693,15 +694,16 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         }
 
         int count = 0;
+        final int chunk = ResourcesUtil.instance().getMaxRequestSize();
         while (count < devices.size()) {
             // answerProcessing.sendMessageToClient("::clearLabelText");
             GetStateResult result;
             // разбиваем запрос на пакеты по 20 ПУ
-            if (count + 20 > devices.size()) {
+            if (count + chunk > devices.size()) {
                 result = HomeManagementAsyncPort.callImportMeteringDeviceData(houseRecord.getFias(), devices.subList(count, devices.size()), answerProcessing);
-                count += 20;
+                count += chunk;
             } else {
-                result = HomeManagementAsyncPort.callImportMeteringDeviceData(houseRecord.getFias(), devices.subList(count, count += 20), answerProcessing);
+                result = HomeManagementAsyncPort.callImportMeteringDeviceData(houseRecord.getFias(), devices.subList(count, count += chunk), answerProcessing);
             }
 
             // обрабатываем результат
@@ -775,14 +777,15 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         if (devicesMap != null && devicesMap.size() > 0) {
             List<ImportMeteringDeviceDataRequest.MeteringDevice> devices = new ArrayList<>(devicesMap.values());
             int count = 0;
+            final int chunk = ResourcesUtil.instance().getMaxRequestSize();
             while (count < devices.size()) {
                 // answerProcessing.sendMessageToClient("::clearLabelText");
                 GetStateResult result;
-                if (count + 20 > devices.size()) {
+                if (count + chunk > devices.size()) {
                     result = HomeManagementAsyncPort.callImportMeteringDeviceData(fias, devices.subList(count, devices.size()), answerProcessing);
-                    count += 20;
+                    count += chunk;
                 } else {
-                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(fias, devices.subList(count, count += 20), answerProcessing);
+                    result = HomeManagementAsyncPort.callImportMeteringDeviceData(fias, devices.subList(count, count += chunk), answerProcessing);
                 }
 
                 if (result != null && result.getImportResult() != null) {

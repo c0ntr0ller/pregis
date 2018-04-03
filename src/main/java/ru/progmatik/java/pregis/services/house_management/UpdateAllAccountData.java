@@ -18,6 +18,7 @@ import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.model.Organization;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
@@ -603,13 +604,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         while (count < accountsList.size()) {
 
             answerProcessing.clearLabelForText();
-
-            if (count + ACCOUNT_COUNTER_FOR_REQUEST > accountsList.size()) {
+            final int chunk = ResourcesUtil.instance().getMaxRequestSize();
+            if (count + chunk > accountsList.size()) {
                 result = HomeManagementAsyncPort.callImportAccountData(accountsList.subList(count, accountsList.size()), answerProcessing);
 //                result = sendAccountToGis.callImportAccountData(accountsList.subList(count, accountsList.size()));
-                count += ACCOUNT_COUNTER_FOR_REQUEST;
+                count += chunk;
             } else {
-                result = HomeManagementAsyncPort.callImportAccountData(accountsList.subList(count, count += ACCOUNT_COUNTER_FOR_REQUEST), answerProcessing);
+                result = HomeManagementAsyncPort.callImportAccountData(accountsList.subList(count, count += chunk), answerProcessing);
             }
 
             if (result != null && result.getImportResult() != null) {
@@ -619,12 +620,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 
                         if (commonResult.getError() == null || commonResult.getError().isEmpty()) {
                             countAdded++;
-                            setAccountToBase(houseId,
-                                    accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
-                                    commonResult.getGUID(),
-                                    commonResult.getImportAccount().getUnifiedAccountNumber(),
-                                    connection);
-
+                            if(accountDataFromGrad.get(commonResult.getTransportGUID()).getClosed() == null) { // обновляем если не закрывали
+                                setAccountToBase(houseId,
+                                        accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
+                                        commonResult.getGUID(),
+                                        commonResult.getImportAccount().getUnifiedAccountNumber(),
+                                        connection);
+                            }
                         } else {
                             answerProcessing.sendMessageToClient("");
                             answerProcessing.sendMessageToClient("Код ошибки: " + commonResult.getError().get(0).getErrorCode());

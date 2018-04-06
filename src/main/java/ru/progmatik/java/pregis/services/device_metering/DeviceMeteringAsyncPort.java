@@ -108,7 +108,9 @@ public class DeviceMeteringAsyncPort {
             }else{
                 answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
             }
-        }
+        } else
+            // сохраняем ответ
+            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, null, LOGGER);
 
         return result;
     }

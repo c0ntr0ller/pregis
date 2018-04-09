@@ -263,6 +263,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                             // убираем из мапы ГИС, так как он у нас есть уже в ГИС и будет просто обновлен, если что-от не совпадает
                             accountsMapFromGISJKH.remove(entry.getValue().getAccountNumber());
                         }else {
+                            entry.getValue().setAccountGUID(null);
                             addEntryToGISMap(accountsCreateMap, entry.getValue());
                         }
                     }
@@ -839,13 +840,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 account.getAccommodation().add(accommodation);
 //                    account.setTransportGUID();  // указывается, если ЛС добавляется в первые.
 
+                // Сведения о плательщике
+                account.setPayerInfo(new AccountType.PayerInfo());
+
                 if (basicInformation.getOgrnOrOgrnip() == null || basicInformation.getOgrnOrOgrnip().isEmpty()) { // частное лицо (не юр и не ИП)
 
                     if (basicInformation.getSurname() != null && !basicInformation.getSurname().trim().isEmpty()
                             && basicInformation.getName() != null && !basicInformation.getName().trim().isEmpty()) {
-
-                        // Сведения о плательщике
-                        account.setPayerInfo(new AccountType.PayerInfo());
 
                         account.getPayerInfo().setInd(new AccountIndType());
 

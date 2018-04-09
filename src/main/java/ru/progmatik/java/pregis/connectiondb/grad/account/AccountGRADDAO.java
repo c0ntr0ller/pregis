@@ -133,9 +133,9 @@ public final class AccountGRADDAO {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                 }
                 if(bi.getSurname().isEmpty() && bi.getOgrnOrOgrnip().isEmpty()){
-                    answerProc.sendErrorToClientNotException("У абонента Град с ЛС " + bi.getNumberLS() + " не указана фамилия и отсутствует ОГРН. Обмен по данному абоненту невозможен, требуется исправить данные в Град");
+                    answerProc.sendErrorToClientNotException("У абонента Град с ЛС " + bi.getNumberLS() + " не указана фамилия и отсутствует ОГРН, исправьте данные в Град");
                 }
-                else listBasic.add(bi);
+                listBasic.add(bi);
             }
         }
         if (listBasic.size() == 0) return null; // если нет ЛС возвращаем null.

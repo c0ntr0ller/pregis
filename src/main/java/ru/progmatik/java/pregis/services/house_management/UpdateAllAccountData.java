@@ -211,9 +211,14 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                         // если есть в ГИС с таким лицевым счетом
                         if(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null) {
                             // если в Граде у абонента ACCOUNTGUID пустой
-                            if (entry.getValue().getAccountGUID() == null ||
+                            if (entry.getValue().getAccountGUID() == null || entry.getValue().getAccountGUID().isEmpty() ||
+                                    // или Идентификатор жилищно-коммунальной услуги пустой
+                                    entry.getKey().getServiceID() == null || entry.getKey().getServiceID().isEmpty() ||
                                     // или при одинаковом ЛС разные GUID
-                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID())) {
+                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) ||
+                                    // при одинаковом ЛС разные UnifiedAccountNumber для организации
+                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getServiceID().equalsIgnoreCase(entry.getKey().getServiceID())
+                                    ) {
                                 // проверяем и впытаемся занести его ACCOUNTGUID в БД
                                 if (!checkAccountDataIsAddedGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
                                         houseId, connection)) {
@@ -568,7 +573,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 ////                    removeAccount(houseId, accountFromGISJKH.getAccountNumber(), connection);
 //                    }
 //                } else { // Если нет уникального идентификатора, заносим всё на честное слово
-                    setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), accountFromGISJKH.getUnifiedAccountNumber(), connection);
+                    setAccountToBase(houseId, accountFromGISJKH.getAccountNumber(), accountFromGISJKH.getAccountGUID(), accountFromGISJKH.getUnifiedAccountNumber(), accountFromGISJKH.getServiceID(), connection);
                     return true;
 //                }
             }
@@ -626,6 +631,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                         accountDataFromGrad.get(commonResult.getTransportGUID()).getAccountNumber(),
                                         commonResult.getGUID(),
                                         commonResult.getImportAccount().getUnifiedAccountNumber(),
+                                        commonResult.getImportAccount().getServiceID(),
                                         connection);
                             }
                         } else {
@@ -662,9 +668,9 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param accountGUID         идентификатор ЛС в ГИС ЖКХ.
      * @param accountUniqueNumber уникальный номер ЛС, присвоенный ГИС ЖКХ.
      */
-    private void setAccountToBase(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber, Connection connection) throws ParseException, SQLException, PreGISException {
+    private void setAccountToBase(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber, String serviceID, Connection connection) throws ParseException, SQLException, PreGISException {
 
-        if (AccountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, connection, answerProcessing)) {
+        if (AccountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, serviceID, connection, answerProcessing)) {
 //            answerProcessing.sendMessageToClient("");
 
 //            if (accountGUID != null && accountUniqueNumber != null) {

@@ -73,6 +73,16 @@ public class HomeManagementAsyncPort {
         return homeManagementAsyncPort.interactHouseManagment(getExportHouseRequest(fias));
     }
 
+    public static GetStateResult callImportHouseUOData(ImportHouseUORequest importHouseUORequest, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
+        HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "importHouseUOData");
+        return homeManagementAsyncPort.interactHouseManagment(getImportHouseUORequest(importHouseUORequest));
+    }
+
+    public static GetStateResult callImportHouseRSOData(ImportHouseRSORequest importHouseRSORequest, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
+        HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "importHouseRSOData");
+        return homeManagementAsyncPort.interactHouseManagment(getImportHouseRSORequest(importHouseRSORequest));
+    }
+
     public static GetStateResult callImportAccountData(List<ImportAccountRequest.Account> accounts, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
         HomeManagementAsyncPort homeManagementAsyncPort = new HomeManagementAsyncPort(answerProcessing, "importAccountData");
         return homeManagementAsyncPort.interactHouseManagment(getImportAccountRequest(accounts));
@@ -112,6 +122,12 @@ public class HomeManagementAsyncPort {
                     break;
                 case "ExportHouseRequest":
                     ackRequest = port.exportHouseData((ExportHouseRequest)requestObject, requestHeader, headerHolder);
+                    break;
+                case "ImportHouseUORequest":
+                    ackRequest = port.importHouseUOData((ImportHouseUORequest)requestObject, requestHeader, headerHolder);
+                    break;
+                case "ImportHouseRSORequest":
+                    ackRequest = port.importHouseRSOData((ImportHouseRSORequest)requestObject, requestHeader, headerHolder);
                     break;
                 case "ImportAccountRequest":
                     ackRequest = port.importAccountData((ImportAccountRequest)requestObject, requestHeader, headerHolder);
@@ -205,6 +221,22 @@ public class HomeManagementAsyncPort {
         request.setVersion(request.getVersion());
 
         request.getAccount().addAll(accounts);
+
+        return request;
+    }
+
+    private static Object getImportHouseUORequest(ImportHouseUORequest request) {
+        request.setId(OtherFormat.getId());
+
+        request.setVersion(request.getVersion());
+
+        return request;
+    }
+
+    private static Object getImportHouseRSORequest(ImportHouseRSORequest request) {
+        request.setId(OtherFormat.getId());
+
+        request.setVersion(request.getVersion());
 
         return request;
     }

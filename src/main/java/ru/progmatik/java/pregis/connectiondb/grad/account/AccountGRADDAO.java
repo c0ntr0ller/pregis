@@ -128,6 +128,7 @@ public final class AccountGRADDAO {
                         bi.setUnifiedAccountNumber(arrayData[23]);
                         bi.setOrgVersionGUID(arrayData[24]);
                     }
+                    if(arrayData.length > 25) bi.setServiceID(arrayData[25]);
 
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
@@ -476,7 +477,7 @@ public final class AccountGRADDAO {
      * @throws ParseException
      */
     public static boolean setAccountGuidAndUniqueNumber(Integer houseId, String accountNumber,
-                                              String accountGUID, String accountUniqueNumber, Connection connection, AnswerProcessing answerProc) throws SQLException, PreGISException, ParseException {
+                                              String accountGUID, String accountUniqueNumber, String serviceId, Connection connection, AnswerProcessing answerProc) throws SQLException, PreGISException, ParseException {
 
         Integer abonentId = getAbonentIdFromGrad(accountNumber, connection);
 
@@ -486,7 +487,7 @@ public final class AccountGRADDAO {
             // ИД прибора учета(:meter_id),
             // уникальный идентификатор ГИС ЖКХ(:gis_id),
             // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?)}";
+            String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ?, ?)}";
             try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) {
 //                answerProcessing.sendMessageToClient(String.format("abonentId: %s:\n" +
 //                                "accountGUID: %s\n" +
@@ -495,7 +496,8 @@ public final class AccountGRADDAO {
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, accountGUID);
                 cstmt.setString(3, accountUniqueNumber);
-                cstmt.setInt(4, ResourcesUtil.instance().getCompanyGradId());
+                cstmt.setString(4, serviceId);
+                cstmt.setInt(5, ResourcesUtil.instance().getCompanyGradId());
                 cstmt.executeUpdate();
 //                int codeReturn = cstmt.executeUpdate();
 //                System.err.println("Apartment code return: " + codeReturn);

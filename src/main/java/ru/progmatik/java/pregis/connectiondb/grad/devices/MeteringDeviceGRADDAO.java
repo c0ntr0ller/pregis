@@ -1004,8 +1004,8 @@ public class MeteringDeviceGRADDAO{
                     if(devicesMap.containsKey(result.getTransportGUID())) {
 
                         // если занеслось в ГИС без ошибок
-                        if (result.getError() == null || result.getError().isEmpty()) {
-
+                        if ((result.getError() == null || result.getError().isEmpty()) &&
+                                result.getImportMeteringDevice() != null) {
                             // выставляем в Град идентификаторы ПУ
                             setMeteringDeviceUniqueNumbers(devicesMap.get(result.getTransportGUID()),
                                     result.getGUID(),

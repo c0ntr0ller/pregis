@@ -447,7 +447,15 @@ public final class HouseGRADDAO {
         if (idHouse != null && houseRoomsMap.containsKey(idHouse) && apartmentNumber != null && houseRoomsMap.get(idHouse) != null) {
 
             // фильтруем лист по номеру квартиры
-            List<Rooms> tmpRoomsMap = houseRoomsMap.get(idHouse).stream().filter(r -> r.getNumberAppart().equalsIgnoreCase(apartmentNumber)).collect(Collectors.toList());
+            List<Rooms> tmpRoomsMap = houseRoomsMap.get(idHouse).stream()
+                    .filter(r -> (r.getNumberAppart() != null &&
+                            (
+                                r.getNumberAppart().equalsIgnoreCase(apartmentNumber) ||
+                                r.getNumberAppart().replace(" л.", "").equalsIgnoreCase(apartmentNumber) ||
+                                r.getNumberAppart().replace("л.", "").equalsIgnoreCase(apartmentNumber)
+                            )
+                    ))
+                    .collect(Collectors.toList());
             for (Rooms room : tmpRoomsMap) {
                 if (room.isResidential() == isResidential) {
                     if (roomNumber == null){

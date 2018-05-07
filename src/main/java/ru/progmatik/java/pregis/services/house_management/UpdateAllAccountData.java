@@ -27,10 +27,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -101,7 +98,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                     if (stateResult == null){ // || stateResult.getExportAccountResult() == null || stateResult.getExportAccountResult().size() == 0) { // если не получили не однин лс.
                         errorState = 0;
                     } else if (stateResult.getErrorMessage() != null && stateResult.getErrorMessage().getErrorCode().equalsIgnoreCase("INT002012")) { // Если нет объектов для экспорта
-                        checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue().getGrad_id(), connectionGRAD);
+                        checkAndSendAccountData(null, accountListFromGrad, itemHouse.getValue(), connectionGRAD);
                     } else if((stateResult.getErrorMessage() != null) || (stateResult.getExportAccountResult() == null) || stateResult.getExportAccountResult().isEmpty()){
                         errorState = 0;
                     }else {
@@ -112,7 +109,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
     //                        countAllGisJkh += exportAccountResult.getAccounts().size();
     //                        accountsListFromGISJKH.addAll(exportAccountResult.getAccounts());
     //                    }
-                        checkAndSendAccountData(stateResult.getExportAccountResult(), accountListFromGrad, itemHouse.getValue().getGrad_id(), connectionGRAD);
+                        checkAndSendAccountData(stateResult.getExportAccountResult(), accountListFromGrad, itemHouse.getValue(), connectionGRAD);
 
                     }
                     printReport(itemHouse.getKey());
@@ -168,12 +165,12 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      *
      * @param accountsListFromGISJKH полученный список абонентов из ГИС ЖКХ.
      * @param accountsMapFromGrad    список абонентов из БД ГРАД.
-     * @param houseId                идентификатор дома в БД ГРАД
+     * @param houseRecord            объект дома в БД ГРАД
      * @param connection             подключение к БД ГРАД.
      */
     private void checkAndSendAccountData(final List<ExportAccountResultType> accountsListFromGISJKH,
                                          final LinkedHashMap<BasicInformation,ImportAccountRequest.Account> accountsMapFromGrad,
-                                         final Integer houseId, final Connection connection) throws SQLException, PreGISException, ParseException {
+                                         final HouseRecord houseRecord, final Connection connection) throws SQLException, PreGISException, ParseException {
 
         // для удобства поиска создаем мапу с лицевыми счетами из ГИС. Ключ - ЛС из Града
         Map<String, ExportAccountResultType> accountsMapFromGISJKH = new LinkedHashMap<>();
@@ -221,7 +218,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                     ) {
                                 // проверяем и впытаемся занести его ACCOUNTGUID в БД
                                 if (!checkAccountDataIsAddedGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
-                                        houseId, connection)) {
+                                        houseRecord.getGrad_id(), connection)) {
                                     // если не занесли - просто сообщим об этом юзеру addEntryToGISMap(accountsCreateMap, entry.getValue());
                                     answerProcessing.sendMessageToClient(String.format("Не удалось обновить идентификаторы ГИС абонента в Град, ЛС: %s", entry.getKey().getNumberLS()));
                                 }
@@ -295,16 +292,33 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         if (!accountsCreateMap.isEmpty()) {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Счетов для создания/обновления в ГИС ЖКХ:" + accountsCreateMap.size());
-            sendAccountDataToGISJKH(accountsCreateMap, houseId, connection);
+            sendAccountDataToGISJKH(accountsCreateMap, houseRecord.getGrad_id(), connection);
         }
 
         // если в мапе ГИС остались ЛС - значит их у нас нет и мы их отправляем на закрытие
         if(!accountsMapFromGISJKH.isEmpty()){
-            for(ExportAccountResultType accountForClose: accountsMapFromGISJKH.values()){
-                addAccountDataForClose(accountForClose,
-                        "Изменение реквизитов лицевого счета",
-                        "Абонент закрыт в ИС предприятия",
-                        accountsForCloseList);
+            // получаем помещений из ГИС
+            Map<String, Boolean>  housePremises = getHousePremises(houseRecord.getFias());
+
+            // если из ГИС не получили помещения - ничего не закрываем
+            if(!housePremises.isEmpty()) {
+
+                for (ExportAccountResultType accountForClose : accountsMapFromGISJKH.values()) {
+                    // если есть помещение в списке помещений дома
+                    if (housePremises.containsKey(accountForClose.getAccommodation().get(0).getPremisesGUID())) {
+                        // если помещение жилое
+                        if (housePremises.get(accountForClose.getAccommodation().get(0).getPremisesGUID())) {
+                            // добавляем на закрытие
+                            answerProcessing.sendMessageToClient(String.format("Абонент ЛС %s отсылается на закрытие В ГИС ЖКХ", accountForClose.getAccountNumber()));
+                            addAccountDataForClose(accountForClose,
+                                    "Изменение реквизитов лицевого счета",
+                                    "Абонент закрыт в ИС предприятия",
+                                    accountsForCloseList);
+                        }else{
+                            answerProcessing.sendMessageToClient(String.format("Абонент ЛС %s нежилое, закрытие В ГИС ЖКХ не производится", accountForClose.getAccountNumber()));
+                        }
+                    }
+                }
             }
         }
 
@@ -316,7 +330,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //            for(ImportAccountRequest.Account accountForClose :accountsForCloseList){
 //                addEntryToGISMap(accountsForCloseMap, accountForClose);
 //            }
-            sendAccountDataToGISJKH(accountsForCloseList.stream().collect(Collectors.toMap(e->e.getTransportGUID(), e->e)), houseId, connection);
+            sendAccountDataToGISJKH(accountsForCloseList.stream().collect(Collectors.toMap(e->e.getTransportGUID(), e->e)), houseRecord.getGrad_id(), connection);
 
         }
 
@@ -325,6 +339,31 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             answerProcessing.sendMessageToClient("Счетов для выгрузки в ГИС ЖКХ нет.");
         }
 
+    }
+
+    /**
+     * вспомогательный метод. возвращает список GUID помещений с признаком жилое/нежилое
+     */
+    private Map<String, Boolean> getHousePremises(final String fias){
+        Map<String, Boolean> premisesMap = new HashMap<>();
+
+        answerProcessing.sendMessageToClient("В связи с обнаружением абонентов на закрытие производится запрос в ГИС ЖКХ списка помещений для сравнения");
+
+        try {
+            final GetStateResult result = HomeManagementAsyncPort.callExportHouseData(fias, answerProcessing);
+            if (result != null && result.getErrorMessage() == null && result.getExportHouseResult() != null) { // Если нет ошибок
+                for (ExportHouseResultType.ApartmentHouse.ResidentialPremises residentialPremises : result.getExportHouseResult().getApartmentHouse().getResidentialPremises()) {
+                    premisesMap.put(residentialPremises.getPremisesGUID(), Boolean.TRUE);
+                }
+                for (ExportHouseResultType.ApartmentHouse.NonResidentialPremises nonResidentialPremises : result.getExportHouseResult().getApartmentHouse().getNonResidentialPremises()) {
+                    premisesMap.put(nonResidentialPremises.getPremisesGUID(), Boolean.FALSE);
+                }
+            }
+        } catch (SQLException | PreGISException e) {
+            e.printStackTrace();
+        }
+
+        return premisesMap;
     }
 
     /**

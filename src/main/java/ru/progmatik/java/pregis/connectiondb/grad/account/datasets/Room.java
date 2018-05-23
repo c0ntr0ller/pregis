@@ -1,9 +1,11 @@
 package ru.progmatik.java.pregis.connectiondb.grad.account.datasets;
 
+import java.math.BigDecimal;
+
 /**
  * Класс, содержит даные листа "Помещение".
  */
-public class Rooms {
+public class Room {
 
     /**
      * Номер ЛС УО (иной идентификатор потребителя).
@@ -64,14 +66,30 @@ public class Rooms {
     private int abonId;
 
     /**
-     * Определяет является абонент физическим лицом или юридическим.
-     */
-    private boolean isCompany;
-
-    /**
-     * Жилое помещение
+     * Жилое помещение - да/нет
      */
     private boolean isResidential;
+
+    /**
+     * Идентификатор помещения
+     */
+    private String premisesGUID;
+
+    /**
+     * Идентификатор комнаты
+     */
+    private String livingroomGUID;
+
+    /**
+     * подъезд
+     */
+    private String doorWay;
+
+    /**
+     * площадь помещения
+     */
+    private BigDecimal totalArea;
+
 
     /**
      * Получить номер ЛС УО (иной идентификатор потребителя).
@@ -223,33 +241,68 @@ public class Rooms {
         this.abonId = abonId;
     }
 
-    /**
-     * Получить, статус абоненета, является физическим лицом или юридическим.
-     * @return статус абонента, true - если юр.лицо, false - если физ.лицо.
-     */
-    public boolean isCompany() {
-        return isCompany;
-    }
+//    /**
+//     * Получить, статус абоненета, является физическим лицом или юридическим.
+//     * @return статус абонента, true - если юр.лицо, false - если физ.лицо.
+//     */
+//    public boolean isCompany() {
+//        return this.isCompany;
+//    }
+//
+//    /**
+//     * Задать, статус абоненета, является физическим лицом или юридическим.
+//     * @param company статус абонента, true - если юр.лицо, false - если физ.лицо.
+//     */
+//    public void setCompany(boolean company) {
+//    }
 
     /**
-     * Задать, статус абоненета, является физическим лицом или юридическим.
-     * @param company статус абонента, true - если юр.лицо, false - если физ.лицо.
+     * жилое помещение или нет
+     * @return
      */
-    public void setCompany(boolean company) {
-        isCompany = company;
-    }
-
     public boolean isResidential() {
-        return isResidential;
+        return this.isResidential;
     }
 
     public void setResidential(boolean residential) {
-        isResidential = residential;
+        this.isResidential = residential;
+    }
+
+    public String getPremisesGUID() {
+        return premisesGUID;
+    }
+
+    public void setPremisesGUID(String premisesGUID) {
+        this.premisesGUID = premisesGUID;
+    }
+
+    public String getLivingroomGUID() {
+        return livingroomGUID;
+    }
+
+    public void setLivingroomGUID(String livingroomGUID) {
+        this.livingroomGUID = livingroomGUID;
+    }
+
+    public BigDecimal getTotalArea() {
+        return totalArea;
+    }
+
+    public void setTotalArea(BigDecimal totalArea) {
+        this.totalArea = totalArea;
+    }
+
+    public String getDoorWay() {
+        return doorWay;
+    }
+
+    public void setDoorWay(String doorWay) {
+        this.doorWay = doorWay;
     }
 
     @Override
     public String toString() {
-        return "Rooms{" +
+        return "Room{" +
                 "numberLS='" + numberLS + '\'' +
                 ", address='" + address + '\'' +
                 ", fias='" + fias + '\'' +
@@ -258,6 +311,9 @@ public class Rooms {
                 ", idSpaceGISJKH='" + idSpaceGISJKH + '\'' +
                 ", sharePay=" + sharePay +
                 ", abonId=" + abonId +
+                ", isResidential=" + isResidential +
+                ", premisesGUID='" + premisesGUID + '\'' +
+                ", livingroomGUID='" + livingroomGUID + '\'' +
                 '}';
     }
 }

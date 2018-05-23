@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.other.utils;
+package ru.progmatik.java.pregis.other;
 
 import java.util.HashMap;
 import java.util.Map;

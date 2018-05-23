@@ -106,7 +106,7 @@ public class UpdateBills {
                 pdGradDao.getPaymentDocumentMap(houseGrad.getGrad_id(), paymentInformationMap);
 
         // сравниваем с документами ГИС и формируем запрос на отзыв документов
-        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = synchronizeDocuments(fias, houseGrad, pdGradDao, paymentDocumentMapGrad);
+        ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncWithDrawList = syncDocuments(fias, houseGrad, pdGradDao, paymentDocumentMapGrad);
 
             // если есть документы на закрытие после синхронизации - добавляем их
         if (syncWithDrawList != null && syncWithDrawList.size() > 0) {
@@ -158,7 +158,7 @@ public class UpdateBills {
         ExportCAChResultType.Contract curContract = null;
         for(ExportCAChResultType caChResultType:resultContract.getExportCAChResult()){
             if (caChResultType.getContract() != null && caChResultType.getContract().getContractStatus() != null) {
-                if (caChResultType.getContract().getContractStatus().equals("Approved")) {
+                if (caChResultType.getContract().getContractStatus().value().equalsIgnoreCase("Approved")) {
                     curContract = caChResultType.getContract();
                 }
             }
@@ -460,10 +460,10 @@ public class UpdateBills {
      * @throws PreGISException
      * @throws ParseException
      */
-    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> synchronizeDocuments(final String fias,
-                                                                                                 final HouseRecord houseGrad,
-                                                                                                 final PaymentDocumentGradDAO pdGradDao,
-                                                                                                 HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad) throws SQLException, PreGISException, ParseException {
+    private ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> syncDocuments(final String fias,
+                                                                                          final HouseRecord houseGrad,
+                                                                                          final PaymentDocumentGradDAO pdGradDao,
+                                                                                          HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad) throws SQLException, PreGISException, ParseException {
 
         ArrayList<ImportPaymentDocumentRequest.WithdrawPaymentDocument> paymentDocumentWithdrawArray = new ArrayList<>();
 

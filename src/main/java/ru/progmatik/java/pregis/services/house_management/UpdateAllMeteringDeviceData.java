@@ -103,26 +103,40 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
                 }
             }
 
-            // сравниваем списки и формируем новые. В мапу заносим список 1 - на добавление в ГИС "insertGIS", на изменение/архивацию в ГИС "archiveGIS", на изменение в Град "updateGRAD"
-            Map<String, Object> compareDevicesMap = compareDevices(devicesGIS, devicesGrad);
+            // сравниваем списки и формируем новые.
+            // 1 - на добавление в ГИС insertGIS, на изменение/архивацию в ГИС archiveGIS, на изменение в Град updateGRAD
+            Map<MeteringDeviceID, ExportMeteringDeviceDataResultType> updateGRAD = new HashMap<>();
+            Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> insertGIS = new HashMap<>();
+            List<ExportMeteringDeviceDataResultType> archiveGIS = new ArrayList<>();
+
+            compareDevices(devicesGIS, devicesGrad,
+                        updateGRAD, insertGIS, archiveGIS);
 
             // -----------------------------------------------------------------------------------------------------
             // расставляем идентификаторы в Град
-            countUpdateGrad = meteringDeviceGRADDAO.updateGradMeteringDevices((Map<MeteringDeviceID, ExportMeteringDeviceDataResultType>) compareDevicesMap.get("updateGRAD"));
+            if(!updateGRAD.isEmpty()) {
+                countUpdateGrad = meteringDeviceGRADDAO.updateGradMeteringDevices(updateGRAD);
+            }
 
             // отсылаем новые в ГИС
-            callImportMeteringDevices((Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice>) (compareDevicesMap.get("insertGIS")),
-                    entryHouse, meteringDeviceGRADDAO, false);
+            if(!insertGIS.isEmpty()) {
+                callImportMeteringDevices(insertGIS,
+                        entryHouse, meteringDeviceGRADDAO, false);
+            }
 
             // архивируем в ГИС
-            callImportMeteringDevices(
-                    convertMeteringDeviceToArchive ((List<ExportMeteringDeviceDataResultType>) compareDevicesMap.get("archiveGIS"))
-                            .stream()
-                            .collect(Collectors.toMap(e -> new MeteringDeviceID("", e.getDeviceDataToUpdate().getMeteringDeviceVersionGUID(), null), e->e)),
-                    entryHouse, meteringDeviceGRADDAO,true);
+            if(!archiveGIS.isEmpty()) {
+                callImportMeteringDevices(
+                        convertMeteringDeviceToArchive(archiveGIS)
+                                .stream()
+                                .collect(Collectors.toMap(e -> new MeteringDeviceID("", e.getDeviceDataToUpdate().getMeteringDeviceVersionGUID(), null), e -> e)),
+                        entryHouse, meteringDeviceGRADDAO, true);
+            }
         } catch (SQLException | ParseException | PreGISException | SOAPException | JAXBException | FileNotFoundException e) {
             errorState = -1;
-            answerProcessing.sendErrorToClient("Синхронизация ПУ по дому" + entryHouse.getAddresStringShort() + ": ", "\"Синхронизация ПУ\" ", LOGGER, e);
+            if (answerProcessing != null) {
+                answerProcessing.sendErrorToClient("Синхронизация ПУ по дому" + entryHouse.getAddresStringShort() + ": ", "\"Синхронизация ПУ\" ", LOGGER, e);
+            }
         }
     }
 
@@ -133,19 +147,23 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
      *  "updateGRAD" - на изменение в Град
      * @param devicesListGIS - проборы по дому из ГИС
      * @param devicesMapGrad - проборы по дому из Град
+     * @param updateGRADMap - мапа для хранения ПУ на обновление в Град
+     * @param insertGISMap - мапа для занесения ПУ в ГИС
+     * @param archiveGISList - мапа для архивации ПУ в ГИС
      * @return - возвращает мапу с объектами, тип которых зависит от ключа
      * insertGIS - Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice>
      * archiveGIS - List<ExportMeteringDeviceDataResultType>
      * updateGRAD - Map<MeteringDeviceID, ExportMeteringDeviceDataResultType>
      */
-    private Map<String, Object> compareDevices(
+    private void compareDevices(
             final List<ExportMeteringDeviceDataResultType> devicesListGIS,
-            final HashMap<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> devicesMapGrad){
+            final HashMap<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> devicesMapGrad,
+            final Map<MeteringDeviceID, ExportMeteringDeviceDataResultType> updateGRADMap,
+            final Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> insertGISMap,
+            final List<ExportMeteringDeviceDataResultType> archiveGISList
+            ){
 
         if (answerProcessing != null) answerProcessing.sendMessageToClient("Сравнение массивов ПУ, полученных из ГИС и Град");
-        Map<MeteringDeviceID, ImportMeteringDeviceDataRequest.MeteringDevice> insertGISMap = new HashMap<>();
-        List<ExportMeteringDeviceDataResultType> archiveGISList = new ArrayList<>();
-        Map<MeteringDeviceID, ExportMeteringDeviceDataResultType> updateGRADMap = new HashMap<>();
 
         // получаем ПУ из ГИС, которым есть соответствие в Град по номеру ПУ + типу + абоненту/помещению (им в Граде мы занесем идентификаторы из ГИС)
         if(devicesListGIS != null) {
@@ -282,14 +300,6 @@ public final class UpdateAllMeteringDeviceData implements ClientDialogWindowObse
         if(!updateGRADMap.isEmpty()){
             if (answerProcessing != null) answerProcessing.sendMessageToClient("Кол-во ПУ на обновление в Град: " + updateGRADMap.size());
         }
-
-        Map<String, Object> resultMap = new LinkedHashMap<>();
-
-        resultMap.put("insertGIS", insertGISMap);
-        resultMap.put("archiveGIS", archiveGISList);
-        resultMap.put("updateGRAD", updateGRADMap);
-
-        return resultMap;
     }
 
     /**

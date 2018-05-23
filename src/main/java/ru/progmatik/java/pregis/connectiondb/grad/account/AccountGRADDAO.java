@@ -6,7 +6,7 @@ import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Room;
 import ru.progmatik.java.pregis.exception.PreGISArgumentNotFoundFromBaseException;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
+
+import static ru.progmatik.java.pregis.other.OtherFormat.checkZero;
 
 /**
  * Класс, обращается в БД ГРАД, за данными о лицевых счетах.
@@ -144,69 +146,18 @@ public final class AccountGRADDAO {
         return listBasic;
     }
 
+
     /**
-     * Метод, получает от метода "createExcel" адрес дома и таблицу Excel.
-     * Добавляет информацию на лист "Помещение".
-     *
-     * @param houseID - ИД адрес дома.
-     */
-    @Deprecated
-    public ArrayList<Rooms> getRooms(final int houseID, final Connection connection) throws ParseException, SQLException {
-
-        final Integer columnIndex = 2; // column with API data format
-        final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
-        final ArrayList<Rooms> listRooms = new ArrayList();
-
-        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
-            while (resultSet.next()) {
-
-//                Бывают попадаются null
-                if (resultSet.getString(columnIndex) == null) continue;
-
-                final Rooms rooms = new Rooms();
-
-                try {
-                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(columnIndex));
-
-                    rooms.setNumberLS(arrayData[1]);
-                    rooms.setAddress(arrayData[2]);
-                    rooms.setFias(arrayData[3]);
-                    rooms.setNumberAppart(arrayData[5]);
-                    rooms.setNumberRoom(arrayData[6]);
-                    rooms.setIdSpaceGISJKH(arrayData[10]);
-                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
-                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
-                    if(arrayData[11].equals("0")){
-                        rooms.setResidential(false);
-                    }else{
-                        rooms.setResidential(true);
-                    }
-//                    rooms.setAccountGUID(arrayData[8]); // Саша должен добавить
-//                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
-
-                } catch (NumberFormatException e) {
-                    LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
-                }
-                listRooms.add(rooms);
-            }
-        }
-        if (listRooms.size() == 0) {
-            answerProcessing.sendMessageToClient("Запрос " + sqlRequest + " не вернул записей");
-            return null; // если нет ЛС возвращаем null.
-        }
-        return listRooms;
-    }
-    /**
-     * Метод, формирует мапу с абонентами, ключ - лицевой счет.
+     * Метод, формирует мапу с помещениями, ключ - лицевой счет.
      *
      * @param houseID - ИД адрес дома.
      * @param connection - соединение с БД
      */
-    public static LinkedHashMap<String, Rooms> getRoomsMaps(final int houseID, final Connection connection) throws ParseException, SQLException {
+    public static LinkedHashMap<String, Room> getLsRoomsMaps(final int houseID, final Connection connection) throws ParseException, SQLException {
 
         final Integer columnIndex = 2; // column with API data format
         final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + ")";
-        final LinkedHashMap<String, Rooms> listRooms = new LinkedHashMap<>();
+        final LinkedHashMap<String, Room> listRooms = new LinkedHashMap<>();
 
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
@@ -214,22 +165,22 @@ public final class AccountGRADDAO {
 //                Бывают попадаются null
                 if (resultSet.getString(columnIndex) == null) continue;
 
-                final Rooms rooms = new Rooms();
+                final Room room = new Room();
 
                 try {
                     final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(columnIndex));
 
-                    rooms.setAddress(arrayData[2]);
-                    rooms.setFias(arrayData[3]);
-                    rooms.setNumberAppart(arrayData[5]);
-                    rooms.setNumberRoom(arrayData[6]);
-                    //rooms.setIdSpaceGISJKH(arrayData[8]);
-                    rooms.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
-                    rooms.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
-                    rooms.setNumberLS(arrayData[1]);
-//                    rooms.setAccountGUID(arrayData[9]); // Саша должен добавить
-//                    rooms.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
-                    listRooms.put(rooms.getNumberLS(), rooms);
+                    room.setAddress(arrayData[2]);
+                    room.setFias(arrayData[3]);
+                    room.setNumberAppart(arrayData[5]);
+                    room.setNumberRoom(arrayData[6]);
+                    //room.setIdSpaceGISJKH(arrayData[8]);
+                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+                    room.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
+                    room.setNumberLS(arrayData[1]);
+//                    room.setAccountGUID(arrayData[9]); // Саша должен добавить
+//                    room.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
+                    listRooms.put(room.getNumberLS(), room);
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                 }
@@ -256,9 +207,9 @@ public final class AccountGRADDAO {
         answerProcessing.sendMessageToClient("Формирую данные...");
         final ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
 
-        LinkedHashMap<String, Rooms> roomsList = getRoomsMaps(houseID, connection);
+        LinkedHashMap<String, Room> roomsList = getLsRoomsMaps(houseID, connection);
 
-        //        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
+        //        final ArrayList<Room> roomsList = getRooms(houseID, connection);
         final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
 //        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
@@ -277,7 +228,7 @@ public final class AccountGRADDAO {
 //                - если новый счет указать TransportGUID, удалить если есть AccountGUID.
 //                - если счет к закрытию указать AccountGUID и isClosed.
 
-            Rooms fRoom = roomsList.get(basicInformation.getNumberLS());
+            Room fRoom = roomsList.get(basicInformation.getNumberLS());
             String premisesGUID = null;
             String livingRoomGUID = null;
             if (fRoom != null) {
@@ -736,18 +687,7 @@ public final class AccountGRADDAO {
     }
 
 
-    /**
-     * Метод, проверяет, если строка пустая или null, то вернет 0.
-     *
-     * @param textForNumber - строка.
-     * @return String - преобразованная строка в "0", если она пустая.
-     */
-    private static String checkZero(final String textForNumber) {
-        if (textForNumber == null || textForNumber.isEmpty()) {
-            return "0";
-        } else
-            return textForNumber;
-    }
+
 
 
 

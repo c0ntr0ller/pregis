@@ -40,6 +40,15 @@ public class ReferenceNSIDAO {
             "COMMENT ON COLUMN SPR_NSI.GROUP_NAME IS 'Название группы, если такая имеется, которая объединяет элементы справочника.'; " +
             "COMMENT ON COLUMN SPR_NSI.CODE_PARENT IS 'Код родительского справочника.';";
 
+    private static final String SQL_CREATE_TABLE_SPR_NSI_TYPE = "CREATE TABLE IF NOT EXISTS SPR_NSI_TYPE (" +
+            "ID identity not null primary key, " +
+            "NSI_TYPE varchar(20) not null); " +
+            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI_TYPE IS 'Хранит типы справочников ГИС ЖКХ. НСИ или НСИРАО.'; " +
+            "COMMENT ON COLUMN SPR_NSI_TYPE.ID IS 'Идентификатор записей.'; " +
+            "COMMENT ON COLUMN SPR_NSI_TYPE.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
+            "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSI'); " +
+            "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSIRAO');";
+
     private static final String SQL_CREATE_TABLE_NSI_DOWNLOAD = "CREATE TABLE IF NOT EXISTS NSI_FOR_DOWNLOAD (" +
             "ID identity not null primary key, " +
             "CODE varchar(20) not null, " +
@@ -57,16 +66,8 @@ public class ReferenceNSIDAO {
             "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('22', 'Причина закрытия лицевого счета', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
             "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('27', 'Тип прибора учета', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
             "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('95', 'Вид документа, удостоверяющего личность', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI'); " +
-            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('224', 'Причина выхода ПУ из строя', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI');";
+            "INSERT INTO NSI_FOR_DOWNLOAD(CODE, WORD_FOR_EXTRACT, NSI_TYPE) VALUES('30', 'Характеристика помещения', select ID from SPR_NSI_TYPE WHERE NSI_TYPE = 'NSI');";
 
-    private static final String SQL_CREATE_TABLE_SPR_NSI_TYPE = "CREATE TABLE IF NOT EXISTS SPR_NSI_TYPE (" +
-            "ID identity not null primary key, " +
-            "NSI_TYPE varchar(20) not null); " +
-            "COMMENT ON TABLE \"PUBLIC\".SPR_NSI_TYPE IS 'Хранит типы справочников ГИС ЖКХ. НСИ или НСИРАО.'; " +
-            "COMMENT ON COLUMN SPR_NSI_TYPE.ID IS 'Идентификатор записей.'; " +
-            "COMMENT ON COLUMN SPR_NSI_TYPE.NSI_TYPE IS 'Тип справочника НСИ или НСИРАО.'; " +
-            "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSI'); " +
-            "INSERT INTO SPR_NSI_TYPE(NSI_TYPE) VALUES('NSIRAO');";
 
     private static final String SQL_CREATE_TABLE_NSI_DATA_PROVIDER_FOR_DOWNLOAD = "CREATE TABLE IF NOT EXISTS NSI_DATA_PROVIDER_FOR_DOWNLOAD (" +
             "ID identity not null primary key, " +

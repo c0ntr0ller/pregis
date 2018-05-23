@@ -223,4 +223,17 @@ public final class OtherFormat {
         }
         return checkString;
     }
+
+    /**
+     * Метод, проверяет, если строка пустая или null, то вернет 0.
+     *
+     * @param textForNumber - строка.
+     * @return String - преобразованная строка в "0", если она пустая.
+     */
+    public static String checkZero(final String textForNumber) {
+        if (textForNumber == null || textForNumber.isEmpty()) {
+            return "0";
+        } else
+            return textForNumber;
+    }
 }

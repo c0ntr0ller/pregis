@@ -10,7 +10,7 @@ import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
 import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Room;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
@@ -813,9 +813,9 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
         answerProcessing.sendMessageToClient("Формирую данные...");
         final ArrayList<BasicInformation> basicInformationList = AccountGRADDAO.getBasicInformation(houseId, connectionGrad, answerProcessing);
 
-        LinkedHashMap<String, Rooms> roomsList = AccountGRADDAO.getRoomsMaps(houseId, connectionGrad);
+        LinkedHashMap<String, Room> roomsList = AccountGRADDAO.getLsRoomsMaps(houseId, connectionGrad);
 
-        //        final ArrayList<Rooms> roomsList = getRooms(houseID, connection);
+        //        final ArrayList<Room> roomsList = getRooms(houseID, connection);
         final ReferenceNSI nsi = new ReferenceNSI(answerProcessing);
 //        ExportOrgRegistry orgRegistry = new ExportOrgRegistry(answerProcessing);
 
@@ -838,7 +838,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //                - если новый счет указать TransportGUID, удалить если есть AccountGUID.
 //                - если счет к закрытию указать AccountGUID и isClosed.
 
-            Rooms fRoom = roomsList.get(basicInformation.getNumberLS());
+            Room fRoom = roomsList.get(basicInformation.getNumberLS());
             String premisesGUID = null;
             String livingRoomGUID = null;
             if (fRoom != null) {

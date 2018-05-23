@@ -14,16 +14,20 @@ package ru.progmatik.java.pregis.connectiondb.grad.house;
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
+import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Room;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static ru.progmatik.java.pregis.other.OtherFormat.checkZero;
 
 /**
  * Класс, обращается в БД ГРАД, за данными о МКД.
@@ -45,7 +49,7 @@ public final class HouseGRADDAO {
 //    private final ArrayList<String> tempMKD = new ArrayList<>();
 //    private final ArrayList<String> tempJD = new ArrayList<>();
 //    private final LinkedHashMap<String, HouseRecord> allHouses = new LinkedHashMap<>();
-    private final HashMap<Integer, ArrayList<Rooms>> houseRoomsMap = new HashMap<>();
+    private final HashMap<Integer, ArrayList<Room>> houseRoomsMap = new HashMap<>();
 
     public HouseGRADDAO(final AnswerProcessing answerProcessing) {
         this.answerProcessing = answerProcessing;
@@ -294,10 +298,6 @@ public final class HouseGRADDAO {
      * Метод, задаёт помещению уникальный идентификатор, присвоенный ГИС ЖКХ.
      * В БД ГРАД нет отличия помещение или комната, идентификатор вешается на ЛС абонента.
      *
-     * @param houseId         ид дома в БД ГРАД.
-     * @param apartmentNumber номер помещения (квартиры, используется для поиска абонента в БД ГРАД).
-     * @param roomNumber      номер комнаты, например в коммунальной квартире (используется для поиска абонента в БД ГРАД).
-     * @param isResidential   - жилое/нежилое
      * @param premisesGUID    идентификатор помещения.
      * @param premisesUniqNum уникальный номер помещения.
      * @param livingRoomGUID  идентификатор комнаты.
@@ -305,32 +305,20 @@ public final class HouseGRADDAO {
      * @throws SQLException    выкинет ошибку, если будут проблемы с БД.
      * @throws PreGISException выкинет ошибку, если например не найдем значение в БД.
      */
-    public void setApartmentUniqueNumber(final Integer houseId, final String apartmentNumber, final String roomNumber, final boolean isResidential,
-                                         final String premisesGUID, final String premisesUniqNum,
+    public void setApartmentUniqueNumber(final String premisesGUID, final String premisesUniqNum,
                                          final String livingRoomGUID, final String roomUniqNumber,
-                                         final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
-
-        final List<Integer> abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, isResidential, connectionGrad);
-
-        if (abonentId != null && !abonentId.isEmpty()) {
-            // ИД дома(:building_id),
-            // ИД абонента(:abon_id),
-            // ИД прибора учета(:meter_id),
-            // уникальный идентификатор ГИС ЖКХ(:gis_id),
-            // уникальный идентификатор лицевого счета ГИС ЖКХ(:gis_ls_id)
-            for (Integer abonId: abonentId) {
-                final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?)}";
-                try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
-                    cstmt.setInt(1, abonId);
-                    cstmt.setString(2, premisesGUID);
-                    cstmt.setString(3, premisesUniqNum);
-                    cstmt.setString(4, livingRoomGUID);
-                    cstmt.setString(5, roomUniqNumber);
-                    cstmt.setInt(6, ResourcesUtil.instance().getCompanyGradId());
-                    cstmt.executeUpdate();
-    //                int codeReturn = cstmt.executeUpdate();
-    //                System.err.println("Apartment code return: " + codeReturn);
-                }
+                                         final Connection connectionGrad,
+                                         final Integer abonentId) throws SQLException, PreGISException{
+        if (abonentId != null) {
+            final String sqlRequest = "{EXECUTE PROCEDURE EX_GIS_ID(?, NULL , NULL, NULL, NULL, NULL, ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?)}";
+            try (CallableStatement cstmt = connectionGrad.prepareCall(sqlRequest)) {
+                cstmt.setInt(1, abonentId);
+                cstmt.setString(2, premisesGUID);
+                cstmt.setString(3, premisesUniqNum);
+                cstmt.setString(4, livingRoomGUID);
+                cstmt.setString(5, roomUniqNumber);
+                cstmt.setInt(6, ResourcesUtil.instance().getCompanyGradId());
+                cstmt.executeUpdate();
             }
         }
 // дублирование сообщения
@@ -341,12 +329,33 @@ public final class HouseGRADDAO {
     }
 
     /**
-     * Метод, получает из процедуры "EX_GIS04" площадь помещения.
-     *
-     * @param houseId        идентификатор дома в БД ГРАДа.
-     * @param connectionGrad подключение к БД ГРАД.
-     * @return ключ - abonId, значение - общая площадь помещения.
+     * метод-заглушка для совместимости со старым кодом
      */
+    @Deprecated
+    public void setApartmentUniqueNumber(final Integer houseId, final String apartmentNumber, final String roomNumber, final boolean isResidential,
+                                         final String premisesGUID, final String premisesUniqNum,
+                                         final String livingRoomGUID, final String roomUniqNumber,
+                                         final Connection connectionGrad) throws SQLException, PreGISException, ParseException {
+        final List<Integer> abonentId = getAbonentIdFromGrad(houseId, apartmentNumber, roomNumber, isResidential, connectionGrad);
+
+        if (abonentId != null && !abonentId.isEmpty()) {
+            for (Integer abonId: abonentId) {
+                setApartmentUniqueNumber(premisesGUID,
+                        premisesUniqNum,
+                        livingRoomGUID,
+                        roomUniqNumber,
+                        connectionGrad,
+                        abonId);
+            }
+        }
+    }
+        /**
+         * Метод, получает из процедуры "EX_GIS04" площадь помещения.
+         *
+         * @param houseId        идентификатор дома в БД ГРАДа.
+         * @param connectionGrad подключение к БД ГРАД.
+         * @return ключ - abonId, значение - общая площадь помещения.
+         */
 //    public HashMap<Integer, String> getTotalSquare(final int houseId, final Connection connectionGrad) throws SQLException {
 //
 //        final HashMap<Integer, String> totalSquareMap = new HashMap<>();
@@ -414,7 +423,7 @@ public final class HouseGRADDAO {
 //            менее заметнее чем указанную выше, где явно должны получить false
             final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
             houseRoomsMap.clear();
-            houseRoomsMap.put(idHouse, accountGRADDAO.getRooms(idHouse, connectionGrad));
+            houseRoomsMap.put(idHouse, getRooms(idHouse, connectionGrad));
         }
 
         final List<Integer> abonentId = findAbonId(idHouse, apartmentNumber, roomNumber, isResidential);
@@ -447,7 +456,7 @@ public final class HouseGRADDAO {
         if (idHouse != null && houseRoomsMap.containsKey(idHouse) && apartmentNumber != null && houseRoomsMap.get(idHouse) != null) {
 
             // фильтруем лист по номеру квартиры
-            List<Rooms> tmpRoomsMap = houseRoomsMap.get(idHouse).stream()
+            List<Room> tmpRoomsMap = houseRoomsMap.get(idHouse).stream()
                     .filter(r -> (r.getNumberAppart() != null &&
                             (
                                 r.getNumberAppart().equalsIgnoreCase(apartmentNumber) ||
@@ -456,7 +465,7 @@ public final class HouseGRADDAO {
                             )
                     ))
                     .collect(Collectors.toList());
-            for (Rooms room : tmpRoomsMap) {
+            for (Room room : tmpRoomsMap) {
                 if (room.isResidential() == isResidential) {
                     if (roomNumber == null){
                         if(room.getNumberRoom() == null) { // если номер комнаты отсутствует в обоих случайя - это нужный нам абонент!
@@ -598,6 +607,65 @@ public final class HouseGRADDAO {
             }
         }
         return true;
+    }
+
+    /**
+     * Метод получает из Град информацию о помещениях.
+     * @param houseID - ИД адрес дома.
+     *
+     */
+//    @Deprecated
+    public ArrayList<Room> getRooms(final int houseID, final Connection connection) throws SQLException, PreGISException {
+
+        final Integer columnIndex = 2; // column with API data format
+        final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + "," + ResourcesUtil.instance().getCompanyGradId() + ")";
+        final ArrayList<Room> listRooms = new ArrayList();
+
+        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
+            while (resultSet.next()) {
+
+//                Бывают попадаются null
+                if (resultSet.getString(columnIndex) == null) continue;
+
+                final Room room = new Room();
+
+                try {
+                    final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(columnIndex));
+
+                    room.setNumberLS(arrayData[1]);
+                    room.setAddress(arrayData[2]);
+                    room.setFias(arrayData[3]);
+                    room.setNumberAppart(arrayData[5]);
+                    room.setNumberRoom(arrayData[6]);
+                    room.setIdSpaceGISJKH(arrayData[10]);
+                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+                    room.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
+                    if(arrayData[10].equals("0")){
+                        room.setResidential(false);
+                    }else{
+                        room.setResidential(true);
+                    }
+
+                    if(arrayData.length > 11) {
+                        room.setDoorWay(arrayData[11]);
+                        room.setTotalArea(new BigDecimal(arrayData[12].replace(",", ".")));
+                        room.setPremisesGUID(arrayData[13]);
+                        room.setLivingroomGUID(arrayData[14]);
+                    }
+//                    room.setAccountGUID(arrayData[8]); // Саша должен добавить
+//                    room.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
+
+                } catch (NumberFormatException e) {
+                    LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
+                }
+                listRooms.add(room);
+            }
+        }
+        if (listRooms.size() == 0) {
+            answerProcessing.sendMessageToClient("Запрос " + sqlRequest + " не вернул записей");
+            return null; // если нет ЛС возвращаем null.
+        }
+        return listRooms;
     }
 
     /**

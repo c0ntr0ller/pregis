@@ -1,6 +1,5 @@
-package ru.progmatik.java.pregis.other.utils;
+package ru.progmatik.java.pregis.connectiondb.grad.devices;
 
-import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.web.servlets.socket.ClientService;

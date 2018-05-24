@@ -6,9 +6,9 @@ import ru.gosuslugi.dom.schema.integration.payment.GetStateResult;
 import ru.gosuslugi.dom.schema.integration.payment.ImportSupplierNotificationsOfOrderExecutionRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.grad.payment.PaymentGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.HouseRecord;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 
 import java.sql.Connection;

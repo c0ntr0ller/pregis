@@ -3,12 +3,11 @@ package ru.progmatik.java.pregis.connectiondb.grad.account;
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.house_management.ImportAccountRequest;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.AnswerYesOrNo;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.BasicInformation;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.DocumentType;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Room;
 import ru.progmatik.java.pregis.exception.PreGISArgumentNotFoundFromBaseException;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.AbonentInformation;
+import ru.progmatik.java.pregis.model.AnswerYesOrNo;
+import ru.progmatik.java.pregis.model.DocumentType;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -83,15 +82,15 @@ public final class AccountGRADDAO {
      *
      * @param houseID - ИД адрес дома.
      */
-    public static ArrayList<BasicInformation> getBasicInformation(final int houseID, final Connection connection, AnswerProcessing answerProc) throws SQLException, PreGISException {
+    public static ArrayList<AbonentInformation> getBasicInformation(final int houseID, final Connection connection, AnswerProcessing answerProc) throws SQLException, PreGISException {
 
         final String sqlRequest = "SELECT * FROM EX_GIS_LS1(" + houseID + "," + ResourcesUtil.instance().getCompanyGradId() + ")";
-        ArrayList<BasicInformation> listBasic = new ArrayList<>();
+        ArrayList<AbonentInformation> listBasic = new ArrayList<>();
 
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sqlRequest)) {
             while (resultSet.next()) {
 
-                final BasicInformation bi = new BasicInformation();
+                final AbonentInformation bi = new AbonentInformation();
 
                 final String[] arrayData = getAllData(resultSet.getString(1));
 
@@ -132,6 +131,10 @@ public final class AccountGRADDAO {
                     }
                     if(arrayData.length > 25) bi.setServiceID(arrayData[25]);
 
+                    if(arrayData.length > 26) bi.setSharePay(Integer.valueOf(arrayData[26]));
+                    else bi.setSharePay(Integer.valueOf("100"));
+
+
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                 }
@@ -147,12 +150,13 @@ public final class AccountGRADDAO {
     }
 
 
-    /**
+    /*
      * Метод, формирует мапу с помещениями, ключ - лицевой счет.
      *
      * @param houseID - ИД адрес дома.
      * @param connection - соединение с БД
      */
+/*
     public static LinkedHashMap<String, Room> getLsRoomsMaps(final int houseID, final Connection connection) throws ParseException, SQLException {
 
         final Integer columnIndex = 2; // column with API data format
@@ -175,7 +179,7 @@ public final class AccountGRADDAO {
                     room.setNumberAppart(arrayData[5]);
                     room.setNumberRoom(arrayData[6]);
                     //room.setIdSpaceGISJKH(arrayData[8]);
-                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+// перенесено в абонента                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
                     room.setAbonId(Integer.valueOf(checkZero(arrayData[0])));
                     room.setNumberLS(arrayData[1]);
 //                    room.setAccountGUID(arrayData[9]); // Саша должен добавить
@@ -191,6 +195,8 @@ public final class AccountGRADDAO {
 //DEBUG        answerProcessing.sendInformationToClientAndLog("SELECT * FROM EX_GIS_LS2 returns " + listRooms.size() + " records", LOGGER);
         return listRooms;
     }
+*/
+
     /**
      * Метод, формирует Map ЛС из БД ГРАД.
      * Ключ - ЛС, значение - класс Account пригодный для импорта ЛС в ГИС ЖКХ.
@@ -199,13 +205,13 @@ public final class AccountGRADDAO {
      * @throws ParseException может возникнуть ошибка при импорте из БД числа кол-во проживающих.
      * @throws SQLException   возможны ошибки БД.
      */
-    public LinkedHashMap<BasicInformation, ImportAccountRequest.Account> getAccountMapFromGrad(final int houseID,
-                                                                                     final Connection connection)
+    public LinkedHashMap<AbonentInformation, ImportAccountRequest.Account> getAccountMapFromGrad(final int houseID,
+                                                                                                 final Connection connection)
             throws ParseException, SQLException, PreGISException {
-        LinkedHashMap<BasicInformation, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
+        LinkedHashMap<AbonentInformation, ImportAccountRequest.Account> mapAccount = new LinkedHashMap<>();
 /*        answerProcessing.sendMessageToClient("");
         answerProcessing.sendMessageToClient("Формирую данные...");
-        final ArrayList<BasicInformation> basicInformationList = getBasicInformation(houseID, connection);
+        final ArrayList<AbonentInformation> basicInformationList = getBasicInformation(houseID, connection);
 
         LinkedHashMap<String, Room> roomsList = getLsRoomsMaps(houseID, connection);
 
@@ -219,7 +225,7 @@ public final class AccountGRADDAO {
             return mapAccount;
         }
 
-        for (BasicInformation basicInformation : basicInformationList) {
+        for (AbonentInformation basicInformation : basicInformationList) {
             int count = 0;
             // for (int i = 0; i < roomsList.size(); i++) {
 
@@ -596,9 +602,9 @@ public final class AccountGRADDAO {
         String fio = "";
 
 
-        final ArrayList<BasicInformation> basicInformation = getBasicInformation(houseId, connectionGrad, answerProc);
-        if (basicInformation != null)
-            for (BasicInformation information : basicInformation) {
+        final ArrayList<AbonentInformation> abonentInformation = getBasicInformation(houseId, connectionGrad, answerProc);
+        if (abonentInformation != null)
+            for (AbonentInformation information : abonentInformation) {
                 if (accountNumber.equals(information.getNumberLS())) {
                     fio = information.getSurname() + " " + information.getName() + " " + information.getMiddleName();
                     final Integer abonId = getAbonentIdFromGrad(accountNumber, connectionGrad);

@@ -2,7 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.localdb.reference;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
-import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
+import ru.progmatik.java.pregis.model.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 
 import java.sql.*;

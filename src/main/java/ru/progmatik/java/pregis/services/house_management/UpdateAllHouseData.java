@@ -4,11 +4,11 @@ import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.base.BaseType;
 import ru.gosuslugi.dom.schema.integration.house_management.*;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Room;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSI;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.HouseRecord;
+import ru.progmatik.java.pregis.model.Room;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -176,41 +176,49 @@ public class UpdateAllHouseData {
         for (Map.Entry<Room, AbstractMap.SimpleEntry<ExportHouseResultType.ApartmentHouse.ResidentialPremises,
                 ExportHouseResultType.ApartmentHouse.ResidentialPremises.LivingRoom>> roomResidentialPremisesEntry : residentialMapForUpdate.entrySet()) {
             if (roomResidentialPremisesEntry.getValue().getValue() != null) {
-                gradDao.setApartmentUniqueNumber(roomResidentialPremisesEntry.getValue().getKey().getPremisesGUID(),
-                        roomResidentialPremisesEntry.getValue().getKey().getPremisesUniqueNumber(),
-                        roomResidentialPremisesEntry.getValue().getValue().getLivingRoomGUID(),
-                        roomResidentialPremisesEntry.getValue().getValue().getLivingRoomUniqueNumber(),
-                        connectionGrad,
-                        roomResidentialPremisesEntry.getKey().getAbonId());
+                for (Integer abonId : roomResidentialPremisesEntry.getKey().getAbonId()) {
+                    gradDao.setApartmentUniqueNumber(roomResidentialPremisesEntry.getValue().getKey().getPremisesGUID(),
+                            roomResidentialPremisesEntry.getValue().getKey().getPremisesUniqueNumber(),
+                            roomResidentialPremisesEntry.getValue().getValue().getLivingRoomGUID(),
+                            roomResidentialPremisesEntry.getValue().getValue().getLivingRoomUniqueNumber(),
+                            connectionGrad,
+                            abonId);
+                }
             } else { // Если нет комнат передаем квартиру
                 // Добавляем в БД уникальный номер помещения.
-                gradDao.setApartmentUniqueNumber(roomResidentialPremisesEntry.getValue().getKey().getPremisesGUID(),
-                        roomResidentialPremisesEntry.getValue().getKey().getPremisesUniqueNumber(),
-                        null,
-                        null,
-                        connectionGrad,
-                        roomResidentialPremisesEntry.getKey().getAbonId());
+                for (Integer abonId : roomResidentialPremisesEntry.getKey().getAbonId()) {
+                    gradDao.setApartmentUniqueNumber(roomResidentialPremisesEntry.getValue().getKey().getPremisesGUID(),
+                            roomResidentialPremisesEntry.getValue().getKey().getPremisesUniqueNumber(),
+                            null,
+                            null,
+                            connectionGrad,
+                            abonId);
+                }
             }
         }
 
         // нежилые помещения
         for (Map.Entry<Room, ExportHouseResultType.ApartmentHouse.NonResidentialPremises> roomNonResidentialPremisesEntry : nonResidentialMapForUpdate.entrySet()) {
-            gradDao.setApartmentUniqueNumber(roomNonResidentialPremisesEntry.getValue().getPremisesGUID(),
-                    roomNonResidentialPremisesEntry.getValue().getPremisesUniqueNumber(),
-                    null,
-                    null,
-                    connectionGrad,
-                    roomNonResidentialPremisesEntry.getKey().getAbonId());
+            for (Integer abonId : roomNonResidentialPremisesEntry.getKey().getAbonId()) {
+                gradDao.setApartmentUniqueNumber(roomNonResidentialPremisesEntry.getValue().getPremisesGUID(),
+                        roomNonResidentialPremisesEntry.getValue().getPremisesUniqueNumber(),
+                        null,
+                        null,
+                        connectionGrad,
+                        abonId);
+            }
         }
 
         // помещения частного дома
         for (Map.Entry<Room, ExportHouseResultType.LivingHouse.LivingRoom> roomLivingRoomEntry : livingHouseRoomsMapForUpdate.entrySet()) {
-            gradDao.setApartmentUniqueNumber(roomLivingRoomEntry.getValue().getLivingRoomGUID(),
-                    roomLivingRoomEntry.getValue().getLivingRoomUniqueNumber(),
-                    null,
-                    null,
-                    connectionGrad,
-                    roomLivingRoomEntry.getKey().getAbonId());
+            for (Integer abonId : roomLivingRoomEntry.getKey().getAbonId()) {
+                gradDao.setApartmentUniqueNumber(roomLivingRoomEntry.getValue().getLivingRoomGUID(),
+                        roomLivingRoomEntry.getValue().getLivingRoomUniqueNumber(),
+                        null,
+                        null,
+                        connectionGrad,
+                        abonId);
+            }
         }
 
 //        result.getExportHouseResult().getApartmentHouse().getBasicCharacteristicts().getCadastralNumber()
@@ -291,7 +299,8 @@ public class UpdateAllHouseData {
                         // если помещение найдено
                         if (foundRoom != null) {
                             // проверяем её GUID и если НЕ совпадает - добавляем на обновление GUID в БД Град
-                            if (!(foundRoom.getPremisesGUID().equalsIgnoreCase(residentialPremise.getPremisesGUID()))) {
+                            if (!(foundRoom.getPremisesGUID().equalsIgnoreCase(residentialPremise.getPremisesGUID())) ||
+                                    foundRoom.getAbonId().size() > 1) { // коммуналки обновляем ВСЕГДА
                                 // добавляем в мапу на обновление жилых помещений/комнат
                                 residentialMapForUpdate.put(foundRoom, simpleEntry);
                             }
@@ -582,21 +591,25 @@ public class UpdateAllHouseData {
 
                     if(room != null) {
                         if (room.getNumberRoom() == null || room.getNumberRoom().isEmpty()) { // помещение-квартира
-                            gradDao.setApartmentUniqueNumber(
-                                    commonResult.getGUID(),
-                                    commonResult.getUniqueNumber(),
-                                    null,
-                                    null,
-                                    connection,
-                                    room.getAbonId());
+                            for (Integer abonId : room.getAbonId()) {
+                                gradDao.setApartmentUniqueNumber(
+                                        commonResult.getGUID(),
+                                        commonResult.getUniqueNumber(),
+                                        null,
+                                        null,
+                                        connection,
+                                        abonId);
+                            }
                         } else { // если комната
-                            gradDao.setApartmentUniqueNumber(
-                                    null,
-                                    null,
-                                    commonResult.getGUID(),
-                                    commonResult.getUniqueNumber(),
-                                    connection,
-                                    room.getAbonId());
+                            for (Integer abonId : room.getAbonId()) {
+                                gradDao.setApartmentUniqueNumber(
+                                        null,
+                                        null,
+                                        commonResult.getGUID(),
+                                        commonResult.getUniqueNumber(),
+                                        connection,
+                                        abonId);
+                            }
                         }
                     }
                 } else {

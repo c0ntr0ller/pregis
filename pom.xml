@@ -212,6 +212,12 @@
             <!--<type>jar</type>-->
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>ru.progmatik</groupId>-->
+            <!--<artifactId>wsdlforms</artifactId>-->
+            <!--<version>11.11.0.15</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

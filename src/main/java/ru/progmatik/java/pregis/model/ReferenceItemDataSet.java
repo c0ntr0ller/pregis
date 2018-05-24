@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.grad.reference;
+package ru.progmatik.java.pregis.model;
 
 /**
  * Класс, описывает объект справочника полученного или готового для записи в БД ГРАДа.

@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.grad.house;
+package ru.progmatik.java.pregis.model;
 
 /**
  * Класс описывает здание

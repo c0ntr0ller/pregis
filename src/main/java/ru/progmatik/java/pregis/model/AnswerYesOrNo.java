@@ -1,4 +1,4 @@
-package ru.progmatik.java.pregis.connectiondb.grad.account.datasets;
+package ru.progmatik.java.pregis.model;
 
 /**
  * Класс перечисления, содержит Да или Нет.

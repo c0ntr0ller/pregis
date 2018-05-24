@@ -13,8 +13,8 @@ import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementIntegerFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementStringFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementType;
 import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult;
-import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
 

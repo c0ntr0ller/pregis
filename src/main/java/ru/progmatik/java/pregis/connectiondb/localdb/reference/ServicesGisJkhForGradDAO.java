@@ -2,8 +2,8 @@ package ru.progmatik.java.pregis.connectiondb.localdb.reference;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
-import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.connectiondb.grad.reference.ReferenceItemGRADDAO;
+import ru.progmatik.java.pregis.model.ReferenceItemDataSet;
 
 import java.sql.*;
 import java.util.ArrayList;

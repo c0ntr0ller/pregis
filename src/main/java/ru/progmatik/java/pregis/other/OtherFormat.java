@@ -236,4 +236,13 @@ public final class OtherFormat {
         } else
             return textForNumber;
     }
+
+    public static String extractLeadingNumber(String inString){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < inString.length(); i++) {
+            if(!Character.isDigit(inString.charAt(i))) break;
+            sb.append(inString.charAt(i));
+        }
+        return sb.toString();
+    }
 }

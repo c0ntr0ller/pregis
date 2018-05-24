@@ -199,6 +199,18 @@ public class ResourcesUtil {
         return kapremont;
     }
 
+    /**
+     *
+     * @return
+     */
+    public boolean getPremisesNumberOnly(){
+        if (properties.getProperty("config.gis.premisesnumberonly") != null && !properties.getProperty("config.gis.premisesnumberonly").isEmpty()) {
+            return properties.getProperty("config.gis.premisesnumberonly").equals("1");
+        } else {
+            LOGGER.error("ResourcesUtil: Помещения НЕ объединяются по номеру квартиры, каждый абонент с литерой выгружается как помещение. Для выгрузки в ГИС помещений, объединенных по номеру квартиры без литеры, устанвоите в настройках config.gis.premisesnumberonly=1");
+            return false;
+        }
+    }
 
     /**
      * Метод, создаёт папку, если она не создана.

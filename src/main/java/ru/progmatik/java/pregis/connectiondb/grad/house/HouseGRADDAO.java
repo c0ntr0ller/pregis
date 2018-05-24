@@ -13,9 +13,9 @@ package ru.progmatik.java.pregis.connectiondb.grad.house;
 
 import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
-import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Room;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.HouseRecord;
+import ru.progmatik.java.pregis.model.Room;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
@@ -421,7 +421,7 @@ public final class HouseGRADDAO {
         if (false == houseRoomsMap.containsKey(idHouse)) {
 //            Если IDEA выделила просто не обращай внимание, зачистую конструкция (!houseRoomsMap.containsKey(idHouse)),
 //            менее заметнее чем указанную выше, где явно должны получить false
-            final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
+//            final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
             houseRoomsMap.clear();
             houseRoomsMap.put(idHouse, getRooms(idHouse, connectionGrad));
         }
@@ -469,14 +469,14 @@ public final class HouseGRADDAO {
                 if (room.isResidential() == isResidential) {
                     if (roomNumber == null){
                         if(room.getNumberRoom() == null) { // если номер комнаты отсутствует в обоих случайя - это нужный нам абонент!
-                            abonIDs.add(room.getAbonId());
+                            abonIDs.addAll(room.getAbonId());
                         }
                         else {
-                            wasApartmentNumber.add(room.getAbonId()); // запоминаем ИД абонента с таким номером квартиры, на случай если совсем не найдем с номером комнаты
+                            wasApartmentNumber.addAll(room.getAbonId()); // запоминаем ИД абонента с таким номером квартиры, на случай если совсем не найдем с номером комнаты
                         }
                     }
                 } else if (roomNumber != null && roomNumber.equalsIgnoreCase(room.getNumberRoom())) { // если номер комнаты совпадает.
-                    abonIDs.add(room.getAbonId());
+                    abonIDs.addAll(room.getAbonId());
                 }
             }
         }
@@ -627,38 +627,72 @@ public final class HouseGRADDAO {
 //                Бывают попадаются null
                 if (resultSet.getString(columnIndex) == null) continue;
 
-                final Room room = new Room();
+
+                Room room = null;
 
                 try {
                     final String[] arrayData = OtherFormat.getAllDataFromString(resultSet.getString(columnIndex));
 
-                    room.setNumberLS(arrayData[1]);
-                    room.setAddress(arrayData[2]);
-                    room.setFias(arrayData[3]);
-                    room.setNumberAppart(arrayData[5]);
-                    room.setNumberRoom(arrayData[6]);
-                    room.setIdSpaceGISJKH(arrayData[10]);
-                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
-                    room.setAbonId(Integer.valueOf(checkZero(arrayData[9])));
-                    if(arrayData[10].equals("0")){
-                        room.setResidential(false);
-                    }else{
-                        room.setResidential(true);
+                    // получаем номер квартиры
+                    String localNumberAppart = arrayData[5];
+                    String localNumberAppartNumberOnly = OtherFormat.extractLeadingNumber(localNumberAppart);
+
+                    // если объединяем по номеру квартиры - ищем сначала уже имющуюся квартиру в списке
+                    if(ResourcesUtil.instance().getPremisesNumberOnly()){
+
+                        for (Room listRoom : listRooms) {
+                            if(listRoom.getNumberAppart().equalsIgnoreCase(localNumberAppartNumberOnly)){
+                                room = listRoom;
+                                break;
+                            }
+                        }
                     }
 
-                    if(arrayData.length > 11) {
-                        room.setDoorWay(arrayData[11]);
-                        room.setTotalArea(new BigDecimal(arrayData[12].replace(",", ".")));
-                        room.setPremisesGUID(arrayData[13]);
-                        room.setLivingroomGUID(arrayData[14]);
+                    // если не нашли помещение или настройка отсутствует - тогда создаем новое помещение
+                    if(room == null) {
+                        room = new Room();
+
+//                        room.setAddress(arrayData[2]);
+                        room.setFias(arrayData[3]);
+
+                        // если по настройке берем только номера квартир без литер и номеров комнат
+                        if(ResourcesUtil.instance().getPremisesNumberOnly()){
+                            room.setNumberAppart(localNumberAppartNumberOnly);
+                        }else {
+                            room.setNumberAppart(localNumberAppart);
+                            room.setNumberRoom(arrayData[6]);
+                        }
+
+                        room.setIdSpaceGISJKH(arrayData[10]);
+// процент оплаты перенесен в абоненты                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+
+                        room.getAbonId().add(Integer.valueOf(checkZero(arrayData[9])));
+
+                        if (arrayData[10].equals("0")) {
+                            room.setResidential(false);
+                        } else {
+                            room.setResidential(true);
+                        }
+
+                        if (arrayData.length > 11) {
+                            room.setDoorWay(arrayData[11]);
+                            room.setTotalArea(new BigDecimal(arrayData[12].replace(",", ".")));
+                            room.setPremisesGUID(arrayData[13]);
+                            room.setLivingroomGUID(arrayData[14]);
+                        }
+
+                        listRooms.add(room);
+
+                    }else{ // если есть настройка и помещение нашли - инкрементируем площади и добавляем ИД абонента в список
+                        room.getAbonId().add(Integer.valueOf(checkZero(arrayData[9])));
+                        if (arrayData.length > 11) {
+                            room.setTotalArea(room.getTotalArea().add(new BigDecimal(arrayData[12].replace(",", "."))));
+                        }
                     }
-//                    room.setAccountGUID(arrayData[8]); // Саша должен добавить
-//                    room.setCompany(); // указать статус абонента, true - если юр.лицо, false - если физ.лицо.
 
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                 }
-                listRooms.add(room);
             }
         }
         if (listRooms.size() == 0) {

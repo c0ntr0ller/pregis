@@ -8,15 +8,14 @@ import org.xml.sax.SAXException;
 import ru.gosuslugi.dom.schema.integration.house_management.ExportHouseResult;
 import ru.progmatik.java.pregis.connectiondb.ConnectionBaseGRAD;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
-import ru.progmatik.java.pregis.connectiondb.grad.account.AccountGRADDAO;
-import ru.progmatik.java.pregis.connectiondb.grad.account.datasets.Rooms;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceValuesGradDAO;
+import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDevicesDBSearch;
 import ru.progmatik.java.pregis.connectiondb.localdb.message.MessageExecutor;
 import ru.progmatik.java.pregis.connectiondb.localdb.meteringdevice.MeteringDevicesDataLocalDBDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.Room;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.other.utils.MeteringDevicesDBSearch;
 import ru.progmatik.java.pregis.services.device_metering.MeteringDeviceValuesObject;
 import ru.progmatik.java.web.servlets.socket.ClientService;
 import ru.progmatik.java.web.servlets.socket.ObjectForJSON;
@@ -339,7 +338,7 @@ public class TestMain {
 //    public static void findCopy() {
 //        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
 //            AccountGRADDAO graddao = new AccountGRADDAO(new AnswerProcessing(new ClientService()));
-//            ArrayList<Rooms> rooms = graddao.getRooms(7124, connection);
+//            ArrayList<Room> rooms = graddao.getRooms(7124, connection);
 //
 //            for (int i = 0; i < rooms.size(); i++) {
 //                for (int j = i + 1; j < rooms.size(); j++) {
@@ -428,14 +427,14 @@ public class TestMain {
         }
     }
 
-    public static ArrayList<Rooms> findCopy(Connection connection) {
-        try {
-            AccountGRADDAO graddao = new AccountGRADDAO(new AnswerProcessing(new ClientService()));
-            return graddao.getRooms(7124, connection);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static ArrayList<Room> findCopy(Connection connection) {
+//        try {
+//            AccountGRADDAO graddao = new AccountGRADDAO(new AnswerProcessing(new ClientService()));
+//            return graddao.getRooms(7124, connection);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 
@@ -448,43 +447,43 @@ public class TestMain {
             e.printStackTrace();
         }
     }
-
+    @Deprecated
     public static void getMeteringDeviceGradDaoPU1() {
-
-        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
-
-            ArrayList<Rooms> rooms = findCopy(connection);
-
-            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
-            ArrayList<String[]> ex = graddao.getExGisPu1(7124, connection);
-
-            for (int i = 0; i < ex.size(); i++) {
-                for (int j = i + 1; j < ex.size(); j++) {
-                    if (ex.get(i)[27].equals(ex.get(j)[27]) && ex.get(i)[1].equals(ex.get(j)[1])) {
-                        System.out.println("Найден повтор записи: " + getLsFromAbonId(rooms, Integer.valueOf(ex.get(i)[27])));
-                        System.out.println(ex.get(i)[2] + " :\t" + ex.get(j)[2]);
-                        System.out.println(ex.get(i)[1] + " :\t" + ex.get(j)[1]);
-                        System.out.println(ex.get(i)[8] + " :\t" + ex.get(j)[8]);
-                        System.out.println(ex.get(i)[26] + " :\t" + ex.get(j)[26]);
-                        System.out.println(ex.get(i)[27] + " :\t" + ex.get(j)[27]);
-                        System.out.println();
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//
+//        try (Connection connection = ConnectionBaseGRAD.instance().getConnection()) {
+//
+//            ArrayList<Room> rooms = findCopy(connection);
+//
+//            MeteringDeviceGRADDAO graddao = new MeteringDeviceGRADDAO(new AnswerProcessing(new ClientService()), 7124);
+//            ArrayList<String[]> ex = graddao.getExGisPu1(7124, connection);
+//
+//            for (int i = 0; i < ex.size(); i++) {
+//                for (int j = i + 1; j < ex.size(); j++) {
+//                    if (ex.get(i)[27].equals(ex.get(j)[27]) && ex.get(i)[1].equals(ex.get(j)[1])) {
+//                        System.out.println("Найден повтор записи: " + getLsFromAbonId(rooms, Integer.valueOf(ex.get(i)[27])));
+//                        System.out.println(ex.get(i)[2] + " :\t" + ex.get(j)[2]);
+//                        System.out.println(ex.get(i)[1] + " :\t" + ex.get(j)[1]);
+//                        System.out.println(ex.get(i)[8] + " :\t" + ex.get(j)[8]);
+//                        System.out.println(ex.get(i)[26] + " :\t" + ex.get(j)[26]);
+//                        System.out.println(ex.get(i)[27] + " :\t" + ex.get(j)[27]);
+//                        System.out.println();
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
-    public static String getLsFromAbonId(ArrayList<Rooms> rooms, int abomnId) {
-        for (Rooms room : rooms) {
-            if (abomnId == room.getAbonId()) {
-                return room.getNumberLS();
-            }
-        }
-        return null;
-    }
+//    public static String getLsFromAbonId(ArrayList<Room> rooms, int abomnId) {
+//        for (Room room : rooms) {
+//            if (abomnId == room.getAbonId()) {
+//                return room.getNumberLS();
+//            }
+//        }
+//        return null;
+//    }
 
     public static void setShutdownDefragToLocalBase() {
 

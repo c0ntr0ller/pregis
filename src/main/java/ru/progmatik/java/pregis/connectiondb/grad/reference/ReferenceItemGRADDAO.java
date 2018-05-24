@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceDownloadNSIDataSet;
 import ru.progmatik.java.pregis.connectiondb.localdb.reference.ReferenceNSIDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
+import ru.progmatik.java.pregis.model.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import java.sql.*;

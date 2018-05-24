@@ -1,11 +1,11 @@
-package ru.progmatik.java.pregis.connectiondb.grad.account.datasets;
+package ru.progmatik.java.pregis.model;
 
 import java.util.Date;
 
 /**
  * Класс, содержит даные листа "Основные сведения".
  */
-public class BasicInformation {
+public class AbonentInformation {
     /**
      * ИД абонента в системе Град
      * ОН НЕ ВЫГРУЖАЕТСЯ!
@@ -108,6 +108,13 @@ public class BasicInformation {
      * если наниматель – обособленное подразделение юридического лица.
      */
     private String kpp;
+
+    /**
+     * Доля внесения платы, размер доли в %.
+     * Обязательный.
+     * Допускается ввод положительных целых значений от 1 до 100.
+     */
+    private int sharePay;
 
     /**
      * Общая площадь, кв. м.
@@ -559,5 +566,13 @@ public class BasicInformation {
 
     public void setOrgVersionGUID(String orgVersionGUID) {
         this.orgVersionGUID = orgVersionGUID;
+    }
+
+    public int getSharePay() {
+        return sharePay;
+    }
+
+    public void setSharePay(int sharePay) {
+        this.sharePay = sharePay;
     }
 }

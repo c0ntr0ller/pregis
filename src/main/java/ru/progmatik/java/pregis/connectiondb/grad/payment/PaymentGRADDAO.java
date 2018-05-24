@@ -2,7 +2,7 @@ package ru.progmatik.java.pregis.connectiondb.grad.payment;
 
 import org.apache.log4j.Logger;
 import ru.gosuslugi.dom.schema.integration.payment.ImportSupplierNotificationsOfOrderExecutionRequest;
-import ru.progmatik.java.pregis.connectiondb.grad.house.HouseRecord;
+import ru.progmatik.java.pregis.model.HouseRecord;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 

@@ -124,6 +124,51 @@ public class ExportCAChData {
         return result;
     }
 
+    public ExportCAChResultType.Contract getApprovedContractByFias(String fias) throws SQLException {
+        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = callExportHouseContracts(fias);
+
+        // если нет контрактов - выдаем ошибку
+        if(resultContract == null || resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
+            answerProcessing.sendMessageToClient("Не найден договор управления в ГИС ЖКХ, сверка не производится");
+            return null;
+        }
+
+        return getApprovedContract(resultContract);
+    }
+
+    /**
+     * метод полуает активный контракт из готового ответа на запрос к ГИС
+     * @param stateResult
+     * @return
+     */
+    public ExportCAChResultType.Contract getApprovedContract(ru.gosuslugi.dom.schema.integration.house_management.GetStateResult stateResult) {
+        // если нет контрактов - выдаем ошибку
+        if (stateResult == null || stateResult.getExportCAChResult() == null || stateResult.getExportCAChResult().size() == 0) {
+            answerProcessing.sendMessageToClient("Не найден договор управления в ГИС ЖКХ!");
+            return null;
+        }
+
+        // получаем действующий контракт
+        ExportCAChResultType.Contract curContract = null;
+        for (ExportCAChResultType caChResultType : stateResult.getExportCAChResult()) {
+            if (caChResultType.getContract() != null && caChResultType.getContract().getContractStatus() != null) {
+                if (caChResultType.getContract().getContractStatus().value().equalsIgnoreCase("Approved")) {
+                    curContract = caChResultType.getContract();
+                }
+            }
+        }
+        if (curContract == null) {
+            curContract = stateResult.getExportCAChResult().get(0).getContract();
+        }
+
+        if (curContract == null) {
+            answerProcessing.sendMessageToClient("Не найден ни один договор управления на доме в ГИС ЖКХ");
+            return null;
+        }
+
+        return curContract;
+    }
+
     /**
      * Метод выдает мапу с УИДами услуг и самими объектами услуг по дому
      * @param curContract текущий контрак дома

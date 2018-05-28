@@ -14,6 +14,7 @@ import ru.progmatik.java.pregis.model.*;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
+import ru.progmatik.java.pregis.services.house.ExportCAChData;
 import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
 import ru.progmatik.java.web.servlets.listener.ClientDialogWindowObservable;
 
@@ -167,6 +168,11 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                          final LinkedHashMap<AbonentInformation,ImportAccountRequest.Account> accountsMapFromGrad,
                                          final HouseRecord houseRecord, final Connection connection) throws SQLException, PreGISException, ParseException {
 
+        // создаем объект работы с контрактами
+        ExportCAChData contractDataPort = new ExportCAChData(answerProcessing);
+        // получаем действующий контракт
+        ExportCAChResultType.Contract curContract = contractDataPort.getApprovedContractByFias(houseRecord.getFias());
+
         // для удобства поиска создаем мапу с лицевыми счетами из ГИС. Ключ - ЛС из Града
         Map<String, ExportAccountResultType> accountsMapFromGISJKH = new LinkedHashMap<>();
 
@@ -192,47 +198,60 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
             countAllGisJkh += accountsListFromGISJKH.size();
 
             // бежим по ЛС из Града
-            for (Map.Entry<AbonentInformation, ImportAccountRequest.Account> entry : accountsMapFromGrad.entrySet()) {
+            gradloop: for (Map.Entry<AbonentInformation, ImportAccountRequest.Account> entry : accountsMapFromGrad.entrySet()) {
                 // если еще не входит в список на закрытие
                 if (!isInClosedAccountList(entry.getValue().getAccountNumber(), accountsForCloseList)) {
+
                     // получаем ACCOUNTUNIQNUM абонента
-//                    final Integer abonId = accountGRADDAO.getAbonentIdFromGrad(entry.getKey(), connection);
                     if(entry.getKey().getGradID() > 0) {
                         // final String uniqueNumberFromDB = accountGRADDAO.getUnifiedAccountNumber(abonId, connection);
 
+                        ExportAccountResultType exportAccountResultType = accountsMapFromGISJKH.get(entry.getValue().getAccountNumber());
                         // если есть в ГИС с таким лицевым счетом
-                        if(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null) {
+                        if(exportAccountResultType != null) {
+
+                            // если контракт есть, но не совпадает - удаляем в ГИС и создаем заново, он автоматически привяжется к новому контракту
+                            if(curContract != null && !exportAccountResultType.getAccountReasons().getContract().getContractGUID().equalsIgnoreCase(curContract.getContractGUID())) {
+
+                                // очищаем его GUID, так как нам его надо создать
+                                entry.getValue().setAccountGUID(null);
+                                addEntryToGISMap(accountsCreateMap, entry.getValue());
+                                // НЕ убираем из мапы ГИС - его надо удалить
+                                continue gradloop;
+                            }
+
                             // если в Граде у абонента ACCOUNTGUID пустой
                             if (entry.getValue().getAccountGUID() == null || entry.getValue().getAccountGUID().isEmpty() ||
                                     // или Идентификатор жилищно-коммунальной услуги пустой
                                     entry.getKey().getServiceID() == null || entry.getKey().getServiceID().isEmpty() ||
                                     // или при одинаковом ЛС разные GUID
-                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) ||
+                                    !exportAccountResultType.getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) ||
                                     // при одинаковом ЛС разные UnifiedAccountNumber для организации
-                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getServiceID().equalsIgnoreCase(entry.getKey().getServiceID())
+                                    !exportAccountResultType.getServiceID().equalsIgnoreCase(entry.getKey().getServiceID())
                                     ) {
                                 // проверяем и впытаемся занести его ACCOUNTGUID в БД
-                                if (!sendAccountDataToGrad(accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()), entry.getValue(),
+                                if (!sendAccountDataToGrad(exportAccountResultType, entry.getValue(),
                                         houseRecord.getGrad_id(), connection)) {
                                     // если не занесли - просто сообщим об этом юзеру addEntryToGISMap(accountsCreateMap, entry.getValue());
                                     answerProcessing.sendMessageToClient(String.format("Не удалось обновить идентификаторы ГИС абонента в Град, ЛС: %s", entry.getKey().getNumberLS()));
                                 }
                             }else{
                                 // если все совпадает (аккаунт и ИД ЛС), но разные плательщики (по ФИО или по организации) - добавляем на обновление в ГИС
+                                AccountExportType.PayerInfo payerInfo = exportAccountResultType.getPayerInfo();
+
                                 if(entry.getValue().getAccountGUID() != null &&
-                                        accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
                                         entry.getValue().getPayerInfo() != null && entry.getValue().getPayerInfo().getInd() != null && // по частникам
-                                        accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
-                                        (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
-                                                accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd() == null ||
-                                                accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getFirstName() == null ||
-                                                !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getFirstName().equalsIgnoreCase(
+                                        exportAccountResultType.getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
+                                        (payerInfo == null ||
+                                                payerInfo.getInd() == null ||
+                                                payerInfo.getInd().getFirstName() == null ||
+                                                !payerInfo.getInd().getFirstName().equalsIgnoreCase(
                                                 entry.getValue().getPayerInfo().getInd().getFirstName()) ||
-                                                !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getSurname().equalsIgnoreCase(
+                                                !payerInfo.getInd().getSurname().equalsIgnoreCase(
                                                         entry.getValue().getPayerInfo().getInd().getSurname()) ||
-                                                (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getPatronymic() != null &&
+                                                (payerInfo.getInd().getPatronymic() != null &&
                                                         entry.getValue().getPayerInfo().getInd().getPatronymic() != null &&
-                                                !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getInd().getPatronymic().equalsIgnoreCase(
+                                                !payerInfo.getInd().getPatronymic().equalsIgnoreCase(
                                                         entry.getValue().getPayerInfo().getInd().getPatronymic())
                                                 )
 
@@ -241,14 +260,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                     addEntryToGISMap(accountsCreateMap, entry.getValue());
                                 }else{
                                     if(entry.getValue().getAccountGUID() != null && //
-                                            accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()) != null &&
                                             entry.getValue().getPayerInfo() != null &&
                                             entry.getValue().getPayerInfo().getOrg() != null && //по юрлицам
-                                            accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
-                                            (accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo() == null ||
-                                                    accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getOrg() == null ||
-                                                    accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getOrg().getOrgVersionGUID() == null ||
-                                                    !accountsMapFromGISJKH.get(entry.getValue().getAccountNumber()).getPayerInfo().getOrg().getOrgVersionGUID().equalsIgnoreCase(
+                                            exportAccountResultType.getAccountGUID().equalsIgnoreCase(entry.getValue().getAccountGUID()) &&
+                                            (payerInfo == null ||
+                                                    payerInfo.getOrg() == null ||
+                                                    payerInfo.getOrg().getOrgVersionGUID() == null ||
+                                                    !payerInfo.getOrg().getOrgVersionGUID().equalsIgnoreCase(
                                                             entry.getValue().getPayerInfo().getOrg().getOrgVersionGUID())
 
                                             ))
@@ -258,6 +276,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                 }
                             }
                             // убираем из мапы ГИС, так как он у нас есть уже в ГИС и будет просто обновлен, если что-от не совпадает
+                            // КРОМЕ СЛУЧАЯ НЕСОВПАДЕНИЯ КОНТРАКТА, ОН ОБРАБАТЫВАЕТСЯ ВЫШЕ ОТДЕЛЬНО
                             accountsMapFromGISJKH.remove(entry.getValue().getAccountNumber());
                         }else {
                             entry.getValue().setAccountGUID(null);
@@ -283,12 +302,6 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                 }
             }
         }
-        // если есть счета на создание/обновление в ГИС - отсылаем их в гис
-        if (!accountsCreateMap.isEmpty()) {
-            answerProcessing.sendMessageToClient("");
-            answerProcessing.sendMessageToClient("Счетов для создания/обновления в ГИС ЖКХ:" + accountsCreateMap.size());
-            sendAccountDataToGISJKH(accountsCreateMap, houseRecord.getGrad_id(), connection);
-        }
 
         // если в мапе ГИС остались ЛС - значит их у нас нет и мы их отправляем на закрытие
         if(!accountsMapFromGISJKH.isEmpty()){
@@ -310,7 +323,7 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
                                     "Абонент закрыт в ИС предприятия",
                                     accountsForCloseList);
                         }else{
-                            answerProcessing.sendMessageToClient(String.format("Абонент ЛС %s нежилое, закрытие В ГИС ЖКХ не производится", accountForClose.getAccountNumber()));
+                            answerProcessing.sendMessageToClient(String.format("Абонент ЛС %s в нежилом помещении, закрытие В ГИС ЖКХ не производится", accountForClose.getAccountNumber()));
                         }
                     }
                 }
@@ -327,6 +340,13 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
 //            }
             sendAccountDataToGISJKH(accountsForCloseList.stream().collect(Collectors.toMap(e->e.getTransportGUID(), e->e)), houseRecord.getGrad_id(), connection);
 
+        }
+
+        // если есть счета на создание/обновление в ГИС - отсылаем их в гис
+        if (!accountsCreateMap.isEmpty()) {
+            answerProcessing.sendMessageToClient("");
+            answerProcessing.sendMessageToClient("Счетов для создания/обновления в ГИС ЖКХ:" + accountsCreateMap.size());
+            sendAccountDataToGISJKH(accountsCreateMap, houseRecord.getGrad_id(), connection);
         }
 
         if(accountsCreateMap.isEmpty() && accountsForCloseList.isEmpty()) {

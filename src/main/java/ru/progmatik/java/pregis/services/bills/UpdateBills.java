@@ -145,32 +145,15 @@ public class UpdateBills {
      */
     private void synchronizeContracts(final HouseRecord houseGrad, List<ImportPaymentDocumentRequest> importPaymentDocumentRequestList, final PaymentDocumentGradDAO pdGradDao) throws SQLException, ParseException, PreGISException {
         // запрашиваем услуги из ГИС
+        // создаем объект работы с контрактами
         ExportCAChData contractDataPort = new ExportCAChData(answerProcessing);
-        ru.gosuslugi.dom.schema.integration.house_management.GetStateResult resultContract = contractDataPort.callExportHouseContracts(houseGrad.getFias());
-
-        // если нет контрактов - выдаем ошибку
-        if(resultContract == null || resultContract.getExportCAChResult() == null || resultContract.getExportCAChResult().size() == 0){
-            answerProcessing.sendMessageToClient("Не найден договор управления в ГИС ЖКХ, сверка не производится");
-            return;
-        }
-
         // получаем действующий контракт
-        ExportCAChResultType.Contract curContract = null;
-        for(ExportCAChResultType caChResultType:resultContract.getExportCAChResult()){
-            if (caChResultType.getContract() != null && caChResultType.getContract().getContractStatus() != null) {
-                if (caChResultType.getContract().getContractStatus().value().equalsIgnoreCase("Approved")) {
-                    curContract = caChResultType.getContract();
-                }
-            }
-        }
+        ExportCAChResultType.Contract curContract = contractDataPort.getApprovedContractByFias(houseGrad.getFias());
+        // если нет контракта - выходим, сравнивать услуги нельзя
         if(curContract == null){
-            curContract = resultContract.getExportCAChResult().get(0).getContract();
-        }
-
-        if(curContract == null){
-            answerProcessing.sendMessageToClient("Не найден ни один договор управления на доме в ГИС ЖКХ, сверка не производится");
             return;
         }
+
         // по контракту получаем список услуг на доме (на доме, а не на абонентах!!!)
         HashMap<String, NsiRef> gisServices = contractDataPort.getHouseServices(curContract);
 

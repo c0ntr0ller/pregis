@@ -279,7 +279,8 @@ public class UpdateAllHouseData {
                             // если комната найдена
                             if (foundRoom != null) {
                                 // проверяем её GUID и если НЕ совпадает - добавляем на обновление GUID в БД Град
-                                if (!(foundRoom.getPremisesGUID().equalsIgnoreCase(residentialPremise.getPremisesGUID()) &&
+                                if (foundRoom.getPremisesGUID() == null || // но не задан GUID
+                                        !(foundRoom.getPremisesGUID().equalsIgnoreCase(residentialPremise.getPremisesGUID()) &&
                                         foundRoom.getLivingroomGUID().equalsIgnoreCase(livingRoom.getLivingRoomGUID()))) {
                                     residentialMapForUpdate.put(foundRoom, simpleEntry);
                                 }
@@ -298,8 +299,8 @@ public class UpdateAllHouseData {
 
                         // если помещение найдено
                         if (foundRoom != null) {
-                            // проверяем её GUID и если НЕ совпадает - добавляем на обновление GUID в БД Град
-                            if (!(foundRoom.getPremisesGUID().equalsIgnoreCase(residentialPremise.getPremisesGUID())) ||
+                            if (foundRoom.getPremisesGUID() == null || // но не задан GUID
+                                    !(foundRoom.getPremisesGUID().equalsIgnoreCase(residentialPremise.getPremisesGUID())) || // GUID задан, но НЕ совпадает
                                     foundRoom.getAbonId().size() > 1) { // коммуналки обновляем ВСЕГДА
                                 // добавляем в мапу на обновление жилых помещений/комнат
                                 residentialMapForUpdate.put(foundRoom, simpleEntry);
@@ -322,7 +323,8 @@ public class UpdateAllHouseData {
                     // если помещение найдено и оно одно
                     if (foundRoom != null) {
                         // проверяем GUID и если НЕ совпадает - добавляем на обновление GUID в БД Град
-                        if (!(foundRoom.getPremisesGUID().equalsIgnoreCase(nonResidentialPremise.getPremisesGUID()))) {
+                        if (foundRoom.getPremisesGUID() == null ||
+                                !(foundRoom.getPremisesGUID().equalsIgnoreCase(nonResidentialPremise.getPremisesGUID()))) {
                             nonResidentialMapForUpdate.put(foundRoom, nonResidentialPremise);
                         }
                         // также если помещение найдено - удаляем из копии списка Град, во избежание перезатирания GUID в БД
@@ -345,7 +347,8 @@ public class UpdateAllHouseData {
                 // если комната найдена
                 if (foundRoom != null) {
                     // проверяем её GUID и если НЕ совпадает - добавляем на обновление GUID в БД Град
-                    if (!(foundRoom.getPremisesGUID().equalsIgnoreCase(livingRoom.getLivingRoomGUID()))) { // тут сравниваем так, потому что в Граде хранится все в одном признаке
+                    if (foundRoom.getPremisesGUID() == null || // но не задан GUID
+                            !(foundRoom.getPremisesGUID().equalsIgnoreCase(livingRoom.getLivingRoomGUID()))) { // тут сравниваем так, потому что в Граде хранится все в одном признаке
                         livingHouseRoomsMapForUpdate.put(foundRoom, livingRoom);
                     }
                     // также если комната найдена - удаляем из копии списка Град, во избежание перезатирания GUID в БД
@@ -411,7 +414,7 @@ public class UpdateAllHouseData {
 
         if (roomList.isEmpty()) {// ищем по PremisesGUID, вдруг руками прописали
             for (Room room : roomsGrad) {
-                if(room.getPremisesGUID().equalsIgnoreCase(premisesGUID)){
+                if(room.getPremisesGUID() != null && room.getPremisesGUID().equalsIgnoreCase(premisesGUID)){
                     roomList.add(room);
                 }
             }

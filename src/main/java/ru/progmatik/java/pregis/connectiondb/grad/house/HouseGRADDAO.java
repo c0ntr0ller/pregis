@@ -422,6 +422,7 @@ public final class HouseGRADDAO {
 //            Если IDEA выделила просто не обращай внимание, зачистую конструкция (!houseRoomsMap.containsKey(idHouse)),
 //            менее заметнее чем указанную выше, где явно должны получить false
 //            final AccountGRADDAO accountGRADDAO = new AccountGRADDAO(answerProcessing);
+
             houseRoomsMap.clear();
             houseRoomsMap.put(idHouse, getRooms(idHouse, connectionGrad));
         }
@@ -617,6 +618,9 @@ public final class HouseGRADDAO {
 //    @Deprecated
     public ArrayList<Room> getRooms(final int houseID, final Connection connection) throws SQLException, PreGISException {
 
+        if(!ResourcesUtil.instance().getPremisesNumberOnly()) {
+            answerProcessing.sendMessageToClient("ResourcesUtil: Помещения НЕ объединяются по номеру квартиры, каждый абонент с литерой выгружается как помещение. Для выгрузки в ГИС помещений, объединенных по номеру квартиры без литеры, установите в настройках config.gis.premisesnumberonly=1");
+        }
         final Integer columnIndex = 2; // column with API data format
         final String sqlRequest = "SELECT * FROM EX_GIS_LS2(" + houseID + "," + ResourcesUtil.instance().getCompanyGradId() + ")";
         final ArrayList<Room> listRooms = new ArrayList();
@@ -635,11 +639,11 @@ public final class HouseGRADDAO {
 
                     // получаем номер квартиры
                     String localNumberAppart = arrayData[5];
-                    String localNumberAppartNumberOnly = OtherFormat.extractLeadingNumber(localNumberAppart);
+                    String localNumberAppartNumberOnly = null;
 
                     // если объединяем по номеру квартиры - ищем сначала уже имющуюся квартиру в списке
                     if(ResourcesUtil.instance().getPremisesNumberOnly()){
-
+                        localNumberAppartNumberOnly = OtherFormat.extractLeadingNumber(localNumberAppart);
                         for (Room listRoom : listRooms) {
                             if(listRoom.getNumberAppart().equalsIgnoreCase(localNumberAppartNumberOnly)){
                                 room = listRoom;

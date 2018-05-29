@@ -238,6 +238,7 @@ public final class OtherFormat {
     }
 
     public static String extractLeadingNumber(String inString){
+        if(inString == null) {return null;}
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < inString.length(); i++) {
             if(!Character.isDigit(inString.charAt(i))) break;

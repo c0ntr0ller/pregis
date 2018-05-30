@@ -266,16 +266,16 @@ public class MeteringDeviceGRADDAO{
 
 //            device.getElectricMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 //            Базовое показание T1
-            device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN));
+            device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN).toString());
 //            Базовое показание T2, не обязательно к заполнению
             if (exGisPu1Element[METERING_VALUE + 1] != null) {
-                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[METERING_VALUE + 1]).setScale(7, BigDecimal.ROUND_DOWN));
+                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[METERING_VALUE + 1]).setScale(7, BigDecimal.ROUND_DOWN).toString());
 //            } else {
 //                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
             }
 //            Базовое показание T3. В зависимости от количества заданных при создании базовых значений ПУ определяется его тип по количеству тарифов. Не обязательно к заполнению
             if (exGisPu1Element[METERING_VALUE + 2] != null) {
-                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[METERING_VALUE + 2]).setScale(7, BigDecimal.ROUND_DOWN));
+                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[METERING_VALUE + 2]).setScale(7, BigDecimal.ROUND_DOWN).toString());
 //            } else {
 //                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
             }
@@ -297,9 +297,9 @@ public class MeteringDeviceGRADDAO{
 //            device.setOneRateMeteringDevice(new ImportMeteringDeviceDataRequest.MeteringDevice.DeviceDataToCreate.OneRateMeteringDevice());
 //            device.getOneRateMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 //            Базовое показание
-            MunicipalResourceNotElectricType nonElectric = new MunicipalResourceNotElectricType();
+            MeteringDeviceFullInformationType.MunicipalResourceNotEnergy nonElectric = new MeteringDeviceFullInformationType.MunicipalResourceNotEnergy();
 
-            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN));
+            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN).toString());
             nonElectric.setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[MUNICIPAL_RESOURCE]));
 //            nonElectric.setReadingsSource(); // Кем внесено не обязательно к заполнению
 //            c версии 9.0.1.3 убрали

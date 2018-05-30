@@ -227,6 +227,19 @@ public class ReferenceNSIDAO {
                 dataList.add(new ReferenceItemDataSet(resultSet.getInt(1), resultSet.getString(2),
                         resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
             }
+
+
+        }
+
+        if(dataList.isEmpty()){
+            // проверяем - есть ли такой элемент вообще
+            try (Connection connection = ConnectionDB.instance().getConnectionDB();
+                 Statement statement = connection.createStatement();
+                    ResultSet checkResultSet = statement.executeQuery("select code from NSI_FOR_DOWNLOAD where CODE = " + codeParent)){
+                if(!checkResultSet.next()){
+                   throw new SQLException("Критическая ошибка - в NSI_FOR_DOWNLOAD не задан справочник " + codeParent);
+                }
+            }
         }
         return dataList;
     }
@@ -320,6 +333,7 @@ public class ReferenceNSIDAO {
             while (resultSet.next()) {
                 listDataSets.add(new ReferenceDownloadNSIDataSet(resultSet.getInt(1), resultSet.getString(2),
                         resultSet.getString(3), NsiListGroupEnum.getNsiGroup(resultSet.getString(4))));
+
             }
         }
         return listDataSets;

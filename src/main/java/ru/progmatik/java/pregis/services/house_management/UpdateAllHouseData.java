@@ -150,14 +150,21 @@ public class UpdateAllHouseData {
         }
 
         if(result.getExportHouseResult().getApartmentHouse() != null) {
-            int roomsForUpdateCount = 0;
-            if(result.getExportHouseResult().getApartmentHouse().getResidentialPremises() != null)
-                roomsForUpdateCount += result.getExportHouseResult().getApartmentHouse().getResidentialPremises().size();
-            if (result.getExportHouseResult().getApartmentHouse().getNonResidentialPremises() != null)
-                roomsForUpdateCount += result.getExportHouseResult().getApartmentHouse().getResidentialPremises().size();
 
-            if(roomsForUpdateCount > 0){
-                answerProcessing.sendMessageToClient(String.format("Помещений для удаления в Гис: %d", roomsForUpdateCount));
+            if(result.getExportHouseResult().getApartmentHouse().getResidentialPremises() != null) {
+                int roomsForUpdateCount = result.getExportHouseResult().getApartmentHouse().getResidentialPremises().size();
+
+                if (roomsForUpdateCount > 0) {
+                    answerProcessing.sendMessageToClient(String.format("Жилых помещений для удаления в Гис: %d", roomsForUpdateCount));
+                }
+            }
+
+            if(result.getExportHouseResult().getApartmentHouse().getNonResidentialPremises() != null) {
+                int roomsForUpdateCount = result.getExportHouseResult().getApartmentHouse().getNonResidentialPremises().size();
+
+                if (roomsForUpdateCount > 0) {
+                    answerProcessing.sendMessageToClient(String.format("Нежилых помещений для удаления в Гис: %d", roomsForUpdateCount));
+                }
             }
         }
 
@@ -383,12 +390,7 @@ public class UpdateAllHouseData {
         // фильтруем лист по номеру квартиры
         List<Room> tmpRoomsMap = roomsGrad.stream()
                 .filter(r -> (r.getNumberAppart() != null &&
-                        (
-                                r.getNumberAppart().equalsIgnoreCase(apartmentNumber) ||
-                                        // попытка учесть номера комнат, написанные с пробелами, скобками ил символом литеры
-                                        r.getNumberAppart().replace("л.", "").replace("(", "").replace(")", "").replace(" ", "#").
-                                                equalsIgnoreCase(apartmentNumber.replace("л.", "").replace("(", "").replace(")", "").replace(" ", "#"))
-                        )
+                        OtherFormat.compareAppartNumbers(r.getNumberAppart(), apartmentNumber)
                 ))
                 .collect(Collectors.toList());
         for (Room room : tmpRoomsMap) {

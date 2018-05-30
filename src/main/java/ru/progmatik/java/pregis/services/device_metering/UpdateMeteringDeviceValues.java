@@ -22,6 +22,7 @@ import ru.progmatik.java.pregis.other.ResourcesUtil;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -143,9 +144,9 @@ public final class UpdateMeteringDeviceValues {
                                     = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
 
                             currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                            currentValue.setMeteringValueT1(entry.getValue().getMeteringValue());
-                            currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo());
-                            currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree());
+                            currentValue.setMeteringValueT1(entry.getValue().getMeteringValue().toPlainString());
+                            currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo().toPlainString());
+                            currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree().toPlainString());
                             currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
                             electricDeviceValue.setCurrentValue(currentValue);
                             devicesValues.setElectricDeviceValue(electricDeviceValue);
@@ -159,7 +160,7 @@ public final class UpdateMeteringDeviceValues {
                                     = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
 
                             currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                            currentValue.setMeteringValue(entry.getValue().getMeteringValue());
+                            currentValue.setMeteringValue(entry.getValue().getMeteringValue().toPlainString());
                             currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
                             currentValue.setMunicipalResource(entry.getValue().getNsiRef());
 
@@ -460,9 +461,9 @@ public final class UpdateMeteringDeviceValues {
 
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
                 rootGUID,
-                value.getMeteringValueT1(),
-                value.getMeteringValueT2(),
-                value.getMeteringValueT3(),
+                new BigDecimal(value.getMeteringValueT1()),
+                new BigDecimal(value.getMeteringValueT2()),
+                new BigDecimal(value.getMeteringValueT3()),
                 valueDate,
                 referenceNSI.getNsiRef("2", "Электрическая энергия")));
         deviceValuesLocalDAO.setDateMeteringDeviceValues(rootGUID, valueDate);
@@ -482,7 +483,7 @@ public final class UpdateMeteringDeviceValues {
 
         tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
                 rootGUID,
-                value.getMeteringValue(),
+                new BigDecimal(value.getMeteringValue()),
                 valueDate,
                 value.getMunicipalResource()));
         deviceValuesLocalDAO.setDateMeteringDeviceValues(rootGUID, valueDate);

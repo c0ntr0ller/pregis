@@ -11,11 +11,9 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static ru.progmatik.java.pregis.other.OrgsSettings.getOrgPPAGUID;
 
@@ -245,5 +243,59 @@ public final class OtherFormat {
             sb.append(inString.charAt(i));
         }
         return sb.toString();
+    }
+
+    /**
+     * метод сравнивает номера квартир во всевозможных написаниях
+     * @param firstNum
+     * @param secondNum
+     * @return
+     */
+    public static boolean compareAppartNumbers(String firstNum, String secondNum){
+        // tесли оба пустые - считаем одинаковыми
+        if((firstNum == null || firstNum.isEmpty()) && (secondNum == null || secondNum.isEmpty())){
+            return true;
+        }
+
+        // если один из параметров пустой, а второй нет
+        if(firstNum == null || firstNum.isEmpty() || secondNum == null || secondNum.isEmpty()){
+            return false;
+        }
+
+        if(firstNum.equalsIgnoreCase(secondNum)){
+            return true;
+        }
+
+        // получаем лидирующие номера помещений
+        String trFirstNum = extractLeadingNumber(firstNum);
+        String trSecondNum = extractLeadingNumber(secondNum);
+
+        // если лидирующие номера не совпадают - однозначно нет
+        if(!trFirstNum.equalsIgnoreCase(trSecondNum)){
+            return false;
+        }
+
+        // если дошли досюда - значит как минимум лидирующие номера совпадают, значит проблема в литерах
+        String firstLetter = removeDuplicates(firstNum.substring(trFirstNum.length()).trim())
+                        .replace("л.", "")
+                        .replace("(", "")
+                        .replace(")", "")
+                        .replace("  ", " ")
+                        .replace(" ", "")
+                        .replace("-", "");
+        String secondLetter = removeDuplicates(secondNum.substring(trSecondNum.length()).trim())
+                                .replace("л.", "")
+                                .replace("(", "")
+                                .replace(")", "")
+                                .replace("  ", " ")
+                                .replace(" ", "")
+                                .replace("-", "");
+        // если литерные части после преобразования совпадают
+        return firstLetter.equalsIgnoreCase(secondLetter);
+
+    }
+
+    public static String removeDuplicates(String myString) {
+        return Arrays.asList(myString.split("")).stream().distinct().collect(Collectors.joining());
     }
 }

@@ -230,17 +230,6 @@ public class ReferenceNSIDAO {
 
 
         }
-
-        if(dataList.isEmpty()){
-            // проверяем - есть ли такой элемент вообще
-            try (Connection connection = ConnectionDB.instance().getConnectionDB();
-                 Statement statement = connection.createStatement();
-                    ResultSet checkResultSet = statement.executeQuery("select code from NSI_FOR_DOWNLOAD where CODE = " + codeParent)){
-                if(!checkResultSet.next()){
-                   throw new SQLException("Критическая ошибка - в NSI_FOR_DOWNLOAD не задан справочник " + codeParent);
-                }
-            }
-        }
         return dataList;
     }
 

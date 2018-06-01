@@ -122,7 +122,7 @@ public final class UpdateMeteringDeviceValues {
         List<ImportMeteringDeviceValuesRequest.MeteringDevicesValues> devicesValuesList = new ArrayList<>();
 
         for (Map.Entry<String, MeteringDeviceValuesObject> entry : meteringDevicesValuesFromGrad.entrySet()) {
-            if (entry.getKey() != null) {
+            if (entry.getKey() != null && entry.getValue() != null) {
 
                 if (!devicesDataLocalDBDAO.isArchivingDeviceByRootGUID(entry.getKey())) {
 
@@ -136,36 +136,39 @@ public final class UpdateMeteringDeviceValues {
                         devicesValues.setMeteringDeviceRootGUID(entry.getValue().getMeteringDeviceRootGUID());
 
                         if (entry.getValue().getNsiRef().getName().equalsIgnoreCase("Электрическая энергия")) { // Если счетчик по электричеству
+                            if(entry.getValue().getMeteringValue() != null) {
+                                final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
+                                        new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
 
-                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue electricDeviceValue =
-                                    new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue();
+                                final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
+                                        = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
 
-                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue currentValue
-                                    = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.ElectricDeviceValue.CurrentValue();
-
-                            currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                            currentValue.setMeteringValueT1(entry.getValue().getMeteringValue().toPlainString());
-                            currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo().toPlainString());
-                            currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree().toPlainString());
-                            currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
-                            electricDeviceValue.setCurrentValue(currentValue);
-                            devicesValues.setElectricDeviceValue(electricDeviceValue);
-
+                                currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                                currentValue.setMeteringValueT1(entry.getValue().getMeteringValue().toPlainString());
+                                if (entry.getValue().getMeteringValueTwo() != null)
+                                    currentValue.setMeteringValueT2(entry.getValue().getMeteringValueTwo().toPlainString());
+                                if (entry.getValue().getMeteringValueThree() != null)
+                                    currentValue.setMeteringValueT3(entry.getValue().getMeteringValueThree().toPlainString());
+                                currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
+                                electricDeviceValue.setCurrentValue(currentValue);
+                                devicesValues.setElectricDeviceValue(electricDeviceValue);
+                            }
                         } else { // остальные ПУ
+                            if(entry.getValue().getMeteringValue() != null) {
+                                final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
+                                        new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
 
-                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue deviceValue =
-                                    new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue();
+                                final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
+                                        = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
 
-                            final ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue currentValue
-                                    = new ImportMeteringDeviceValuesRequest.MeteringDevicesValues.OneRateDeviceValue.CurrentValue();
+                                currentValue.setTransportGUID(OtherFormat.getRandomGUID());
+                                currentValue.setMeteringValue(entry.getValue().getMeteringValue().toPlainString());
+                                currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
+                                currentValue.setMunicipalResource(entry.getValue().getNsiRef());
 
-                            currentValue.setTransportGUID(OtherFormat.getRandomGUID());
-                            currentValue.setMeteringValue(entry.getValue().getMeteringValue().toPlainString());
-                            currentValue.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(entry.getValue().getMeteringGregorianDate()));
-                            currentValue.setMunicipalResource(entry.getValue().getNsiRef());
-
-                            deviceValue.getCurrentValue().add(currentValue);
-                            devicesValues.setOneRateDeviceValue(deviceValue);
+                                deviceValue.getCurrentValue().add(currentValue);
+                                devicesValues.setOneRateDeviceValue(deviceValue);
+                            }
                         }
 
                         devicesValuesList.add(devicesValues); // добавим устройство для отправки в ГИС ЖКХ.
@@ -279,7 +282,12 @@ public final class UpdateMeteringDeviceValues {
     private GetStateResult getExportMeteringDeviceHistory(final String fias) throws SQLException, PreGISException {
 
         final ReferenceNSIDAO nsidao = new ReferenceNSIDAO();
-        final ArrayList<ReferenceItemDataSet> allItems = nsidao.getAllItemsCodeParent("27");
+        ArrayList<ReferenceItemDataSet> allItems = nsidao.getAllItemsCodeParent("27");
+        if (allItems.size() == 0) {
+            referenceNSI.updateNSIFromTableList();
+            allItems = nsidao.getAllItemsCodeParent("27");
+        }
+
         final ArrayList<NsiRef> nsiList = new ArrayList<>();
 
         for (ReferenceItemDataSet item : allItems) {
@@ -459,14 +467,16 @@ public final class UpdateMeteringDeviceValues {
                                         final ElectricMeteringValueType value,
                                         final Date valueDate) throws SQLException, PreGISException {
 
-        tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
-                rootGUID,
-                new BigDecimal(value.getMeteringValueT1()),
-                new BigDecimal(value.getMeteringValueT2()),
-                new BigDecimal(value.getMeteringValueT3()),
-                valueDate,
-                referenceNSI.getNsiRef("2", "Электрическая энергия")));
-        deviceValuesLocalDAO.setDateMeteringDeviceValues(rootGUID, valueDate);
+        if(value != null) {
+            tempMeteringDevicesValue.put(rootGUID, new MeteringDeviceValuesObject(
+                    rootGUID,
+                    new BigDecimal(value.getMeteringValueT1()),
+                    value.getMeteringValueT2() == null ? null : new BigDecimal(value.getMeteringValueT2()),
+                    value.getMeteringValueT3() == null ? null : new BigDecimal(value.getMeteringValueT3()),
+                    valueDate,
+                    referenceNSI.getNsiRef("2", "Электрическая энергия")));
+            deviceValuesLocalDAO.setDateMeteringDeviceValues(rootGUID, valueDate);
+        }
 //        LOGGER.debug("Добавлены показания ПУ для сравнения: " + rootGUID + " показания: " + value.getMeteringValueT1());
     }
 

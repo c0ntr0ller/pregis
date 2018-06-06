@@ -119,13 +119,15 @@ public final class ProgramAction {
     /**
      * Метод, получаем данные о МКД из ГИС ЖКХ.
      */
-    public void callExportHouseData(final String houseGradID) {
+    public void callExportHouseData(final String houseGradIDs) {
 
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
             final UpdateAllHouseData houseData = new UpdateAllHouseData(answerProcessing);
-            houseData.callUpdateAllHouseData(checkHouseGradId(houseGradID));
+            for (String houseID : houseGradIDs.split(",")) {
+                houseData.callUpdateAllHouseData(checkHouseGradId(houseID));
+            }
         }catch (Exception e) {
             answerProcessing.sendErrorToClient("callUpdateAllHouseData(): ", "\"Получения данных о МКД\" ", LOGGER, e);
         } finally {
@@ -136,7 +138,7 @@ public final class ProgramAction {
     /**
      * Метод, синхронизирует данные о лицевых счетах ГИС ЖКХ и БД ГРАД.
      */
-    public void updateAccountData(final String houseGradID) {
+    public void updateAccountData(final String houseGradIDs) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
 
         try {
@@ -144,7 +146,10 @@ public final class ProgramAction {
             answerProcessing.sendMessageToClient("Синхронизация лицевых счетов...");
 
             final UpdateAllAccountData updateAllAccountData = new UpdateAllAccountData(answerProcessing);
-            final int state = updateAllAccountData.callUpdateAllAccountData(checkHouseGradId(houseGradID));
+            Integer state = 1;
+            for (String houseID : houseGradIDs.split(",")) {
+                state = Integer.min(state,updateAllAccountData.callUpdateAllAccountData(checkHouseGradId(houseID)));
+            }
 
             answerProcessing.clearLabelForText();
             if (state == -1) {
@@ -170,11 +175,14 @@ public final class ProgramAction {
     /**
      * Метод, синхронизирует ПУ.
      */
-    public void updateMeteringDevices(final String houseGradID) {
+    public void updateMeteringDevices(final String houseGradIDs) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
             final UpdateAllMeteringDeviceData updateAllMeteringDeviceData = new UpdateAllMeteringDeviceData(answerProcessing);
-            final int state = updateAllMeteringDeviceData.updateMeteringDeviceData(checkHouseGradId(houseGradID));
+            Integer state = 1;
+            for (String houseID : houseGradIDs.split(",")) {
+                state = Integer.min(state, updateAllMeteringDeviceData.updateMeteringDeviceData(checkHouseGradId(houseID)));
+            }
             if (state == -1) {
                 answerProcessing.sendMessageToClient("");
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация ПУ\" прервана!");
@@ -244,12 +252,17 @@ public final class ProgramAction {
     /**
      * Метод, по коду дома по ФИАС получает показания ПУ.
      */
-    public void getExportMeteringDeviceHistory(final String houseGradID) {
+    public void getExportMeteringDeviceHistory(final String houseGradIDs) {
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         final UpdateMeteringDeviceValues deviceValues;
         try {
             deviceValues = new UpdateMeteringDeviceValues(answerProcessing);
-            final int state = deviceValues.updateAllMeteringDeviceValues(checkHouseGradId(houseGradID));
+
+            Integer state = 1;
+            for (String houseID : houseGradIDs.split(",")) {
+                state = Integer.min(state, deviceValues.updateAllMeteringDeviceValues(checkHouseGradId(houseID)));
+            }
+
             if (state == -1) {
                 answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Синхронизация показаний ПУ\" прервана!");
             } else {
@@ -329,7 +342,9 @@ public final class ProgramAction {
     /**
      * Метод, экспорт сведений о лицевых счетах.
      * Тестовый метод.
+     * НЕ ИСПОЛЬЗУЕТСЯ!
      */
+    @Deprecated
     public void callExportAccountData(final String fias) {
 
         setStateRunOn();
@@ -357,14 +372,26 @@ public final class ProgramAction {
     /**
      * Метод, импорт сведений о платежных документах.
      */
-    public void callImportPaymentDocumentData(final String houseGradID) {
+    public void callImportPaymentDocumentData(final String houseGradIDs) {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежных документов...");
             final UpdateBills updateBills = new UpdateBills(answerProcessing);
-            updateBills.callPaymentDocumentImport(checkHouseGradId(houseGradID));
+
+            Integer state = 1;
+            for (String houseID : houseGradIDs.split(",")) {
+                state = Integer.min(state, updateBills.callPaymentDocumentImport(checkHouseGradId(houseID)));
+            }
+
+            if (state == -1) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Выгрузка платежных документов\" прервана!");
+            } else if (state == 0) {
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки!\nОперация: \"Выгрузка платежных документов\" завершилась с ошибками!");
+            } else {
+                    answerProcessing.sendOkMessageToClient("\"Выгрузка платежных документов\" успешно выполнено.");
+            }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPaymentDocumentData(): ", "", LOGGER, e);
         } finally {
@@ -462,14 +489,18 @@ public final class ProgramAction {
     /**
      * Метод, импорт сведений о платежах.
      */
-    public void callImportPayments(final String houseGradID) {
+    public void callImportPayments(final String houseGradIDs) {
         setStateRunOn();
         try {
             answerProcessing.sendMessageToClient("");
             answerProcessing.sendMessageToClient("Запуск...");
             answerProcessing.sendMessageToClient("Выгрузка платежей...");
             final UpdatePayments updatePayments = new UpdatePayments(answerProcessing);
-            updatePayments.callSendPayments(checkHouseGradId(houseGradID));
+
+            Integer state = 1;
+            for (String houseID : houseGradIDs.split(",")) {
+                state = Integer.min(state, updatePayments.callSendPayments(checkHouseGradId(houseID)));
+            }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPayments(): ", "", LOGGER, e);
         } finally {

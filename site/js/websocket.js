@@ -78,16 +78,19 @@ function sendMessage(message) {
 };
 function sendMessageWithParam(message, param) {
     var valueForm = "";
-    if (ws.readyState != 1) location.reload(true);
-    if (param.length > 0) {
-        valueForm = param;
+    if (ws.readyState == 1) {
+        if (param.length > 0) {
+            valueForm = param;
+        }
+        var msgJSON = {
+            command: message,
+            value: valueForm
+        };
+        // console.log("Send : " + msgJSON);
+        ws.send(JSON.stringify(msgJSON));
+    } else {
+        location.reload(true);
     }
-    var msgJSON = {
-        command: message,
-        value: valueForm
-    };
-    // console.log("Send : " + msgJSON);
-    ws.send(JSON.stringify(msgJSON));
 };
 function showMessage(message) {
     $('.label-text > span').html(message);
@@ -128,7 +131,8 @@ function showHouseListModalWindow(arrayHouse) {
     var arrayJSON = JSON.parse(arrayHouse);
 
     if (arrayJSON.length > 0 ) {
-        selectBox.append($("<option></option>").attr("value", -1).text("Выгрузить все"));
+        // selectBox.append($("<option></option>"));
+    // .attr("value", -1).text("Выгрузить все")
     }
     if (arrayJSON.length > 0 ) {
         for (var i = 0; i < arrayJSON.length; i++) {
@@ -141,6 +145,21 @@ function showHouseListModalWindow(arrayHouse) {
 
     $('#view-modal-window').fadeIn(300);
     selectBox.fadeIn(50);
+    selectBox.attr("multiple","multiple");
+    selectBox.multiselect({
+        includeSelectAllOption: true,
+        selectAllText: 'Выбрать всё',
+        allSelectedText: "Выбраны все дома",
+        nonSelectedText: "Ничего не выбрано",
+        enableCaseInsensitiveFiltering: true,
+        buttonWidth: '386px',
+        paddingLeft: '2px'}).ready(function () {
+            selectBox.multiselect('selectAll', false);
+            selectBox.multiselect('updateButtonText');
+    });
+    $('.modal-text').css("z-index", 1004);
+
+
     if ($('.hide-layout').css('display') != 'none') {
         $('.hide-layout').css("z-index", 1001);
     }
@@ -173,7 +192,10 @@ function answerYes() {
     var selectBox = $('#house-select');
     if (selectBox.length > 0 && selectBox.css('display') != 'none') {
         // console.log($('#house-select option:selected').attr("value"));
-        sendMessageWithParam(tempCommandID, $('#house-select option:selected').attr("value"));
+        var iStr = '';
+        $('#house-select option:selected').each(function(a, item){ iStr = iStr + ( iStr != '' ? ',' : '' )+item.value;});
+        sendMessageWithParam(tempCommandID, iStr );
+            // .attr("value"));
         $('#house-select').empty();
         selectBox.fadeOut(300);
     } else {

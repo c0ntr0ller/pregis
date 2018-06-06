@@ -29,7 +29,7 @@ public class UpdatePayments {
             this.answerProcessing = new AnswerProcessing();
         }
     }
-    public void callSendPayments(final Integer houseGradID) throws SQLException, PreGISException {
+    public int callSendPayments(final Integer houseGradID) throws SQLException, PreGISException {
         setErrorStatus(1);
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
             answerProcessing.sendMessageToClient("Формирую список домов...");
@@ -48,7 +48,7 @@ public class UpdatePayments {
                 }
             }
         }
-
+        return getErrorStatus();
     }
 
     /**
@@ -177,5 +177,9 @@ public class UpdatePayments {
         if (errorStatus < this.errorStatus) {
             this.errorStatus = errorStatus;
         }
+    }
+
+    public int getErrorStatus() {
+        return errorStatus;
     }
 }

@@ -54,7 +54,7 @@ public class UpdateBills {
      * @throws ParseException могут возникнуть ошибки, если у абонента указана не верно площадь или идентификатор в Граде.
      * @param houseGradID идентификатор дома в БД Град.
      */
-    public void callPaymentDocumentImport(final Integer houseGradID) throws SQLException, ParseException, PreGISException {
+    public int callPaymentDocumentImport(final Integer houseGradID) throws SQLException, ParseException, PreGISException {
 
         setErrorStatus(1);
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
@@ -74,6 +74,7 @@ public class UpdateBills {
                 }
             }
         }
+        return getErrorStatus();
     }
 
     /**

@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <title>ПреГИС</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/png">
+
+    <!-- Include Twitter Bootstrap and jQuery: -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-multiselect.js"></script>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/css/bootstrap-multiselect.css" type="text/css"/>
+
+    <script type="text/javascript" src="/js/websocket.js"></script>
+    <script type="text/javascript" src="/js/script.js"></script>
+
     <link rel='stylesheet' href='css/font_ptsans.css' type='text/css'>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,114 +29,120 @@
     </div>
 </div>
 <div class="container">
-    <div id="getOrgPPAGUID" class="thumb">
-        <div class="content">
-            <h2>Получить идентификатор организации</h2>
-            <p>
-                Позволяет получить идентификатор организации в ГИС ЖКХ,
-                информацию о том, прошла ли данная организация процедуру регистрации и
-                получить подтвержденные полномочия организации.
-            </p>
+    <div class="row">
+        <div id="getOrgPPAGUID" class="thumb col">
+            <div class="content">
+                <h2>Получить идентификатор организации</h2>
+                <p>
+                    Позволяет получить идентификатор организации в ГИС ЖКХ,
+                    информацию о том, прошла ли данная организация процедуру регистрации и
+                    получить подтвержденные полномочия организации.
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/senderId.jpg">
+            </div>
         </div>
-        <div class="wrapper">
-            <img src="images/senderId.jpg">
+        <div id="getExportDataProviderNsiItem" class="thumb col">
+            <div class="content">
+                <h2>Синхронизация справочников</h2>
+                <p>
+                    Импортирует сведения справочников:
+                    <br>1 - Дополнительные услуги.
+                    <br>51 - Коммунальные услуги.
+                    <br>59 - Работы и услуги организации.
+                    <br>и других.
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/nsi.jpg">
+            </div>
         </div>
-    </div>
-    <div id="getExportDataProviderNsiItem" class="thumb">
-        <div class="content">
-            <h2>Синхронизация справочников</h2>
-            <p>
-                Импортирует сведения справочников:
-                <br>1 - Дополнительные услуги.
-                <br>51 - Коммунальные услуги.
-                <br>59 - Работы и услуги организации.
-                <br>и других.
-            </p>
-        </div>
-        <div class="wrapper">
-            <img src="images/nsi.jpg">
-        </div>
-    </div>
-    <div id="getHouseUO" class="getHouseList thumb">
-        <div class="content">
-            <h2>Получить данные о МКД</h2>
-            <p>
-                Получает уникальные идентификаторы домов и помещений из системы «ГИС ЖКХ».
-            </p>
-        </div>
-        <div class="wrapper">
-            <img src="images/mkd.jpg">
-        </div>
-    </div>
-    <div id="updateAccountData" class="getHouseList thumb">
-        <div class="content">
-            <h2>Синхронизация лицевых счетов</h2>
-            <p>
-                Происходит синхронизация лицевых счетов из систем «ГРАД» и «ГИС ЖКХ».<br>
-                Подробнее: если лицевой счет из «ГРАДа» не найден в «ГИС ЖКХ», он будет выгружен в «ГИС ЖКХ».
-                Лицевой счет не найден в «ГРАД», будет закрыт в «ГИС ЖКХ».
-            </p>
-        </div>
-        <div class="wrapper">
-            <img src="images/ls.jpg">
+        <div id="getHouseUO" class="getHouseList thumb col">
+            <div class="content">
+                <h2>Получить данные о МКД</h2>
+                <p>
+                    Получает уникальные идентификаторы домов и помещений из системы «ГИС ЖКХ».
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/mkd.jpg">
+            </div>
         </div>
     </div>
-    <div id="updateMeteringDevices" class="getHouseList thumb">
-        <div class="content">
-            <h2>Выгрузка приборов учета</h2>
-            <p>
-                Происходит привязка и отправка данных о приборах учета в систему «ГИС ЖКХ».
-            </p>
+    <div class="row">
+        <div id="updateAccountData" class="getHouseList thumb col">
+            <div class="content">
+                <h2>Синхронизация лицевых счетов</h2>
+                <p>
+                    Происходит синхронизация лицевых счетов из систем «ГРАД» и «ГИС ЖКХ».<br>
+                    Подробнее: если лицевой счет из «ГРАДа» не найден в «ГИС ЖКХ», он будет выгружен в «ГИС ЖКХ».
+                    Лицевой счет не найден в «ГРАД», будет закрыт в «ГИС ЖКХ».
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/ls.jpg">
+            </div>
         </div>
-        <div class="wrapper">
-            <img src="images/pu.jpg">
+        <div id="updateMeteringDevices" class="getHouseList thumb col">
+            <div class="content">
+                <h2>Выгрузка приборов учета</h2>
+                <p>
+                    Происходит привязка и отправка данных о приборах учета в систему «ГИС ЖКХ».
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/pu.jpg">
+            </div>
         </div>
-    </div>
-    <div id="getExportMeteringHistory" class="getHouseList thumb">
-        <div class="content">
-            <h2>Синхронизация показаний приборов учета</h2>
-            <p>
-                Отправляет и получает актуальные показания приборов учета.
-            </p>
-        </div>
-        <div class="wrapper">
-            <img src="images/look.jpg">
+        <div id="getExportMeteringHistory" class="getHouseList thumb col">
+            <div class="content">
+                <h2>Синхронизация показаний приборов учета</h2>
+                <p>
+                    Отправляет и получает актуальные показания приборов учета.
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/look.jpg">
+            </div>
         </div>
     </div>
     <!-- <div class="thumb dont-play"> -->
-    <div id="callImportPaymentDocumentData" class="getHouseList thumb">
-        <div class="content">
-            <h2>Выгрузка платежных документов</h2>
-            <p>
-                Операция позволяет импортировать в ГИС ЖКХ сведения о платежных документах.
-            </p>
+    <div class="row">
+        <div id="callImportPaymentDocumentData" class="getHouseList thumb col">
+            <div class="content">
+                <h2>Выгрузка платежных документов</h2>
+                <p>
+                    Операция позволяет импортировать в ГИС ЖКХ сведения о платежных документах.
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/pd.jpg">
+            </div>
         </div>
-        <div class="wrapper">
-            <img src="images/pd.jpg">
+        <div id="callImportPayments" class="getHouseList thumb col">
+            <div class="content">
+                <h2>Квитирование</h2>
+                <p>
+                    Операция позволяет импортировать в ГИС ЖКХ информацию о платежах.
+                    Сведения о квитировании включают в себя: идентификатор платежного документа (счета на оплату),
+                    идентификатор извещения, сведения об услугах и сумме квитирования.
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/kvit.jpg">
+            </div>
         </div>
-    </div>
-    <div id="callImportPayments" class="getHouseList thumb">
-        <div class="content">
-            <h2>Квитирование</h2>
-            <p>
-                Операция позволяет импортировать в ГИС ЖКХ информацию о платежах.
-                Сведения о квитировании включают в себя: идентификатор платежного документа (счета на оплату),
-                идентификатор извещения, сведения об услугах и сумме квитирования.
-            </p>
-        </div>
-        <div class="wrapper">
-            <img src="images/kvit.jpg">
-        </div>
-    </div>
-    <div id="exit" class="thumb">
-        <div class="content">
-            <h2>Выход</h2>
-            <p>
-                Выйти из системы.
-            </p>
-        </div>
-        <div class="wrapper">
-            <img src="images/exit.jpg">
+        <div id="exit" class="thumb col">
+            <div class="content">
+                <h2>Выход</h2>
+                <p>
+                    Выйти из системы.
+                </p>
+            </div>
+            <div class="wrapper">
+                <img src="images/exit.jpg">
+            </div>
         </div>
     </div>
 </div>
@@ -153,13 +171,10 @@
     <div id="dont-work-text" class="modal-text">Модуль находится на стадии разработки.</div>
     <div id="dont-work-button" class="button"><span>Продолжить</span></div>
 </div>
-<footer class="footer">
+<footer class="footer2">
     <span>Разработано &#169; </span><a href="http://prog-matik.ru"><img src="images/progmatic_150x150.png"></a><span> г. Новосибирск 2016. </span>
     <br>
     <span class="show-log show-report">Посмотреть отчёт работы...</span>
 </footer>
-<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
-<script type="text/javascript" src="/js/websocket.js"></script>
-<script type="text/javascript" src="/js/script.js"></script>
 </body>
 </html>

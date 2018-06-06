@@ -34,7 +34,7 @@ body {
 }
 .container {
     *zoom: 1;
-    width: 906px;
+    width: 902px;
     margin: 10px auto;
     border: 1px solid #eee;
     box-shadow: 0 5px 30px rgba(0,0,0,0.6);
@@ -81,7 +81,7 @@ body {
     margin: 30px;
 }
 /***FOOTER***/
-.footer {
+.footer2 {
     clear: both;
     position: relative;
     display: block;
@@ -90,20 +90,21 @@ body {
     margin: 30px auto 0;
     height: 45px;
     bottom: 0;
-    width: 906px;
+    width: 902px;
     text-align: center;
     font-size: 14px;
 }
-.footer span {
+.footer2 span {
     vertical-align: 4px;
     color: #777;
     text-shadow: 1px 1px 1px white;
 }
-.footer img {
+.footer2 img {
     width: 110px;
+    vertical-align: baseline;
 }
 
-.footer .show-log {
+.footer2 .show-log {
     bottom: 0;
     font-size: 12px;
     color: #00a2e2;
@@ -113,7 +114,7 @@ body {
 /***SETTINGS BUTTON***/
 .container-settings {
     margin: 15px auto;
-    width: 906px;
+    width: 902px;
     position: relative;
     text-align: center;
 }
@@ -123,6 +124,9 @@ body {
             1px 1px 2px #454544;
     color: #454544;
     cursor: default;
+    margin-top: 0;
+    font-weight: 900;
+    font-size: 2em;
 }
 .settings {
     display: none;
@@ -313,13 +317,15 @@ body {
 }
 .modal-text {
     position: absolute;
-    overflow: auto;
+    /*overflow: auto;*/
     /*top: 0;*/
     left: 0;
-    width: 80%;
-    max-width: 80%;
-    max-height: 50%;
-    padding: 15px 50px 15px 20px;
+    /*width: 82%;*/
+    /*max-width: 82%;*/
+    /*max-height: 50%;*/
+    /*padding: 15px 50px 15px 20px;*/
+    width: 100%;
+    padding: 15px 0px 15px 0px;
     text-align: center;
     vertical-align: middle;
     background-color: #333;
@@ -328,10 +334,15 @@ body {
     top: 50%;
     transform: translateY(-50%);
     cursor: default;
+    box-sizing: content-box;
 }
 #house-select {
     display: none;
     font-size: 15px;
+    color: black;
+    background-color: white;
+    width: 100%;
+    margin-left: 20px;
 }
 /***BUTTON***/
 .button-state, #dont-work-button {
@@ -402,3 +413,8 @@ body {
 /***BUTTON***/
 /***AJAX-LOADER***/
 
+.dropdown-menu {
+    height:400px;
+    width: 100%;
+    overflow-y: auto;
+}

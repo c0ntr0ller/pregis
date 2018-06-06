@@ -266,18 +266,29 @@ public class MeteringDeviceGRADDAO{
 
 //            device.getElectricMeteringDevice().setBasicChatacteristicts(getBasicCharacteristics(houseId, exGisPu1Element, connectionGrad));
 //            Базовое показание T1
-            device.getMunicipalResourceEnergy().setMeteringValueT1(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN).toString());
+            BigDecimal valueT1 = new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN);
+            if(valueT1.abs().compareTo(new BigDecimal(0.01)) == -1){
+                device.getMunicipalResourceEnergy().setMeteringValueT1("0");
+            }else {
+                device.getMunicipalResourceEnergy().setMeteringValueT1(valueT1.toString());
+            }
 //            Базовое показание T2, не обязательно к заполнению
             if (exGisPu1Element[METERING_VALUE + 1] != null) {
-                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal(exGisPu1Element[METERING_VALUE + 1]).setScale(7, BigDecimal.ROUND_DOWN).toString());
-//            } else {
-//                device.getMunicipalResourceEnergy().setMeteringValueT2(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
+                BigDecimal valueT2 = new BigDecimal(exGisPu1Element[METERING_VALUE + 1]).setScale(7, BigDecimal.ROUND_DOWN);
+                if(valueT2.abs().compareTo(new BigDecimal(0.01)) == -1){
+                    device.getMunicipalResourceEnergy().setMeteringValueT2("0");
+                }else {
+                    device.getMunicipalResourceEnergy().setMeteringValueT2(valueT2.toString());
+                }
             }
 //            Базовое показание T3. В зависимости от количества заданных при создании базовых значений ПУ определяется его тип по количеству тарифов. Не обязательно к заполнению
             if (exGisPu1Element[METERING_VALUE + 2] != null) {
-                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal(exGisPu1Element[METERING_VALUE + 2]).setScale(7, BigDecimal.ROUND_DOWN).toString());
-//            } else {
-//                device.getMunicipalResourceEnergy().setMeteringValueT3(new BigDecimal("0").setScale(4, BigDecimal.ROUND_DOWN));
+                BigDecimal valueT3 = new BigDecimal(exGisPu1Element[METERING_VALUE + 2]).setScale(7, BigDecimal.ROUND_DOWN);
+                if(valueT3.abs().compareTo(new BigDecimal(0.01)) == -1){
+                    device.getMunicipalResourceEnergy().setMeteringValueT3("0");
+                }else {
+                    device.getMunicipalResourceEnergy().setMeteringValueT3(valueT3.toString());
+                }
             }
 //            Время и дата снятия показания
 //            device.getMunicipalResourceEnergy().setReadingsSource(); // Кем внесено не обязательно к заполнению
@@ -299,7 +310,13 @@ public class MeteringDeviceGRADDAO{
 //            Базовое показание
             MeteringDeviceFullInformationType.MunicipalResourceNotEnergy nonElectric = new MeteringDeviceFullInformationType.MunicipalResourceNotEnergy();
 
-            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN).toString());
+//            nonElectric.setMeteringValue(new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN).toString());
+            BigDecimal meterValue = new BigDecimal(exGisPu1Element[METERING_VALUE]).setScale(7, BigDecimal.ROUND_DOWN);
+            if(meterValue.abs().compareTo(new BigDecimal(0.01)) == -1){
+                nonElectric.setMeteringValue("0");
+            }else {
+                nonElectric.setMeteringValue(meterValue.toString());
+            }
             nonElectric.setMunicipalResource(nsi.getNsiRef("2", exGisPu1Element[MUNICIPAL_RESOURCE]));
 //            nonElectric.setReadingsSource(); // Кем внесено не обязательно к заполнению
 //            c версии 9.0.1.3 убрали

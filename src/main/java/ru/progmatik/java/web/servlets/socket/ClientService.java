@@ -60,6 +60,9 @@ public final class ClientService {
             action.getAnswerProcessing().sendErrorToClientNotException("Уже выполняется другая операция!");
         } else {
             switch (command) {
+                case "getOrgName":
+                    action.getOrgName();
+                    break;
                 case "getOrgPPAGUID":
                     action.getOrgPPAGUID();
                     break;

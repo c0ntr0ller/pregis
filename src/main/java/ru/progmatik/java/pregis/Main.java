@@ -97,7 +97,6 @@ public class Main {
         ProgramAction action = new ProgramAction(webSocketClientServlet.getClientService());
 
 //        if (OtherFormat.getOrgPPAGUID() == null)
-        action.fillOrgsMap();  // Получение orgPPAGUID
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new LoginClient(action)), "/*");
@@ -126,6 +125,8 @@ public class Main {
 
         Server server = new Server(port);
         server.setHandler(handlers);
+
+        action.fillOrgsMap();  // Получение orgPPAGUID
 
         server.start();
         server.join();

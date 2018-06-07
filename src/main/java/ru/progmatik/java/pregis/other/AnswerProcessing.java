@@ -28,6 +28,7 @@ public final class AnswerProcessing {
     private static final String CLIENT_SET_BUTTON_STATE_FALSE = "::setButtonState(false)";
     private static final String CLIENT_SET_BUTTON_STATE_TRUE = "::setButtonState(true)";
     private static final String CLIENT_SHOW_MESSAGE = "::showMessage()";
+    private static final String CLIENT_SHOW_ORGNAME = "::showOrgName()";
     private final SaveToBaseMessages saveToBase;
     private final ClientService clientService;
 
@@ -189,6 +190,10 @@ public final class AnswerProcessing {
         if(clientService != null) clientService.sendMessage(messageFormatter(command, null));
     }
 
+
+    public void showOrgName(final String message){
+        if(clientService != null) clientService.sendMessage(messageFormatter(CLIENT_SHOW_ORGNAME, message));
+    }
     /**
      * Метод, формирует JSON для передачи сообщения во front-end.
      * @param command имя команды

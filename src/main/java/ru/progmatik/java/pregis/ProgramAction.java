@@ -8,7 +8,10 @@ import ru.progmatik.java.pregis.connectiondb.grad.devices.MeteringDeviceGRADDAO;
 import ru.progmatik.java.pregis.connectiondb.grad.house.HouseGRADDAO;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.model.HouseRecord;
+import ru.progmatik.java.pregis.model.Organization;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
+import ru.progmatik.java.pregis.other.OrgsSettings;
+import ru.progmatik.java.pregis.other.ResourcesUtil;
 import ru.progmatik.java.pregis.services.bills.UpdateBills;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house_management.*;
@@ -66,6 +69,23 @@ public final class ProgramAction {
     }
 
     /**
+     * метод возвращает в интерфейс название и ОГРН организации в виде строки
+     */
+    public void getOrgName() {
+        if(OrgsSettings.getOrgsMap() != null && !OrgsSettings.getOrgsMap().isEmpty()){
+            try {
+                Organization organization = OrgsSettings.getOrgsMap().get(ResourcesUtil.instance().getCompanyGradId());
+                if (organization != null){
+                    answerProcessing.showOrgName(organization.getFullName());
+                }
+            } catch (PreGISException e) {
+                answerProcessing.sendErrorToClient("getOrgName", "Получение названия орагнизации", LOGGER, e);
+            }
+        }
+    }
+
+
+    /**
      * Метод, получение orgPPAGUID - идентификатор зарегистрированной организации.
      */
     public void getOrgPPAGUID() {
@@ -120,9 +140,12 @@ public final class ProgramAction {
      * Метод, получаем данные о МКД из ГИС ЖКХ.
      */
     public void callExportHouseData(final String houseGradIDs) {
-
         setStateRunOn(); // взводим флаг в состояния выполнения метода
         try {
+            if(houseGradIDs.isEmpty()){
+                answerProcessing.sendMessageToClient("Ничего не выбрано!");
+                return;
+            }
             answerProcessing.sendMessageToClient("Запуск получения сведений о МКД...");
             final UpdateAllHouseData houseData = new UpdateAllHouseData(answerProcessing);
             for (String houseID : houseGradIDs.split(",")) {
@@ -613,6 +636,7 @@ public final class ProgramAction {
 
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
 
+            answerProcessing.sendMessageToClient("Получение списка домов из Град...");
             final HouseGRADDAO houseGRADDAO = new HouseGRADDAO(answerProcessing);
             final LinkedHashMap<String, HouseRecord> houseAddedGisJkh = houseGRADDAO.getHouseRecords(null, connectionGRAD);
 //            final HashMap<Integer, String> allHouseForListModalWindow = houseGRADDAO.getAllHouseForListModalWindow(connectionGRAD);

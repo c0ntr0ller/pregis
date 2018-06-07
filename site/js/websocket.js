@@ -13,8 +13,7 @@ function getWebConnect() {
     var host = "ws://" + window.location.hostname + ":" + window.location.port + "/websocket";
     ws = new WebSocket(host);
     ws.onopen = function (event) {
-
-        // console.log('Открыто соединение');
+        getOrgName();
     };
 
     ws.onmessage = function (event) {
@@ -45,6 +44,9 @@ function getWebConnect() {
             case '::closeModalWindow()':
                 hideModalWindow();
                 break;
+            case '::showOrgName()':
+                showOrgName(inMessage.value);
+                break;
             case '::showHouseListModalWindow()':
                 showHouseListModalWindow(inMessage.value);
                 break;
@@ -73,6 +75,14 @@ function getWebConnect() {
     };
 };
 
+function getOrgName() {
+    sendMessage("getOrgName");
+}
+
+function showOrgName(message) {
+    $('#orgname').html(message);
+}
+
 function sendMessage(message) {
     sendMessageWithParam(message, "");
 };
@@ -88,8 +98,8 @@ function sendMessageWithParam(message, param) {
         };
         // console.log("Send : " + msgJSON);
         ws.send(JSON.stringify(msgJSON));
-    } else {
-        location.reload(true);
+    // } else {
+    //     location.reload(true);
     }
 };
 function showMessage(message) {
@@ -123,47 +133,52 @@ function showModalWindow(text) {
 };
 function showHouseListModalWindow(arrayHouse) {
 
-    $('#message-modal-window').text("");
-    $('#message-modal-window').append($("<select></select>").attr("id", 'house-select'));
+    if(tempCommandID != "") {
+        hideErrorList();
+        hideState();
+        $('#message-modal-window').text("");
+        $('#message-modal-window').append($("<select></select>").attr("id", 'house-select'));
 
-    var selectBox = $('#house-select');
+        var selectBox = $('#house-select');
 
-    var arrayJSON = JSON.parse(arrayHouse);
+        var arrayJSON = JSON.parse(arrayHouse);
 
-    if (arrayJSON.length > 0 ) {
-        // selectBox.append($("<option></option>"));
-    // .attr("value", -1).text("Выгрузить все")
-    }
-    if (arrayJSON.length > 0 ) {
-        for (var i = 0; i < arrayJSON.length; i++) {
-            // console.log("value: " + arrayJSON[i].value);
-            selectBox.append($("<option></option>").attr("value", arrayJSON[i].value).text(arrayJSON[i].name));
+        if (arrayJSON.length > 0) {
+            // selectBox.append($("<option></option>"));
+            // .attr("value", -1).text("Выгрузить все")
         }
-    } else {
-        selectBox.append($("<option></option>").attr("value", -2).prop("selected").text("Нет данных для выгрузки"));
-    }
+        if (arrayJSON.length > 0) {
+            for (var i = 0; i < arrayJSON.length; i++) {
+                // console.log("value: " + arrayJSON[i].value);
+                selectBox.append($("<option></option>").attr("value", arrayJSON[i].value).text(arrayJSON[i].name));
+            }
+        } else {
+            selectBox.append($("<option></option>").attr("value", -2).prop("selected").text("Нет данных для выгрузки"));
+        }
 
-    $('#view-modal-window').fadeIn(300);
-    selectBox.fadeIn(50);
-    selectBox.attr("multiple","multiple");
-    selectBox.multiselect({
-        includeSelectAllOption: true,
-        selectAllText: 'Выбрать всё',
-        allSelectedText: "Выбраны все дома",
-        nonSelectedText: "Ничего не выбрано",
-        enableCaseInsensitiveFiltering: true,
-        buttonWidth: '386px',
-        paddingLeft: '2px'}).ready(function () {
+        $('#view-modal-window').fadeIn(300);
+        selectBox.fadeIn(50);
+        selectBox.attr("multiple", "multiple");
+        selectBox.multiselect({
+            includeSelectAllOption: true,
+            selectAllText: 'Выбрать всё',
+            allSelectedText: "Выбраны все дома",
+            nonSelectedText: "Ничего не выбрано",
+            enableCaseInsensitiveFiltering: true,
+            buttonWidth: '386px',
+            paddingLeft: '2px'
+        }).ready(function () {
             selectBox.multiselect('selectAll', false);
             selectBox.multiselect('updateButtonText');
-    });
-    $('.modal-text').css("z-index", 1004);
+        });
+        $('.modal-text').css("z-index", 1004);
 
 
-    if ($('.hide-layout').css('display') != 'none') {
-        $('.hide-layout').css("z-index", 1001);
+        if ($('.hide-layout').css('display') != 'none') {
+            $('.hide-layout').css("z-index", 1001);
+        }
+        showLayoutHide();
     }
-    showLayoutHide();
 };
 function hideModalWindow() {
     $('#view-modal-window').fadeOut(300);
@@ -175,6 +190,8 @@ function hideModalWindow() {
 function getHouseList(commandID) {
     tempCommandID = commandID;
     sendMessage("getHouseAddedGisJkh");
+    showState();
+    // showLayoutHide();
 };
 function answerNo() {
     hideModalWindow();

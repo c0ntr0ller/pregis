@@ -691,21 +691,21 @@ public final class UpdateAllAccountData implements ClientDialogWindowObservable 
      * @param houseId             ид дома в БД.
      * @param accountNumber       номер ЛС.
      * @param accountGUID         идентификатор ЛС в ГИС ЖКХ.
-     * @param accountUniqueNumber уникальный номер ЛС, присвоенный ГИС ЖКХ.
+     * @param unifiedAccountNumber уникальный номер ЛС, присвоенный ГИС ЖКХ.
      */
-    private void setAccountToBase(Integer houseId, String accountNumber, String accountGUID, String accountUniqueNumber, String serviceID, Connection connection) throws ParseException, SQLException, PreGISException {
+    private void setAccountToBase(Integer houseId, String accountNumber, String accountGUID, String unifiedAccountNumber, String serviceID, Connection connection) throws ParseException, SQLException, PreGISException {
 
-        if (AccountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, accountUniqueNumber, serviceID, connection, answerProcessing)) {
+        if (AccountGRADDAO.setAccountGuidAndUniqueNumber(houseId, accountNumber, accountGUID, unifiedAccountNumber, serviceID, connection, answerProcessing)) {
 //            answerProcessing.sendMessageToClient("");
 
-//            if (accountGUID != null && accountUniqueNumber != null) {
+//            if (accountGUID != null && unifiedAccountNumber != null) {
 //                answerProcessing.sendMessageToClient(String.format("Для лицевого счета № %s:\n" +
 //                                "Добавлен идентификатор: %s\nДобавлен уникальный идентификатор: %s.",
-//                        accountNumber, accountGUID, accountUniqueNumber));
+//                        accountNumber, accountGUID, unifiedAccountNumber));
 //            } else if (accountGUID != null) {
 //                answerProcessing.sendMessageToClient(String.format("Добавлен идентификатор: %s, для лицевого счета № %s", accountGUID, accountNumber));
-//            } else if (accountUniqueNumber != null) {
-//                answerProcessing.sendMessageToClient(String.format("Добавлен уникальный идентификатор: %s, для лицевого счета № %s", accountUniqueNumber, accountNumber));
+//            } else if (unifiedAccountNumber != null) {
+//                answerProcessing.sendMessageToClient(String.format("Добавлен уникальный идентификатор: %s, для лицевого счета № %s", unifiedAccountNumber, accountNumber));
 //            }
             countAddedToGRAD++;
         } else {

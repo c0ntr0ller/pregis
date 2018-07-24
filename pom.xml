@@ -227,7 +227,7 @@
         <dependency>
             <groupId>org.jtemplate</groupId>
             <artifactId>jtemplate</artifactId>
-            <version>RELEASE</version>
+            <version>1.8</version>
         </dependency>
     </dependencies>
 

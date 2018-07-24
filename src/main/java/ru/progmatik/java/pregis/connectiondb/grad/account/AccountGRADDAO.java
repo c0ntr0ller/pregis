@@ -427,14 +427,14 @@ public final class AccountGRADDAO {
      * @param houseId             ид дома в БД ГРАД.
      * @param accountNumber       номер ЛС.
      * @param accountGUID         идентификатор ЛС в ГИС ЖКХ.
-     * @param accountUniqueNumber уникальный номер ЛС, присвоенный ГИС ЖКХ.
+     * @param unifiedAccountNumber уникальный номер ЛС, присвоенный ГИС ЖКХ.
      * @return true - идентификатор успешно добавлен, false - идентификатор не удалось добавить.
      * @throws SQLException
      * @throws PreGISException
      * @throws ParseException
      */
     public static boolean setAccountGuidAndUniqueNumber(Integer houseId, String accountNumber,
-                                              String accountGUID, String accountUniqueNumber, String serviceId, Connection connection, AnswerProcessing answerProc) throws SQLException, PreGISException, ParseException {
+                                              String accountGUID, String unifiedAccountNumber, String serviceId, Connection connection, AnswerProcessing answerProc) throws SQLException, PreGISException, ParseException {
 
         Integer abonentId = getAbonentIdFromGrad(accountNumber, connection);
 
@@ -448,11 +448,11 @@ public final class AccountGRADDAO {
             try (CallableStatement cstmt = connection.prepareCall(sqlRequest)) {
 //                answerProcessing.sendMessageToClient(String.format("abonentId: %s:\n" +
 //                                "accountGUID: %s\n" +
-//                                "accountUniqueNumber: %s.",
-//                        abonentId, accountGUID, accountUniqueNumber));
+//                                "unifiedAccountNumber: %s.",
+//                        abonentId, accountGUID, unifiedAccountNumber));
                 cstmt.setInt(1, abonentId);
                 cstmt.setString(2, accountGUID);
-                cstmt.setString(3, accountUniqueNumber);
+                cstmt.setString(3, unifiedAccountNumber);
                 cstmt.setString(4, serviceId);
                 cstmt.setInt(5, ResourcesUtil.instance().getCompanyGradId());
                 cstmt.executeUpdate();
@@ -461,7 +461,7 @@ public final class AccountGRADDAO {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.info(String.format("SQL request: %s", sqlRequest));
                     LOGGER.info(String.format("set attribute for LS (%s) - abonID: %s; AccountGUID: %s; AccountUniqueNumber: %s.",
-                            accountNumber, abonentId, accountGUID, accountUniqueNumber));
+                            accountNumber, abonentId, accountGUID, unifiedAccountNumber));
                 }
                 if (accountGUID != null && !accountGUID.equalsIgnoreCase(getAccountGUIDFromBase(abonentId, connection))) {
                     answerProc.sendErrorToClientNotException(String.format("Идентификатор %s не занесен в БД ГРАД для ЛС %s", accountGUID, accountNumber));

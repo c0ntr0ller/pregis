@@ -32,6 +32,14 @@ public final class ClientService {
                 System.out.println(e.getMessage());
             }
         }
+
+        // уменьшаем размер хранимого лога, ибо долго открывается. Цифра 3000 - пока от балды!
+        if(dataList.size() > 3000){
+            for (int i = 0; i < 1000; i++) {
+                dataList.remove(i);
+            }
+
+        }
         dataList.add(data);
     }
 

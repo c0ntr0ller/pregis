@@ -7,3 +7,7 @@
 6. запускаем скрипт c:\Java\giswsdl\script\wsdl_import_ppak.bat - он перепакует c:\Java\giswsdl\target\giswsdl-3.10.jar
 7. копируем c:\Java\giswsdl\target\giswsdl-3.10.jar в нашу папку lib
 8. запускаем pregis и проверяем обмены
+
+добавление в maven
+mvn install:install-file -Dfile=/home/bek/Java/pregis_b/lib/giswsdl-3.11.jar -DgroupId=ru.progmatik.java -DartifactId=giswsdl -Dversion=3.11 -Dpackaging=jar
+в pom не должно быть ссылок на сам файл, все возьмется из локального репозитория

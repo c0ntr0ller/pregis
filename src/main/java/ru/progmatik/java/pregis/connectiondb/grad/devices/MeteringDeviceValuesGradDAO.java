@@ -106,6 +106,10 @@ public final class MeteringDeviceValuesGradDAO {
             call.setBigDecimal(3, valuesObject.getMeteringValueTwo());
             call.setDate(4, new java.sql.Date(valuesObject.getMeteringDate().getTime()));
 
+            answerProcessing.sendInformationToClientAndLog("Заносятся показания для ПУ. RootGUID: " +  valuesObject.getMeteringDeviceRootGUID()
+                    + ". Показания: " + valuesObject.getMeteringValue().toPlainString()
+                    + ". Дата:" + new java.sql.Date(valuesObject.getMeteringDate().getTime()), LOGGER);
+
             LOGGER.debug("SQL: {EXECUTE PROCEDURE EX_GIS_IND2GRAD(" +
                     valuesObject.getMeteringDeviceRootGUID() + ", " +
                     valuesObject.getMeteringValue() + ", " +

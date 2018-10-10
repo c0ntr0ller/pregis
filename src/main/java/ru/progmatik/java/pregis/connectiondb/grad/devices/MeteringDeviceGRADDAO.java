@@ -406,6 +406,18 @@ public class MeteringDeviceGRADDAO{
 
                 basicCharacteristics.setCollectiveDevice(new MeteringDeviceBasicCharacteristicsType.CollectiveDevice());
 
+                // дата поверки только для ОДПУ
+                if (exGisPu1Element[VERIFICATION_DATE] != null && System.currentTimeMillis() > dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE]).getTime()) {
+                    basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[VERIFICATION_DATE])));
+                } else if (exGisPu1Element[VERIFICATION_DATE] == null
+                        && exGisPu1Element[COMMISSIONING_DATE] != null
+                        && !exGisPu1Element[COMMISSIONING_DATE].isEmpty()) { // ГИС ЖКХ выдаёт ошибку, если не указана дата, хотя не обязательна
+                    // если нет даты поверки - берем дату ввода в эксплуатацию
+                    basicCharacteristics.setFirstVerificationDate(OtherFormat.getDateForXML(dateFromSQL.parse(exGisPu1Element[COMMISSIONING_DATE])));
+                }
+//                Межповерочный интервал (НСИ 16) стал необязательным
+                basicCharacteristics.setVerificationInterval(nsi.getNsiRef("16", exGisPu1Element[VERIFICATION_INTERVAL].split(" ")[0]));
+
 //              Наличие датчиков давления
 //              basicCharacteristics.setPressureSensor();
 
@@ -468,13 +480,13 @@ public class MeteringDeviceGRADDAO{
 //                        " с именем: " + exGisPu1Element[DEVICE_NUMBER] + " не определен ни к одному из типов помещений!");
                 throw new PreGISArgumentNotFoundFromBaseException("ПУ MeterID: " + exGisPu1Element[METER_ID_PU1] +
                         " AbonID: " + exGisPu1Element[ABON_ID_PU1] +
-                        " с именем: " + exGisPu1Element[DEVICE_NUMBER] + " не определен ни к одному из типов помещений!");
+                        " с номером: " + exGisPu1Element[DEVICE_NUMBER] + " не удалось определить тип помещения установки или отсутствует привязка к помещению/комнате/квартире!");
             }
         } catch (NullPointerException e) {
 //            answerProcessing.sendErrorToClient("getBasicCharacteristics()", "\"Синхронизация ПУ\" ", LOGGER, e);
             throw new PreGISArgumentNotFoundFromBaseException("ПУ MeterID: " + exGisPu1Element[METER_ID_PU1] +
                     " AbonID: " + exGisPu1Element[ABON_ID_PU1] +
-                    " с именем: " + exGisPu1Element[DEVICE_NUMBER] + " не определен ни к одному из типов помещений!");
+                    " с номером: " + exGisPu1Element[DEVICE_NUMBER] + " - критическая ошибка при определении типа помещения установки!");
 //            answerProcessing.sendInformationToClientAndLog();
 //            errorState = 0;
         }

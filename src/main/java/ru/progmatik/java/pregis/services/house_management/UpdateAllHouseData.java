@@ -677,6 +677,7 @@ public class UpdateAllHouseData {
                     
                     roomMapTransport.put(residentialPremisesToCreate.getTransportGUID(), room);
                 } else { // комната
+                    // TODO тут ОШИБКА! Жилиые комнаты можно добавлять только если помещение создается или изменяется в этом же запросе! Пока непонятно, при следующем обращении надо сделать
                     ImportHouseUORequest.ApartmentHouse.ResidentialPremises.LivingRoomToCreate livingRoomToCreate = 
                             new ImportHouseUORequest.ApartmentHouse.ResidentialPremises.LivingRoomToCreate();
                     livingRoomToCreate.setTransportGUID(OtherFormat.getRandomGUID());

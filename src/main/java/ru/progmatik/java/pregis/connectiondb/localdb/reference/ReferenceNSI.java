@@ -12,11 +12,11 @@ import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementIntegerFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementStringFieldType;
 import ru.gosuslugi.dom.schema.integration.nsi_base.NsiElementType;
-import ru.gosuslugi.dom.schema.integration.nsi_common.ExportNsiItemResult;
+import ru.gosuslugi.dom.schema.integration.nsi_common.GetStateResult;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.model.ReferenceItemDataSet;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
-import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
+import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItemAsyncPort;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -123,8 +123,10 @@ public class ReferenceNSI {
     private boolean updateNSI(ReferenceDownloadNSIDataSet downloadNsiDataSet) throws PreGISException, SQLException {
 
         Map<String, ReferenceItemDataSet> mapItems = nsiDao.getMapItemsCodeParent(downloadNsiDataSet.getCode());
-        ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
-        ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(downloadNsiDataSet.getNsiType(), new BigInteger(downloadNsiDataSet.getCode()));
+//        ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
+//        ExportNsiItemResult exportNsiItemResult = nsiItem.callExportNsiItem(downloadNsiDataSet.getNsiType(), new BigInteger(downloadNsiDataSet.getCode()));
+        final GetStateResult exportNsiItemResult = ExportNsiItemAsyncPort.callExportNsiItem(downloadNsiDataSet.getNsiType(), new BigInteger(downloadNsiDataSet.getCode()), answerProcessing);
+
         if (exportNsiItemResult == null) {
             throw new PreGISException("Невозможно получить справочник " + downloadNsiDataSet.getCode() + " из ГИС ЖКХ.");
         }

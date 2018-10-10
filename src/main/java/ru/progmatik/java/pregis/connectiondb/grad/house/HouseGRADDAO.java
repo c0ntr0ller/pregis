@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import ru.progmatik.java.pregis.connectiondb.ConnectionDB;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.model.HouseRecord;
+import ru.progmatik.java.pregis.model.HouseType;
 import ru.progmatik.java.pregis.model.Room;
 import ru.progmatik.java.pregis.other.AnswerProcessing;
 import ru.progmatik.java.pregis.other.OtherFormat;
@@ -34,7 +35,7 @@ import static ru.progmatik.java.pregis.other.OtherFormat.checkZero;
  */
 public final class HouseGRADDAO {
 
-    private static final int HOUSE_ADDRESS_GRAD_MKD = 0; // Адрес дома в ГРАД
+    private static final int HOUSE_ADDRESS_GRAD = 0; // Адрес дома в ГРАД
     private static final int HOUSE_FIAS = 1; // Код дома по ФИАС
     private static final int HOUSE_ID_GRAD_MKD = 13; // ИД дома из БД ГРАД
     private static final int HOUSE_ID_GRAD_JD = 10; // ИД дома из БД ГРАД
@@ -148,30 +149,9 @@ public final class HouseGRADDAO {
     private LinkedHashMap<String, HouseRecord> getAllMkdHouseRecords(final Connection connectionGrad) throws SQLException, PreGISException {
 
         final List<String> allListHouseData = getMKDHousesFromGrad(connectionGrad);
-        final LinkedHashMap<String, HouseRecord> mapMkd = new LinkedHashMap<>();
-        if (allListHouseData != null && !allListHouseData.isEmpty()) {
-            for (String itemListHouse : allListHouseData) {
-                if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
-                    String[] houseAllData = getAllData(itemListHouse);
-                    String HOUSE_ID = houseAllData[HOUSE_ID_GRAD_MKD];
+        final LinkedHashMap<String, HouseRecord> mapMkd = getHouseRecordMapFromStringList(allListHouseData, HouseType.MKD);
 
-                    if (HOUSE_ID.equals("-1-")) {
-                        answerProcessing.sendMessageToClient("-1- Не найден ИД дома в данных Града в строке: " + itemListHouse);
-                    } else {
-                        mapMkd.put(houseAllData[HOUSE_FIAS],
-                                new HouseRecord(
-                                        houseAllData[HOUSE_FIAS],
-                                        Integer.valueOf(houseAllData[HOUSE_ID_GRAD_MKD]),
-                                        houseAllData[HOUSE_ADDRESS_GRAD_MKD],
-                                        ((houseAllData.length <= HOUSE_HOUSEUNIQNUM) ? "" : houseAllData[HOUSE_HOUSEUNIQNUM]),
-                                        String.format("%s %s", houseAllData[ADDRESS_GRAD_MKD], houseAllData[NUMBER_HOUSE_GRAD_MKD])
-                                )
-                        );
-                    }
-                }
-            }
-        }
-        if (mapMkd.isEmpty()) {
+        if (mapMkd == null || mapMkd.isEmpty()) {
             return null;
         } else {
             return mapMkd;
@@ -189,35 +169,60 @@ public final class HouseGRADDAO {
     private LinkedHashMap<String, HouseRecord> getAllJdHouseRecords(final Connection connectionGrad) throws SQLException, PreGISException {
 
         final ArrayList<String> allListHouseData = getJdHousesFromGrad(connectionGrad);
+        final LinkedHashMap<String, HouseRecord> mapJd = getHouseRecordMapFromStringList(allListHouseData, HouseType.JD);
+
+        if (mapJd == null || mapJd.isEmpty())
+            return null;
+        else {
+            return mapJd;
+        }
+    }
+
+    private LinkedHashMap<String, HouseRecord> getHouseRecordMapFromStringList(List<String> allListHouseData, HouseType houseType) {
         final LinkedHashMap<String, HouseRecord> mapJd = new LinkedHashMap<>();
         if (!allListHouseData.isEmpty()) { // Если в листе вообще есть данные тогда
             for (String itemListHouse : allListHouseData) {
                 if (getAllData(itemListHouse)[HOUSE_FIAS] != null && !getAllData(itemListHouse)[HOUSE_FIAS].isEmpty()) {
                     String[] houseAllData = getAllData(itemListHouse);
-                    String HOUSE_ID = houseAllData[HOUSE_ID_GRAD_JD];
+
+                    String HOUSE_ID;
+                    if(houseType.equals(HouseType.JD)) {
+                        HOUSE_ID= houseAllData[HOUSE_ID_GRAD_JD];
+                    }else{
+                        HOUSE_ID = houseAllData[HOUSE_ID_GRAD_MKD];
+                    }
+
 
                     if (HOUSE_ID.equals("-1-")) {
                         answerProcessing.sendMessageToClient("-1- Не найден ИД дома в данных Града в строке: " + itemListHouse);
                     } else {
+
+                        Integer houseId;
+                        String addressGrad;
+                        String numberHouseGrad;
+                        if(houseType.equals(HouseType.JD)) {
+                            houseId = Integer.valueOf(houseAllData[HOUSE_ID_GRAD_JD]);
+                            addressGrad = houseAllData[ADDRESS_GRAD_JD];
+                            numberHouseGrad = houseAllData[NUMBER_HOUSE_GRAD_JD];
+                        }else{
+                            houseId = Integer.valueOf(houseAllData[HOUSE_ID_GRAD_MKD]);
+                            addressGrad = houseAllData[ADDRESS_GRAD_MKD];
+                            numberHouseGrad = houseAllData[NUMBER_HOUSE_GRAD_MKD];
+                        }
                         mapJd.put(houseAllData[HOUSE_FIAS],
                                 new HouseRecord(
                                         houseAllData[HOUSE_FIAS],
-                                        Integer.valueOf(houseAllData[HOUSE_ID_GRAD_JD]),
-                                        houseAllData[HOUSE_ADDRESS_GRAD_MKD],
+                                        houseId,
+                                        houseAllData[HOUSE_ADDRESS_GRAD],
                                         ((houseAllData.length <= HOUSE_HOUSEUNIQNUM) ? "" : houseAllData[HOUSE_HOUSEUNIQNUM]),
-                                        String.format("%s %s", houseAllData[ADDRESS_GRAD_JD], houseAllData[NUMBER_HOUSE_GRAD_JD])
+                                        String.format("%s %s", addressGrad, numberHouseGrad)
                                 )
                         );
                     }
                 }
             }
-        } else return null; // если в листе нет данных вернем null
-
-        if (mapJd.isEmpty())
-            return null;
-        else {
-            return mapJd;
-        }
+        } else return null;
+        return mapJd;
     }
 
     /**

@@ -72,13 +72,13 @@ public class ExportNsiItem {
     private ExportNsiItemRequest getExportNsiItemRequest(NsiListGroupEnum nsi, BigInteger codeNsi) {
 
         ExportNsiItemRequest request = new ExportNsiItemRequest();
-        request.setId("signed-data-container");
-//        request.setListGroup("NSI"); // Обязательный атрибут
-        request.setListGroup(nsi.getNsi()); // Обязательный атрибут
-        request.setRegistryNumber(codeNsi); // Обязательный атрибут
-        request.setVersion(request.getVersion());
-//        request.setRegistryNumber(BigInteger.valueOf(225)); // Обязательный атрибут
-
+//        request.setId("signed-data-container");
+////        request.setListGroup("NSI"); // Обязательный атрибут
+//        request.setListGroup(nsi.getNsi()); // Обязательный атрибут
+//        request.setRegistryNumber(codeNsi); // Обязательный атрибут
+//        request.setVersion(request.getVersion());
+////        request.setRegistryNumber(BigInteger.valueOf(225)); // Обязательный атрибут
+//
         return request;
     }
 

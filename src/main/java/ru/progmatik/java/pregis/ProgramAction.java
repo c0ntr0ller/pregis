@@ -16,7 +16,7 @@ import ru.progmatik.java.pregis.services.bills.UpdateBills;
 import ru.progmatik.java.pregis.services.device_metering.UpdateMeteringDeviceValues;
 import ru.progmatik.java.pregis.services.house_management.*;
 import ru.progmatik.java.pregis.services.nsi.UpdateReference;
-import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItem;
+import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiItemAsyncPort;
 import ru.progmatik.java.pregis.services.nsi.common.service.ExportNsiList;
 import ru.progmatik.java.pregis.services.nsi.common.service.NsiListGroupEnum;
 import ru.progmatik.java.pregis.services.organizations.ExportOrgRegistry;
@@ -352,8 +352,9 @@ public final class ProgramAction {
             return;
         }
         try {
-            final ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
-            nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
+//            final ExportNsiItem nsiItem = new ExportNsiItem(answerProcessing);
+//            nsiItem.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem));
+            ExportNsiItemAsyncPort.callExportNsiItem(NsiListGroupEnum.NSI, new BigInteger(codeNsiItem), answerProcessing);
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callExportNsiItem(): ", "\"Экспорта данных справочника\" ", LOGGER, e);
         } finally {

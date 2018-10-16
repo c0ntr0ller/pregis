@@ -26,7 +26,7 @@ public class ExportNsiItemAsyncPort {
     private final NsiPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
-    public ExportNsiItemAsyncPort(AnswerProcessing answerProcessing, String methodName) {
+    public ExportNsiItemAsyncPort(AnswerProcessing answerProcessing) {
         if(answerProcessing != null) {
             this.answerProcessing = answerProcessing;
         }else{
@@ -41,7 +41,7 @@ public class ExportNsiItemAsyncPort {
     }
 
     public static GetStateResult callExportNsiItem(NsiListGroupEnum nsi, BigInteger codeNsi, AnswerProcessing answerProcessing) throws PreGISException {
-        ExportNsiItemAsyncPort exportNsiItemAsyncPort = new ExportNsiItemAsyncPort(answerProcessing, "ExportNsiItem");
+        ExportNsiItemAsyncPort exportNsiItemAsyncPort = new ExportNsiItemAsyncPort(answerProcessing);
         return exportNsiItemAsyncPort.exportNsiItem(getExportNsiItemRequest(nsi, codeNsi));
     }
 

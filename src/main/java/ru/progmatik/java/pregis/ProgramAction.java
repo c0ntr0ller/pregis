@@ -525,6 +525,14 @@ public final class ProgramAction {
             for (String houseID : houseGradIDs.split(",")) {
                 state = Integer.min(state, updatePayments.callSendPayments(checkHouseGradId(houseID)));
             }
+
+            if (state == -1) {
+                answerProcessing.sendErrorToClientNotException("Возникла ошибка!\nОперация: \"Выгрузка чеков из Град\" прервана!");
+            } else if (state == 0) {
+                answerProcessing.sendErrorToClientNotException("Возникли ошибки!\nОперация: \"Выгрузка чеков из Град\" завершилась с ошибками!");
+            } else {
+                answerProcessing.sendOkMessageToClient("\"Выгрузка чеков из Град\" успешно выполнена.");
+            }
         } catch (Exception e) {
             answerProcessing.sendErrorToClient("callImportPayments(): ", "", LOGGER, e);
         } finally {

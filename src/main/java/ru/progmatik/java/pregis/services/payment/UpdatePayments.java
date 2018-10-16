@@ -14,11 +14,12 @@ import ru.progmatik.java.pregis.other.AnswerProcessing;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UpdatePayments {
     private static final Logger LOGGER = Logger.getLogger(UpdatePayments.class);
     private final AnswerProcessing answerProcessing;
-    private int errorStatus;
+    private int errorStatus = 1;
     private int allCount;
 
     public UpdatePayments(final AnswerProcessing answerProcessing) {
@@ -29,6 +30,14 @@ public class UpdatePayments {
             this.answerProcessing = new AnswerProcessing();
         }
     }
+
+    /**
+     * метод формирует список домов для получения платежей и вызывает методе отсылки в ГИС ЖКХ
+     * @param houseGradID
+     * @return
+     * @throws SQLException
+     * @throws PreGISException
+     */
     public int callSendPayments(final Integer houseGradID) throws SQLException, PreGISException {
         setErrorStatus(1);
         try (Connection connectionGRAD = ConnectionBaseGRAD.instance().getConnection()) {
@@ -40,7 +49,7 @@ public class UpdatePayments {
             if (houseMap != null) {
                 for (Map.Entry<String, HouseRecord> houseEntry : houseMap.entrySet()) {
                     try {
-                        sendPaymentsHouse(houseEntry.getKey(), houseEntry.getValue(), connectionGRAD);
+                        sendPaymentsHouse(houseEntry.getValue(), connectionGRAD);
                     } catch (PreGISException e) {
                         answerProcessing.sendErrorToClient("callSendPayments(): ", "", LOGGER, e);
                         setErrorStatus(0);
@@ -52,73 +61,92 @@ public class UpdatePayments {
     }
 
     /**
-     * Основной метод класса - запрашивает данные из град, формирует массив запросов и передает его на отправку
-     * @param fias
+     * метод формирует соединение, запрашивает данные из Град, получет массив чеков и передает его на отправку
      * @param houseGrad
      * @param connectionGrad
      * @throws PreGISException
      * @throws SQLException
      */
-    private void sendPaymentsHouse(final String fias, final HouseRecord houseGrad, final Connection connectionGrad) throws PreGISException, SQLException {
+    private void sendPaymentsHouse(final HouseRecord houseGrad, final Connection connectionGrad) throws PreGISException, SQLException {
         // получаем платежи из Град
         PaymentGRADDAO paymentGRADDAO = new PaymentGRADDAO(answerProcessing, connectionGrad);
 
         answerProcessing.sendMessageToClient("Получаем платежи из Град по дому " + houseGrad.getAddresStringShort() + "...");
-        HashMap<String, ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsMapGrad = paymentGRADDAO.getPaymentsFromGrad(houseGrad);
+        HashMap<String, ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsMapGrad
+                = paymentGRADDAO.getPaymentsFromGrad(houseGrad);
 
         if(paymentsMapGrad == null || paymentsMapGrad.size() == 0){
-            answerProcessing.sendMessageToClient("В Град нет платежей для выгрузки в ГИС ЖКХ");
             return;
         }
-        // формируем запросы в ГИС по 1000 платежей
-        List<ImportSupplierNotificationsOfOrderExecutionRequest> requestList = compileImportSupplierNotificationsOfOrderExecutionRequest(new ArrayList<>(paymentsMapGrad.values()));
-        // отсылаем в ГИС и обрабатываем ответ
-
-        if(requestList != null && requestList.size() > 0){
-            for (ImportSupplierNotificationsOfOrderExecutionRequest request: requestList) {
-                sendPaymentsToGisGKH(request, paymentsMapGrad, paymentGRADDAO);
-            }
-        }
+        sendPaymentsToGisGKH(paymentsMapGrad, paymentGRADDAO);
     }
 
     /**
-     * метод отсылает реквест в ГИС, получает результат и обрабатывает его (отсылает в Град отметки о высылке платежей)
+     * метод отсылает данные в ГИС, получает результат и обрабатывает его (отсылает в Град отметки о высылке платежей)
      * @param request
      * @param paymentsMapGrad
      * @param paymentGRADDAO
      * @throws SQLException
      * @throws PreGISException
      */
-    private void sendPaymentsToGisGKH(final ImportSupplierNotificationsOfOrderExecutionRequest request,
-                                      final HashMap<String, ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsMapGrad,
-                                      final PaymentGRADDAO paymentGRADDAO) throws SQLException, PreGISException {
-        GetStateResult result = new PaymentAsyncPort(answerProcessing, "ImportSupplierNotificationsOfOrderExecutionRequest").interactPayments(request);
+    private void sendPaymentsToGisGKH(final HashMap<String, ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> paymentsMapGrad,
+                                      final PaymentGRADDAO paymentGRADDAO) throws PreGISException, SQLException {
+        // формируем запросы в ГИС по 1000 платежей
+        List<ImportSupplierNotificationsOfOrderExecutionRequest> requestList
+                = compileImportSupplierNotificationsOfOrderExecutionRequest(new ArrayList<>(paymentsMapGrad.values()));
 
-        StringBuilder paymentDocumentIDs = new StringBuilder();
-        StringBuilder uniqueNumbers = new StringBuilder();
-        StringBuilder paymentGUIDs = new StringBuilder();
-        if (result != null && result.getImportResult() != null) {
-            answerProcessing.sendMessageToClient("Обработка результата импорта данных. Кол-во данных: " + result.getImportResult().size());
-            for (CommonResultType resultType : result.getImportResult()) {
+        // отсылаем в ГИС и обрабатываем ответ
+        if(requestList == null || requestList.size() == 0) {
+            return;
+        }
 
-                if (resultType.getError() != null && resultType.getError().size() > 0) {
+        Map<String, String> transport2ResieptMap = new HashMap<>();
+        for (String reciept : paymentsMapGrad.keySet()) {
+            if (transport2ResieptMap.put(paymentsMapGrad.get(reciept).getTransportGUID(), reciept) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+        }
 
-                    showErrorPayment(resultType.getTransportGUID(),
-                            resultType.getError().get(0).getErrorCode(),
-                            resultType.getError().get(0).getDescription());
-                    setErrorStatus(0);
-                }else {
-//                    request.getSupplierNotificationOfOrderExecution().stream().collect(Collectors.toMap(ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution::getTransportGUID, Function.identity()))
-                    paymentDocumentIDs.append(",").append(paymentsMapGrad.get(resultType.getTransportGUID()).getPaymentDocumentID());
-                    uniqueNumbers.append(",").append(resultType.getUniqueNumber());
-                    paymentGUIDs.append(",").append(resultType.getGUID());
+        answerProcessing.sendMessageToClient(String.format("Высылаем чеки в ГИС ЖКХ в кол-ве %d", paymentsMapGrad.size()));
+
+        String recieptsSeparator = "|";
+
+        for (ImportSupplierNotificationsOfOrderExecutionRequest request: requestList) {
+            GetStateResult result = PaymentAsyncPort.callImportPayments(request, answerProcessing);
+
+            StringBuilder reciepts = new StringBuilder();
+
+            if (result != null && result.getImportResult() != null) {
+                answerProcessing.sendMessageToClient("Обработка результата импорта данных. Кол-во данных: " + result.getImportResult().size());
+                for (CommonResultType resultType : result.getImportResult()) {
+
+                    if (resultType.getError() != null && resultType.getError().size() > 0) {
+
+                        showErrorPayment(resultType.getTransportGUID(),
+                                resultType.getError().get(0).getErrorCode(),
+                                resultType.getError().get(0).getDescription());
+                        setErrorStatus(0);
+                    }else {
+
+                        // если чек прошел успешно - заносим его в строку на занесение в Град
+                        String recieptSuccess = transport2ResieptMap.get(resultType.getTransportGUID());
+                        if(recieptSuccess != null && !recieptSuccess.isEmpty())
+                            reciepts.append(recieptSuccess).append(recieptsSeparator);
+
+                    }
                 }
+                if(reciepts.length() > 0){
+                    try {
+                        paymentGRADDAO.markPayments(reciepts.toString(), recieptsSeparator);
+                        setErrorStatus(1);
+                    } catch (SQLException e) {
+                        answerProcessing.sendInformationToClientAndLog("Не удалось выставить отметки на чеки; " + e.getMessage(), LOGGER);
+                        setErrorStatus(0);
+                    }
+                }
+            } else if (result == null) {
+                setErrorStatus(0);
             }
-            if(paymentDocumentIDs.length() > 0){
-                paymentGRADDAO.markPayments(paymentDocumentIDs.toString(), uniqueNumbers.toString(), paymentGUIDs.toString());
-            }
-        } else if (result == null) {
-            setErrorStatus(0);
         }
     }
 
@@ -135,17 +163,10 @@ public class UpdatePayments {
         answerProcessing.sendMessageToClient("Описание ошибки: " + description);
         setErrorStatus(0);
     }
-    /**
-     * метод для получения платежей из ГИС. Пока не реализован
-     * @param houseGradID
-     */
-    public void callRecivePayments(final Integer houseGradID){
-
-    }
 
     /**
-     * Вспомогательный метод. Разбивает массив платежей на подмассивы не более 1000 в каждом
-     * @param paymentsListGrad
+     * Вспомогательный метод. Разбивает массив чеков на подмассивы не более 1000 в каждом и формирует массив запросов в ГИС ЖКХ
+     * @param paymentsListGrad массив чеков
      * @return
      */
     private List<ImportSupplierNotificationsOfOrderExecutionRequest> compileImportSupplierNotificationsOfOrderExecutionRequest(
@@ -153,7 +174,6 @@ public class UpdatePayments {
 
         // формируем запрос
         if (paymentsListGrad.size() == 0){
-            answerProcessing.sendMessageToClient("Отсутствуют новые платежные документы!");
             return null;
         }
 

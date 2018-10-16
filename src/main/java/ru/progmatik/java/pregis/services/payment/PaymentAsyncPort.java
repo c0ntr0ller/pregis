@@ -18,35 +18,39 @@ import ru.progmatik.java.pregis.other.UrlLoader;
 import javax.xml.ws.Holder;
 import java.sql.SQLException;
 
+/**
+ * класс описывает порт для взаимодействия с сервисом импорта/экспорат платежей в ГИС ЖКХ
+ * пока реализована только отсылка платежей
+ */
 public class PaymentAsyncPort {
     private static final Logger LOGGER = Logger.getLogger(PaymentAsyncPort.class);
-    private final String NAME_METHOD;
 
-    private static final String NAME_METHOD_IMPORT = "importNotificationsOfOrderExecution";
-    private static final String NAME_METHOD_EXPORT_PAYMENT = "exportPaymentDocumentDetails";
-
-    private final PaymentsServiceAsync service;
     private final PaymentPortsTypeAsync port;
     private final AnswerProcessing answerProcessing;
 
-    public PaymentAsyncPort(AnswerProcessing answerProcessing, String methodName) {
-        this.NAME_METHOD = methodName;
-
+    public PaymentAsyncPort(AnswerProcessing answerProcessing) {
         if(answerProcessing != null) {
             this.answerProcessing = answerProcessing;
         }else{
             this.answerProcessing = new AnswerProcessing();
         }
 
-        service = UrlLoader.instance().getUrlMap().get("paymentAsync") == null ? new PaymentsServiceAsync()
+        PaymentsServiceAsync service = UrlLoader.instance().getUrlMap().get("paymentAsync") == null ? new PaymentsServiceAsync()
                 : new PaymentsServiceAsync(UrlLoader.instance().getUrlMap().get("paymentAsync"));
+        if (answerProcessing != null) {
+            answerProcessing.sendMessageToClient("Открытие порта PaymentPortAsync");
+        }
         port = service.getPaymentPortAsync();
         OtherFormat.setPortSettings(service, port);
     }
 
+    public static GetStateResult callImportPayments(ImportSupplierNotificationsOfOrderExecutionRequest request, AnswerProcessing answerProcessing) throws SQLException, PreGISException {
+        return new PaymentAsyncPort(answerProcessing).interactPayments(request);
+    }
+
     public GetStateResult interactPayments(Object requestObject) throws SQLException, PreGISException {
+        final String method_name = requestObject.getClass().getSimpleName();
         answerProcessing.sendMessageToClient("");
-        answerProcessing.sendMessageToClient(TextForLog.FORMED_REQUEST + NAME_METHOD);
         RequestHeader requestHeader = OtherFormat.getRequestHeader();
         ResultHeader resultHeader;
         Holder<ResultHeader> headerHolder = new Holder<>();
@@ -58,30 +62,21 @@ public class PaymentAsyncPort {
             answerProcessing.sendMessageToClient(TextForLog.SENDING_REQUEST);
             AckRequest ackRequest = null;
 
-            switch (requestObject.getClass().getSimpleName()) {
-                case "ImportNotificationsOfOrderExecutionRequest":
-                    ackRequest = port.importNotificationsOfOrderExecution(getImportNotificationsOfOrderExecutionRequest(requestObject), requestHeader, headerHolder);
-                    break;
-                case "ImportNotificationsOfOrderExecutionCancellationRequest":
-                    ackRequest = port.importNotificationsOfOrderExecutionCancellation(getImportNotificationsOfOrderExecutionCancellationRequest(requestObject), requestHeader, headerHolder);
-                    break;
-                case "ImportSupplierNotificationsOfOrderExecutionRequest":
-                    ackRequest = port.importSupplierNotificationsOfOrderExecution(getImportSupplierNotificationsOfOrderExecutionRequest(requestObject), requestHeader, headerHolder);
-                    break;
-                case "ExportPaymentDocumentDetailsRequest":
-                    ackRequest = port.exportPaymentDocumentDetails(getExportPaymentDocumentDetailsRequest(requestObject), requestHeader, headerHolder);
-                    break;
-                default:
-                    answerProcessing.sendMessageToClient("Не определен метод экспорта/импорта " + NAME_METHOD);
+            if(ImportSupplierNotificationsOfOrderExecutionRequest.class.getSimpleName().equalsIgnoreCase(method_name)){
+                ackRequest = port.importSupplierNotificationsOfOrderExecution(getImportSupplierNotificationsOfOrderExecution(requestObject), requestHeader, headerHolder);
+            }else if(ImportNotificationsOfOrderExecutionRequest.class.getSimpleName().equalsIgnoreCase(method_name)){
+                ackRequest = port.importNotificationsOfOrderExecution(getImportNotificationsOfOrderExecutionRequest(requestObject), requestHeader, headerHolder);
+            }else{
+                answerProcessing.sendMessageToClient("Не определен тип объекта запроса на экспорт/импорт " + method_name);
             }
 
             if (ackRequest != null) {
                 // сохраняем запрос
-                answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, requestHeader, null, null, LOGGER);
+                answerProcessing.sendToBaseAndAnotherError(method_name, requestHeader, null, null, LOGGER);
 
                 answerProcessing.sendMessageToClient(TextForLog.REQUEST_SENDED);
 
-                PaymentAsyncResultWaiter paymentAsyncResultWaiter = new PaymentAsyncResultWaiter(ackRequest, NAME_METHOD, answerProcessing, port);
+                PaymentAsyncResultWaiter paymentAsyncResultWaiter = new PaymentAsyncResultWaiter(ackRequest, method_name, answerProcessing, port);
 
                 result = paymentAsyncResultWaiter.getRequestResult();
                 resultHeader = paymentAsyncResultWaiter.getHeaderHolder().value;
@@ -90,7 +85,7 @@ public class PaymentAsyncPort {
                 return null;
             }
         } catch (Fault fault) {
-            answerProcessing.sendServerErrorToClient(NAME_METHOD, requestHeader, LOGGER, fault);
+            answerProcessing.sendServerErrorToClient(method_name, requestHeader, LOGGER, fault);
             return null;
         }
 
@@ -103,16 +98,24 @@ public class PaymentAsyncPort {
         if (resultErrorMessage != null) {
             if(resultErrorMessage.getErrorCode().contains("INT002012")) { // это не ошибка, просто нет данных
                 answerProcessing.sendMessageToClient("Нет объектов для экспорта из ГИС ЖКХ");
-                answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, null, LOGGER);
+                answerProcessing.sendToBaseAndAnotherError(method_name, null, resultHeader, null, LOGGER);
             }
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, resultErrorMessage, LOGGER);
+            answerProcessing.sendToBaseAndAnotherError(method_name, null, resultHeader, resultErrorMessage, LOGGER);
         }
         else
             // сохраняем ответ
-            answerProcessing.sendToBaseAndAnotherError(NAME_METHOD, null, resultHeader, null, LOGGER);
+            answerProcessing.sendToBaseAndAnotherError(method_name, null, resultHeader, null, LOGGER);
 
         return result;
 
+    }
+
+    private ImportSupplierNotificationsOfOrderExecutionRequest getImportSupplierNotificationsOfOrderExecution(Object requestObject) {
+        ImportSupplierNotificationsOfOrderExecutionRequest request = (ImportSupplierNotificationsOfOrderExecutionRequest)requestObject;
+        request.setId(OtherFormat.getId());
+        request.setVersion(request.getVersion());
+
+        return request;
     }
 
     private ImportNotificationsOfOrderExecutionRequest getImportNotificationsOfOrderExecutionRequest(Object requestObject){

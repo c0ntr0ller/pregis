@@ -460,6 +460,32 @@ public final class PaymentDocumentGradDAO {
 //                    Порядок расчетов. Вообще ниразу нигде не написано что это? TODO
 //                    chargeInfo.getAdditionalService().setCalcExplanation("Иное");
 
+                    if(invoce02.getAmount_personal() != 0 || invoce02.getAmount_shared() != 0) {
+
+                        chargeInfo.getAdditionalService().setConsumption(new PDServiceChargeType.AdditionalService.Consumption());
+
+                        if (invoce02.getAmount_personal() != 0) {
+
+                            PDServiceChargeType.AdditionalService.Consumption.Volume volumeIndividual = new PDServiceChargeType.AdditionalService.Consumption.Volume();
+//                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
+                            volumeIndividual.setType("I");
+//                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
+//                            volumeIndividual.setDeterminingMethod();
+                            volumeIndividual.setValue(new BigDecimal(invoce02.getAmount_personal()).setScale(3, BigDecimal.ROUND_DOWN));
+                            chargeInfo.getAdditionalService().getConsumption().getVolume().add(volumeIndividual);
+
+                        }
+                        if (invoce02.getAmount_shared() != 0) {
+
+                            PDServiceChargeType.AdditionalService.Consumption.Volume volumeOverall = new PDServiceChargeType.AdditionalService.Consumption.Volume();
+//                            Тип предоставления услуги: (I)ndividualConsumption - индивидульное потребление house(O)verallNeeds - общедомовые нужды
+                            volumeOverall.setType("O");
+//                            Способ определения объемов КУ: (N)orm - Норматив (M)etering device - Прибор учета (O)ther - Иное
+//                            volumeIndividual.setDeterminingMethod();
+                            volumeOverall.setValue(new BigDecimal(invoce02.getAmount_shared()).setScale(3, BigDecimal.ROUND_DOWN));
+                            chargeInfo.getAdditionalService().getConsumption().getVolume().add(volumeOverall);
+                        }
+                    }
                     // перерасчеты
                     if (invoce02.getRepays() != null || invoce02.getExempts() != null ||
                             !invoce02.getRepays().equals(new BigDecimal(0)) || !invoce02.getExempts().equals(new BigDecimal(0))) {

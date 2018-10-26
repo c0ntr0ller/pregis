@@ -64,7 +64,7 @@ public class PaymentGRADDAO {
             }
         }
         if (paymentsFromGrad.size() < 1) {
-            answerProcessing.sendInformationToClientAndLog("Не удалось получить платежи из Град по дому " + houseGrad.getAddresStringShort(), LOGGER);
+            answerProcessing.sendMessageToClient("Нет платежей для выгрузки из Град по дому " + houseGrad.getAddresStringShort());
         }
 
 

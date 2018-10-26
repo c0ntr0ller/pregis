@@ -4,7 +4,7 @@
     <groupId>ru.prog_matik.java</groupId>
     <artifactId>pregis</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <name>pregis</name>
     <url>http://maven.apache.org</url>
 

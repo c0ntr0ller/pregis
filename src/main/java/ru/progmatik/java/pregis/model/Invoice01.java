@@ -22,6 +22,8 @@ public class Invoice01 {
     private String bik;
     private String bank_account;
 
+    private double forpay;
+
     public String getAccountguid() {
         return accountguid;
     }
@@ -132,5 +134,13 @@ public class Invoice01 {
 
     public void setBank_account(String bank_account) {
         this.bank_account = bank_account;
+    }
+
+    public double getForpay() {
+        return forpay;
+    }
+
+    public void setForpay(double forpay) {
+        this.forpay = forpay;
     }
 }

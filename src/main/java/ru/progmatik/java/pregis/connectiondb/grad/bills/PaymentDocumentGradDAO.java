@@ -193,6 +193,8 @@ public final class PaymentDocumentGradDAO {
                     paymentDocument.setAdvanceBllingPeriod(OtherFormat.getBigDecimalTwo(new BigDecimal(invoceGrad.getValue().getAvans())));
                 }
             }
+
+            paymentDocument.setTotalPayableByPDWithDebtAndAdvance(new BigDecimal(invoceGrad.getValue().getForpay()));
             // на оплату
             paymentDocument.setExpose(true);
             // Транспортный GUID
@@ -646,7 +648,7 @@ public final class PaymentDocumentGradDAO {
             try (Statement accountStatement = connection.createStatement()) {
                 String sqlQuery = String.format("select raccountguid, rpd_type, rpd_no, rsq_total, " +
                                 "rsq_live, rsq_heat, rtencount, rdebt, ravans, rpays_advance, " +
-                                "rbik, rbank_account, rnls, raddress from ex_gis_invoce01(%d, %s, %d, %d, null)",
+                                "rbik, rbank_account, rnls, raddress, rforpay from ex_gis_invoce01(%d, %s, %d, %d, null)",
                         month, year, ResourcesUtil.instance().getCompanyGradId(), houseGradID);
                 ResultSet accountsResultSet = accountStatement.executeQuery(sqlQuery);
 
@@ -667,6 +669,7 @@ public final class PaymentDocumentGradDAO {
                     invoce01.setPays_advance(accountsResultSet.getDouble("rpays_advance"));
                     invoce01.setBik(accountsResultSet.getString("rbik"));
                     invoce01.setBank_account(accountsResultSet.getString("rbank_account"));
+                    invoce01.setForpay(accountsResultSet.getDouble("rforpay"));
 
                     accountsMap.put(invoce01.getPd_no(), invoce01);
                 }

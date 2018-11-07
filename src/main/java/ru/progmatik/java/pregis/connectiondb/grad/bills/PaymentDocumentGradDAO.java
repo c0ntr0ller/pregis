@@ -194,7 +194,7 @@ public final class PaymentDocumentGradDAO {
                 }
             }
 
-            paymentDocument.setTotalPayableByPDWithDebtAndAdvance(new BigDecimal(invoceGrad.getValue().getForpay()));
+            paymentDocument.setTotalPayableByPDWithDebtAndAdvance(OtherFormat.getBigDecimalTwo(new BigDecimal(invoceGrad.getValue().getForpay())));
             // на оплату
             paymentDocument.setExpose(true);
             // Транспортный GUID

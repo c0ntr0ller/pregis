@@ -562,18 +562,21 @@ public final class HouseGRADDAO {
              ResultSet resultSet = statement.executeQuery(sqlRequest)) { // После использования должны все соединения закрыться
             // определяем - есть ли в наших данных новое поле для АПИ, в котором данные уже в новом формате. По-умолчанию считает что нет
             boolean apiStrExists = false;
+            int apiStrIndex = 1;
             final String apiColumnName = "RAPISTR";
-            for (int i = 1; i < resultSet.getMetaData().getColumnCount(); i++) {
+
+            for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
                 if (resultSet.getMetaData().getColumnName(i).equals(apiColumnName)) {
                     apiStrExists = true;
+                    apiStrIndex = i;
                     break;
                 }
             }
-
+// TODO переделать по-нормальному!!!
             if (apiStrExists) { // если база возвращает новый формат данных - обрабатываем их
                 while (resultSet.next()) {
-                    if (resultSet.getString(1) != null || !resultSet.getString(1).isEmpty()) {
-                        allHouseData.add(resultSet.getString(1));
+                    if (resultSet.getString(apiStrIndex) != null || !resultSet.getString(apiStrIndex).isEmpty()) {
+                        allHouseData.add(resultSet.getString(apiStrIndex));
 // переделываем на общий список                        tempDataHouse.add(resultSet.getString(1));
                     }
                 }

@@ -1324,8 +1324,18 @@ public class MeteringDeviceGRADDAO{
         final String[] sString = {""};
         return executorProcedure("{EXECUTE PROCEDURE EX_GIS04(" + houseId + ")}",
                 connectionGrad, resultSet1 -> {
+                    int apiStrIndex = 1;
+                    final String apiColumnName = "RAPISTR";
+
+                    for (int i = 1; i <= resultSet1.getMetaData().getColumnCount(); i++) {
+                        if (resultSet1.getMetaData().getColumnName(i).equals(apiColumnName)) {
+                            apiStrIndex = i;
+                            break;
+                        }
+                    }
+
                     while (resultSet1.next()){
-                        sString[0] = OtherFormat.getAllDataFromString(resultSet1.getString(1))[7];
+                        sString[0] = OtherFormat.getAllDataFromString(resultSet1.getString(apiStrIndex))[7];
                         for (String s: sString[0].split(",")) {
                             list.add(Integer.valueOf(s));
                         }

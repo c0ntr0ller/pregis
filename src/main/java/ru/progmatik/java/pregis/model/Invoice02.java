@@ -1,6 +1,8 @@
 package ru.progmatik.java.pregis.model;
 
 
+import ru.gosuslugi.dom.schema.integration.bills.ImportPaymentDocumentRequest;
+
 import java.math.BigDecimal;
 
 /**
@@ -35,14 +37,15 @@ public class Invoice02 {
     private String code;
     private String code_parent;
     private BigDecimal charge_total;
-    private int payee_id;
+    private ImportPaymentDocumentRequest.PaymentInformation paymentInformation;
 
-    public int getPayee_id() {
-        return payee_id;
+
+    public ImportPaymentDocumentRequest.PaymentInformation getPaymentInformation() {
+        return paymentInformation;
     }
 
-    public void setPayee_id(int payee_id) {
-        this.payee_id = payee_id;
+    public void setPaymentInformation(ImportPaymentDocumentRequest.PaymentInformation paymentInformation) {
+        this.paymentInformation = paymentInformation;
     }
 
     public BigDecimal getCharge_total() {

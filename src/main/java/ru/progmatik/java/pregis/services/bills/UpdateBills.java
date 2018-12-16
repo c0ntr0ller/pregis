@@ -100,7 +100,7 @@ public class UpdateBills {
 
         // запрашиваем текущие документы по дому из Град
         answerProcessing.sendMessageToClient("Создается список платежных реквизитов получателей по дому");
-        final HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = pdGradDao.getPaymentInformationMap(houseGrad.getGrad_id());
+        final List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap = pdGradDao.getPaymentInformationMap(houseGrad.getGrad_id());
 
         answerProcessing.sendMessageToClient("Создается список платежных документов по дому");
         final HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad =
@@ -347,7 +347,7 @@ public class UpdateBills {
             final int houseGradId,
             final PaymentDocumentGradDAO pdGradDao,
             HashMap<String, ImportPaymentDocumentRequest.PaymentDocument> paymentDocumentMapGrad,
-            HashMap<Integer, ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap) throws SQLException, PreGISException, ParseException {
+            List<ImportPaymentDocumentRequest.PaymentInformation> paymentInformationMap) throws SQLException, PreGISException, ParseException {
 
 
 
@@ -391,7 +391,7 @@ public class UpdateBills {
 
             importPaymentDocumentRequest.setMonth(pdGradDao.getMonth());
             importPaymentDocumentRequest.setYear(pdGradDao.getYear());
-            importPaymentDocumentRequest.getPaymentInformation().addAll(paymentInformationMap.values());
+            importPaymentDocumentRequest.getPaymentInformation().addAll(paymentInformationMap);
             importPaymentDocumentRequest.setConfirmAmountsCorrect(true);
 
             importPaymentDocumentRequest.getPaymentDocument().addAll(subarray);

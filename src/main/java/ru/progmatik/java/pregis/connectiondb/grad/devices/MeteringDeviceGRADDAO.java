@@ -917,10 +917,11 @@ public class MeteringDeviceGRADDAO{
      * @return список полученый из процедуры EX_GIS_PU1.
      * @throws SQLException
      */
-    public ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException {  // Connection error
+    public ArrayList<String[]> getExGisPu1(Integer houseId, Connection connection) throws SQLException, PreGISException {  // Connection error
 
         ArrayList<String[]> list = new ArrayList<>();
-        return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ")}",
+        return executorProcedure("{EXECUTE PROCEDURE EX_GIS_PU1(" + houseId + ","
+                        + String.valueOf( ResourcesUtil.instance().getCompanyGradId()) + ")}",
                 connection, resultSet1 -> {
                     while (resultSet1.next()) {
                         if (OtherFormat.getAllDataFromString(resultSet1.getString(1))[TYPE_PU].equalsIgnoreCase("Коллективный (общедомовой)") ||

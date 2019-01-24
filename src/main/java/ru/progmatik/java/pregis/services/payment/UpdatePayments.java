@@ -180,7 +180,7 @@ public class UpdatePayments {
         allCount = paymentsListGrad.size();
         ArrayList<ImportSupplierNotificationsOfOrderExecutionRequest> importSupplierNotificationsOfOrderExecutionRequestArrayList = new ArrayList<>();
 
-        int chunk = 1000; //не берем из настроек - в доке указано жестко 1000  ResourcesUtil.instance().getMaxRequestSize(); // chunk size to divide
+        int chunk = 200; // снизил до 200, чота не пролазит //не берем из настроек - в доке указано жестко 1000  ResourcesUtil.instance().getMaxRequestSize(); // chunk size to divide
         for(int i=0; i<paymentsListGrad.size(); i+=chunk){
             ArrayList<ImportSupplierNotificationsOfOrderExecutionRequest.SupplierNotificationOfOrderExecution> starry = new ArrayList<>(paymentsListGrad.subList(i, Math.min(paymentsListGrad.size(),i+chunk)));
 

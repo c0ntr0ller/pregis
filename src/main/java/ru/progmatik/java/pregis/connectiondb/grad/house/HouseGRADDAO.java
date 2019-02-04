@@ -648,60 +648,61 @@ public final class HouseGRADDAO {
                     // получаем номер квартиры
                     String localNumberAppart = arrayData[5];
                     String localNumberAppartNumberOnly = null;
+                    // если номер квартиры задан
+                    if (localNumberAppart != null || !"".equalsIgnoreCase(localNumberAppart)) {
+                        // если объединяем по номеру квартиры - ищем сначала уже имющуюся квартиру в списке
+                        if (ResourcesUtil.instance().getPremisesNumberOnly()) {
+                            localNumberAppartNumberOnly = OtherFormat.extractLeadingNumber(localNumberAppart);
+                            for (Room listRoom : listRooms) {
+                                if (listRoom.getNumberAppart().equalsIgnoreCase(localNumberAppartNumberOnly)) {
+                                    room = listRoom;
+                                    break;
+                                }
+                            }
+                        }
 
-                    // если объединяем по номеру квартиры - ищем сначала уже имющуюся квартиру в списке
-                    if(ResourcesUtil.instance().getPremisesNumberOnly()){
-                        localNumberAppartNumberOnly = OtherFormat.extractLeadingNumber(localNumberAppart);
-                        for (Room listRoom : listRooms) {
-                            if(listRoom.getNumberAppart().equalsIgnoreCase(localNumberAppartNumberOnly)){
-                                room = listRoom;
-                                break;
+                        // если не нашли помещение или настройка отсутствует - тогда создаем новое помещение
+                        if (room == null) {
+                            room = new Room();
+
+                            //                        room.setAddress(arrayData[2]);
+                            room.setFias(arrayData[3]);
+
+                            // если по настройке берем только номера квартир без литер и номеров комнат
+                            if (ResourcesUtil.instance().getPremisesNumberOnly()) {
+                                room.setNumberAppart(localNumberAppartNumberOnly);
+                            } else {
+                                room.setNumberAppart(localNumberAppart);
+                                room.setNumberRoom(arrayData[6]);
+                            }
+
+                            room.setIdSpaceGISJKH(arrayData[10]);
+                            // процент оплаты перенесен в абоненты                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
+
+                            room.getAbonId().add(Integer.valueOf(checkZero(arrayData[9])));
+
+                            if (arrayData[10].equals("0")) {
+                                room.setResidential(false);
+                            } else {
+                                room.setResidential(true);
+                            }
+
+                            if (arrayData.length > 11) {
+                                room.setDoorWay(arrayData[11]);
+                                room.setTotalArea(new BigDecimal(arrayData[12].replace(",", ".")));
+                                room.setPremisesGUID(arrayData[13]);
+                                room.setLivingroomGUID(arrayData[14]);
+                            }
+
+                            listRooms.add(room);
+
+                        } else { // если есть настройка и помещение нашли - инкрементируем площади и добавляем ИД абонента в список
+                            room.getAbonId().add(Integer.valueOf(checkZero(arrayData[9])));
+                            if (arrayData.length > 11) {
+                                room.setTotalArea(room.getTotalArea().add(new BigDecimal(arrayData[12].replace(",", "."))));
                             }
                         }
                     }
-
-                    // если не нашли помещение или настройка отсутствует - тогда создаем новое помещение
-                    if(room == null) {
-                        room = new Room();
-
-//                        room.setAddress(arrayData[2]);
-                        room.setFias(arrayData[3]);
-
-                        // если по настройке берем только номера квартир без литер и номеров комнат
-                        if(ResourcesUtil.instance().getPremisesNumberOnly()){
-                            room.setNumberAppart(localNumberAppartNumberOnly);
-                        }else {
-                            room.setNumberAppart(localNumberAppart);
-                            room.setNumberRoom(arrayData[6]);
-                        }
-
-                        room.setIdSpaceGISJKH(arrayData[10]);
-// процент оплаты перенесен в абоненты                    room.setSharePay(Integer.valueOf(checkZero(arrayData[8])));
-
-                        room.getAbonId().add(Integer.valueOf(checkZero(arrayData[9])));
-
-                        if (arrayData[10].equals("0")) {
-                            room.setResidential(false);
-                        } else {
-                            room.setResidential(true);
-                        }
-
-                        if (arrayData.length > 11) {
-                            room.setDoorWay(arrayData[11]);
-                            room.setTotalArea(new BigDecimal(arrayData[12].replace(",", ".")));
-                            room.setPremisesGUID(arrayData[13]);
-                            room.setLivingroomGUID(arrayData[14]);
-                        }
-
-                        listRooms.add(room);
-
-                    }else{ // если есть настройка и помещение нашли - инкрементируем площади и добавляем ИД абонента в список
-                        room.getAbonId().add(Integer.valueOf(checkZero(arrayData[9])));
-                        if (arrayData.length > 11) {
-                            room.setTotalArea(room.getTotalArea().add(new BigDecimal(arrayData[12].replace(",", "."))));
-                        }
-                    }
-
                 } catch (NumberFormatException e) {
                     LOGGER.error("ExtractSQL: Не верный формат для ячейки.", e);
                 }

@@ -13,6 +13,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ru.progmatik.java.pregis.exception.PreGISException;
 import ru.progmatik.java.pregis.other.OtherFormat;
 import ru.progmatik.java.pregis.other.ResourcesUtil;
+import ru.progmatik.java.pregis.signet.bcsign.jce.KeyLoader;
+import ru.progmatik.java.pregis.signet.bcsign.jce.KeyStoreUtils;
 import ru.progmatik.java.pregis.signet.bcsign.security.XmlDSignTools;
 import ru.progmatik.java.web.servlets.socket.WebSocketClientServlet;
 import ru.progmatik.java.web.servlets.web.IndexServlet;
@@ -20,6 +22,9 @@ import ru.progmatik.java.web.servlets.web.LoginClient;
 import ru.progmatik.java.web.servlets.web.MainServlet;
 import ru.progmatik.java.web.servlets.web.UsersServlet;
 
+import java.io.File;
+import java.security.KeyStore;
+import java.security.Provider;
 import java.security.Security;
 
 //import ru.CryptoPro.JCP.JCP;
@@ -27,6 +32,13 @@ import java.security.Security;
 //import ru.CryptoPro.JCP.JCP;
 
 public class Main {
+
+    static {
+        BouncyCastleProvider bcProvider = new BouncyCastleProvider();
+        String name = bcProvider.getName();
+        Security.removeProvider(name); // remove old instance
+        Security.addProvider(bcProvider);
+    }
 
     private static final Logger LOGGER = Logger.getLogger(Main.class);
 
@@ -73,7 +85,10 @@ public class Main {
 
         Security.addProvider(new BouncyCastleProvider());  // Добавим Bouncy Castle
         XmlDSignTools.init("BC"); // Инициализация алгоритма ГОСТ для подписи файлов
-
+        KeyStore keyStore = KeyStore.getInstance("pkcs12", "BC");
+        final Provider provider = keyStore.getProvider();
+//        Security.getAlgorithms()
+        KeyStoreUtils.loadKeyStoreFromFile(keyStore, new File("./data/spas.p12.pfx"), "12345678".toCharArray());
 //        if (LOGGER.isDebugEnabled()) {
 //            SSLServerSocketFactory factory =
 //                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();

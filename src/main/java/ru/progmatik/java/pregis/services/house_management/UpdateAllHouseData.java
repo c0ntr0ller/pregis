@@ -724,7 +724,7 @@ public class UpdateAllHouseData {
         apartmentHouse.setApartmentHouseToUpdate(apartmentHouseToUpdate);
         importHouseUORequest.setApartmentHouse(apartmentHouse);
 
-        importHouseUORequest.setInheritMissingValues(false);
+        importHouseUORequest.setInheritMissingValues(true);
 
         return importHouseUORequest;
     }
@@ -820,7 +820,7 @@ public class UpdateAllHouseData {
         apartmentHouse.setApartmentHouseToUpdate(apartmentHouseToUpdate);
         importHouseRSORequest.setApartmentHouse(apartmentHouse);
 
-        importHouseRSORequest.setInheritMissingValues(false);
+        importHouseRSORequest.setInheritMissingValues(true);
 
         return importHouseRSORequest;
     }

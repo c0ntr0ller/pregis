@@ -22,8 +22,7 @@ import org.apache.xml.security.utils.Constants;
 public class SignatureGostR34102001Gostr3411 extends SignatureGostR34102001 {
 
 	/** Field _URI */
-	public static final String _URI = "http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411";
-//	public static final String _URI = Constants.MoreAlgorithmsSpecNS + "gostr34102001-gostr3411";
+	public static final String _URI = Constants.MoreAlgorithmsSpecNS + "gostr34102001-gostr3411";
 
 	@Override
 	protected String engineGetURI() {

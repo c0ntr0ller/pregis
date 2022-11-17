@@ -96,8 +96,7 @@ class NameMethodDAO {
                 if (rs.next()) {
                     return rs.getInt(1);
                 } else {
-                    LOGGER.warn("Не найдено " + nameMethod + " в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
-                    return 0;
+                    throw new java.sql.SQLException("Не найдено " + nameMethod + " в таблице \"SPR_NAME_METHOD.NAME_METHOD\"!");
                 }
             }
         }

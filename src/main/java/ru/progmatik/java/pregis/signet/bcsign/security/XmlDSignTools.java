@@ -37,7 +37,7 @@ public class XmlDSignTools {
 	public static final String URL_V2_ALGORITHM_ENCRIPTION = "urn:ietf:params:xml:ns:cpxmlsec:algorithms:gost28147";
 
 	public static final String JCENAME_ALGORITHM_DIGEST = "GOST3411";
-	public static final String JCENAME_ALGORITHM_SIGNATURE = "GOST3411WITHECGOST3410";
+	public static final String JCENAME_ALGORITHM_SIGNATURE = "GOST3411withECGOST3410";
 //	public static final String JCENAME_ALGORITHM_SIGNATURE = "GOST3411withGOST3410EL";
 	public static final String JCENAME_ALGORITHM_ENCRIPTION = "IDEA/CBC/ISO10126Padding";
 //	public static final String JCENAME_ALGORITHM_ENCRIPTION = "GostJCE/CBC/ISO10126Padding";
@@ -56,7 +56,7 @@ public class XmlDSignTools {
 		JCEMapper.register(URL_V2_ALGORITHM_SIGNATURE, signature);
 
 		// CryptoPro BlockEncryption
-		JCEMapper.Algorithm encryption = new JCEMapper.Algorithm("GOST28147", JCENAME_ALGORITHM_ENCRIPTION, "BlockEncryption", 1024);
+		JCEMapper.Algorithm encryption = new JCEMapper.Algorithm("GOST28147", JCENAME_ALGORITHM_ENCRIPTION, "BlockEncryption", 256);
 		JCEMapper.register(URL_V1_ALGORITHM_ENCRIPTION, encryption);
 		JCEMapper.register(URL_V2_ALGORITHM_ENCRIPTION, encryption);
 
